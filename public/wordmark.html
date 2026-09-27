@@ -103,7 +103,7 @@
 <main class="frame wm">
   <h1 class="list-label">Wordmark in Instrument Sans</h1>
   <div class="prose flow intro">
-    <p>Instrument Sans medium at width 75, lowercase, two lines starting on the E. Three studies: the line height of the two lines under the mark; the size at the fit and three steps under it; and a layout with the two lines beside the mark, to the right of the stave and centred on the E's middle bar. The Estonian breaks inside its long word, the hyphen a hairline of the mark's weight. English and Estonian at 20rem and 11rem of mark width.</p>
+    <p>Instrument Sans medium at width 75, lowercase, two lines starting on the E. Three studies: the line height of the two lines under the mark; the size at the fit and three steps under it; and a layout beside the mark, to the right of the stave, in four shapes: two lines or one, centred on the E's middle bar or set on the letters' baseline. The Estonian breaks inside its long word, the hyphen a hairline of the mark's weight. English and Estonian at 20rem and 11rem of mark width.</p>
   </div>
   <div id="cells"></div>
 </main>
@@ -121,13 +121,20 @@ const widthOf = (s) => { mt.textContent = s; return mt.getComputedTextLength(); 
 const split2 = (s) => { const et = s.match(/^(.*nüüdis)(muusika keskus)$/i); if (et) return [et[1] + '-', et[2]]; const w = s.split(' '); let best = null; for (let i = 1; i < w.length; i++) { const a = w.slice(0, i).join(' '), b = w.slice(i).join(' '); const m = Math.max(a.length, b.length); if (!best || m < best.m) best = { a, b, m }; } return [best.a, best.b]; };
 const fitSize = (lines) => 100 * BLOCK / Math.max(...lines.map(widthOf));
 // one lockup: layout 'under' or 'beside', a line height as a factor of the size, a size in units
-const lockup = (text, { layout, lh, size, rem }) => {
-  const lines = split2(text);
+const lockup = (text, { layout, lh, size, rem, one = false, valign = 'centre' }) => {
+  const lines = one ? [text] : split2(text);
   const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('aria-hidden', 'true');
   const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '29'); use.setAttribute('width', '310'); use.setAttribute('height', '93'); svg.append(use);
   let x, y1, vb;
   if (layout === 'under') { x = LEFT; y1 = BOTTOM + GAP + CAP * size; const y2 = y1 + lh * size; vb = [35, 27, 310, y2 + 0.25 * size - 27]; }
-  else { x = STAVE_END + BESIDE_GAP; const block = CAP * size + lh * size; y1 = EBAR - block / 2 + CAP * size; const wText = Math.max(...lines.map(widthOf)) * size / 100; vb = [35, 27, x + wText - 35, Math.max(95, y1 + lh * size + 0.25 * size - 27)]; }
+  else {
+    x = STAVE_END + BESIDE_GAP;
+    const block = CAP * size + (lines.length - 1) * lh * size;
+    // centred on the E's middle bar, or the last line on the letters' baseline (asked 2026-09-27: "bottom aligned variants")
+    y1 = valign === 'bottom' ? BOTTOM - (lines.length - 1) * lh * size : EBAR - block / 2 + CAP * size;
+    const wText = Math.max(...lines.map(widthOf)) * size / 100;
+    vb = [35, 27, x + wText - 35, Math.max(95, y1 + (lines.length - 1) * lh * size + 0.25 * size - 27)];
+  }
   svg.setAttribute('viewBox', vb.map((v) => (typeof v === 'number' ? +v.toFixed(1) : v)).join(' '));
   // the mark keeps one width: the svg is as many rem as its viewBox is wide against the mark's 310
   svg.dataset.w = rem; svg.style.setProperty('--rem', rem + 'rem'); svg.style.setProperty('--k', (vb[2] / 310).toFixed(3));
@@ -174,7 +181,8 @@ const draw = async () => {
     cells.append(cell);
   }
   section('Beside the mark, at line height 0.95, the mark at its width');
-  for (const size of [30, 36, 42]) cells.append(cellOf('bs' + (++n), `${px(size)}, both languages at one size`, { layout: 'beside', lh: 0.95, size }));
+  const SHAPES = [['two lines, centred on the E\'s bar', {}], ['two lines, the last on the baseline', { valign: 'bottom' }], ['one line, centred on the E\'s bar', { one: true }], ['one line, on the baseline', { one: true, valign: 'bottom' }]];
+  for (const size of [30, 36, 42]) for (const [name, shape] of SHAPES) cells.append(cellOf('bs' + (++n), `${name}: ${px(size)}, both languages at one size`, { layout: 'beside', lh: 0.95, size, ...shape }));
   window.__wordmark = { count: n, enFit: +enFit.toFixed(1), etFit: +etFit.toFixed(1), instrument: document.fonts.check('500 100px "Instrument Sans"') };
 };
 draw();

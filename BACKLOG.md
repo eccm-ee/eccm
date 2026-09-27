@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "Do horz layout with single line of workmaek and also bottom aliged varints"
+
+Asked verbatim. The beside study on /wordmark has four shapes at each of its three sizes: two lines centred on the E's bar, two lines with the last on the letters' baseline, one line centred, one line on the baseline; English and Estonian at 20rem and 11rem, the one-line Estonian unbroken.
+
 ### Done 2026-09-27: "Revert latest wordmark change"
 
 Asked verbatim. /wordmark is back at the three studies (line height, size, beside) with the hairline placed from the drawn line; the paired horizontal and vertical layout is in git at d61d4ff.
