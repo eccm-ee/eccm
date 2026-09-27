@@ -471,3 +471,14 @@ in the whole CMS plan, Email Sending, is nowhere near step 1.
   local by default), developers.cloudflare.com/d1/tutorials/d1-and-prisma-orm/
   (the `--local` and `--remote` flags), all through the Cloudflare docs search
   today
+
+## 10. Reconciliation with plan-eccm-social-images.md, 2026-09-27
+
+The social image plan, written in parallel, reads the same `media.scheme`
+column and agrees on its contents, but shapes the JSON flat (`ground`, `ink`,
+`ink2`, `accent`, `btnFill`, `onBtn`, `titleFace`, `titleWeight`, `bodyFace`,
+`serif`, `detector`, `notes`, `readings`) rather than as the `vars` object in
+section 2 above. Recommended: the flat shape, for the reason given in that
+plan's section 10, with `scheme_v` kept as the integer column and a nine line
+map in the renderer turning the flat keys into the `--ev-*` properties. To be
+settled at session 3, before the first scheme row is written.
