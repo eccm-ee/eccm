@@ -7,9 +7,9 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
-### Open 2026-09-27: "in bg work with logo. do in square positive and negative options (no subline), 1px outline and not, do classical icon sizes all the way to .ico"
+### Done 2026-09-27: "in bg work with logo. do in square positive and negative options (no subline), 1px outline and not, do classical icon sizes all the way to .ico"
 
-Asked verbatim. A background agent draws the square mark from logo.svg without the tagline, positive and negative, with and without a 1px outline, and renders the classical icon sizes down to a multi-size .ico, with no new binary on this machine; it touches no existing page and reports the head lines to add.
+Asked verbatim. A background agent draws the square mark from logo.svg without the tagline, positive and negative, with and without a 1px outline, and renders the classical icon sizes down to a multi-size .ico, with no new binary on this machine; it touches no existing page and reports the head lines to add. ✅ Done: public/icons/ holds the four SVGs, nine PNGs and favicon.ico, tools/icons.mjs renders them in headless Chrome and writes the ICO in plain Node, plans/plan-eccm-icons.md has the geometry and the unsettled list; the session put the marks and the sizes on /ds, the four head lines into every page and the chrome, and a manifest at /manifest.webmanifest. At 16 px the mark is four blobs; a true 16 px mark is the owner's call.
 
 ### Done 2026-09-27: three general rules, dictated
 
