@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "save handoff"
+
+HANDOFF.md written in this repository for the first time, with every number counted by a command.
+
 ### Done 2026-09-27: "Do horz layout with single line of workmaek and also bottom aliged varints"
 
 Asked verbatim. The beside study on /wordmark has four shapes at each of its three sizes: two lines centred on the E's bar, two lines with the last on the letters' baseline, one line centred, one line on the baseline; English and Estonian at 20rem and 11rem, the one-line Estonian unbroken.
@@ -119,7 +123,7 @@ Asked verbatim with a crop of eccm.ee's favicon, heavy ECCM letters filling an o
 
 Asked verbatim. A background agent writes the tagline rules into the eccm-ui skill from typographic sources, measures the current tagline (DIN Condensed squeezed to 95 per cent, its x-height at the header and phone mark widths), and builds public/wordmark.html with six to eight alternatives under the mark, each measured, for the owner to pick; nothing changes in the logos until then. ✅ Done: section 7 of the eccm-ui skill, seven rules with sources; public/wordmark.html with eleven settings measured in both languages at 20rem and 11rem; the current line is squeezed 5.4 and 7.5 per cent and sits at 7.9 px of x-height on a phone, the floor; the recommendation is Schibsted Grotesk medium on two lines fitted to the mark, 10.3 px on a phone, no squeeze, the site's own face.
 
-### Open 2026-09-27: "use Eesti nyydismuusika keskus / Estonian Centre of Contemporary Music alternatives", "borders around icons when hovered", "m's still bobby"
+### Done 2026-09-27: "use Eesti nyydismuusika keskus / Estonian Centre of Contemporary Music alternatives", "borders around icons when hovered", "m's still bobby"
 
 Asked verbatim with a crop of the 16 to 64 row. The alternative texts of the logos become the centre's name in the page's language, sentence case as the tagline has it; the icons on /ds show their square on hover; and the M in the small-size marks is made wider, the letter and not only its arms, which is what "make it wider to compensate" meant, so its counters open at 48 and 64.
 
@@ -224,7 +228,7 @@ Asked verbatim, mid-task. An inventory of eccm.ee's URL shapes as fetched today,
 
 Asked verbatim, mid-task. A reading of trip's image pipeline for pages (not cards): originals, transforms, variants, srcset and sizes, 2x, formats, the CLS attributes, caching and the free tier, and what eccm takes for its list, event page and the derive reading. Written to `plans/plan-eccm-images.md`, not executed.
 
-### Open 2026-09-27: "look up what, how ✅ `plan-eccm-images.md`, 394 lines: trip rents every rendition from a hashed R2 master through one URL function; three ladders for eccm; the 300 px thumbnails are soft on 2x and the masters exist on eccm.ee as og:image. should we mark up the event pages. What is the standard here?"
+### Done 2026-09-27: "look up what, how should we mark up the event pages. What is the standard here?"
 
 Asked verbatim, mid-task, after the credits assessment mentioned schema.org. The standard for an event page: schema.org Event and MusicEvent as JSON-LD, what Google requires and recommends, the HTML5 semantics, hreflang and Open Graph for two languages, ics, what eccm.ee and arvopart.ee carry today. Written to `plans/plan-eccm-event-markup.md` with a worked example for event 134, not executed. ✅ `plan-eccm-event-markup.md`, 466 lines: MusicEvent as JSON-LD, the HTML5 skeleton off event.html, the two-language head, event 134 mapped onto the seven tables; neither eccm.ee nor arvopart.ee carries event structured data.
 

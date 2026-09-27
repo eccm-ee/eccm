@@ -9,11 +9,15 @@ It left the positron repository on 2026-09-27 with its history
 
 | where | what |
 | --- | --- |
-| `public/` | the site, served as static assets: `index.html` (the list), `event.html`, `edit.html`, `derive.html` (the design-from-image example), `logo.html`, `type.html`, `eccm.css`, `vendor/` (the fonts, each with its licence), the pictures, `logo.svg`, `_headers` (`X-Robots-Tag: noindex` while the site is on this hostname) |
-| `plans/` | the four plans: what to build (`plan-eccm-cms.md`), what it looks like (`plan-eccm-design.md`), the setup and the handover (`plan-eccm-setup.md`), and design from image (`plan-eccm-design-from-image.md`) |
+| `HANDOFF.md` | what state this is in right now |
+| `BACKLOG.md` | what has been asked for and not yet done, every ask verbatim |
+| `public/` | the site, served as static assets: `index.html` (the list), `event.html`, `edit.html`, `derive.html` (design from a picture), `ds.html` (the design system), `type.html`, `serif.html`, `wordmark.html`, `tagline.html`, `tagline-47.html`, `logo.html`, `eccm.css`, `vendor/` (the fonts, each with its licence), `icons/` (the square marks and every icon size), the pictures, the logo and wordmark SVGs, `manifest.webmanifest`, `_headers` (`X-Robots-Tag: noindex` while the site is on this hostname) |
+| `src/` | the Worker: `index.mjs` the router, `render/` the templates (`html.mjs`, `md.mjs`, `chrome.mjs`, `event.mjs`, `dates.mjs`) |
+| `migrations/`, `data/` | the D1 schema and the seed files |
+| `plans/` | every plan, eleven today (`ls plans/*.md \| wc -l`, counted and never remembered): the four that came with the move and the seven of 2026-09-27, each relayed in full when written |
 | `.claude/skills/eccm-ui` | the type half of the design system, with every rule's measurement and the owner's words. Load before any change under `public/` |
 | `.claude/skills/positron-compose` | the composition half, copied from positron. Load beside `eccm-ui` |
-| `tools/` | `shot.mjs`, `which-rule-won.mjs`, `ancestry.mjs`, `check-html.mjs`, copied from positron with a header saying so. Positron's copies are the originals |
+| `tools/` | `shot.mjs`, `which-rule-won.mjs`, `ancestry.mjs`, `check-html.mjs`, copied from positron with a header saying so, and `mark.mjs` with `icons.mjs`, which draw the mark per icon size and write the ICOs |
 | `archive/` | what was removed and why, verbatim |
 | `wrangler.jsonc` | two environments. `staging` is this account and `eccm.positron.studio`; `production` is ECCM's account and `eccm.ee`, blank until cutover |
 
