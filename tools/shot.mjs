@@ -233,5 +233,5 @@ await sleep(200);
 await rm(PROFILE, { recursive: true, force: true }).catch(() => {});
 
 const bad = shots.filter((s) => s.page.overflow > 0);
-console.log(`\n${shots.length} shot(s) of /${slug}/${bad.length ? `, ${bad.length} with sideways overflow` : ', none dragging the page sideways'}`);
+console.log(`\n${shots.length} shot(s) of ${/^https?:/.test(slug) ? slug : `${BASE}/${slug}/`}${bad.length ? `, ${bad.length} with sideways overflow` : ', none dragging the page sideways'}`);
 process.exit(bad.length ? 1 : 0);
