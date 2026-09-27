@@ -7,6 +7,14 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "rm E"
+
+Asked verbatim. `public/layout.html`: the white-on-black footer leaves the page (in git at 6db2a37) with its inverted rule; four footers remain, A to D.
+
+### Done 2026-09-28: "rm instumert sans examples from layput page"
+
+Asked verbatim. `public/layout.html`: every footer in Schibsted Grotesk only, so 12 footers instead of 24; the Instrument Sans declaration, the face class and the face names in the captions leave the page, the font files stay under `public/vendor` for the wordmark and type pages.
+
 ### Done 2026-09-28: "placeholder neesd to be grayer"
 
 Asked verbatim, the email field in footer D on `public/layout.html`: the placeholder was the second ink, #555; it is `--eccm-rule-strong`, #999, now, the lighter grey the site already has.
