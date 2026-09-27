@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "do Eesti nyydis- / muusika keskus"
+
+Asked verbatim. The Estonian two-liner on /tagline and /tagline-47 breaks inside the long word, "eesti nüüdis-" over "muusika keskus", in whichever casing the setting has, and is fitted on its longer line as before.
+
 ### Done 2026-09-27: "Take 47 and make separate page with uppercase and lowercase variants left and center and 3 font sizes (small difference)"
 
 Asked verbatim. Setting 47 is uppercase, tracking 0.08em, two lines fitted, left aligned. public/tagline-47.html holds it in uppercase and lowercase, left aligned and centred, at the fitted size and at 92 and 85 per cent of it, twelve settings in both languages at 11rem; the lowercase carries a light 0.02em since the rule tracks no lowercase and the owner can say otherwise.

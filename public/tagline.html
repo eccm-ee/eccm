@@ -143,7 +143,8 @@ const NS = 'http://www.w3.org/2000/svg';
 const meter = document.createElementNS(NS, 'svg'); meter.setAttribute('width', '0'); meter.setAttribute('height', '0'); meter.style.position = 'absolute';
 const mt = document.createElementNS(NS, 'text'); mt.setAttribute('class', 'tag'); mt.setAttribute('font-size', '100'); meter.append(mt); document.body.append(meter);
 const widthOf = (s, track) => { mt.setAttribute('letter-spacing', String(track * 100)); mt.textContent = s; return mt.getComputedTextLength(); };
-const split2 = (s) => { const w = s.split(' '); let best = null; for (let i = 1; i < w.length; i++) { const a = w.slice(0, i).join(' '), b = w.slice(i).join(' '); const m = Math.max(a.length, b.length); if (!best || m < best.m) best = { a, b, m }; } return [best.a, best.b]; };
+// the Estonian line breaks inside its long word (asked 2026-09-27: "do Eesti nyydis- / muusika keskus")
+const split2 = (s) => { const et = s.match(/^(.*nüüdis)(muusika keskus)$/i); if (et) return [et[1] + '-', et[2]]; const w = s.split(' '); let best = null; for (let i = 1; i < w.length; i++) { const a = w.slice(0, i).join(' '), b = w.slice(i).join(' '); const m = Math.max(a.length, b.length); if (!best || m < best.m) best = { a, b, m }; } return [best.a, best.b]; };
 const lockup = (text, cse, track, wrap, ink, widthClass, align) => {
   const s = CASES[cse](text);
   let lines, size;
