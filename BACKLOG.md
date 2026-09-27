@@ -7,6 +7,11 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "make versions inside square, 1px black border  and white on black bg. for side titles a rectangle"
+
+Asked verbatim. `public/wordmark.html`: beside every plain lockup, the same lockup in a frame, once with a 1px border in the ink and once white on black; a square for the under lockups, centred on the letters with the stave reaching into the margin as the square marks do, a rectangle round the ink for the beside ones; the margin from the ink is the square marks' 28 units.
+✅ Done: 42 lockups on the page, 14 plain and each with its two frames. MEASURED at 20rem, in units: every under square is 354 a side; the beside rectangles are 657.5, 593.5 and 885 wide by 152.5. The border is a CSS pixel at any scale, the inverted frame is the ink's own box with no line. Shot at 375 and 1280.
+
 ### Done 2026-09-27: "the Estonian above the mark and the English under it,  - estonian needs mor space under it cause typography. do inversed languaged verson too"
 
 Asked verbatim. `public/wordmark.html`, the bilingual under lockup. Why it reads tight: under the mark the 12 units run from the mark's edge to the cap line, and a lowercase line's bulk sits at the x-height, 6.8 units lower at 40 units, so the eye reads 18.8; over the mark the line sits on its baseline with no descenders, so the eye reads the bare 12. The air over the mark is measured to the x-height as well, which puts the baseline 18.8 units over the mark's top at this size. And a second lockup with the English over the mark and the Estonian under it.
