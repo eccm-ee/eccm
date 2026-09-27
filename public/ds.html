@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>ECCM: kujundussüsteem</title>
+<!-- public/ds.html: the design system on one page, asked 2026-09-27 ("make
+     /ds page for design system elements. typography, buttons, logo"). Every
+     value here is eccm.css's own, read through the same classes the site's
+     pages use, so a change to the stylesheet shows here first; nothing is
+     copied. The three logos are ./logo-et.svg, ./logo-en.svg and the two
+     language ./logo.svg, and the header of every page takes the one of its
+     language. Rules: .claude/skills/eccm-ui and positron-compose. -->
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="./eccm.css">
+<style>
+  /* the page's own layout for tables of tokens, swatches and specimens; the
+     type in them is the site's small register, and the only painted grounds
+     are the ones whose colour is the content */
+  @layer page {
+    .ds h2 { margin-block: var(--eccm-s-16) var(--eccm-s-6); font-size: var(--eccm-t-l); }
+    .ds h2:first-of-type { margin-block-start: var(--eccm-s-8); }
+    .ds-tokens { display: grid; grid-template-columns: max-content max-content minmax(0, 1fr); column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); max-inline-size: 48rem; margin-block: var(--eccm-s-6); }
+    .ds-tokens > code { font-family: ui-monospace, Menlo, monospace; font-size: 0.8125rem; }
+    .ds-tokens > span:nth-child(3n) { color: var(--eccm-ink-2); }
+    .ds-spec { display: grid; row-gap: var(--eccm-s-12); margin-block: var(--eccm-s-8); }
+    .ds-cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-3); }
+    .ds-swatches { display: flex; flex-wrap: wrap; gap: var(--eccm-s-6); margin-block: var(--eccm-s-6); }
+    .ds-swatch { inline-size: 9rem; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
+    .ds-swatch i { display: block; block-size: 4rem; border: 1px solid var(--eccm-rule); margin-block-end: var(--eccm-s-2); }
+    .ds-space { display: grid; row-gap: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); margin-block: var(--eccm-s-6); max-inline-size: var(--eccm-measure); }
+    .ds-space > div { display: grid; grid-template-columns: 7rem minmax(0, 1fr); align-items: center; column-gap: var(--eccm-s-4); }
+    .ds-space i { display: block; block-size: var(--eccm-s-3); background: var(--eccm-ink); }
+    .ds-ground { padding: var(--eccm-s-8); background: var(--ev-ground, var(--eccm-ground)); color: var(--ev-ink, var(--eccm-ink)); }
+    .ds-ground + .ds-ground { margin-block-start: var(--eccm-s-4); }
+    .ds-ground .ds-cap { color: inherit; opacity: 0.7; }
+    .ds-btns { display: flex; flex-wrap: wrap; gap: var(--eccm-s-4); }
+    .ds-logos { display: grid; gap: var(--eccm-s-12); margin-block: var(--eccm-s-6); }
+    .ds-logos figure { margin: 0; }
+    .ds-logos img { display: block; inline-size: min(100%, var(--eccm-mark-w)); }
+    .ds-logos .phone img { inline-size: 11rem; }
+    .ds-logos figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+    .ds-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--eccm-s-2); max-inline-size: var(--eccm-measure); }
+    /* under 40rem the token table stacks, since two max-content columns
+       beside a third do not fit a phone (MEASURED: 90 px of sideways
+       overflow at 375) */
+    @media (max-width: 40rem) {
+      .ds-tokens { grid-template-columns: minmax(0, 1fr); row-gap: var(--eccm-s-1); }
+      .ds-tokens > span:nth-child(3n) { margin-block-end: var(--eccm-s-3); }
+      .ds-space > div { grid-template-columns: 6rem minmax(0, 1fr); }
+    }
+  }
+</style>
+</head>
+<body>
+<header class="site-head">
+  <div class="frame">
+    <a class="mark" href="./"><img src="./logo-et.svg" width="310" height="133" alt="ECCM, Eesti Nüüdismuusika Keskus"></a>
+    <span class="lang"><span aria-current="page" lang="et">ET</span><a href="https://eccm.ee/index.php/en/" lang="en">EN</a></span>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Menüü">
+  <div class="frame">
+    <ul class="nav">
+      <li><a href="./">Avaleht</a></li>
+      <li><a href="https://eccm.ee/index.php/et/eccm">ECCM</a></li>
+      <li><a href="https://eccm.ee/index.php/et/tallinn-1965">Tallinn 1965</a></li>
+      <li><a href="https://eccm.ee/nan/">NAN</a></li>
+      <li><a href="https://eccm.ee/index.php/et/ulysses">Ulysses</a></li>
+      <li><a href="https://eccm.ee/index.php/et/konkursid">Konkursid</a></li>
+      <li><a href="https://eccm.ee/index.php/et/syndmusest">Sündmused</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="frame ds">
+  <h1 class="list-label">Kujundussüsteem</h1>
+  <div class="prose flow">
+    <p>Üks lehekülg kõigest, millest eccm.ee uued leheküljed koosnevad. Iga väärtus on eccm.css oma ja loetakse siin samade klassidega, mida leheküljed kasutavad, nii et muudatus stiililehes paistab kõigepealt siin.</p>
+  </div>
+
+  <h2>Kirjatüüp</h2>
+  <div class="prose flow">
+    <p>Üks perekond, Schibsted Grotesk, ise serveeritud. Pealkirjad on kaalus 400 ja hierarhia tuleb suurusest ja ruumist, mitte rasvasest ega joonest. Pildist tuletatud leheküljel astub pealkirjadesse Source Serif 4, kui pildi enda kiri loeb seriifina, ja kehateksti ainult valge lähedasel taustal.</p>
+  </div>
+  <div class="ds-tokens" aria-label="Kirjasuuruse skaala">
+    <code>--eccm-t-s</code><span>0.875rem, 14 px</span><span>kicker, faktide sildid, tegijate sildid, jalus, vormisildid</span>
+    <code>--eccm-t-m</code><span>1.125rem, 18 px</span><span>kehatekst, nupud, sisendid</span>
+    <code>--eccm-t-l</code><span>1.4rem, 22.4 px</span><span>vahepealkiri proosas, järgmiste ürituste pealkiri</span>
+    <code>--eccm-t-xl</code><span>1.55 kuni 1.75rem, 24.8 kuni 28 px</span><span>nimekirja pealkiri kitsas reas, alla 47rem</span>
+    <code>--eccm-t-2xl</code><span>1.85 kuni 2.2rem, 29.6 kuni 35.2 px</span><span>nimekirja pealkiri ja ürituse pealkiri</span>
+    <code>--eccm-lh-body</code><span>1.5</span><span>kehatekst</span>
+    <code>--eccm-lh-head</code><span>1.15</span><span>pealkirjad</span>
+    <code>--eccm-lh-meta</code><span>1.4</span><span>väike register</span>
+    <code>--eccm-measure</code><span>66ch</span><span>proosa ja pealkirja suurim laius</span>
+  </div>
+  <div class="ds-spec">
+    <div>
+      <p class="ds-cap">Nimekirja rida: kicker, pealkiri, kokkuvõte</p>
+      <div class="ds-row">
+        <p class="ev-kicker"><time datetime="2026-09-30T19:00+03:00">30.09.2026</time><time>19.00</time><span>ECCM saal</span><span>Ulysses</span></p>
+        <h2 class="ev-title" style="margin: 0"><a href="./event.html">Gestuurid/situatsioonid: ilma partituurita kuulamine</a></h2>
+        <p class="ev-summary prose" style="margin: 0">Tööprotsessi viimane hetk, võimalus olla tunnistajaks kolme osaleja koosmõjus tekkinud olukorrale.</p>
+      </div>
+    </div>
+    <div>
+      <p class="ds-cap">Ürituse pealkiri, h1</p>
+      <div class="event-lead"><h1 style="margin: 0">Gestuurid/situatsioonid: ilma partituurita kuulamine. Marianna Liik, Artjom Astrov, Maryn-Liis Rüütelmaa</h1></div>
+    </div>
+    <div>
+      <p class="ds-cap">Proosa: lõigud, vahepealkiri, link, väike register</p>
+      <div class="prose flow">
+        <p>Avalik žest ei ole valmis teose esitlus ega klassikaline kontsert. See on kümnepäevase protsessi viimane hetk, võimalus olla tunnistajaks olukorrale, mis on tekkinud kolme osaleja koosmõjus ja mida ei saa korrata täpselt samal kujul.</p>
+        <h2>Vahepealkiri proosas</h2>
+        <p>Kõigile, keda huvitab <b>heli, mis ei ole komponeeritud</b>, ja kes on valmis <i>kuulama ilma partituurita</i>. Vaata ka <a href="./derive.html">kujundust pildist</a>.</p>
+        <p class="small">Väike register, mida kannavad jalus, kuupäevad ja sildid.</p>
+      </div>
+    </div>
+    <div>
+      <p class="ds-cap">Faktid: silt väärtuse kohal, laual kahes veerus</p>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-09-30T19:00+03:00">30.09.2026 kell 19.00</time>, 60 min</dd></div>
+        <div><dt>Kus</dt><dd>ECCM saal, Herne 11A, Tallinn</dd></div>
+        <div><dt>Sari</dt><dd>Ulysses</dd></div>
+        <div><dt>Küsi</dt><dd><a href="tel:+37255655596">5565 5596</a>, <a href="https://eccm.ee">eccm.ee</a></dd></div>
+      </dl>
+    </div>
+    <div>
+      <p class="ds-cap">Tegijad: silt väärtuse kõrval, telefonil kohal</p>
+      <dl class="credits">
+        <div><dt>Kunstnikud</dt><dd>Marianna Liik, Liisa Hõbepappel, Artjom Astrov</dd></div>
+        <div><dt>Dramaturg</dt><dd>Alissa Šnaider</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <h2>Värvid</h2>
+  <div class="prose flow">
+    <p>Valge on materjal ja kiri on ese. Iga paar on arvutatud valge vastu ja värv ei ole kunagi ainus vihje: aktsent on ainult allajoonel hiirega ja fookusrõngal.</p>
+  </div>
+  <div class="ds-swatches">
+    <div class="ds-swatch"><i style="background: #ffffff"></i><code>--eccm-ground</code><br>#ffffff</div>
+    <div class="ds-swatch"><i style="background: #1a1a1a"></i><code>--eccm-ink</code><br>#1a1a1a, 17.40:1</div>
+    <div class="ds-swatch"><i style="background: #555555"></i><code>--eccm-ink-2</code><br>#555555, 7.46:1</div>
+    <div class="ds-swatch"><i style="background: #d9d9d9"></i><code>--eccm-rule</code><br>#d9d9d9</div>
+    <div class="ds-swatch"><i style="background: #999999"></i><code>--eccm-rule-strong</code><br>#999999, lingi joon</div>
+    <div class="ds-swatch"><i style="background: #b3400f"></i><code>--eccm-accent</code><br>#b3400f, 5.74:1</div>
+  </div>
+  <div class="prose flow">
+    <p class="small">Pildist tuletatud lehekülg seab samad rollid oma märkidega: <code>--ev-ground</code>, <code>--ev-ink</code>, <code>--ev-ink2</code>, <code>--ev-accent</code>, <code>--ev-btn-fill</code>, <code>--ev-on-btn</code>, <code>--ev-title-face</code>, <code>--ev-title-weight</code>, <code>--ev-body-face</code>. Näited on <a href="./derive.html">kujundus pildist</a> leheküljel.</p>
+  </div>
+
+  <h2>Ruum</h2>
+  <div class="prose flow">
+    <p>Üks skaala, ja ühtegi arvu, mis ei ole sellel. Rühma ümber on alati rohkem ruumi kui rühma sees, vähemalt kaks astet.</p>
+  </div>
+  <div class="ds-space">
+    <div><code>--eccm-s-1</code><i style="inline-size: 0.25rem"></i></div>
+    <div><code>--eccm-s-2</code><i style="inline-size: 0.5rem"></i></div>
+    <div><code>--eccm-s-3</code><i style="inline-size: 0.75rem"></i></div>
+    <div><code>--eccm-s-4</code><i style="inline-size: 1rem"></i></div>
+    <div><code>--eccm-s-6</code><i style="inline-size: 1.5rem"></i></div>
+    <div><code>--eccm-s-8</code><i style="inline-size: 2rem"></i></div>
+    <div><code>--eccm-s-12</code><i style="inline-size: 3rem"></i></div>
+    <div><code>--eccm-s-16</code><i style="inline-size: 4rem"></i></div>
+    <div><code>--eccm-s-24</code><i style="inline-size: 6rem"></i></div>
+  </div>
+  <div class="ds-tokens" aria-label="Mõõdud">
+    <code>--eccm-gutter</code><span>1rem, laual 2rem</span><span>raami serv</span>
+    <code>.frame</code><span>min(100% - 2 * gutter, 72rem)</span><span>lehekülje raam</span>
+    <code>--eccm-pic-w</code><span>300px</span><span>nimekirja pilt, oma suuruses</span>
+    <code>--eccm-mark-w</code><span>20rem, telefonil 11rem</span><span>logo päises</span>
+  </div>
+
+  <h2>Nupud</h2>
+  <div class="prose flow">
+    <p>Sõna 3rem kõrguses kastis, joonega tindis, ilma nurga ja varjuta, alati süsteemi kirjas. Kaks olekut: tavaline, joonega, ja pööratud, täidetud. Pildist tuletatud leheküljel loeb nupp selle skeemi märke ja lehekülje omad on varuks.</p>
+  </div>
+  <div class="ds-ground">
+    <p class="ds-cap">Valgel</p>
+    <p class="ds-btns"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a><a class="btn" href="#">Muuda</a></p>
+  </div>
+  <div class="ds-ground" style="--ev-ground: #1b2746; --ev-ink: #ffffff">
+    <p class="ds-cap">Tumedal tuletatud taustal, tint valge</p>
+    <p class="ds-btns"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a></p>
+  </div>
+  <div class="ds-ground" style="--ev-ground: #d9c8d9; --ev-ink: #1a1a1a">
+    <p class="ds-cap">Heledal tuletatud taustal</p>
+    <p class="ds-btns"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a></p>
+  </div>
+
+  <h2>Logo</h2>
+  <div class="prose flow">
+    <p>Kolm faili ühest märgist. Eestikeelne lehekülg kannab päises eestikeelset, ingliskeelne ingliskeelset, ja kakskeelne jääb alles kohtadeks, kus üks keel oleks vale. Märk on joonistatud rida rida haaval eccm.ee serveeritud JPEG-i järgi ja vaatekast on tindi enda kast, nii et lehekülg joondub tindi, mitte õhu järgi. Tunnuslause kiri on ajutine, DIN Condensed kokku surutuna mõõdetud laiusele, kuni ECCM nimetab kirjatüübi või annab vektori.</p>
+  </div>
+  <div class="ds-logos">
+    <figure><img src="./logo-et.svg" width="310" height="133" alt="ECCM, Eesti Nüüdismuusika Keskus"><figcaption>logo-et.svg, eestikeelne, 310 × 133</figcaption></figure>
+    <figure><img src="./logo-en.svg" width="310" height="133" alt="ECCM, Estonian Centre of Contemporary Music"><figcaption>logo-en.svg, ingliskeelne, 310 × 133</figcaption></figure>
+    <figure><img src="./logo.svg" width="310" height="147" alt="ECCM, Eesti Nüüdismuusika Keskus, Estonian Centre of Contemporary Music"><figcaption>logo.svg, kakskeelne, 310 × 147</figcaption></figure>
+    <figure class="phone"><img src="./logo-et.svg" width="310" height="133" alt=""><figcaption>telefoni laiuses, 11rem</figcaption></figure>
+  </div>
+</main>
+
+<footer class="frame site-foot">
+  <span>Eesti Nüüdismuusika Keskus, Herne 11A, 10135 Tallinn</span>
+</footer>
+</body>
+</html>

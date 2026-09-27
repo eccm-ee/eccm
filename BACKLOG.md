@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "make /ds page for desing system elements. typography, buttons, logo. make 2 variants of logo, estonian and english and switch them on site header based on language. keep 2language logo version also around"
+
+Asked verbatim. `public/ds.html` at /ds: the tokens with their values, every text style in use as a specimen, the buttons in both modes on the page ground and on a derived ground, the colours, and the three logos. `public/logo-et.svg` and `public/logo-en.svg` beside `public/logo.svg` (the two-language one, kept); the site header takes the language's one on the static pages and in the rendered chrome. ✅ Done and deployed; the one-language logos keep the mark and one tagline on the first baseline with the box cut to the ink below it, 310 by 133; the Estonian line alone sits left on the E's edge at its measured width rather than stretched. MEASURED: /ds parses, shots at 375 and 1280 with nothing sideways after the token table learned to stack on a phone.
+
 ### Done 2026-09-27: "rm Upcoming events / Design trial: the text and the picture are eccm.ee’s own as of 27.09.2026."
 
 Asked verbatim: the two footer lines, the upcoming events link and the design trial line, leave the rendered chrome and every static page's footer. The edit form's own note that it saves nothing stays, since it is true and not a footer. ✅ Done in `src/render/chrome.mjs` and six static pages; MEASURED live: 0 matches on /, /event and /derive, the rendered footer one line.

@@ -47,7 +47,7 @@ ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflan
 <body>
 <header class="site-head">
   <div class="frame">
-    <a class="mark" href="/"><img src="/logo.svg" width="310" height="147" alt="${t.markAlt}"></a>
+    <a class="mark" href="/"><img src="/logo-${lang}.svg" width="310" height="133" alt="${t.markAlt}"></a>
     <span class="lang"><span aria-current="page" lang="${lang}">${LABEL[lang]}</span><a href="${alternate.href}" hreflang="${alternate.lang}" lang="${alternate.lang}">${LABEL[alternate.lang]}</a></span>
   </div>
 </header>
