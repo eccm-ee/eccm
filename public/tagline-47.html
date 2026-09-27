@@ -28,12 +28,12 @@
     /* no rule between cells; the caption stands a long way above its lockups
        and the cells further apart than that (asked 2026-09-27: "rm horiz
        lines and add a looooot vert space between explanations and logos") */
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(24rem, 100%), 1fr)); column-gap: var(--eccm-s-12); row-gap: var(--eccm-s-16); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(34rem, 100%), 1fr)); column-gap: var(--eccm-s-12); row-gap: var(--eccm-s-16); }
     .cell { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: var(--eccm-s-4); align-content: start; }
     .cell .cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin: 0; }
     .locks { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--eccm-s-8); }
     .locks svg { display: block; overflow: visible; }
-    .locks .w20 { inline-size: 20rem; } .locks .w11 { inline-size: 11rem; }
+    .locks .w20 { inline-size: 20rem; } .locks .w16 { inline-size: 16rem; } .locks .w11 { inline-size: 11rem; }
     .locks figure { margin: 0; }
     .locks figcaption { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-start: var(--eccm-s-2); }
     .tag { font-family: 'DIN Condensed', 'Helvetica Neue', 'Arial Narrow', sans-serif; font-weight: 700; }
@@ -103,7 +103,7 @@
 <main class="frame tl">
   <h1 class="list-label">Tagline, from setting 47</h1>
   <div class="prose flow intro">
-    <p>Setting 47 of the DIN page, uppercase at 0.08em on two lines fitted to the letters and left aligned, taken apart: uppercase and lowercase, left aligned and centred, at the fitted size and at two smaller sizes a step apart. The lowercase carries a light 0.02em. Both languages at the phone's 11rem. <span class="face-note" id="face-note"></span></p>
+    <p>Setting 47 of the DIN page, uppercase at 0.08em on two lines fitted to the letters and left aligned, taken apart: uppercase and lowercase, left aligned and centred, at the fitted size and at two smaller sizes a step apart. The lowercase carries a light 0.02em. Both languages at the phone's 11rem and, under them, at 16rem, between the phone and the header's 20rem. <span class="face-note" id="face-note"></span></p>
   </div>
   <div id="cells"></div>
 </main>
@@ -167,12 +167,16 @@ for (const [cse, track] of [['uppercase', 0.08], ['lowercase', 0.02]]) {
     n++;
     const cell = document.createElement('div'); cell.className = 'cell'; cell.id = 'v' + n;
     const en11 = lockup(EN, cse, track, 'two lines fitted', '#1a1a1a', 'w11', align, scale), et11 = lockup(ET, cse, track, 'two lines fitted', '#1a1a1a', 'w11', align, scale);
+    const en16 = lockup(EN, cse, track, 'two lines fitted', '#1a1a1a', 'w16', align, scale), et16 = lockup(ET, cse, track, 'two lines fitted', '#1a1a1a', 'w16', align, scale);
     const px11 = en11.size * (176 / 310), xh = px11 * XH, capPx = px11 * CAP;
     const cap = document.createElement('p'); cap.className = 'cap';
     cap.textContent = `${n}. ${align}, ${Math.round(scale * 100)} per cent of the fit: ${en11.size.toFixed(1)} units, ${cse === 'uppercase' ? 'cap height ' + capPx.toFixed(1) : 'x-height ' + xh.toFixed(1)} px on a phone`;
     const locks = document.createElement('div'); locks.className = 'locks';
     for (const l of [en11, et11]) { const f = document.createElement('figure'); f.append(l.svg); locks.append(f); }
-    cell.append(cap, locks); grid.append(cell);
+    // the same pair larger, between the phone and the header (asked 2026-09-27: "larger size like page logo but not that big")
+    const locks16 = document.createElement('div'); locks16.className = 'locks';
+    for (const l of [en16, et16]) { const f = document.createElement('figure'); f.append(l.svg); locks16.append(f); }
+    cell.append(cap, locks, locks16); grid.append(cell);
   }
 }
 // which face drew it: DIN Condensed sets the English line at about 1219 units per 100 of size, Arial Narrow and Helvetica Neue Condensed at about 1540

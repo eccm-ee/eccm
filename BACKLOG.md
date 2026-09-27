@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "add examples with larger size like page logo but not that big"
+
+Asked verbatim. Every setting on /tagline-47 shows its pair a second time at 16rem, between the phone's 11rem and the header's 20rem, under the 11rem pair.
+
 ### Done 2026-09-27: "do Eesti nyydis- / muusika keskus"
 
 Asked verbatim. The Estonian two-liner on /tagline and /tagline-47 breaks inside the long word, "eesti nüüdis-" over "muusika keskus", in whichever casing the setting has, and is fitted on its longer line as before.
