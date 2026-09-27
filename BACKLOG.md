@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "Take 47 and make separate page with uppercase and lowercase variants left and center and 3 font sizes (small difference)"
+
+Asked verbatim. Setting 47 is uppercase, tracking 0.08em, two lines fitted, left aligned. public/tagline-47.html holds it in uppercase and lowercase, left aligned and centred, at the fitted size and at 92 and 85 per cent of it, twelve settings in both languages at 11rem; the lowercase carries a light 0.02em since the rule tracks no lowercase and the owner can say otherwise.
+
 ### Done 2026-09-27: "There is no such thing. Either both lines left aligned or both centered."
 
 Said with a phone screenshot of setting 8, where the fitted line started on the E and the shorter one was centred. Every line of a lockup now follows the setting, centred on the letters' axis with text-anchor middle or starting on the E, and the tracking travels as a style too, since Safari drew the tracked line narrower than Chrome measured it.
