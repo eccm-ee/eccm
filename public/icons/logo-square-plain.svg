@@ -12,7 +12,8 @@
   <rect width="354" height="354" fill="#ffffff"/>
   <g fill="currentColor">
     <g transform="translate(-7 103.5)">
-      <rect x="35" y="29" width="14" height="93"/><rect x="35" y="29" width="38" height="13"/><rect x="35" y="67" width="31" height="13"/><rect x="35" y="108" width="38" height="14"/><path d="M146 60 V49 A15 15 0 0 0 116 49 V101.5 A15 15 0 0 0 146 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/><path d="M227 60 V49 A15 15 0 0 0 197 49 V101.5 A15 15 0 0 0 227 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/><rect x="273" y="29" width="14" height="93"/><rect x="319" y="29" width="14" height="93"/><polygon points="281,29 295,29 302.5,84 310,29 324,29 309,122 296,122"/>
+      <g class="letters">
+      <rect x="35" y="29" width="14" height="93"/><rect x="35" y="29" width="38" height="13"/><rect x="35" y="67" width="31" height="13"/><rect x="35" y="108" width="38" height="14"/><path d="M146 60 V49 A15 15 0 0 0 116 49 V101.5 A15 15 0 0 0 146 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/><path d="M227 60 V49 A15 15 0 0 0 197 49 V101.5 A15 15 0 0 0 227 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/><rect x="273" y="29" width="14" height="93"/><rect x="319" y="29" width="14" height="93"/><polygon points="281,29 295,29 302.5,84 310,29 324,29 309,122 296,122"/></g>
     </g>
   </g>
 </svg>
