@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "Leave these for hor layout and put vert layoud next to them. Bit more horiz gap" (a phone screenshot of the beside lockups)
+
+Asked verbatim. /wordmark is one study now: at 30, 36 and 42 units, each language at 20rem and 11rem, the horizontal lockup with the lines right of the stave and, beside it, the vertical lockup with the same lines under the mark at the same size; the gap between the stave and the lines grows from 18 to 28 units. The line-height and size studies are in git.
+
 ### Done 2026-09-27: "Dash is in wrong place" (a phone screenshot of /wordmark)
 
 On Safari the hairline sat in a gap after "eesti nüüdis": the page measured the line with the face at its full width and Safari drew it at 75, so the fitted lines came out narrow and the dash far right. The width axis is now set with font-variation-settings as well, which Safari measures, and the dash is placed from the drawn line's own length, a third of the size long after a gap of eight hundredths, on /wordmark, /tagline-47 and /tagline.
