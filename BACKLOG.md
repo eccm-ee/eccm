@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "wordmark. leave lowercase. reduce lineheight of workmark. try differetnt text sizes and do vriant of ECCM (workmark) flex layout"
+
+Asked verbatim. /wordmark is lowercase only, in three studies: the line height of the two tagline lines under the mark at 1.05, 0.95 and 0.88; the size at the fit and at 90, 80 and 70 per cent of it, at 0.95; and a beside layout with the two lines to the right of the stave, centred on the E's middle bar, at three sizes, the mark kept at the same width as in the under layout.
+
 ### Done 2026-09-27: "leave b c e g in serif, hide the rest"
 
 Asked verbatim. /serif shows B Newsreader, C Literata, E Piazzolla and G Petrona under their letters; the six others are out of the page and in git, their files stay under public/vendor and their faces declared.
