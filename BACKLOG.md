@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "leave b c e g in serif, hide the rest"
+
+Asked verbatim. /serif shows B Newsreader, C Literata, E Piazzolla and G Petrona under their letters; the six others are out of the page and in git, their files stay under public/vendor and their faces declared.
+
 ### Done 2026-09-27: "https://eccm.positron.studio/type - only use our default and then source sans and instuments and the rest 10 has to be serif fonts, mordern"
 
 Asked verbatim. /type keeps three of its twelve, A Schibsted Grotesk (the default), B Source Serif 4 and C Instrument Sans, read with "source sans" as the Source Serif 4 the site uses; the ten modern serifs the background agent is fetching become D to M on the same page when they land, and the unused face declarations leave the page. ✅ Done: D Newsreader, E Fraunces, F Piazzolla, G Literata, H Bodoni Moda, I Brygada 1918, J Petrona, K Besley, L Roboto Serif, M Instrument Serif (titles only), in the ranking's order; "source serif" confirmed.
