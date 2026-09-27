@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "rm 37.0 units, 21.0 px at 11rem, both languages as one block, English over Estonian, centred on the E's middle bar"
+
+Asked verbatim, the caption of the cell. `public/wordmark.html`: the one-block bilingual beside lockup leaves the page, so of the two readings of "also both languages beside" the side-by-side one stays; the one-block shape is in git at 5e3102d.
+
 ### Done 2026-09-27: "move estonian version on top of ECCM in the \"English then Estonian\""
 
 Asked verbatim. `public/wordmark.html`, the bilingual under lockup: the Estonian two lines go above the mark, their last baseline 12 units over the mark's top, the same air the English keeps under its bottom; the English stays under.
