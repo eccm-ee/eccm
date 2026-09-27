@@ -7,17 +7,20 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
-### Open 2026-09-27: "also both languages beside"
+### Done 2026-09-27: "also both languages beside"
 
 Asked verbatim, mid-task. `public/wordmark.html`: a bilingual beside setting at 37 units. Two readings, both drawn so the owner can strike one: the four lines as one block to the right of the stave, centred on the E's middle bar, the languages parted by 12 units of air; and each language its own two-line block, side by side, each centred on the bar, the gap between them the same as after the stave.
+✅ Both drawn. MEASURED at 20rem, in units: the one-block lockup's box is 154.6 tall against the mark's 93, the four lines overhanging the mark by about 27 above and 23 below; the side-by-side lockup is 829 wide, 2.7 marks.
 
-### Open 2026-09-27: "do variant with both languages under ECCM"
+### Done 2026-09-27: "do variant with both languages under ECCM"
 
 Asked verbatim, mid-task. `public/wordmark.html`: a third setting, the mark with the English two lines and the Estonian two lines under it as one lockup, at the under setting's 40 units, the languages parted by the same 12 units of clear air the mark and the first line have.
+✅ Done. MEASURED at 20rem: the box is 310 by 271 units against 183 for one language.
 
-### Open 2026-09-27: "add more space between ECCM and beside wordmark"
+### Done 2026-09-27: "add more space between ECCM and beside wordmark"
 
 Asked verbatim, mid-task. `public/wordmark.html`, the beside setting: the gap between the stave's end and the two lines is 18 units; the same ask on 2026-09-27 ("Bit more horiz gap") took it to 28 in d61d4ff before that layout was reverted whole, so 28 is the number with a history.
+✅ Done at 28, and the same 28 parts the two languages when they sit side by side.
 
 ### Done 2026-09-27: "for serif page leave Schibsted Grotesk, Instrument Sans, Literata,"
 
