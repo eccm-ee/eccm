@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>ECCM: footers</title>
-<!-- public/layout.html: four footers for the site, tried side by side
+<title>ECCM: headers and footers</title>
+<!-- public/layout.html: four headers on whole pages and four footers for the site, tried side by side
      (asked 2026-09-27: "create new page layout where you tray first several
      footers. eccm logo, with and without workmark, main links, credits etc.
      use Schibsted and Instrument", "i mean page /layout", "look aroind other
@@ -43,6 +43,37 @@
     figure.desk { margin: 0 0 var(--eccm-s-8); }
     figure.desk figcaption { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-start: var(--eccm-s-3); }
     figure.desk .box { margin-block-end: 0; }
+
+    /* a whole page in a box: a header, a derived event page in its scheme, footer A; the frames inside read the box's gutter */
+    .pg { --g: var(--eccm-s-8); }
+    .pg .frame { inline-size: min(100% - 2 * var(--g), 72rem); }
+    @container (max-width: 48rem) { .pg { --g: var(--eccm-s-4); } }
+    .hd .mk { display: block; color: var(--eccm-ink); }
+    .hd .mk svg { display: block; inline-size: var(--w, 11rem); max-inline-size: 100%; }
+    .hd .nav a, .hd .lang a { text-decoration: none; }
+    /* H-B and H-D, one band: the mark, the menu and the switch on one line, the switch at the far end, ruled under; in a narrow box the menu drops to a second line */
+    .hd.one > .frame, .hd.run > .frame { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--eccm-s-8); row-gap: var(--eccm-s-2); padding-block: var(--hd-pad, var(--eccm-s-4)); border-block-end: 1px solid var(--hd-rule, var(--eccm-ink)); }
+    .hd.one .nav, .hd.run .nav { order: 1; flex: 1; }
+    .hd.one .lang, .hd.run .lang { order: 2; }
+    @container (max-width: 48rem) { .hd.one .nav, .hd.run .nav { order: 3; flex-basis: 100%; } .hd.one .lang, .hd.run .lang { margin-inline-start: auto; } }
+    .hd.run { --hd-pad: var(--eccm-s-3); --hd-rule: var(--eccm-rule); }
+    /* H-C, stacked with air only: the mark and the switch as two ends, the menu under them, no rule */
+    .hd.stack > .frame { padding-block: var(--eccm-s-6) var(--eccm-s-4); }
+    .hd.stack .top { display: flex; justify-content: space-between; align-items: baseline; column-gap: var(--eccm-s-6); }
+    .hd.stack .nav { margin-block-start: var(--eccm-s-6); }
+    /* the derived page between: the scheme's ground edge to edge, the sample's own rules as derive.html has them, its padding and outline left to the page */
+    .pg-main { background: var(--ev-ground); color: var(--ev-ink); padding-block: var(--eccm-s-8) var(--eccm-s-16); }
+    .pg .sample { padding: 0; background: none; outline: none; }
+    .sample .kicker { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--ev-ink2); margin-block-end: var(--eccm-s-3); }
+    .sample .title { font-size: var(--eccm-t-2xl); line-height: var(--eccm-lh-head); text-wrap: balance; font-family: var(--ev-title-face); font-weight: var(--ev-title-weight, 400); max-inline-size: var(--eccm-measure); }
+    .sample .facts { margin-block-start: var(--eccm-s-8); font-family: var(--ev-title-face); }
+    .sample .facts dt { color: var(--ev-ink2); font-family: 'Schibsted Grotesk', Helvetica, Arial, sans-serif; }
+    .sample .actions { display: flex; flex-wrap: wrap; gap: var(--eccm-s-3); margin-block-start: var(--eccm-s-8); }
+    .sample .btn-pri { background: var(--ev-btn-fill); color: var(--ev-on-btn); }
+    .sample .body { max-inline-size: var(--eccm-measure); margin-block-start: 2lh; font-family: var(--ev-body-face); }
+    .sample .body a { text-decoration-color: var(--ev-accent, var(--ev-ink2)); text-decoration-thickness: 2px; color: inherit; }
+    .sample .credits { margin-block-start: 2lh; font-family: var(--ev-title-face); }
+    .sample .credits dt { color: var(--ev-ink2); font-family: 'Schibsted Grotesk', Helvetica, Arial, sans-serif; }
 
     /* the footer itself: the site's footer rule, set at the small size in the second ink, s-8 above and s-12 below, and a gutter that follows the container */
     .ft { --g: var(--eccm-s-8); padding: var(--eccm-s-8) var(--g) var(--eccm-s-12); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
@@ -146,9 +177,9 @@
 </nav>
 
 <main class="frame lay">
-  <h1 class="list-label">Footers</h1>
+  <h1 class="list-label">Headers and footers</h1>
   <div class="prose flow intro">
-    <p>Four footers for the site, each with the mark alone and some of the main links, the contact, the credits, a newsletter field, the funders' slots and the Tallinn UNESCO City of Music mark as the city publishes it. Each is drawn in Schibsted Grotesk, at the desk and in a 375 px box, and decides its own arrangement from its container; the first in both languages. Left out on purpose: a phone, an email and social links, because none of ECCM's is on record here, and a privacy line, because no such page exists yet.</p>
+    <p>Four headers, each on a whole page with a derived event page between it and footer A, in the two schemes the derive page read off the Improtest picture, dark, and the Open Space picture, light. Then four footers for the site, each with the mark alone and some of the main links, the contact, the credits, a newsletter field, the funders' slots and the Tallinn UNESCO City of Music mark as the city publishes it. Each is drawn in Schibsted Grotesk, at the desk and in a 375 px box, and decides its own arrangement from its container; the first in both languages. Left out on purpose: a phone, an email and social links, because none of ECCM's is on record here, and a privacy line, because no such page exists yet.</p>
     <p>What a footer carries, read off seven comparable sites on 2026-09-27, one fetch each. Every one gives the organisation's name and address; five repeat the menu; four give an email and four a phone; four carry a privacy or legal line; three a copyright line, three social links and three a newsletter field; two the funders and two a registry number. eccm.ee's own footer today is Joomla's login form.</p>
   </div>
   <table>
@@ -163,6 +194,7 @@
       <tr><td>saal.ee</td><td>name, address, the association, a newsletter field</td></tr>
     </tbody>
   </table>
+  <div id="heads"></div>
   <div id="tries"></div>
 </main>
 
@@ -180,12 +212,15 @@ const markSvg = () => {
 
 // what a footer says, per language; the menus are the site's own, the City of Music files the city's (public/partners/SOURCE.md)
 const VENUE = 'Pühavaimu 9, Tallinn', POST = 'Herne 11A, 10135 Tallinn';
+// what eccm.ee's contact page publishes (READ 2026-09-28): the postal address, one mobile number as the organisation's contact, and a
+// form in place of an email address, so the form is what a footer can link to (asked 2026-09-28: "wheer is contact info in footer? email? smth else?")
+const PHONE = '+372 516 2103', FORM = 'https://eccm.ee/index.php/et/eccm/kontakt';
 const L = {
-  et: { lang: 'et', name: 'Eesti Nüüdismuusika Keskus', hall: 'Saal', post: 'Postiaadress', copy: '© 2026 Eesti Nüüdismuusika Keskus', city: 'Tallinn, UNESCO muusikalinn', menuLabel: 'Menüü', contact: 'Kontakt', news: 'Uudiskiri', email: 'E-post', join: 'Liitu', funders: 'Toetajad', funder: 'toetaja',
+  et: { lang: 'et', name: 'Eesti Nüüdismuusika Keskus', hall: 'Saal', post: 'Postiaadress', copy: '© 2026 Eesti Nüüdismuusika Keskus', city: 'Tallinn, UNESCO muusikalinn', menuLabel: 'Menüü', contact: 'Kontakt', phone: 'Telefon', write: 'Kirjuta meile', news: 'Uudiskiri', email: 'E-post', join: 'Liitu', funders: 'Toetajad', funder: 'toetaja',
     menu: [['Avaleht', './'], ['ECCM', 'https://eccm.ee/index.php/et/eccm'], ['Tallinn 1965', 'https://eccm.ee/index.php/et/tallinn-1965'], ['NAN', 'https://eccm.ee/nan/'], ['Ulysses', 'https://eccm.ee/index.php/et/ulysses'], ['Konkursid', 'https://eccm.ee/index.php/et/konkursid'], ['Sündmused', 'https://eccm.ee/index.php/et/syndmusest']],
     partner: 'tallinn-muusikalinn-sinine_RGB.svg', partnerBlack: 'tallinn-muusikalinn-must_RGB.svg', partnerAlt: 'Tallinn, UNESCO muusikalinn', partnerHref: 'https://muusikalinntallinn.ee/',
     sw: '<span class="lang"><span aria-current="page" lang="et">ET</span><a href="https://eccm.ee/index.php/en/" lang="en">EN</a></span>' },
-  en: { lang: 'en', name: 'Estonian Centre of Contemporary Music', hall: 'Hall', post: 'Postal address', copy: '© 2026 Estonian Centre of Contemporary Music', city: 'Tallinn, UNESCO City of Music', menuLabel: 'Menu', contact: 'Contact', news: 'Newsletter', email: 'Email', join: 'Join', funders: 'Supported by', funder: 'funder',
+  en: { lang: 'en', name: 'Estonian Centre of Contemporary Music', hall: 'Hall', post: 'Postal address', copy: '© 2026 Estonian Centre of Contemporary Music', city: 'Tallinn, UNESCO City of Music', menuLabel: 'Menu', contact: 'Contact', phone: 'Phone', write: 'Write to us', news: 'Newsletter', email: 'Email', join: 'Join', funders: 'Supported by', funder: 'funder',
     menu: [['Home', './'], ['ECCM', 'https://eccm.ee/index.php/en/eccm-new-eng'], ['Tallinn 1965', 'https://eccm.ee/index.php/en/tallinn-1965-eng'], ['NAN', 'https://eccm.ee/nan/'], ['Ulysses', 'https://eccm.ee/index.php/en/ulysses-eng'], ['Open calls', 'https://eccm.ee/index.php/en/open-calls'], ['Events', 'https://eccm.ee/index.php/en/eventseng']],
     partner: 'tallinn-cityofmusic-blue_RGB.svg', partnerBlack: 'tallinn-cityofmusic-black_RGB.svg', partnerAlt: 'Tallinn, UNESCO City of Music', partnerHref: 'https://muusikalinntallinn.ee/eng/',
     sw: '<span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span>' },
@@ -197,11 +232,11 @@ const partner = (p, black) => `<a class="partner" href="${p.partnerHref}"><img s
 
 // the four footers, lettered in this order (a white-on-black fifth left on 2026-09-28: "rm E"); the first is drawn in both languages (asked 2026-09-27: "move var c to the top as a and make english ver")
 const TRIES = [
-  { title: 'Three columns and a partner', langs: ['et', 'en'], what: 'the mark, 8rem, and the copyright under it; the menu in two columns with no label; the contact under the name, the venue and the postal address as label over value; the City of Music mark in black at the end, 5rem, its ink\'s top on the mark\'s top', html: (p) => `
+  { title: 'Three columns and a partner', langs: ['et', 'en'], what: 'the mark, 8rem, and the copyright under it; the menu in two columns with no label; the contact as label over value, the venue, the postal address, the phone and a link to the contact form, no name; the City of Music mark in black at the end, 5rem, its ink\'s top on the mark\'s top', html: (p) => `
     <div class="cols four">
       <div>${mark(p, 8)}<p style="margin-block-start: var(--eccm-s-6)">${p.copy}</p></div>
       <div>${menu(p, 'two')}</div>
-      <div><p class="label">${p.name}</p><p>${p.hall}<br>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">${p.post}<br>${POST}</p></div>
+      <div><p>${p.hall}<br>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">${p.post}<br>${POST}</p><p style="margin-block-start: var(--eccm-s-3)">${p.phone}<br><a href="tel:+3725162103">${PHONE}</a></p><p style="margin-block-start: var(--eccm-s-3)"><a href="${FORM}">${p.write}</a></p></div>
       <div class="end">${partner(p, true)}</div>
     </div>` },
   { title: 'One row', what: 'the mark alone at the start; the name, the venue and the language switch at the end', html: (p) => `
@@ -213,15 +248,49 @@ const TRIES = [
     <div class="cols">
       <div>${mark(p, 8)}</div>
       <div><p class="label">${p.menuLabel}</p>${menu(p, 'two')}</div>
-      <div><p class="label">${p.contact}</p><p>${p.name}</p><p>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">${p.post}<br>${POST}</p></div>
+      <div><p class="label">${p.contact}</p><p>${p.name}</p><p>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">${p.post}<br>${POST}</p><p style="margin-block-start: var(--eccm-s-3)">${p.phone}<br><a href="tel:+3725162103">${PHONE}</a></p><p style="margin-block-start: var(--eccm-s-3)"><a href="${FORM}">${p.write}</a></p></div>
       <div><p class="label">${p.news}</p><form class="news" onsubmit="return false"><input type="email" name="email" autocomplete="email" placeholder="${p.email}" aria-label="${p.email}"><button class="btn" type="submit">${p.join}</button></form></div>
     </div>
     <div class="line" style="justify-content: space-between; align-items: center"><span class="line" style="margin: 0"><span>${p.copy}</span>${p.sw}</span>${partner(p, true)}</div>` },
 ];
 const LANG_NAME = { et: 'Estonian', en: 'English' };
 const footer = (html, lang) => `<footer class="ft" lang="${lang}">${html}</footer>`;
+
+// two derived event pages, copied from derive.html as it drew them on 2026-09-28 with the schemes it measured
+// (asked 2026-09-28: "make also header variants. in between put some derived example(s)")
+const DERIVED = {
+  dark: { from: 'the Improtest picture, a dark scheme on the picture\'s own red', style: "--ev-ground: #421c19; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-accent: #b6716a; --ev-btn-fill: #ffffff; --ev-on-btn: #1a1a1a; --ev-title-face: inherit; --ev-body-face: inherit;", html: "<div class=\"sample\" style=\"--ev-ground: #421c19; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-accent: #b6716a; --ev-btn-fill: #ffffff; --ev-on-btn: #1a1a1a; --ev-title-face: inherit; --ev-body-face: inherit;\">\n      <p class=\"kicker\">27.05.2026 19.00 ECCM Improtest</p>\n      <p class=\"title\">Improtest: Post Horn</p>\n      <dl class=\"facts\"><div><dt>Millal</dt><dd>30.09.2026 kell 19.00</dd></div><div><dt>Kus</dt><dd>ECCM saal, P\u00fchavaimu 9</dd></div></dl>\n      <p class=\"actions\"><a class=\"btn btn-pri\" href=\"./event.html\">Osta pilet</a><a class=\"btn\" href=\"./event.html\">Lisa kalendrisse</a></p>\n      <div class=\"body flow\"><p>Avalik \u017eest ei ole valmis teose esitlus ega klassikaline kontsert. See on k\u00fcmnep\u00e4evase protsessi viimane hetk, v\u00f5imalus olla tunnistajaks olukorrale, mis on tekkinud kolme osaleja koosm\u00f5jus ja mida ei saa korrata t\u00e4pselt samal kujul.</p><p>K\u00f5igile, keda huvitab <strong>heli, mis ei ole komponeeritud</strong>, ja kes on valmis <em>kuulama ilma partituurita</em>. Vaata ka <a href=\"./event.html\">sarja eelmisi aktsioone</a>.</p></div>\n      <dl class=\"credits\"><div><dt>Kunstnikud</dt><dd>Marianna Liik, Artjom Astrov, Maryn-Liis R\u00fc\u00fctelmaa</dd></div><div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div></dl>\n      </div>" },
+  light: { from: 'the Open Space picture, a light scheme on a grey ground', style: "--ev-ground: #ededed; --ev-ink: #1a1a1a; --ev-ink2: #555555; --ev-btn-fill: #1a1a1a; --ev-on-btn: #ffffff; --ev-title-face: inherit; --ev-body-face: inherit;", html: "<div class=\"sample\" style=\"--ev-ground: #ededed; --ev-ink: #1a1a1a; --ev-ink2: #555555; --ev-btn-fill: #1a1a1a; --ev-on-btn: #ffffff; --ev-title-face: inherit; --ev-body-face: inherit;\">\n      <p class=\"kicker\">16.05.2026 19.00 N\u00fc\u00fcdismuusika keskuse saal TUMA</p>\n      <p class=\"title\">OPEN SPACE #4</p>\n      <dl class=\"facts\"><div><dt>Millal</dt><dd>30.09.2026 kell 19.00</dd></div><div><dt>Kus</dt><dd>ECCM saal, P\u00fchavaimu 9</dd></div></dl>\n      <p class=\"actions\"><a class=\"btn btn-pri\" href=\"./event.html\">Osta pilet</a><a class=\"btn\" href=\"./event.html\">Lisa kalendrisse</a></p>\n      <div class=\"body flow\"><p>Avalik \u017eest ei ole valmis teose esitlus ega klassikaline kontsert. See on k\u00fcmnep\u00e4evase protsessi viimane hetk, v\u00f5imalus olla tunnistajaks olukorrale, mis on tekkinud kolme osaleja koosm\u00f5jus ja mida ei saa korrata t\u00e4pselt samal kujul.</p><p>K\u00f5igile, keda huvitab <strong>heli, mis ei ole komponeeritud</strong>, ja kes on valmis <em>kuulama ilma partituurita</em>. Vaata ka <a href=\"./event.html\">sarja eelmisi aktsioone</a>.</p></div>\n      <dl class=\"credits\"><div><dt>Kunstnikud</dt><dd>Marianna Liik, Artjom Astrov, Maryn-Liis R\u00fc\u00fctelmaa</dd></div><div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div></dl>\n      </div>" },
+};
+// the four headers, each shown on a whole page over one derived example and footer A
+const HEADS = [
+  { title: 'As the site is, the mark bare', ex: 'dark', what: 'the mark at 20rem and the switch on its baseline as two ends of a band, then the menu band ruled top and bottom in ink, which is the site\'s header today with the bare mark in place of the logo file', html: (p) => `
+    <header class="site-head hd"><div class="frame">${mark(p, 20)}${p.sw}</div></header>
+    <nav class="site-nav" aria-label="${p.menuLabel}"><div class="frame">${menu(p, 'nav')}</div></nav>` },
+  { title: 'One band', ex: 'light', what: 'the mark at 8rem, the menu and the switch on one line, ruled under in ink; in a narrow box the menu drops to a second line under the mark and the switch', html: (p) => `
+    <header class="hd one"><div class="frame">${mark(p, 8)}${p.sw}${menu(p, 'nav')}</div></header>` },
+  { title: 'Stacked, air only', ex: 'dark', what: 'the mark at 11rem and the switch as two ends, the menu under them, no rule anywhere', html: (p) => `
+    <header class="hd stack"><div class="frame"><div class="top">${mark(p, 11)}${p.sw}</div>${menu(p, 'nav')}</div></header>` },
+  { title: 'A running header', ex: 'light', what: 'the mark at 6rem, the menu and the switch on one thin band ruled under in the hairline grey, the header a page can carry on every screen', html: (p) => `
+    <header class="hd run"><div class="frame">${mark(p, 6)}${p.sw}${menu(p, 'nav')}</div></header>` },
+];
+const page = (head, ex, foot) => `<div class="pg">${head}<div class="pg-main" style="${ex.style}"><div class="frame">${ex.html}</div></div>${foot}</div>`;
+const heads = document.getElementById('heads');
+let pages = 0;
+HEADS.forEach((h, i) => {
+  const p = L.et, ex = DERIVED[h.ex], foot = footer(TRIES[0].html(p), 'et');
+  const h2 = document.createElement('h2'); h2.id = 'head-' + 'abcd'[i]; h2.textContent = `H-${'ABCD'[i]}. ${h.title}`; heads.append(h2);
+  const cap = document.createElement('p'); cap.className = 'cap'; cap.textContent = `${h.what}; the page between it and footer A is ${ex.from}`; heads.append(cap);
+  const f = document.createElement('figure'); f.className = 'desk';
+  f.innerHTML = `<div class="box">${page(h.html(p), ex, foot)}</div><figcaption>the desk</figcaption>`; heads.append(f); pages++;
+  const phones = document.createElement('div'); phones.className = 'phones';
+  const ph = document.createElement('figure');
+  ph.innerHTML = `<div class="box">${page(h.html(p), ex, foot)}</div><figcaption>375 px</figcaption>`; phones.append(ph); pages++;
+  heads.append(phones);
+});
 const tries = document.getElementById('tries');
 let n = 0;
+const fh = document.createElement('h2'); fh.id = 'footers'; fh.textContent = 'Footers'; tries.append(fh);
 TRIES.forEach((t, i) => {
   const h2 = document.createElement('h2'); h2.id = 'try-' + 'abcd'[i]; h2.textContent = `${'ABCD'[i]}. ${t.title}`; tries.append(h2);
   const cap = document.createElement('p'); cap.className = 'cap'; cap.textContent = t.what; tries.append(cap);
@@ -237,7 +306,7 @@ TRIES.forEach((t, i) => {
   }
 });
 for (const a of document.querySelectorAll('.mk')) a.replaceChildren(markSvg());
-window.__layout = { footers: n, tries: TRIES.length, marks: document.querySelectorAll('.mk svg').length, partners: document.querySelectorAll('.partner img').length };
+window.__layout = { pages, heads: HEADS.length, footers: n, tries: TRIES.length, marks: document.querySelectorAll('.mk svg').length, partners: document.querySelectorAll('.partner img').length };
 </script>
 </body>
 </html>

@@ -7,6 +7,21 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Open 2026-09-28: "in bg analyze and write plan of eccm social media presence and web presence in general - in fienta pages etc"
+
+Asked verbatim. A background agent writes `plans/plan-eccm-presence.md`: an inventory of where ECCM is on the web today (eccm.ee, ticketing pages on Fienta and elsewhere, social accounts, listings, streaming and archive services), each read once and labelled READ or INFERRED, and a plan for the presence, reported in full when it lands. The agent does not commit.
+
+### Done 2026-09-28: "rm Eesti Nüüdismuusika Keskus from 3rd col" and "wheer is contact info in footer? email? smth else?"
+
+Asked verbatim, footer A on `public/layout.html`. The name leaves the contact column. There was no email or phone because none of ECCM's was on record in this repository, and `plans/plan-eccm-design.md` read only one person's mobile off the contact page; that page is read once more for a general address, and what it gives goes into the column as text.
+✅ READ 2026-09-28: the contact page publishes the postal address, an empty `Faks:` label, one mobile number under the tegevjuht's name, and a contact form; no email address and no social link. The column carries the venue, the postal address, the phone as `Telefon`, and `Kirjuta meile` linking to the form as the email's stand-in; the name is out.
+✅ Done in A, both languages, and the phone and the form link added to D's contact column too, its name and label kept.
+
+### Done 2026-09-28: "make also header variants. in between but some derived example(s)"
+
+Asked verbatim. `public/layout.html` gains header variants, each shown as a whole page: the header, then a derived event page from `derive.html` in its own scheme, then footer A, at the desk and in a 375 px box. The derived examples are copies of what the derive page draws, one light and one dark, with the scheme values it measured, and the page says which picture each came from.
+✅ Done, with *"but -> put"* read as put. Four headers, H-A to H-D, each on a whole page at the desk and in a 375 px box: as the site is with the bare mark at 20rem and the ruled menu band; one band with the mark at 8rem, the menu and the switch on one line; stacked with air only, the mark at 11rem; a running header, the mark at 6rem on a thin band ruled in the hairline grey. The pages alternate the Improtest scheme (dark, ground #421c19) and the Open Space scheme (light, ground #ededed), both copied from derive.html as drawn on 2026-09-28. MEASURED locally at 1280: 8 pages, 26 marks and 14 partner marks on the page, 19,037 px tall. Shot at 1280 and 375.
+
 ### Done 2026-09-28: "rm E"
 
 Asked verbatim. `public/layout.html`: the white-on-black footer leaves the page (in git at 6db2a37) with its inverted rule; four footers remain, A to D.
