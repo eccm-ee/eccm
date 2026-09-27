@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "rm , served from here."
+
+Asked verbatim: the clause leaves the typography paragraph on /ds.
+
 ### Done 2026-09-27: "rb borders from color swwatched excep white in ds"
 
 Asked verbatim: the colour swatches on /ds lose their border, the white one keeps it since it has no other edge.
