@@ -30,10 +30,9 @@
       // Cloudflare writes the DNS record and the certificate on deploy
       "routes": [{ "pattern": "eccm.positron.studio", "custom_domain": true }],
       "workers_dev": true,
-      // the database: local only until session 6 runs wrangler d1 create and
-      // writes the real id here; the zero id is a placeholder wrangler needs
-      // for the local file, and a remote deploy with it would fail on purpose
-      "d1_databases": [{ "binding": "DB", "database_name": "eccm-staging", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "migrations" }]
+      // the database, created 2026-09-27 with wrangler d1 create eccm-staging
+      // on this account; the same name serves the local file under wrangler dev
+      "d1_databases": [{ "binding": "DB", "database_name": "eccm-staging", "database_id": "3be30799-baa1-4844-937c-b4c6858fc915", "migrations_dir": "migrations" }]
     },
     "production": {
       "name": "eccm"

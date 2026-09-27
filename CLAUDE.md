@@ -52,6 +52,11 @@ first; `wrangler deploy` never runs workerd and works on any version.
 env -u CF_API_TOKEN -u CLOUDFLARE_API_TOKEN npx wrangler deploy --env staging
 ```
 
+After a new migration, first `env -u CF_API_TOKEN -u CLOUDFLARE_API_TOKEN npx wrangler d1
+migrations apply eccm-staging --remote --env staging`, since the deployed
+Worker reads the remote database `eccm-staging` (created 2026-09-27, its id in
+`wrangler.jsonc`), and a seed file the same way with `d1 execute --remote`.
+
 Always with `--env`. `public/` is the source, there is no build step, and a
 `.env` in the directory shadows the machine's wrangler login, so deploy without
 one. Then `curl -sI https://eccm.positron.studio/event` reads `200`, because

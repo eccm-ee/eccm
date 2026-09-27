@@ -7,6 +7,14 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "rm Upcoming events / Design trial: the text and the picture are eccm.ee’s own as of 27.09.2026."
+
+Asked verbatim: the two footer lines, the upcoming events link and the design trial line, leave the rendered chrome and every static page's footer. The edit form's own note that it saves nothing stays, since it is true and not a footer. ✅ Done in `src/render/chrome.mjs` and six static pages; MEASURED live: 0 matches on /, /event and /derive, the rendered footer one line.
+
+### Done 2026-09-27: "deploy"
+
+Asked verbatim, right after. The Worker carries a D1 binding now, so a deploy needs the remote database: session 6's first step, `wrangler d1 create eccm-staging`, its id into `wrangler.jsonc`, the migration and both seeds applied remotely, then the deploy and a curl per route on https://eccm.positron.studio. ✅ Done: database `3be30799-baa1-4844-937c-b4c6858fc915`, migration applied, 11 roles, 2 texts, 7 credits remotely; deployed; MEASURED live: both event routes 200 with hreflang pairs, the fallback URL 200 with its line and canonical, an unknown path 404, the static pages 200. Session 6 of the CMS plan is therefore done early except for the routes it lists that do not exist yet.
+
 ### Done 2026-09-27: "pin workerd in eccm"
 
 Asked verbatim. The workerd binary is pinned by name and exact version in `package.json`, with an override so a wrangler bump cannot pull another, and its version and hash are written into CLAUDE.md beside the wrangler pin. ✅ Done: `workerd` 1.20260701.1 in devDependencies and overrides, the binary's hash unchanged after the reinstall, a local D1 query still answering.

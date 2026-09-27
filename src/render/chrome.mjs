@@ -9,7 +9,7 @@ export const T = {
   et: {
     menu: 'Menüü', markAlt: 'ECCM, Eesti Nüüdismuusika Keskus', upcoming: 'Tulevased üritused',
     nav: [['/', 'Avaleht'], ['https://eccm.ee/index.php/et/eccm', 'ECCM'], ['https://eccm.ee/index.php/et/tallinn-1965', 'Tallinn 1965'], ['https://eccm.ee/nan/', 'NAN'], ['https://eccm.ee/index.php/et/ulysses', 'Ulysses'], ['https://eccm.ee/index.php/et/konkursid', 'Konkursid'], ['https://eccm.ee/index.php/et/syndmusest', 'Sündmused']],
-    foot: 'Eesti Nüüdismuusika Keskus, Herne 11A, 10135 Tallinn', proof: 'Kujunduse proov: sisu ja pilt on eccm.ee omad seisuga 27.09.2026.',
+    foot: 'Eesti Nüüdismuusika Keskus, Herne 11A, 10135 Tallinn',
     notFound: 'Sellist lehte ei ole.', notFoundLead: 'Aadress võib olla vananenud või valesti kirjutatud.',
     when: 'Millal', where: 'Kus', series: 'Sari', calendar: 'Kalendrisse', ask: 'Küsi', at: 'kell', min: 'min',
     ticket: 'Osta pilet', edit: 'Muuda', credits: 'Tegijad', next: 'Järgmised üritused',
@@ -18,7 +18,7 @@ export const T = {
   en: {
     menu: 'Menu', markAlt: 'ECCM, Estonian Centre of Contemporary Music', upcoming: 'Upcoming events',
     nav: [['/', 'Home'], ['https://eccm.ee/index.php/en/eccm-new-eng', 'ECCM'], ['https://eccm.ee/index.php/en/tallinn-1965-eng', 'Tallinn 1965'], ['https://eccm.ee/nan/', 'NAN'], ['https://eccm.ee/index.php/en/ulysses-eng', 'Ulysses'], ['https://eccm.ee/index.php/en/open-calls', 'Open calls'], ['https://eccm.ee/index.php/en/eventseng', 'Events']],
-    foot: 'Estonian Centre of Contemporary Music, Herne 11A, 10135 Tallinn', proof: 'Design trial: the text and the picture are eccm.ee’s own as of 27.09.2026.',
+    foot: 'Estonian Centre of Contemporary Music, Herne 11A, 10135 Tallinn',
     notFound: 'There is no such page.', notFoundLead: 'The address may be out of date or mistyped.',
     when: 'When', where: 'Where', series: 'Series', calendar: 'Add to calendar', ask: 'Ask', at: 'at', min: 'min',
     ticket: 'Buy a ticket', edit: 'Edit', credits: 'Credits', next: 'Next events',
@@ -65,8 +65,6 @@ ${body}
 
 <footer class="frame site-foot">
   <span>${t.foot}</span>
-  <span><a href="/">${t.upcoming}</a></span>
-  <span>${t.proof}</span>
 </footer>
 </body>
 </html>
