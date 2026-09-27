@@ -250,7 +250,16 @@
       const bottom = Math.max(...Array.from({ length: band }, (_, i) => rowMax.get(k.y1 - i) || 0));
       const top = Math.max(...Array.from({ length: band }, (_, i) => rowMax.get(k.y0 + i) || 0));
       const mid = Math.max(1, q(Array.from({ length: Math.max(1, k.y1 - k.y0 - 2 * band) }, (_, i) => rowMax.get(k.y0 + band + i) || 0), 0.5));
-      const foot = Math.max(bottom, top) / mid;
+      // a bar the width of the glyph (E, L, T, D in any face) is not a foot:
+      // a serif foot is a stem widened at its end and stays under seven
+      // tenths of the glyph (MEASURED 2026-09-27: the Residentuur poster's
+      // bold sans capitals, 19 px tall, carried "feet" of 13 to 15 px on 15
+      // to 18 px glyphs and read 90 per cent serif; Sound Plasma's real
+      // serifs run 11 to 15 px on 23 to 28 px glyphs and 9 of 11 pass either
+      // way)
+      const wG = k.x1 - k.x0 + 1;
+      const asFoot = (run) => (run <= 0.7 * wG ? run : 0);
+      const foot = Math.max(asFoot(bottom), asFoot(top)) / mid;
       contrasts.push(contrastRatio); feet.push(foot);
       if (contrastRatio >= 0.9 || foot >= 1.8) serifish++;
     }
@@ -402,9 +411,9 @@
   // the serif is Source Serif 4, chosen 2026-09-27 ("Pick sorce serif rm others")
   const SERIF = { family: "'Source Serif 4', Georgia, serif", weight: 400 };
 
-  // ── the pictures, three sets off eccm.ee ────────────────────────────────
-  // the newest set is the default and the earlier two answer ?set=1 and
-  // ?set=2, so every rule keeps the picture it was written on
+  // ── the pictures, four sets off eccm.ee ─────────────────────────────────
+  // the newest set is the default and the earlier ones answer ?set=1, ?set=2
+  // and ?set=3, so every rule keeps the picture it was written on
   const SETS = {
     // calendar page one, read 2026-09-26
     1: [
@@ -441,11 +450,22 @@
       { file: 'ic_medium_w300h300q100_schoenberg-kurtag-1422x2284.jpg', kicker: '10.09.2026 19.00 Eesti Nüüdismuusika Keskus Schönbergi ühing', title: 'Schönbergi sari' },
       { file: 'ic_medium_w300h300q100_joy2.jpeg', kicker: '31.05.2026 19.00 ECCM saal Koostöö', title: '„JOY!“ MUBA Uue muusika ansambli kontsert' },
     ],
+    // the six pictured past events before those, read 2026-09-27 (asked:
+    // "Add new set of derived examples"); one event on the way, Eesti /
+    // Biofoonia, carries the picture set one already has for Surm
+    4: [
+      { file: 'ic_medium_w300h300q100_screenshot-2026-05-27-at-14-23-04.png', kicker: '27.05.2026 19.00 ECCM Improtest', title: 'Improtest: Post Horn' },
+      { file: 'ic_medium_w300h300q100_residentuur-26.jpg', kicker: '19.05.2026 18.00 ECCM saal U:', title: 'Residentuu:r 4' },
+      { file: 'ic_medium_w300h300q100_open-space.jpeg', kicker: '16.05.2026 19.00 Nüüdismuusika keskuse saal TUMA', title: 'OPEN SPACE #4' },
+      { file: 'ic_medium_w300h300q100_558d761d-3ef9-4d73-a3f1-27d3372b760d.png', kicker: '14.05.2026 19.00 Eesti Nüüdismuusika Keskus Schönbergi ühing', title: 'Schönbergi sari' },
+      { file: 'ic_medium_w300h300q100_29122019-fb-19201000px-2.jpg', kicker: '12.05.2026 19.00 ECCM saal U:', title: 'Puutetundlikkus / puute tundlikkus' },
+      { file: 'ic_medium_w300h300q100_improtest-090526.jpg', kicker: '09.05.2026 19.00 ECCM saal Improtest', title: 'Improtest: Baumann / Pietilä / Soo' },
+    ],
   };
   const f2 = (n) => n.toFixed(2), pc = (n) => `${Math.round(100 * n)} per cent`;
 
   const FLAGS = new URLSearchParams(location.search);
-  const PICS = SETS[FLAGS.get('set')] || SETS[3];
+  const PICS = SETS[FLAGS.get('set')] || SETS[4];
   const TIMES = (window.__times = []);
   const cards = document.getElementById('cards');
   const tally = { light: 0, dark: 0, accent: 0, serif: 0 };
