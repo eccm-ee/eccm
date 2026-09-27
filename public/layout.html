@@ -61,21 +61,26 @@
     .ft .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: var(--eccm-s-8); }
     .ft .menu { display: flex; flex-wrap: wrap; column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-1); }
     .ft .stack li + li { margin-block-start: var(--eccm-s-1); }
-    /* the menu in two columns: seven items fall four and three, and the row gap is the stack's */
-    .ft .two { display: grid; grid-template-columns: repeat(2, max-content); column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-1); grid-auto-flow: row; }
+    /* the menu in two columns: seven items fall four and three; the column gap is the footer's own and the rows sit a half step apart (asked 2026-09-27: "add more space between links in fooer (C)") */
+    .ft .two { display: grid; grid-template-columns: repeat(2, max-content); column-gap: var(--eccm-s-8); row-gap: var(--eccm-s-2); grid-auto-flow: row; }
     /* a partner's mark at the end of the columns: three columns that share the width and a fourth that takes only its own, and the mark 6rem wide
        (an auto track beside an auto-fit repeat is not a valid track list, and Chrome fell back to the plain repeat, which only read right because the frame caps at four columns) */
     .ft .cols.four { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; }
     .ft .end { justify-self: end; }
-    .ft .partner { display: block; inline-size: 6rem; }
+    /* the city's file carries 60.5 units of air above its ink and about 60.8 beside it in a 446.46 unit box (MEASURED with getBBox, both
+       languages), so the img is pulled up and outward by those fractions of its width: the ink's top sits on the ECCM mark's top and
+       its outer edge on the footer's edge (asked 2026-09-27: "bit smaller and align top with eccm") */
+    .ft .partner { --pw: 5rem; display: block; inline-size: var(--pw); margin-inline-end: calc(var(--pw) * -0.136); }
+    .ft .end .partner { margin-block-start: calc(var(--pw) * -0.1355); }
     .ft .partner img { display: block; inline-size: 100%; block-size: auto; }
-    @container (max-width: 48rem) { .ft .cols.four { grid-template-columns: minmax(0, 1fr); } .ft .end { justify-self: start; } }
+    @container (max-width: 48rem) { .ft .cols.four { grid-template-columns: minmax(0, 1fr); } .ft .end { justify-self: start; } .ft .partner { margin-inline: calc(var(--pw) * -0.136) 0; } }
     .ft .line { display: flex; flex-wrap: wrap; gap: var(--eccm-s-2) var(--eccm-s-8); margin-block-start: var(--eccm-s-8); }
     .ft .line.top { margin-block-start: 0; margin-block-end: var(--eccm-s-8); }
     .ft .lang { display: flex; column-gap: var(--eccm-s-3); }
     .ft .news { display: flex; flex-wrap: wrap; gap: var(--eccm-s-2); align-items: end; }
     .ft .news label { display: grid; gap: var(--eccm-s-1); }
     .ft input { font: inherit; block-size: 3rem; inline-size: 14rem; max-inline-size: 100%; padding-inline: var(--eccm-s-3); border: 1px solid var(--eccm-ink); border-radius: 0; background: transparent; color: var(--eccm-ink); }
+    .ft input::placeholder { color: var(--eccm-ink-2); opacity: 1; }
     .ft .btn { color: var(--eccm-ink); border-color: var(--eccm-ink); }
     .ft .slots { display: flex; flex-wrap: wrap; gap: var(--eccm-s-4); }
     .ft .slot { inline-size: 7rem; block-size: 3.5rem; border: 1px solid var(--eccm-rule-strong); display: grid; place-items: center; }
@@ -147,7 +152,7 @@
 <main class="frame lay">
   <h1 class="list-label">Footers</h1>
   <div class="prose flow intro">
-    <p>Five footers for the site, each with the mark, alone or with its wordmark, and some of the main links, the contact, the credits, a newsletter field and the funders' slots. Each is drawn in Schibsted Grotesk and in Instrument Sans, at the desk and in a 375 px box, and decides its own arrangement from its container. Left out on purpose: a phone, an email and social links, because none of ECCM's is on record here, and a privacy line, because no such page exists yet.</p>
+    <p>Five footers for the site, each with the mark, alone or with its wordmark, and some of the main links, the contact, the credits, a newsletter field, the funders' slots and the Tallinn UNESCO City of Music mark as the city publishes it. Each is drawn in Schibsted Grotesk and in Instrument Sans, at the desk and in a 375 px box, and decides its own arrangement from its container; the first in both languages. Left out on purpose: a phone, an email and social links, because none of ECCM's is on record here, and a privacy line, because no such page exists yet.</p>
     <p>What a footer carries, read off seven comparable sites on 2026-09-27, one fetch each. Every one gives the organisation's name and address; five repeat the menu; four give an email and four a phone; four carry a privacy or legal line; three a copyright line, three social links and three a newsletter field; two the funders and two a registry number. eccm.ee's own footer today is Joomla's login form.</p>
   </div>
   <table>
@@ -169,20 +174,20 @@
   <span>Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinn</span>
 </footer>
 <script type="module">
-const ET = 'eesti nüüdismuusika keskus';
 // the wordmark page's under lockup: Instrument Sans medium at width 75, two lines at 40 units, 12 units under the mark
+const TAG = { et: 'eesti nüüdismuusika keskus', en: 'estonian centre of contemporary music' };
 const LEFT = 35, BOTTOM = 122, GAP = 12, CAP = 0.7, XH = 0.53, LH = 0.95, UNDER = 40;
 const NS = 'http://www.w3.org/2000/svg';
 const meter = document.createElementNS(NS, 'svg'); meter.setAttribute('width', '0'); meter.setAttribute('height', '0'); meter.style.position = 'absolute'; document.body.append(meter);
 const mt = document.createElementNS(NS, 'text'); mt.setAttribute('class', 'tag-is'); mt.setAttribute('font-size', '100'); meter.append(mt);
 const widthOf = (s) => { mt.textContent = s; return mt.getComputedTextLength(); };
-const split2 = (s) => { const m = s.match(/^(.*nüüdis)(muusika keskus)$/i); return [m[1] + '-', m[2]]; };
-// the mark, alone or with the wordmark under it, as an svg that draws in the current colour
-const markSvg = (tagline) => {
+const split2 = (s) => { const et = s.match(/^(.*nüüdis)(muusika keskus)$/i); if (et) return [et[1] + '-', et[2]]; const w = s.split(' '); let best = null; for (let i = 1; i < w.length; i++) { const a = w.slice(0, i).join(' '), b = w.slice(i).join(' '); const m = Math.max(a.length, b.length); if (!best || m < best.m) best = { a, b, m }; } return [best.a, best.b]; };
+// the mark, alone or with the wordmark of one language under it, as an svg that draws in the current colour
+const markSvg = (tagline, lang) => {
   const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('aria-hidden', 'true');
   const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '27'); use.setAttribute('width', '310'); use.setAttribute('height', '96.5'); svg.append(use);
   if (!tagline) { svg.setAttribute('viewBox', '35 27 310 96.5'); return svg; }
-  const lines = split2(ET), size = UNDER, y1 = BOTTOM + GAP + CAP * size;
+  const lines = split2(TAG[lang]), size = UNDER, y1 = BOTTOM + GAP + CAP * size;
   svg.setAttribute('viewBox', `35 27 310 ${(y1 + LH * size + 0.25 * size - 27).toFixed(1)}`);
   document.body.append(svg);
   lines.forEach((l, i) => {
@@ -193,65 +198,76 @@ const markSvg = (tagline) => {
   svg.remove(); return svg;
 };
 
-const MENU = [['Avaleht', './'], ['ECCM', 'https://eccm.ee/index.php/et/eccm'], ['Tallinn 1965', 'https://eccm.ee/index.php/et/tallinn-1965'], ['NAN', 'https://eccm.ee/nan/'], ['Ulysses', 'https://eccm.ee/index.php/et/ulysses'], ['Konkursid', 'https://eccm.ee/index.php/et/konkursid'], ['Sündmused', 'https://eccm.ee/index.php/et/syndmusest']];
-const menu = (cls) => `<ul class="${cls}">${MENU.map(([t, h]) => `<li><a href="${h}">${t}</a></li>`).join('')}</ul>`;
-const NAME = 'Eesti Nüüdismuusika Keskus', VENUE = 'Pühavaimu 9, Tallinn', POST = 'Herne 11A, 10135 Tallinn';
-const lang = '<span class="lang"><span aria-current="page" lang="et">ET</span><a href="https://eccm.ee/index.php/en/" lang="en">EN</a></span>';
-const copy = `© 2026 ${NAME}`, city = 'Tallinn, UNESCO muusikalinn';
-// the Tallinn UNESCO City of Music mark, the Estonian blue screen file from the city's identity site (public/partners/SOURCE.md)
-const partner = '<a class="partner" href="https://muusikalinntallinn.ee/"><img src="./partners/tallinn-muusikalinn-sinine_RGB.svg" alt="Tallinn, UNESCO muusikalinn"></a>';
-const mark = (tagline, w) => `<a class="mk" href="./" style="--w: ${w}rem" data-tagline="${tagline ? 1 : ''}" aria-label="${NAME}"></a>`;
+// what a footer says, per language; the menus are the site's own, the City of Music files the city's (public/partners/SOURCE.md)
+const VENUE = 'Pühavaimu 9, Tallinn', POST = 'Herne 11A, 10135 Tallinn';
+const L = {
+  et: { lang: 'et', name: 'Eesti Nüüdismuusika Keskus', hall: 'Saal', post: 'Postiaadress', copy: '© 2026 Eesti Nüüdismuusika Keskus', city: 'Tallinn, UNESCO muusikalinn', menuLabel: 'Menüü', contact: 'Kontakt', news: 'Uudiskiri', email: 'E-post', join: 'Liitu', funders: 'Toetajad', funder: 'toetaja',
+    menu: [['Avaleht', './'], ['ECCM', 'https://eccm.ee/index.php/et/eccm'], ['Tallinn 1965', 'https://eccm.ee/index.php/et/tallinn-1965'], ['NAN', 'https://eccm.ee/nan/'], ['Ulysses', 'https://eccm.ee/index.php/et/ulysses'], ['Konkursid', 'https://eccm.ee/index.php/et/konkursid'], ['Sündmused', 'https://eccm.ee/index.php/et/syndmusest']],
+    partner: 'tallinn-muusikalinn-sinine_RGB.svg', partnerBlack: 'tallinn-muusikalinn-must_RGB.svg', partnerAlt: 'Tallinn, UNESCO muusikalinn', partnerHref: 'https://muusikalinntallinn.ee/',
+    sw: '<span class="lang"><span aria-current="page" lang="et">ET</span><a href="https://eccm.ee/index.php/en/" lang="en">EN</a></span>' },
+  en: { lang: 'en', name: 'Estonian Centre of Contemporary Music', hall: 'Hall', post: 'Postal address', copy: '© 2026 Estonian Centre of Contemporary Music', city: 'Tallinn, UNESCO City of Music', menuLabel: 'Menu', contact: 'Contact', news: 'Newsletter', email: 'Email', join: 'Join', funders: 'Supported by', funder: 'funder',
+    menu: [['Home', './'], ['ECCM', 'https://eccm.ee/index.php/en/eccm-new-eng'], ['Tallinn 1965', 'https://eccm.ee/index.php/en/tallinn-1965-eng'], ['NAN', 'https://eccm.ee/nan/'], ['Ulysses', 'https://eccm.ee/index.php/en/ulysses-eng'], ['Open calls', 'https://eccm.ee/index.php/en/open-calls'], ['Events', 'https://eccm.ee/index.php/en/eventseng']],
+    partner: 'tallinn-cityofmusic-blue_RGB.svg', partnerBlack: 'tallinn-cityofmusic-black_RGB.svg', partnerAlt: 'Tallinn, UNESCO City of Music', partnerHref: 'https://muusikalinntallinn.ee/eng/',
+    sw: '<span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span>' },
+};
+const menu = (p, cls) => `<ul class="${cls}">${p.menu.map(([t, h]) => `<li><a href="${h}">${t}</a></li>`).join('')}</ul>`;
+const mark = (p, tagline, w) => `<a class="mk" href="./" style="--w: ${w}rem" data-tagline="${tagline ? 1 : ''}" data-lang="${p.lang}" aria-label="${p.name}"></a>`;
+// the City of Music mark; black where the footer carries no colour, which the city's rule allows (asked 2026-09-27: "tallinn muusikalinn -> make it black")
+const partner = (p, black) => `<a class="partner" href="${p.partnerHref}"><img src="./partners/${black ? p.partnerBlack : p.partner}" alt="${p.partnerAlt}"></a>`;
 
-// the five footers: each a shape, and what it carries
+// the five footers, lettered in this order; the first is drawn in both languages (asked 2026-09-27: "move var c to the top as a and make english ver")
 const TRIES = [
-  ['A. One row', 'the mark alone at the start; the name, the venue and the language switch at the end', `
-    <div class="row">${mark(false, 8)}<div class="line" style="margin:0"><span>${NAME}, ${VENUE}</span>${lang}</div></div>`],
-  ['B. Wordmark and the menu', 'the mark with its wordmark at the start and the menu at the end, on one row; under them the name, the venue and the copyright line', `
-    <div class="row">${mark(true, 11)}${menu('menu')}</div>
-    <div class="line"><span>${NAME}, ${VENUE}</span><span>${copy}</span>${lang}</div>`],
-  ['C. Three columns and a partner', 'the mark with its wordmark, smaller, and the copyright under it; the menu in two columns with no label; the contact with the venue and the postal address as label over value; the City of Music mark at the end, as Tallinn publishes it (asked 2026-09-27: "smaller logo. menu in 2 col? No Menyy ... logo hast to be somewhere as well (right side?)")', `
+  { title: 'Three columns and a partner', langs: ['et', 'en'], what: 'the mark with its wordmark, 8rem, and the copyright under it; the menu in two columns with no label; the contact under the name, the venue and the postal address as label over value; the City of Music mark in black at the end, 5rem, its ink\'s top on the mark\'s top', html: (p) => `
     <div class="cols four">
-      <div>${mark(true, 8)}<p style="margin-block-start: var(--eccm-s-6)">${copy}</p></div>
-      <div>${menu('two')}</div>
-      <div><p class="label">Kontakt</p><p>${NAME}</p><p style="margin-block-start: var(--eccm-s-3)">Saal<br>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">Postiaadress<br>${POST}</p></div>
-      <div class="end">${partner}</div>
-    </div>`],
-  ['D. Four columns and a newsletter', 'the mark alone; the menu; the contact; a newsletter field with its button; under everything a line with the copyright, the city and the switch, and the funders as slots', `
+      <div>${mark(p, true, 8)}<p style="margin-block-start: var(--eccm-s-6)">${p.copy}</p></div>
+      <div>${menu(p, 'two')}</div>
+      <div><p class="label">${p.name}</p><p>${p.hall}<br>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">${p.post}<br>${POST}</p></div>
+      <div class="end">${partner(p, true)}</div>
+    </div>` },
+  { title: 'One row', what: 'the mark alone at the start; the name, the venue and the language switch at the end', html: (p) => `
+    <div class="row">${mark(p, false, 8)}<div class="line" style="margin:0"><span>${p.name}, ${VENUE}</span>${p.sw}</div></div>` },
+  { title: 'Wordmark and the menu', what: 'the mark with its wordmark at the start and the menu at the end, on one row; under them the name, the venue and the copyright line', html: (p) => `
+    <div class="row">${mark(p, true, 11)}${menu(p, 'menu')}</div>
+    <div class="line"><span>${p.name}, ${VENUE}</span><span>${p.copy}</span>${p.sw}</div>` },
+  { title: 'Four columns and a newsletter', what: 'the mark alone; the menu in two columns; the contact; a newsletter field with its name as the placeholder and its button; under everything a line with the copyright and the switch at the start and the City of Music mark in black at the end (asked 2026-09-27: "E-post as placeholder in field, rm label. rm toetajad. find place to muusikalinn", "try 2 col links in D")', html: (p) => `
     <div class="cols">
-      <div>${mark(false, 8)}</div>
-      <div><p class="label">Menüü</p>${menu('stack')}</div>
-      <div><p class="label">Kontakt</p><p>${NAME}</p><p>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">Postiaadress<br>${POST}</p></div>
-      <div><p class="label">Uudiskiri</p><form class="news" onsubmit="return false"><label><span>E-post</span><input type="email" name="email" autocomplete="email"></label><button class="btn" type="submit">Liitu</button></form></div>
+      <div>${mark(p, false, 8)}</div>
+      <div><p class="label">${p.menuLabel}</p>${menu(p, 'two')}</div>
+      <div><p class="label">${p.contact}</p><p>${p.name}</p><p>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">${p.post}<br>${POST}</p></div>
+      <div><p class="label">${p.news}</p><form class="news" onsubmit="return false"><input type="email" name="email" autocomplete="email" placeholder="${p.email}" aria-label="${p.email}"><button class="btn" type="submit">${p.join}</button></form></div>
     </div>
-    <div class="line" style="align-items: center"><span>Toetajad</span><span class="slots"><span class="slot">toetaja</span><span class="slot">toetaja</span><span class="slot">toetaja</span></span></div>
-    <div class="line"><span>${copy}</span><span>${city}</span>${lang}</div>`],
-  ['E. White on black', 'the wordmark large across the top, the menu as a row under it, then the contact and the copyright, the ink and the ground traded', `
-    <div class="line top" style="align-items: flex-end; justify-content: space-between">${mark(true, 20)}${lang}</div>
-    ${menu('menu')}
-    <div class="line"><span>${NAME}, ${VENUE}</span><span>${copy}</span><span>${city}</span></div>`],
+    <div class="line" style="justify-content: space-between; align-items: center"><span class="line" style="margin: 0"><span>${p.copy}</span>${p.sw}</span>${partner(p, true)}</div>` },
+  { title: 'White on black', dark: true, what: 'the wordmark large across the top, the menu as a row under it, then the contact and the copyright, the ink and the ground traded', html: (p) => `
+    <div class="line top" style="align-items: flex-end; justify-content: space-between">${mark(p, true, 20)}${p.sw}</div>
+    ${menu(p, 'menu')}
+    <div class="line"><span>${p.name}, ${VENUE}</span><span>${p.copy}</span><span>${p.city}</span></div>` },
 ];
 const FACES = [['Schibsted Grotesk', ''], ['Instrument Sans', 'is']];
-const footer = (html, face, dark) => `<footer class="ft${dark ? ' dark' : ''}${face ? ' ' + face : ''}" lang="et">${html}</footer>`;
+const LANG_NAME = { et: 'Estonian', en: 'English' };
+const footer = (html, face, dark, lang) => `<footer class="ft${dark ? ' dark' : ''}${face ? ' ' + face : ''}" lang="${lang}">${html}</footer>`;
 const tries = document.getElementById('tries');
 let n = 0;
-for (const [title, what, html] of TRIES) {
-  const dark = title.startsWith('E.');
-  const h2 = document.createElement('h2'); h2.textContent = title; tries.append(h2);
-  const cap = document.createElement('p'); cap.className = 'cap'; cap.textContent = what; tries.append(cap);
-  for (const [name, cls] of FACES) {
-    const f = document.createElement('figure'); f.className = 'desk';
-    f.innerHTML = `<div class="box">${footer(html, cls, dark)}</div><figcaption>${name}, the desk</figcaption>`; tries.append(f); n++;
+TRIES.forEach((t, i) => {
+  const h2 = document.createElement('h2'); h2.id = 'try-' + 'abcde'[i]; h2.textContent = `${'ABCDE'[i]}. ${t.title}`; tries.append(h2);
+  const cap = document.createElement('p'); cap.className = 'cap'; cap.textContent = t.what; tries.append(cap);
+  const langs = t.langs || ['et'];
+  for (const lang of langs) {
+    const p = L[lang], html = t.html(p), tag = langs.length > 1 ? `, ${LANG_NAME[lang]}` : '';
+    for (const [name, cls] of FACES) {
+      const f = document.createElement('figure'); f.className = 'desk';
+      f.innerHTML = `<div class="box">${footer(html, cls, t.dark, lang)}</div><figcaption>${name}, the desk${tag}</figcaption>`; tries.append(f); n++;
+    }
+    const phones = document.createElement('div'); phones.className = 'phones';
+    for (const [name, cls] of FACES) {
+      const f = document.createElement('figure');
+      f.innerHTML = `<div class="box">${footer(html, cls, t.dark, lang)}</div><figcaption>${name}, 375 px${tag}</figcaption>`; phones.append(f); n++;
+    }
+    tries.append(phones);
   }
-  const phones = document.createElement('div'); phones.className = 'phones';
-  for (const [name, cls] of FACES) {
-    const f = document.createElement('figure');
-    f.innerHTML = `<div class="box">${footer(html, cls, dark)}</div><figcaption>${name}, 375 px</figcaption>`; phones.append(f); n++;
-  }
-  tries.append(phones);
-}
+});
 await document.fonts.load('500 100px "Instrument Sans"');
-for (const a of document.querySelectorAll('.mk')) a.replaceChildren(markSvg(!!a.dataset.tagline));
-window.__layout = { footers: n, tries: TRIES.length, marks: document.querySelectorAll('.mk svg').length, instrument: document.fonts.check('500 100px "Instrument Sans"') };
+for (const a of document.querySelectorAll('.mk')) a.replaceChildren(markSvg(!!a.dataset.tagline, a.dataset.lang));
+window.__layout = { footers: n, tries: TRIES.length, marks: document.querySelectorAll('.mk svg').length, partners: document.querySelectorAll('.partner img').length, instrument: document.fonts.check('500 100px "Instrument Sans"') };
 </script>
 </body>
 </html>

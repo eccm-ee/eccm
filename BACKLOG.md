@@ -7,6 +7,17 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "D: maek E-post as placeholder in field, rm label. rm toetajad . find place to muusikalinn" and "try 2 col links in D"
+
+Asked verbatim, mid-task, footer D on `public/layout.html`: the email field carries E-post as its placeholder and keeps that name for a screen reader with no visible label; the funders' row goes; the City of Music mark in black sits at the end of the bottom line, the copyright and the switch at its start, and the text line naming the city goes since the mark says it; the menu in two columns as in A, its label kept since nothing was said about it.
+✅ Done, all four. The mark sits in the bottom line centred on the line, the city's file being symmetric above and below its ink. One shot at 1280.
+
+### Done 2026-09-27: "rm Kontakt\n\nEesti Nüüdismuusika Keskus . add more space between  links in fooer (C). tallinn muusikalinn -> make it black"
+
+Asked verbatim, footer C on `public/layout.html`: the `Kontakt` label goes and the name is the column's first line, in the label's ink; the two-column menu's column gap grows from 1.5rem to the footer's own 2rem and its row gap from 0.25rem to 0.5rem; the City of Music mark is the black file from the city's pack, which its rule allows where colour is not used.
+⚠️ Added mid-task: *"and bit smaller aht align top wich eccm. move var c to the top as a anad make engliosh ver"*: the City of Music mark a step smaller and its ink's top on the ECCM mark's top; footer C becomes the first, lettered A, the others move down a letter; and an English version of it under the Estonian one, with the English wordmark, menu, contact and copyright and the English black City of Music file.
+✅ Done, all six. The City of Music box is 5rem and its ink 58 px wide; the file carries 60.5 units of air above the ink and about 60.8 beside it in a 446.46 box (MEASURED with getBBox), so the img is pulled up and out by those fractions. MEASURED at 1280 in both languages: the ink's top is 0 px off the ECCM mark's top and its right edge 0 and 0.3 px off the footer's padding edge. Lettered A now; the old A and B are B and C; the English version has the English wordmark, menu, contact, copyright and the city's English black file. 24 footers and 12 partner marks on the page. Shot at 1280.
+
 ### Done 2026-09-27: "c. smaller logo. menu in 2 col? No \"Menyy\" https://muusikalinntallinn.ee/ logo hast to be somewhere as well (right side?)"
 
 Asked verbatim, about footer C on `public/layout.html`: the mark smaller, the menu in two columns without its label, and the Tallinn UNESCO City of Music mark in the footer, at the right. The mark is fetched once off https://muusikalinntallinn.ee/ and kept under `public/` with a note of where it came from; eccm.ee shows it today in its sidebar as a 120 by 118 JPEG.
