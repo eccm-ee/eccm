@@ -55,7 +55,8 @@
     .ds-squares img { display: block; inline-size: 8rem; block-size: 8rem; }
     .ds-sizes { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--eccm-s-6); margin-block: var(--eccm-s-8); }
     .ds-sizes figure { margin: 0; }
-    .ds-neg { background: #1a1a1a; color: #ffffff; padding: var(--eccm-s-6); }
+    /* a negative icon carries its own black square; the row stays on the page (asked 2026-09-27: "put black to back to each icon not whole block") */
+    .ds-neg img { background: #1a1a1a; }
     .ds-sizes img { display: block; }
     /* the icon's square shows on hover, since a positive mark on white has no edge (asked 2026-09-27) */
     .ds-sizes img:hover, .ds-squares img:hover, .ds-logos img:hover { outline: 1px solid var(--eccm-rule-strong); }

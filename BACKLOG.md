@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "on icon samples put black to back to each icon not whole block"
+
+Asked verbatim. On /ds the negative icon rows lose their black band; each negative icon carries its own black, which is the square the file already paints, and the row sits on the page like the positive one.
+
 ### Done 2026-09-27: "None of the proposed wordmark versions work. Those first DIN examples are the best, but work now hard on this font size. Letter spacing and also casing, capital casing, full uppercase, words uppercase, sentence case, font size, wrapping, so create a lot of variants, make it work, maybe also a gray version, not sure about it, do it"
 
 Asked, dictated. public/tagline.html: the tagline in DIN Condensed under the mark in every combination of four casings (lowercase, sentence case, words capitalised, uppercase), three trackings, three wraps (one line fitted to the letters E to M, one line at the current 27 units unsqueezed, two lines fitted) and three inks (ink, muted ink, light grey), 108 settings, each at 20rem and 11rem with the size in units and the x-height on the phone printed, both languages, the current squeezed line as the reference at the top. ✅ Done at https://eccm.positron.studio/tagline, 108 settings, DIN Condensed confirmed drawing by the fitted size matching the measured natural width; the fitted one-liner is 24.5 units, 7.2 px of x-height on a phone, under the floor, the two-liners about 45 units, over it.
