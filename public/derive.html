@@ -11,8 +11,9 @@
      opens: on a 64 px canvas for colour, and at up to 600 px for type. From
      the colour come a scheme, light or dark, a ground, an ink, a muted ink,
      an accent and the text colour that passes on it; from the type a verdict,
-     serif, sans, unsure or no type, from stroke contrast and feet at the
-     baseline of text-like shapes. Beside each picture a sample event page is
+     serif, sans, unsure, no type, or type too small to read for serifs, from
+     stroke contrast and feet at the baseline of text-like shapes 14 px tall
+     or more. Beside each picture a sample event page is
      drawn in what it gave: the head, the buttons in the system face in both
      modes, a body with rich text and credits, so
      a serif is judged in use and a dark scheme is judged on a whole page.
@@ -89,7 +90,7 @@
 
 <main class="frame">
   <h1>Kujundus pildist</h1>
-  <p class="intro">Each picture is read as the page opens: its colour at 64 pixels gives a light or a dark scheme, a ground and an accent for underlines and focus, and its type at up to 600 pixels gives serif, sans or no type found. Beside it a short event page is drawn in what it gave, with the title and the facts in Source Serif 4 when the graphic's type reads as a serif, and the body in it only on a ground near white.</p>
+  <p class="intro">Each picture is read as the page opens: its colour at 64 pixels gives a light or a dark scheme, a ground and an accent for underlines and focus, and its type at up to 600 pixels gives serif, sans, no type found, or type too small to read for serifs. Beside it a short event page is drawn in what it gave, with the title and the facts in Source Serif 4 when the graphic's type reads as a serif, and the body in it only on a ground near white.</p>
   <p class="tally" id="tally">Reading the pictures.</p>
   <div id="cards"></div>
 
@@ -142,6 +143,10 @@
     const chroma = labs.map((l) => Math.hypot(l[1], l[2]));
     const meanY = px.reduce((s, p) => s + lum(p), 0) / px.length;
     const meanC = chroma.reduce((s, v) => s + v, 0) / chroma.length;
+    // the cast: the picture's mean colour as a hue and a chroma, which a
+    // black and white photograph still has and the hue bins below cannot
+    // see, since they count only pixels over 0.04
+    const cast = (() => { const a = labs.reduce((s, l) => s + l[1], 0) / labs.length, b = labs.reduce((s, l) => s + l[2], 0) / labs.length; const [, C, hh] = lch([0, a, b]); return { C, h: hh }; })();
     const vivid = chroma.filter((v) => v >= 0.04).length / chroma.length;
     const bins = new Map();
     for (let i = 0; i < d.length; i += 4) { const k = ((d[i] >> 4) << 8) | ((d[i + 1] >> 4) << 4) | (d[i + 2] >> 4); bins.set(k, (bins.get(k) || 0) + 1); }
@@ -166,7 +171,7 @@
       // nonmudsy detected colors first")
       var hues = hb.filter((b) => b.n >= 0.01 * labs.length).sort((a, b) => b.n - a.n).map((b) => ({ share: b.n / labs.length, lch: lch([b.L / b.n, b.a / b.n, b.b / b.n]) }));
     }
-    return { meanY, meanC, vivid, top, edges, flatAll, seed, hues: hues || [] };
+    return { meanY, meanC, vivid, cast, top, edges, flatAll, seed, hues: hues || [] };
   };
 
   // ── type, on up to 600 px: stroke contrast and feet, per text-like shape ──
@@ -215,9 +220,18 @@
     // photographs read as serif from their grain)
     const text = shapes.filter((k) => { const h = k.y1 - k.y0 + 1; let mates = 0; for (const o of shapes) { if (o === k) continue; const oh = o.y1 - o.y0 + 1; if (Math.abs(o.y1 - k.y1) <= 0.2 * h && oh >= 0.6 * h && oh <= 1.6 * h && Math.abs(o.x0 - k.x0) <= 12 * h) mates++; } return mates >= 3; });
     const q = (arr, p) => { const a = [...arr].sort((x, y) => x - y); return a[Math.min(a.length - 1, Math.floor(p * a.length))]; };
-    let serifish = 0; const contrasts = [], feet = [];
+    // a serif is read only on a letter 14 px tall or more with a stem of 3
+    // px or more: below that a serif is one pixel, antialiasing is half a
+    // stroke, and a capital's bar reads as a foot (MEASURED 2026-09-27 on the
+    // Ludensemble poster at 300 px: letters 7 to 9 px tall, stems 2 px, 15 of
+    // 15 read as serif in a geometric sans; asked: "why serif? no serifs on
+    // image"); the same floor took the Huddersfield photograph's arrows, 2 px
+    // strokes, out of a serif verdict they had made on their own
+    const MIN_H = 14, MIN_STEM = 3;
+    let serifish = 0, small = 0; const contrasts = [], feet = [];
     for (const k of text) {
       const h = k.y1 - k.y0 + 1;
+      if (h < MIN_H) { small++; continue; }
       const runs = [], rowMax = new Map();
       for (let y = k.y0; y <= k.y1; y++) {
         let len = 0;
@@ -228,6 +242,7 @@
       }
       if (runs.length < 6) continue;
       const stem = q(runs, 0.5);
+      if (stem < MIN_STEM) { small++; continue; }
       const strokes = runs.filter((r) => r <= 1.5 * stem + 1);
       if (strokes.length < 4) continue;
       const contrastRatio = (q(strokes, 0.9) - q(strokes, 0.1)) / Math.max(1, q(strokes, 0.5));
@@ -241,8 +256,8 @@
     }
     const n = contrasts.length;
     const share = n ? serifish / n : 0;
-    const verdict = n < 8 ? 'no type found' : share >= 0.45 ? 'serif' : share <= 0.25 ? 'sans' : 'unsure';
-    return { verdict, n, share, contrast: n ? q(contrasts, 0.5) : 0, foot: n ? q(feet, 0.5) : 0, polarity: light ? 'dark type on light' : 'light type on dark', W, H };
+    const verdict = n >= 8 ? (share >= 0.45 ? 'serif' : share <= 0.25 ? 'sans' : 'unsure') : text.length >= 8 ? 'type too small to read for serifs' : 'no type found';
+    return { verdict, n, found: text.length, small, share, contrast: n ? q(contrasts, 0.5) : 0, foot: n ? q(feet, 0.5) : 0, polarity: light ? 'dark type on light' : 'light type on dark', W, H };
   };
 
   // ── the scheme, §3 and §4 with the asks of 2026-09-27 ────────────────────
@@ -305,7 +320,15 @@
       } else if (r.meanC < 0.02 && bigY >= 0.85 && big.share >= 0.5) {
         s.ground = WHITE; s.groundNote = 'white, the picture’s own ground is white and it has no hue';
       } else if (r.meanC < 0.02) {
-        s.ground = fromHex('#ededed'); s.groundNote = 'a light grey, the picture has no hue';
+        // a grey picture with a faint cast keeps it, as a hue at a chroma too
+        // small to name and too large to miss (asked 2026-09-27 of the
+        // Varssavi photograph, players in black on a light grey wall that had
+        // come out neutral: "missing a small pinkish hue here")
+        if (r.cast.C >= 0.006) {
+          const C = Math.min(0.015, Math.max(0.008, r.cast.C));
+          s.ground = gamutLch(0.94, C, r.cast.h).rgb;
+          s.groundNote = `a light grey with the picture’s faint cast, hue ${Math.round(r.cast.h)} at chroma ${C.toFixed(3)}`;
+        } else { s.ground = fromHex('#ededed'); s.groundNote = 'a light grey, the picture has no hue'; }
       } else {
         const from = bigY >= 0.5 ? bigRgb : null;
         if (from) {
@@ -435,7 +458,7 @@
     const r = readColour(img);
     r.serifByHand = !!p.serifByHand;
     const t2 = performance.now();
-    const t = FLAGS.get('type') === '0' ? { verdict: 'skipped', n: 0, share: 0, contrast: 0, foot: 0, polarity: '', W: 0, H: 0 } : readType(img);
+    const t = FLAGS.get('type') === '0' ? { verdict: 'skipped', n: 0, found: 0, small: 0, share: 0, contrast: 0, foot: 0, polarity: '', W: 0, H: 0 } : readType(img);
     const t3 = performance.now();
     const s = scheme(r, t);
     TIMES.push({ file: p.file.slice(22, 40), decode: Math.round(t1 - t0), colour: Math.round(t2 - t1), type: Math.round(t3 - t2), scheme: Math.round(performance.now() - t3) });
@@ -454,12 +477,12 @@
     const dl = document.createElement('dl'); dl.className = 'readings';
     const row = (k, v) => { const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v; dl.append(dt, dd); };
     row('luminance', `${f2(r.meanY)}${s.wall ? `, dark but not about black, its mid tone ${s.wall.hex} holds ${Math.round(100 * s.wall.share)} per cent` : ''}, so a ${s.mode} scheme`);
-    row('chroma', `${r.meanC.toFixed(3)} mean, ${pc(r.vivid)} of pixels over 0.04`);
+    row('chroma', `${r.meanC.toFixed(3)} mean, ${pc(r.vivid)} of pixels over 0.04, a cast of hue ${Math.round(r.cast.h)} at chroma ${r.cast.C.toFixed(3)}`);
     row('edges', Object.entries(r.edges).map(([k, e]) => `${k} ${e.flat ? 'flat' : Math.round(100 * e.share) + '%'}`).join(', '));
     row('ground', `${hex(s.ground)}, ${s.groundNote}; ink ${f2(contrast(lum(s.ink), lum(s.ground)))}:1, muted ink ${f2(contrast(lum(s.ink2), lum(s.ground)))}:1`);
     row('accent', s.accent ? `${hex(s.accent.rgb)}, chroma ${s.accent.C.toFixed(3)}, hue ${Math.round(s.accent.h)}; on the ground ${f2(contrast(lum(s.accent.rgb), lum(s.ground)))}:1, for underlines and focus only` : s.notes.join('; '));
     row('button', `${hex(s.btnFill)} filled with ${hex(s.onBtn)} text, ${f2(contrast(lum(s.btnFill), lum(s.onBtn)))}:1`);
-    row('type', `${t.verdict}: ${t.n} text-like shapes at ${t.W} px, ${t.polarity}, ${pc(t.share)} serif-like, median stroke contrast ${f2(t.contrast)}, median foot ${f2(t.foot)}`);
+    row('type', `${t.verdict}: ${t.found} text-like shapes at ${t.W} px, ${t.n} of them 14 px tall with a 3 px stem, which a serif needs${t.n ? `, ${t.polarity}, ${pc(t.share)} serif-like, median stroke contrast ${f2(t.contrast)}, median foot ${f2(t.foot)}` : ''}`);
     row('serif', s.serif ? `in the title and facts${s.mode === 'light' && lum(s.ground) >= 0.8 ? ' and the body' : ', the body stays in the sans on a ground this dark'} (${s.serifHow})` : 'none');
     top.append(left, dl);
     card.append(top, sample(p, s));
