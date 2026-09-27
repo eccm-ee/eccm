@@ -7,6 +7,11 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "in square move eng up and est down so they have same y padding as they have x padding. sma"
+
+Asked verbatim. `public/wordmark.html`, the two bilingual squares: the language over the mark moves up and the one under it moves down until each sits 28 units from the square's edge, the letters' own margin at the sides; the mark stays centred on the square. MEASURED before: the lockup box is 267.8 tall in a 354 square, so the blocks sat 45 and 43 from the edges. The one-language square is not touched, one block cannot sit at both margins.
+✅ Done in both bilingual squares and their inverted twins. MEASURED at 20rem as the page opens: 28 units over the top language and 28 under the bottom one in each. One shot at 1280.
+
 ### Done 2026-09-27: "make versions inside square, 1px black border  and white on black bg. for side titles a rectangle"
 
 Asked verbatim. `public/wordmark.html`: beside every plain lockup, the same lockup in a frame, once with a 1px border in the ink and once white on black; a square for the under lockups, centred on the letters with the stave reaching into the margin as the square marks do, a rectangle round the ink for the beside ones; the margin from the ink is the square marks' 28 units.

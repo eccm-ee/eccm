@@ -28,7 +28,9 @@
      one pixel border, and white on black: a square for the under layout,
      centred on the letters with the stave reaching into the margin as the
      square marks do, a rectangle round the ink for the beside layout, the
-     margin the square marks' 28 units. The line height and size studies and the four
+     margin the square marks' 28 units. A square with a language over the
+     mark and one under it is centred on the letters and the two languages
+     sit at the margin, 28 from the edge as the letters are at the sides. The line height and size studies and the four
      beside shapes at three sizes are in git at 73e4d2a. -->
 <link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
@@ -119,7 +121,7 @@
 <main class="frame wm">
   <h1 class="list-label">Wordmark in Instrument Sans</h1>
   <div class="prose flow intro">
-    <p>Instrument Sans medium at width 75, lowercase, two lines a language, starting on the E, both languages at one size. Under the mark at 40 units, one language, or one language over the mark and the other under it, either way round; beside it to the right of the stave at 37 units, one language or both side by side, every block centred on the E's middle bar. The Estonian breaks inside its long word, the hyphen a hairline of the mark's weight. Each lockup at 20rem and 11rem of mark width, plain, in a frame with a one pixel border, and white on black, a square for the under layout and a rectangle for the beside one, 28 units from the ink.</p>
+    <p>Instrument Sans medium at width 75, lowercase, two lines a language, starting on the E, both languages at one size. Under the mark at 40 units, one language, or one language over the mark and the other under it, either way round; beside it to the right of the stave at 37 units, one language or both side by side, every block centred on the E's middle bar. The Estonian breaks inside its long word, the hyphen a hairline of the mark's weight. Each lockup at 20rem and 11rem of mark width, plain, in a frame with a one pixel border, and white on black, a square for the under layout and a rectangle for the beside one, 28 units from the ink. In a square with a language over the mark and one under it, the two sit at the margin and the mark stays centred.</p>
   </div>
   <div id="cells"></div>
 </main>
@@ -198,6 +200,7 @@ const lockup = (texts, { layout, size, rem, columns = false, above = false }) =>
   }
   svg.remove();
   svg.dataset.box = vb.map((v) => +v.toFixed(1)).join(' ');
+  svg.dataset.size = size; svg.dataset.above = above ? '1' : '';
   return svg;
 };
 // the same lockup in a frame: a square for the under layout, centred on the letters (35 to 333) so the stave reaches 12 units into
@@ -208,7 +211,21 @@ const framed = (svg, { square, inv }) => {
   const ink = square ? { x: 35, y, w: 298, h } : { x, y, w, h };
   const fw = square ? Math.max(ink.w, ink.h) + 2 * FRAME : ink.w + 2 * FRAME;
   const fh = square ? fw : ink.h + 2 * FRAME;
-  const box = [ink.x + ink.w / 2 - fw / 2, ink.y + ink.h / 2 - fh / 2, fw, fh].map((v) => +v.toFixed(1));
+  const spread = square && svg.dataset.above;
+  // a square with a language over the mark and one under it is centred on the letters, and the two languages sit at the
+  // margin, 28 units from the edge as the letters are at the sides (asked 2026-09-27: "in square move eng up and est down
+  // so they have same y padding as they have x padding"); any other frame is centred on the lockup's box
+  const fy = spread ? (TOP + BOTTOM) / 2 - fh / 2 : ink.y + ink.h / 2 - fh / 2;
+  const box = [ink.x + ink.w / 2 - fw / 2, fy, fw, fh].map((v) => +v.toFixed(1));
+  if (spread) {
+    const size = +svg.dataset.size, runs = [...f.querySelectorAll('text, rect')].map((el) => [el, +el.getAttribute('y')]);
+    const over = runs.filter(([, yy]) => yy < TOP), under = runs.filter(([, yy]) => yy > BOTTOM);
+    const capTop = Math.min(...over.filter(([el]) => el.tagName === 'text').map(([, yy]) => yy)) - CAP * size;
+    const descent = Math.max(...under.filter(([el]) => el.tagName === 'text').map(([, yy]) => yy)) + 0.25 * size;
+    const up = capTop - (fy + FRAME), down = (fy + fh - FRAME) - descent;
+    for (const [el, yy] of over) el.setAttribute('y', (yy - up).toFixed(1));
+    for (const [el, yy] of under) el.setAttribute('y', (yy + down).toFixed(1));
+  }
   f.setAttribute('viewBox', box.join(' ')); f.dataset.box = box.join(' ');
   f.style.setProperty('--k', (fw / 310).toFixed(3));
   f.classList.add(inv ? 'inv' : 'frame');
@@ -246,8 +263,14 @@ const draw = async () => {
   cells.append(cellOf('beside-columns', `${px(BESIDE)}, both languages side by side, each centred on the E's middle bar, ${BESIDE_GAP} units between them`, { layout: 'beside', size: BESIDE, columns: true }, BOTH));
   // every 20rem lockup's box, in units, and the widest line of each language at each size against the letters' 298
   const boxes = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="20"]:not(.frame):not(.inv)')].map((v) => v.dataset.box)]));
+  // in each bilingual square at 20rem, the air over the top language and under the bottom one, in units
+  const margins = Object.fromEntries([...cells.querySelectorAll('.cell')].filter((c) => c.querySelector('svg[data-above="1"]')).map((c) => {
+    const f = c.querySelector('svg[data-w="20"].frame'); const [, fy, , fh] = f.dataset.box.split(' ').map(Number); const size = +f.dataset.size;
+    const ys = [...f.querySelectorAll('text')].map((t) => +t.getAttribute('y'));
+    return [c.id, [+(Math.min(...ys) - CAP * size - fy).toFixed(1), +(fy + fh - Math.max(...ys) - 0.25 * size).toFixed(1)]];
+  }));
   const frames = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="20"].frame')].map((v) => v.dataset.box)]));
-  window.__wordmark = { count: cells.querySelectorAll('.cell').length, under: UNDER, beside: BESIDE, gap: BESIDE_GAP, enFit: +enFit.toFixed(1), etFit: +etFit.toFixed(1), enUnder: +blockWidth(split2(EN), UNDER).toFixed(1), etUnder: +blockWidth(split2(ET), UNDER).toFixed(1), enBeside: +blockWidth(split2(EN), BESIDE).toFixed(1), etBeside: +blockWidth(split2(ET), BESIDE).toFixed(1), boxes, frames, instrument: document.fonts.check('500 100px "Instrument Sans"') };
+  window.__wordmark = { count: cells.querySelectorAll('.cell').length, under: UNDER, beside: BESIDE, gap: BESIDE_GAP, enFit: +enFit.toFixed(1), etFit: +etFit.toFixed(1), enUnder: +blockWidth(split2(EN), UNDER).toFixed(1), etUnder: +blockWidth(split2(ET), UNDER).toFixed(1), enBeside: +blockWidth(split2(EN), BESIDE).toFixed(1), etBeside: +blockWidth(split2(ET), BESIDE).toFixed(1), boxes, frames, margins, instrument: document.fonts.check('500 100px "Instrument Sans"') };
 };
 draw();
 </script>
