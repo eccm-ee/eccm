@@ -7,6 +7,18 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "placeholder neesd to be grayer"
+
+Asked verbatim, the email field in footer D on `public/layout.html`: the placeholder was the second ink, #555; it is `--eccm-rule-strong`, #999, now, the lighter grey the site already has.
+
+### Done 2026-09-28: "add more space between" (a crop of the two-column menu)
+
+Asked with a picture of the menu in two columns, Avaleht beside ECCM. The column gap grows from the footer's 2rem to 3rem in every two-column menu, A and D, in both languages; the rows keep their half step.
+
+### Done 2026-09-28: "rm wordmarks on logos in footers"
+
+Asked verbatim. `public/layout.html`: every footer draws the mark alone, letters and stave, no tagline under it; the wordmark drawing code leaves the page (in git at 65025af) and the captions and the intro stop naming it.
+
 ### Done 2026-09-27: "D: maek E-post as placeholder in field, rm label. rm toetajad . find place to muusikalinn" and "try 2 col links in D"
 
 Asked verbatim, mid-task, footer D on `public/layout.html`: the email field carries E-post as its placeholder and keeps that name for a screen reader with no visible label; the funders' row goes; the City of Music mark in black sits at the end of the bottom line, the copyright and the switch at its start, and the text line naming the city goes since the mark says it; the menu in two columns as in A, its label kept since nothing was said about it.
