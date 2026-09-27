@@ -45,9 +45,9 @@ database and deploy were pulled forward; **session 3, the scheme column, is
 next.** The dev server for local work is `npx wrangler dev --env staging`;
 one was running on port 8797 when this was written.
 
-## The plans, eleven
+## The plans, twelve
 
-`plan-eccm-cms-step-1.md` (seven tables, six sessions, section 10 reconciles
+`plan-eccm-presence.md` (2026-09-28: where ECCM is on the web, what Instagram does better, a priced plan of twelve items and a posting rhythm), `plan-eccm-cms-step-1.md` (seven tables, six sessions, section 10 reconciles
 the scheme JSON with the social plan, section 11 takes the URL scheme),
 `plan-eccm-social-images.md` (trip's resvg pipeline and how the scheme feeds
 it), `plan-eccm-images.md` (how trip rents renditions, three ladders for

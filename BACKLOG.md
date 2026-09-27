@@ -7,9 +7,15 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
-### Open 2026-09-28: "in bg analyze and write plan of eccm social media presence and web presence in general - in fienta pages etc"
+### Open 2026-09-28: "all headers are bad. cramped, no proper typo approach, not leaving nice detected area stand out... not good at all. all you typo whitespace reaerch? looks what others do"
+
+Asked verbatim, the four headers on `public/layout.html`. Before redrawing: the whitespace and scale rules in `.claude/skills/eccm-ui/SKILL.md` and `positron-compose` §1 and §4 are read and applied, and seven comparable sites' headers are measured in a browser once each (the header's height, the mark's drawn size, the menu's size and gaps, the air between the header and the first content, rules or none), so the redraw stands on numbers and not on taste.
+⚠️ Added mid-task: *"replace posthord with smth else"* and *"bring more detected ones"*: the Improtest example leaves the pages and each header gets its own derived example, taken from the derive page's four sets, more of them and different ones, the serif one among them.
+
+### Done 2026-09-28: "in bg analyze and write plan of eccm social media presence and web presence in general - in fienta pages etc"
 
 Asked verbatim. A background agent writes `plans/plan-eccm-presence.md`: an inventory of where ECCM is on the web today (eccm.ee, ticketing pages on Fienta and elsewhere, social accounts, listings, streaming and archive services), each read once and labelled READ or INFERRED, and a plan for the presence, reported in full when it lands. The agent does not commit.
+✅ Landed: `plans/plan-eccm-presence.md`, 532 lines, ten numbered sections, 26 fetches one per page, relayed in full in the session; committed by the session.
 
 ### Done 2026-09-28: "rm Eesti Nüüdismuusika Keskus from 3rd col" and "wheer is contact info in footer? email? smth else?"
 
