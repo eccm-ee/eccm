@@ -153,7 +153,24 @@ const lockup = (text, cse, track, wrap, ink, widthClass, align, scale = 1) => {
     t.style.letterSpacing = (track * size).toFixed(2) + 'px';
     if (align === 'left aligned') { t.setAttribute('x', LEFT); t.setAttribute('text-anchor', 'start'); }
     else { t.setAttribute('x', CENTRE); t.setAttribute('text-anchor', 'middle'); }
-    t.setAttribute('y', (first + i * LINE * size).toFixed(1)); t.textContent = l; svg.append(t);
+    const y = first + i * LINE * size;
+    t.setAttribute('y', y.toFixed(1));
+    // the hyphen of the Estonian break is a hairline of the logo's own weight,
+    // 1.5 units, in the slot the font's hyphen took, at the middle of the
+    // x-height or of the cap height (asked 2026-09-27: "use thin dash like
+    // the element in logo in nyydis-")
+    const hy = /-$/.test(l);
+    t.textContent = hy ? l.slice(0, -1) : l; svg.append(t);
+    if (hy) {
+      const wFull = widthOf(l, track) * size / 100, wText = widthOf(l.slice(0, -1), track) * size / 100;
+      const start = align === 'left aligned' ? LEFT : CENTRE - wFull / 2;
+      const slot = wFull - wText, len = slot * 0.7;
+      const upper = l === l.toUpperCase();
+      const mid = y - (upper ? CAP * 0.5 : XH * 0.5) * size;
+      const dash = document.createElementNS(NS, 'rect');
+      dash.setAttribute('x', (start + wText + (slot - len) / 2).toFixed(1)); dash.setAttribute('y', (mid - 0.75).toFixed(2)); dash.setAttribute('width', len.toFixed(1)); dash.setAttribute('height', '1.5'); dash.setAttribute('fill', ink);
+      svg.append(dash);
+    }
   });
   return { svg, size };
 };

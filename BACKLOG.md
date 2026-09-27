@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "use thin dash like the element in logo in nyydis-"
+
+Asked verbatim. On /tagline and /tagline-47 the hyphen after nüüdis is drawn as a hairline of the logo's weight, 1.5 units, in the slot the font's hyphen took, at the middle of the x-height or of the cap height.
+
 ### Done 2026-09-27: "add examples with larger size like page logo but not that big"
 
 Asked verbatim. Every setting on /tagline-47 shows its pair a second time at 16rem, between the phone's 11rem and the header's 20rem, under the 11rem pair.
