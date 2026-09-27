@@ -41,7 +41,7 @@
     .locks figure { margin: 0; }
     .locks figcaption { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-start: var(--eccm-s-2); }
     .tag { font-family: 'DIN Condensed', 'Helvetica Neue', 'Arial Narrow', sans-serif; font-weight: 700; }
-    .tag-is { font-family: 'Instrument Sans', Helvetica, Arial, sans-serif; font-stretch: 75%; font-weight: 600; }
+    .tag-is { font-family: 'Instrument Sans', Helvetica, Arial, sans-serif; font-stretch: 75%; font-variation-settings: 'wdth' 75; font-weight: 600; }
     .set { display: flex; flex-wrap: wrap; gap: var(--eccm-s-12); margin-block: var(--eccm-s-8) var(--eccm-s-16); }
     .set figure { margin: 0; } .set img, .set svg { display: block; inline-size: 16rem; block-size: auto; overflow: visible; }
     .set figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
@@ -142,17 +142,20 @@ const lockup = (text, track, align, cls) => {
   const first = BOTTOM + GAP + CAP * size, last = first + (lines.length - 1) * LINE * size, h = last + 0.25 * size - 27;
   const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', `35 27 310 ${h.toFixed(1)}`); svg.setAttribute('aria-hidden', 'true');
   const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '29'); use.setAttribute('width', '310'); use.setAttribute('height', '93'); svg.append(use);
+  // the lockup sits in the document while its lines are laid, since a detached text measures as zero
+  document.body.append(svg);
   lines.forEach((l, i) => {
     const t = document.createElementNS(NS, 'text'); t.setAttribute('class', cls); t.setAttribute('font-size', size.toFixed(2)); t.style.letterSpacing = (track * size).toFixed(2) + 'px'; t.setAttribute('fill', '#1a1a1a');
     if (align === 'left') { t.setAttribute('x', LEFT); t.setAttribute('text-anchor', 'start'); } else { t.setAttribute('x', CENTRE); t.setAttribute('text-anchor', 'middle'); }
     const y = first + i * LINE * size; t.setAttribute('y', y.toFixed(1));
     const hy = /-$/.test(l); t.textContent = hy ? l.slice(0, -1) : l; svg.append(t);
     if (hy) {
-      const wFull = widthOf(l, track, cls) * size / 100, wText = widthOf(l.slice(0, -1), track, cls) * size / 100;
-      const start = align === 'left' ? LEFT : CENTRE - wFull / 2, slot = wFull - wText, len = slot * 0.7, mid = y - CAP * 0.5 * size;
-      const dash = document.createElementNS(NS, 'rect'); dash.setAttribute('x', (start + wText + (slot - len) / 2).toFixed(1)); dash.setAttribute('y', (mid - 0.75).toFixed(2)); dash.setAttribute('width', len.toFixed(1)); dash.setAttribute('height', '1.5'); dash.setAttribute('fill', '#1a1a1a'); svg.append(dash);
+      // from the drawn line itself: its start from the anchor and its length as drawn
+      const wText = t.getComputedTextLength(), start = align === 'left' ? LEFT : CENTRE - wText / 2, len = size * 0.3, mid = y - CAP * 0.5 * size;
+      const dash = document.createElementNS(NS, 'rect'); dash.setAttribute('x', (start + wText + size * 0.08).toFixed(1)); dash.setAttribute('y', (mid - 0.75).toFixed(2)); dash.setAttribute('width', len.toFixed(1)); dash.setAttribute('height', '1.5'); dash.setAttribute('fill', '#1a1a1a'); svg.append(dash);
     }
   });
+  svg.remove();
   return { svg, size };
 };
 const draw = async () => {

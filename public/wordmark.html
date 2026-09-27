@@ -37,7 +37,7 @@
     .w20 { inline-size: 20rem; } .w11 { inline-size: 11rem; }
     .locks svg[data-w] { inline-size: calc(var(--rem) * var(--k)); }
     .locks figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-    .tag-is { font-family: 'Instrument Sans', Helvetica, Arial, sans-serif; font-stretch: 75%; font-weight: 500; }
+    .tag-is { font-family: 'Instrument Sans', Helvetica, Arial, sans-serif; font-stretch: 75%; font-variation-settings: 'wdth' 75; font-weight: 500; }
   }
 </style>
 </head>
@@ -131,15 +131,19 @@ const lockup = (text, { layout, lh, size, rem }) => {
   svg.setAttribute('viewBox', vb.map((v) => (typeof v === 'number' ? +v.toFixed(1) : v)).join(' '));
   // the mark keeps one width: the svg is as many rem as its viewBox is wide against the mark's 310
   svg.dataset.w = rem; svg.style.setProperty('--rem', rem + 'rem'); svg.style.setProperty('--k', (vb[2] / 310).toFixed(3));
+  // the lockup sits in the document while its lines are laid, since a detached text measures as zero
+  document.body.append(svg);
   lines.forEach((l, i) => {
     const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'tag-is'); t.setAttribute('font-size', size.toFixed(2)); t.setAttribute('fill', '#1a1a1a'); t.setAttribute('x', x); t.setAttribute('text-anchor', 'start');
     const y = y1 + i * lh * size; t.setAttribute('y', y.toFixed(1));
     const hy = /-$/.test(l); t.textContent = hy ? l.slice(0, -1) : l; svg.append(t);
     if (hy) {
-      const wFull = widthOf(l) * size / 100, wText = widthOf(l.slice(0, -1)) * size / 100, slot = wFull - wText, len = slot * 0.7, mid = y - XH * 0.5 * size;
-      const dash = document.createElementNS(NS, 'rect'); dash.setAttribute('x', (x + wText + (slot - len) / 2).toFixed(1)); dash.setAttribute('y', (mid - 0.75).toFixed(2)); dash.setAttribute('width', len.toFixed(1)); dash.setAttribute('height', '1.5'); dash.setAttribute('fill', '#1a1a1a'); svg.append(dash);
+      // from the drawn line itself, so a browser that measures the face at another width still puts the dash after the s
+      const wText = t.getComputedTextLength(), len = size * 0.3, mid = y - XH * 0.5 * size;
+      const dash = document.createElementNS(NS, 'rect'); dash.setAttribute('x', (x + wText + size * 0.08).toFixed(1)); dash.setAttribute('y', (mid - 0.75).toFixed(2)); dash.setAttribute('width', len.toFixed(1)); dash.setAttribute('height', '1.5'); dash.setAttribute('fill', '#1a1a1a'); svg.append(dash);
     }
   });
+  svg.remove();
   return svg;
 };
 const cellOf = (id, capText, opts) => {

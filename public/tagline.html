@@ -156,6 +156,8 @@ const lockup = (text, cse, track, wrap, ink, widthClass, align) => {
   const h = last + 0.25 * size - 27;
   const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', `35 27 310 ${h.toFixed(1)}`); svg.setAttribute('class', widthClass); svg.setAttribute('aria-hidden', 'true');
   const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '29'); use.setAttribute('width', '310'); use.setAttribute('height', '93'); svg.append(use);
+  // the lockup sits in the document while its lines are laid, since a detached text measures as zero
+  document.body.append(svg);
   lines.forEach((l, i) => {
     const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'tag'); t.setAttribute('font-size', size.toFixed(2)); t.setAttribute('letter-spacing', (track * size).toFixed(2)); t.setAttribute('fill', ink);
     // every line follows the setting: centred on the letters' axis, or starting
@@ -174,16 +176,16 @@ const lockup = (text, cse, track, wrap, ink, widthClass, align) => {
     const hy = /-$/.test(l);
     t.textContent = hy ? l.slice(0, -1) : l; svg.append(t);
     if (hy) {
-      const wFull = widthOf(l, track) * size / 100, wText = widthOf(l.slice(0, -1), track) * size / 100;
-      const start = align === 'left aligned' ? LEFT : CENTRE - wFull / 2;
-      const slot = wFull - wText, len = slot * 0.7;
+      // from the drawn line itself
+      const wText = t.getComputedTextLength(), start = align === 'left aligned' ? LEFT : CENTRE - wText / 2, len = size * 0.3, slot = size * 0.16 + len;
       const upper = l === l.toUpperCase();
       const mid = y - (upper ? CAP * 0.5 : XH * 0.5) * size;
       const dash = document.createElementNS(NS, 'rect');
-      dash.setAttribute('x', (start + wText + (slot - len) / 2).toFixed(1)); dash.setAttribute('y', (mid - 0.75).toFixed(2)); dash.setAttribute('width', len.toFixed(1)); dash.setAttribute('height', '1.5'); dash.setAttribute('fill', ink);
+      dash.setAttribute('x', (start + wText + size * 0.08).toFixed(1)); dash.setAttribute('y', (mid - 0.75).toFixed(2)); dash.setAttribute('width', len.toFixed(1)); dash.setAttribute('height', '1.5'); dash.setAttribute('fill', ink);
       svg.append(dash);
     }
   });
+  svg.remove();
   return { svg, size };
 };
 const cells = document.getElementById('cells');

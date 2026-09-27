@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "Dash is in wrong place" (a phone screenshot of /wordmark)
+
+On Safari the hairline sat in a gap after "eesti nüüdis": the page measured the line with the face at its full width and Safari drew it at 75, so the fitted lines came out narrow and the dash far right. The width axis is now set with font-variation-settings as well, which Safari measures, and the dash is placed from the drawn line's own length, a third of the size long after a gap of eight hundredths, on /wordmark, /tagline-47 and /tagline.
+
 ### Done 2026-09-27: "wordmark. leave lowercase. reduce lineheight of workmark. try differetnt text sizes and do vriant of ECCM (workmark) flex layout"
 
 Asked verbatim. /wordmark is lowercase only, in three studies: the line height of the two tagline lines under the mark at 1.05, 0.95 and 0.88; the size at the fit and at 90, 80 and 70 per cent of it, at 0.95; and a beside layout with the two lines to the right of the stave, centred on the E's middle bar, at three sizes, the mark kept at the same width as in the under layout.
