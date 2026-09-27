@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "take first on 1 example in 47 and do estonian and centered versions"
+
+Asked verbatim with a crop of setting 1 on /tagline-47: uppercase DIN Condensed at 0.08em on two lines fitted to the letters, left aligned, full size. Four files under public/: the English and the Estonian lockup, each left aligned and centred, the Estonian with the hairline hyphen, the sizes measured on the page; shown at the top of /tagline-47. ✅ wordmark-en-left.svg, wordmark-en-centred.svg at 34.6 units and wordmark-et-left.svg, wordmark-et-centred.svg at 45.0, each fitted on its longer line.
+
 ### Done 2026-09-27: "use thin dash like the element in logo in nyydis-"
 
 Asked verbatim. On /tagline and /tagline-47 the hyphen after nüüdis is drawn as a hairline of the logo's weight, 1.5 units, in the slot the font's hyphen took, at the middle of the x-height or of the cap height.
