@@ -7,6 +7,14 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Open 2026-09-27: "look up trip image handling in the posts and index pages, size optimizations, responsive and size handling and 2x and all that stuff"
+
+Asked verbatim, mid-task. A reading of trip's image pipeline for pages (not cards): originals, transforms, variants, srcset and sizes, 2x, formats, the CLS attributes, caching and the free tier, and what eccm takes for its list, event page and the derive reading. Written to `plans/plan-eccm-images.md`, not executed.
+
+### Open 2026-09-27: "look up what, how should we mark up the event pages. What is the standard here?"
+
+Asked verbatim, mid-task, after the credits assessment mentioned schema.org. The standard for an event page: schema.org Event and MusicEvent as JSON-LD, what Google requires and recommends, the HTML5 semantics, hreflang and Open Graph for two languages, ics, what eccm.ee and arvopart.ee carry today. Written to `plans/plan-eccm-event-markup.md` with a worked example for event 134, not executed.
+
 ### Done 2026-09-27: "do it", the credits shape and the plain router, into both plans
 
 After the assessment of the per-language question, of credits modelling and of Astro: the CMS step 1 plan gets credit lines (a role key from a translated dictionary, names typed once, organisation names per language, a free-text role for one-offs) in place of the per-language credits JSON, and both plans state that the router is plain JavaScript, no Astro, with the numbers measured on trip's build. ✅ Done: the CMS plan is seven tables now (`role` and `event_credit` added, `event_text.credits` gone), its section 1 carries the measured three kinds of credit content and section 3 the seed rule for them, its section 4 the no-framework paragraph with the sizes; the social plan's no-Astro bullet carries the same numbers.
