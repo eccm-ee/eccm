@@ -278,6 +278,11 @@
   .btn:hover { text-decoration: none; outline: 1px solid var(--ev-ink, var(--eccm-ink)); outline-offset: -2px; }
   .btn-pri { background: var(--ev-accent, var(--ev-ink, var(--eccm-ink))); color: var(--ev-on-accent, var(--ev-ground, var(--eccm-ground))); border-color: transparent; }
   .btn-pri:hover { outline-color: var(--ev-on-accent, var(--ev-ground, var(--eccm-ground))); }
+  /* disabled: the same button at 45 per cent, which fades ink, rule and fill
+     together on any ground, and takes no pointer; a link carries
+     aria-disabled and no href, a button the attribute (asked 2026-09-27:
+     "add disabled buttons variants to ds") */
+  .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.45; cursor: default; pointer-events: none; }
   /* the form: one column at the measure, a visible label above each field,
      fields a finger tall, ruled in the strong hairline, ink on white */
   .note { color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-8); }

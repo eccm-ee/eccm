@@ -65,10 +65,10 @@ const written = [];
 // the hairlines snapped to whole pixels (reported 2026-09-27: the five stave
 // lines came out in three shades at 128 and 180); the files under
 // public/icons/ stay the general-purpose marks
-for (const [prefix, kind] of [['icon', 'square'], ['stack', 'stack']]) for (const n of SIZES) {
+for (const [prefix, kind, neg] of [['icon', 'square', false], ['stack', 'stack', false], ['icon-neg', 'square', true], ['stack-neg', 'stack', true]]) for (const n of SIZES) {
   await P('Emulation.setDeviceMetricsOverride', { width: n, height: n, deviceScaleFactor: 1, mobile: false });
-  const sized = `data:image/svg+xml;base64,${Buffer.from(svgFor(kind, n, n < PLAIN_BELOW)).toString('base64')}`;
-  const html = `<!doctype html><html><head><style>html,body{margin:0;background:#fff}img{display:block}</style></head><body><img src="${sized}" width="${n}" height="${n}"></body></html>`;
+  const sized = `data:image/svg+xml;base64,${Buffer.from(svgFor(kind, n, n < PLAIN_BELOW, neg)).toString('base64')}`;
+  const html = `<!doctype html><html><head><style>html,body{margin:0;background:${neg ? '#1a1a1a' : '#fff'}}img{display:block}</style></head><body><img src="${sized}" width="${n}" height="${n}"></body></html>`;
   await P('Page.navigate', { url: `data:text/html;charset=utf-8,${encodeURIComponent(html)}` });
   await sleep(300);
   const { data } = await P('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: n, height: n, scale: 1 } });
@@ -92,20 +92,26 @@ ws.close(); chrome.kill();
 // is allowed to fail (MEASURED: ENOTEMPTY on the second run)
 await sleep(800); await rm(PROFILE, { recursive: true, force: true }).catch(() => {});
 
-// favicon.ico: a 6 byte header, a 16 byte directory entry per image, then the
-// PNG bytes of 16, 32 and 48, which every current reader accepts as entries
+// an ICO: a 6 byte header, a 16 byte directory entry per image, then the
+// PNG bytes of 16, 32 and 48, which every current reader accepts as entries;
+// one from the positive marks and one from the negative (asked 2026-09-27:
+// "do icons inverted too")
 const icoSizes = [16, 32, 48];
-const pngs = await Promise.all(icoSizes.map((n) => readFile(join(OUT, `icon-${n}.png`))));
-const header = Buffer.alloc(6); header.writeUInt16LE(0, 0); header.writeUInt16LE(1, 2); header.writeUInt16LE(icoSizes.length, 4);
-const dir = Buffer.alloc(16 * icoSizes.length);
-let offset = 6 + dir.length;
-icoSizes.forEach((n, i) => {
-  const e = i * 16;
-  dir.writeUInt8(n === 256 ? 0 : n, e); dir.writeUInt8(n === 256 ? 0 : n, e + 1); dir.writeUInt8(0, e + 2); dir.writeUInt8(0, e + 3);
-  dir.writeUInt16LE(1, e + 4); dir.writeUInt16LE(32, e + 6); dir.writeUInt32LE(pngs[i].length, e + 8); dir.writeUInt32LE(offset, e + 12);
-  offset += pngs[i].length;
-});
-await writeFile(join(OUT, 'favicon.ico'), Buffer.concat([header, dir, ...pngs]));
+const writeIco = async (prefix, name) => {
+  const pngs = await Promise.all(icoSizes.map((n) => readFile(join(OUT, `${prefix}-${n}.png`))));
+  const header = Buffer.alloc(6); header.writeUInt16LE(0, 0); header.writeUInt16LE(1, 2); header.writeUInt16LE(icoSizes.length, 4);
+  const dir = Buffer.alloc(16 * icoSizes.length);
+  let offset = 6 + dir.length;
+  icoSizes.forEach((n, i) => {
+    const e = i * 16;
+    dir.writeUInt8(n === 256 ? 0 : n, e); dir.writeUInt8(n === 256 ? 0 : n, e + 1); dir.writeUInt8(0, e + 2); dir.writeUInt8(0, e + 3);
+    dir.writeUInt16LE(1, e + 4); dir.writeUInt16LE(32, e + 6); dir.writeUInt32LE(pngs[i].length, e + 8); dir.writeUInt32LE(offset, e + 12);
+    offset += pngs[i].length;
+  });
+  await writeFile(join(OUT, name), Buffer.concat([header, dir, ...pngs]));
+};
+await writeIco('icon', 'favicon.ico');
+await writeIco('icon-neg', 'favicon-neg.ico');
 
 // verify by reading back: every PNG's IHDR, and the ICO's directory
 const rows = [];

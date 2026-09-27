@@ -7,7 +7,7 @@ import { html, raw } from './html.mjs';
 
 export const T = {
   et: {
-    menu: 'Menüü', markAlt: 'ECCM, Eesti Nüüdismuusika Keskus', upcoming: 'Tulevased üritused',
+    menu: 'Menüü', markAlt: 'Eesti nüüdismuusika keskus', upcoming: 'Tulevased üritused',
     nav: [['/', 'Avaleht'], ['https://eccm.ee/index.php/et/eccm', 'ECCM'], ['https://eccm.ee/index.php/et/tallinn-1965', 'Tallinn 1965'], ['https://eccm.ee/nan/', 'NAN'], ['https://eccm.ee/index.php/et/ulysses', 'Ulysses'], ['https://eccm.ee/index.php/et/konkursid', 'Konkursid'], ['https://eccm.ee/index.php/et/syndmusest', 'Sündmused']],
     foot: 'Eesti Nüüdismuusika Keskus, Pühavaimu 9, Tallinn',
     notFound: 'Sellist lehte ei ole.', notFoundLead: 'Aadress võib olla vananenud või valesti kirjutatud.',
@@ -16,7 +16,7 @@ export const T = {
     fallback: null,
   },
   en: {
-    menu: 'Menu', markAlt: 'ECCM, Estonian Centre of Contemporary Music', upcoming: 'Upcoming events',
+    menu: 'Menu', markAlt: 'Estonian Centre of Contemporary Music', upcoming: 'Upcoming events',
     nav: [['/', 'Home'], ['https://eccm.ee/index.php/en/eccm-new-eng', 'ECCM'], ['https://eccm.ee/index.php/en/tallinn-1965-eng', 'Tallinn 1965'], ['https://eccm.ee/nan/', 'NAN'], ['https://eccm.ee/index.php/en/ulysses-eng', 'Ulysses'], ['https://eccm.ee/index.php/en/open-calls', 'Open calls'], ['https://eccm.ee/index.php/en/eventseng', 'Events']],
     foot: 'Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinn',
     notFound: 'There is no such page.', notFoundLead: 'The address may be out of date or mistyped.',
@@ -41,7 +41,7 @@ export const page = ({ lang, title, alternate, canonical, alternates, body }) =>
 <title>${title} ECCM</title>
 ${canonical ? html`<link rel="canonical" href="${canonical}">` : ''}
 ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflang}" href="${a.href}">`)}
-<link rel="icon" href="/icons/logo-square-plain.svg" type="image/svg+xml">
+<link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
 <link rel="manifest" href="/manifest.webmanifest">

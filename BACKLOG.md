@@ -7,6 +7,22 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "center workmark", "do icons inverted too", "add disabled buttons variants to ds"
+
+Asked verbatim, the first with a crop of logo-et.svg. The Estonian tagline is centred under the letters E to M; the icon rasters exist in the negative too, icon-neg-<n>.png and stack-neg-<n>.png with a favicon-neg.ico, shown on /ds under the positive rows; and the buttons have a disabled state, faded to 45 per cent with no pointer, in both modes on every ground on /ds.
+
+### Done 2026-09-27: "stave examples: should be narrow as in original logo, do not extend or adjust eccm size. in EC / CM align C to the right of M" and "original favicon seems more readable than your 16 variant"
+
+Asked verbatim with a crop of eccm.ee's favicon, heavy ECCM letters filling an orange square. The stave goes back to its 12 units as in the logo in every square and every size; the letters keep their size; in the stacked mark the first row is right-aligned so its C ends on the M; and for 16 and 32 a bold set of the letters, stems of 20 units instead of 14, fills the square the way the original favicon does, and the SVG favicon points at it. ✅ Done; the first render of the bold set lost its C's to a broken path in the size builder, fixed before the commit.
+
+### Open 2026-09-27: "use or create a typography skill to propose alternatives to the Estonian Centre of Contemporary Music workmark its hard to read"
+
+Asked verbatim. A background agent writes the tagline rules into the eccm-ui skill from typographic sources, measures the current tagline (DIN Condensed squeezed to 95 per cent, its x-height at the header and phone mark widths), and builds public/wordmark.html with six to eight alternatives under the mark, each measured, for the owner to pick; nothing changes in the logos until then.
+
+### Open 2026-09-27: "use Eesti nyydismuusika keskus / Estonian Centre of Contemporary Music alternatives", "borders around icons when hovered", "m's still bobby"
+
+Asked verbatim with a crop of the 16 to 64 row. The alternative texts of the logos become the centre's name in the page's language, sentence case as the tagline has it; the icons on /ds show their square on hover; and the M in the small-size marks is made wider, the letter and not only its arms, which is what "make it wider to compensate" meant, so its counters open at 48 and 64.
+
 ### Done 2026-09-27: "i feels like E C C M is a fixed thing and those various extended lines are thing than come go, can be animated etc"
 
 Said verbatim, a principle. Written into the skill and the icons plan, and made real in the files: every mark SVG holds the letters in a group with the class letters and the hairlines in a group with the class lines, so a page or a graphic can leave the lines out, extend them or animate them without touching the letters. No animation drawn.

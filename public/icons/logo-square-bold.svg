@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 354 354" width="354" height="354" color="#1a1a1a" role="img" aria-labelledby="t d">
+  <title id="t">ECCM</title>
+  <desc id="d">The ECCM mark in a square for 16 and 32 px: the letters with stems of 20 units instead of 14, no hairlines, the way eccm.ee's own favicon fills its square with heavy letters (asked 2026-09-27: "original favicon seems more readable than your 16 variant"). The SVG favicon.</desc>
+  <!-- the square: 354 on a side. The letters, E's left edge to M's right
+       edge, 298 wide and 93 tall in logo.svg's units, are the block that is
+       aligned: a margin of two stems (28) each side, and the E's middle bar
+       on the square's centre line, which puts the block 2 units above the
+       geometric centre. The five stave hairlines are ornament at their own
+       12 units, as in the logo, hanging into the right margin (asked
+       2026-09-27: "stave examples: should be narrow as in original logo, do
+       not extend or adjust eccm size") -->
+  <rect width="354" height="354" fill="#ffffff"/>
+  <g fill="currentColor">
+    <!-- the letters are the fixed mark; the lines are a layer that comes and
+         goes, is extended or animated -->
+    <g transform="translate(-13 103.5)">
+      <g class="letters"><rect x="35" y="29" width="20" height="93"/><rect x="35" y="29" width="44" height="19"/><rect x="35" y="66" width="37" height="19"/><rect x="35" y="103" width="44" height="19"/><path d="M146 62 V49 A15 15 0 0 0 116 49 V101.5 A15 15 0 0 0 146 101.5 V86" fill="none" stroke="currentColor" stroke-width="20"/><path d="M227 62 V49 A15 15 0 0 0 197 49 V101.5 A15 15 0 0 0 227 101.5 V86" fill="none" stroke="currentColor" stroke-width="20"/><rect x="273" y="29" width="20" height="93"/><rect x="325" y="29" width="20" height="93"/><polygon points="287,29 305,29 309,82 313,29 331,29 319,122 299,122"/></g>
+    </g>
+  </g>
+</svg>

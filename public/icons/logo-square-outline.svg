@@ -1,28 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 354 354" width="354" height="354" color="#1a1a1a" role="img" aria-labelledby="t d">
   <title id="t">ECCM</title>
-  <desc id="d">The ECCM mark in a square, ink on white, with a one pixel outline, no tagline. The mark is logo.svg's, measured off the JPEG eccm.ee serves; the stave runs to the edge.</desc>
+  <desc id="d">The ECCM mark in a square, ink on white, with a one pixel outline, no tagline. The mark is logo.svg's, measured off the JPEG eccm.ee serves.</desc>
   <!-- the square: 354 on a side. The letters, E's left edge to M's right
        edge, 298 wide and 93 tall in logo.svg's units, are the block that is
        aligned: a margin of two stems (28) each side, and the E's middle bar
        on the square's centre line, which puts the block 2 units above the
-       geometric centre, the mark's own middle rather than its box's. The five
-       stave hairlines are ornament and run from the M to the square's right
-       edge (asked 2026-09-27: "consider ECCM as a block to align and 5 lines
-       just extend from M to right edge") -->
+       geometric centre. The five stave hairlines are ornament at their own
+       12 units, as in the logo, hanging into the right margin (asked
+       2026-09-27: "stave examples: should be narrow as in original logo, do
+       not extend or adjust eccm size") -->
   <rect width="354" height="354" fill="#ffffff"/>
   <g fill="currentColor">
+    <!-- the letters are the fixed mark; the lines are a layer that comes and
+         goes, is extended or animated -->
     <g transform="translate(-7 103.5)">
-      <g class="letters">
-      <rect x="35" y="29" width="14" height="93"/><rect x="35" y="29" width="38" height="13"/><rect x="35" y="67" width="31" height="13"/><rect x="35" y="108" width="38" height="14"/><path d="M146 60 V49 A15 15 0 0 0 116 49 V101.5 A15 15 0 0 0 146 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/><path d="M227 60 V49 A15 15 0 0 0 197 49 V101.5 A15 15 0 0 0 227 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/><rect x="273" y="29" width="14" height="93"/><rect x="319" y="29" width="14" height="93"/><polygon points="283,29 293,29 302.5,84 312,29 322,29 306,122 299,122"/></g>
+      <g class="letters"><rect x="35" y="29" width="14" height="93"/><rect x="35" y="29" width="38" height="13"/><rect x="35" y="67" width="31" height="13"/><rect x="35" y="108" width="38" height="14"/><path d="M146 60 V49 A15 15 0 0 0 116 49 V101.5 A15 15 0 0 0 146 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/><path d="M227 60 V49 A15 15 0 0 0 197 49 V101.5 A15 15 0 0 0 227 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/><rect x="273" y="29" width="14" height="93"/><rect x="319" y="29" width="14" height="93"/><polygon points="283,29 293,29 302.5,84 312,29 322,29 306,122 299,122"/></g>
       <g class="lines">
         <rect x="73" y="108" width="36" height="1.5"/>
         <rect x="153" y="88" width="37" height="1.5"/>
         <rect x="234" y="58.5" width="39" height="1.5"/>
-        <rect x="333" y="58.5" width="28" height="1.5"/>
-        <rect x="333" y="65.875" width="28" height="1.5"/>
-        <rect x="333" y="73.25" width="28" height="1.5"/>
-        <rect x="333" y="80.625" width="28" height="1.5"/>
-        <rect x="333" y="88" width="28" height="1.5"/>
+        <rect x="333" y="58.5" width="12" height="1.5"/>
+        <rect x="333" y="65.875" width="12" height="1.5"/>
+        <rect x="333" y="73.25" width="12" height="1.5"/>
+        <rect x="333" y="80.625" width="12" height="1.5"/>
+        <rect x="333" y="88" width="12" height="1.5"/>
       </g>
     </g>
   </g>

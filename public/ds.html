@@ -12,7 +12,7 @@
      copied. The three logos are ./logo-et.svg, ./logo-en.svg and the two
      language ./logo.svg, and the header of every page takes the one of its
      language. Rules: .claude/skills/eccm-ui and positron-compose. -->
-<link rel="icon" href="/icons/logo-square-plain.svg" type="image/svg+xml">
+<link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
 <link rel="manifest" href="/manifest.webmanifest">
@@ -55,7 +55,10 @@
     .ds-squares img { display: block; inline-size: 8rem; block-size: 8rem; }
     .ds-sizes { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--eccm-s-6); margin-block: var(--eccm-s-8); }
     .ds-sizes figure { margin: 0; }
+    .ds-neg { background: #1a1a1a; color: #ffffff; padding: var(--eccm-s-6); }
     .ds-sizes img { display: block; }
+    /* the icon's square shows on hover, since a positive mark on white has no edge (asked 2026-09-27) */
+    .ds-sizes img:hover, .ds-squares img:hover, .ds-logos img:hover { outline: 1px solid var(--eccm-rule-strong); }
     .ds-stave-demo { position: relative; min-block-size: 10rem; padding: var(--eccm-s-8); }
     .ds-stave-demo img { position: absolute; top: var(--eccm-s-6); right: 0; inline-size: 120px; block-size: 58px; }
     .ds-stave-demo .ds-cap { margin: 0; }
@@ -87,7 +90,7 @@
 <body>
 <header class="site-head">
   <div class="frame">
-    <a class="mark" href="./"><img src="./logo-en.svg" width="310" height="133" alt="ECCM, Estonian Centre of Contemporary Music"></a>
+    <a class="mark" href="./"><img src="./logo-en.svg" width="310" height="133" alt="Estonian Centre of Contemporary Music"></a>
     <span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span>
   </div>
 </header>
@@ -255,19 +258,19 @@
 
   <h2>Buttons</h2>
   <div class="prose flow">
-    <p>A word in a 3rem box ruled in ink, no radius, no shadow, always in the system face. Two modes: regular, ruled, and inversed, filled. On a page derived from its picture the button reads that scheme's tokens, with the page's own as the fallback.</p>
+    <p>A word in a 3rem box ruled in ink, no radius, no shadow, always in the system face. Two modes: regular, ruled, and inversed, filled, each with a disabled state at 45 per cent that takes no pointer. On a page derived from its picture the button reads that scheme's tokens, with the page's own as the fallback.</p>
   </div>
   <div class="ds-ground">
-    <p class="ds-cap">On white</p>
-    <p class="ds-btns" lang="et"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a><a class="btn" href="#">Muuda</a></p>
+    <p class="ds-cap">On white, then disabled</p>
+    <p class="ds-btns" lang="et"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a><a class="btn" href="#">Muuda</a><a class="btn btn-pri" aria-disabled="true">Osta pilet</a><a class="btn" aria-disabled="true">Lisa kalendrisse</a></p>
   </div>
   <div class="ds-ground" style="--ev-ground: #1b2746; --ev-ink: #ffffff">
-    <p class="ds-cap">On a dark derived ground, ink white</p>
-    <p class="ds-btns" lang="et"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a></p>
+    <p class="ds-cap">On a dark derived ground, ink white, then disabled</p>
+    <p class="ds-btns" lang="et"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a><a class="btn btn-pri" aria-disabled="true">Osta pilet</a><a class="btn" aria-disabled="true">Lisa kalendrisse</a></p>
   </div>
   <div class="ds-ground" style="--ev-ground: #d9c8d9; --ev-ink: #1a1a1a">
-    <p class="ds-cap">On a light derived ground</p>
-    <p class="ds-btns" lang="et"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a></p>
+    <p class="ds-cap">On a light derived ground, then disabled</p>
+    <p class="ds-btns" lang="et"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a><a class="btn btn-pri" aria-disabled="true">Osta pilet</a><a class="btn" aria-disabled="true">Lisa kalendrisse</a></p>
   </div>
 
   <h2>Logo</h2>
@@ -275,30 +278,32 @@
     <p>Three files of one mark. An Estonian page carries the Estonian one in its header, an English page the English one, and the two-language one stays for the places where one language would be wrong. The mark is drawn row by row off the JPEG eccm.ee serves and its viewBox is the ink's own box, so a page aligns to ink and not to air. The tagline's face is interim, DIN Condensed squeezed to the measured width, until ECCM names the typeface or sends the vector.</p>
   </div>
   <div class="ds-logos">
-    <figure><img src="./logo-et.svg" width="310" height="133" alt="ECCM, Eesti Nüüdismuusika Keskus"><figcaption>logo-et.svg, Estonian, 310 by 133</figcaption></figure>
-    <figure><img src="./logo-en.svg" width="310" height="133" alt="ECCM, Estonian Centre of Contemporary Music"><figcaption>logo-en.svg, English, 310 by 133</figcaption></figure>
-    <figure><img src="./logo.svg" width="310" height="147" alt="ECCM, Eesti Nüüdismuusika Keskus, Estonian Centre of Contemporary Music"><figcaption>logo.svg, two languages, 310 by 147</figcaption></figure>
+    <figure><img src="./logo-et.svg" width="310" height="133" alt="Eesti nüüdismuusika keskus"><figcaption>logo-et.svg, Estonian, 310 by 133</figcaption></figure>
+    <figure><img src="./logo-en.svg" width="310" height="133" alt="Estonian Centre of Contemporary Music"><figcaption>logo-en.svg, English, 310 by 133</figcaption></figure>
+    <figure><img src="./logo.svg" width="310" height="147" alt="Eesti nüüdismuusika keskus, Estonian Centre of Contemporary Music"><figcaption>logo.svg, two languages, 310 by 147</figcaption></figure>
     <figure class="phone"><img src="./logo-et.svg" width="310" height="133" alt=""><figcaption>at the phone width, 11rem</figcaption></figure>
   </div>
   <div class="prose flow">
-    <p>The square mark, no tagline, for icons and avatars: positive and negative, each with and without a one pixel outline that stays one pixel at any size, and a plain one without the hairlines for the small sizes. The letters, E's left edge to M's right edge, are the block that is aligned: two stems of margin each side, and the E's middle bar on the square's centre line, which lifts the block two units above the geometric centre, the way a wide mark asks. The stave is ornament and runs from the M to the square's right edge.</p>
+    <p>The square mark, no tagline, for icons and avatars: positive and negative, each with and without a one pixel outline that stays one pixel at any size, and a plain one without the hairlines for the small sizes. The letters, E's left edge to M's right edge, are the block that is aligned: two stems of margin each side, and the E's middle bar on the square's centre line, which lifts the block two units above the geometric centre, the way a wide mark asks. The stave is ornament at its own width, as in the logo, hanging into the right margin.</p>
   </div>
   <div class="ds-squares">
     <figure><img src="./icons/logo-square.svg" width="354" height="354" alt="ECCM mark, ink on white"><figcaption>logo-square.svg</figcaption></figure>
     <figure><img src="./icons/logo-square-neg.svg" width="354" height="354" alt="ECCM mark, white on ink"><figcaption>logo-square-neg.svg</figcaption></figure>
     <figure><img src="./icons/logo-square-outline.svg" width="354" height="354" alt="ECCM mark, ink on white, outlined"><figcaption>logo-square-outline.svg</figcaption></figure>
     <figure><img src="./icons/logo-square-neg-outline.svg" width="354" height="354" alt="ECCM mark, white on ink, outlined"><figcaption>logo-square-neg-outline.svg</figcaption></figure>
-    <figure><img src="./icons/logo-square-plain.svg" width="354" height="354" alt="ECCM mark, ink on white, no hairlines"><figcaption>logo-square-plain.svg, under 128 px, the M's arms a stem wide</figcaption></figure>
+    <figure><img src="./icons/logo-square-plain.svg" width="354" height="354" alt="ECCM mark, ink on white, no hairlines"><figcaption>logo-square-plain.svg, 48 and 64 px, the wider M</figcaption></figure>
+    <figure><img src="./icons/logo-square-bold.svg" width="354" height="354" alt="ECCM mark, heavy letters"><figcaption>logo-square-bold.svg, 16 and 32 px and the favicon</figcaption></figure>
   </div>
   <div class="prose flow">
-    <p>The stacked alternative, EC over CM: the rows share one left edge, two stems apart, the block centred in the square with the stave running to the right edge, and the join that crossed from the first C to the second dropped, since the rows part it.</p>
+    <p>The stacked alternative, EC over CM: the rows share one left edge, two stems apart, the rows right-aligned so the first C ends on the M, the block centred in the square, the stave at its own width, and the join that crossed from the first C to the second dropped, since the rows part it.</p>
   </div>
   <div class="ds-squares">
     <figure><img src="./icons/logo-stack.svg" width="270" height="270" alt="ECCM stacked mark, ink on white"><figcaption>logo-stack.svg</figcaption></figure>
     <figure><img src="./icons/logo-stack-neg.svg" width="270" height="270" alt="ECCM stacked mark, white on ink"><figcaption>logo-stack-neg.svg</figcaption></figure>
     <figure><img src="./icons/logo-stack-outline.svg" width="270" height="270" alt="ECCM stacked mark, ink on white, outlined"><figcaption>logo-stack-outline.svg</figcaption></figure>
     <figure><img src="./icons/logo-stack-neg-outline.svg" width="270" height="270" alt="ECCM stacked mark, white on ink, outlined"><figcaption>logo-stack-neg-outline.svg</figcaption></figure>
-    <figure><img src="./icons/logo-stack-plain.svg" width="270" height="270" alt="ECCM stacked mark, no hairlines"><figcaption>logo-stack-plain.svg, under 128 px</figcaption></figure>
+    <figure><img src="./icons/logo-stack-plain.svg" width="270" height="270" alt="ECCM stacked mark, no hairlines"><figcaption>logo-stack-plain.svg, 48 and 64 px</figcaption></figure>
+    <figure><img src="./icons/logo-stack-bold.svg" width="270" height="270" alt="ECCM stacked mark, heavy letters"><figcaption>logo-stack-bold.svg, 16 and 32 px</figcaption></figure>
   </div>
   <div class="prose flow">
     <p>The stave on its own, an element for graphics: five one pixel lines on a seven pixel pitch, used at its size or a whole multiple. It sits in the top right corner, flush to the right edge, with the padding from the top only, in the ink of the ground it is on.</p>
@@ -312,7 +317,7 @@
     <p class="ds-cap">the same on a dark ground</p>
   </div>
   <div class="prose flow">
-    <p>The icon sizes: 16, 32, 48, 64, 128, 180, 192, 256 and 512, and a favicon.ico holding 16, 32 and 48. From 128 up each size is its own drawing with the hairlines snapped to whole pixels on an integer pitch, which is what keeps five stave lines one shade; under 128 the hairlines are dropped and the M's arms are a stem wide. At 16 a stem is 0.6 px and the letters are still four blobs; a true 16 px mark with whole-pixel strokes is a decision not taken here.</p>
+    <p>The icon sizes: 16, 32, 48, 64, 128, 180, 192, 256 and 512, and a favicon.ico holding 16, 32 and 48. From 128 up each size is its own drawing with the hairlines snapped to whole pixels on an integer pitch, which is what keeps five stave lines one shade; at 48 and 64 the hairlines are dropped and the M is 12 units wider with its arms a stem wide, so its counters open; at 16 and 32 the letters are the bold set, stems of 20 units, the way eccm.ee's own favicon fills its square. At 16 a stem is 0.6 px and the letters are still four blobs; a true 16 px mark with whole-pixel strokes is a decision not taken here.</p>
   </div>
   <div class="ds-sizes">
     <figure><img src="./icons/icon-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
@@ -323,6 +328,15 @@
     <figure><img src="./icons/icon-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
     <figure><img src="./icons/icon-256.png" width="256" height="256" alt=""><figcaption>256</figcaption></figure>
   </div>
+  <div class="ds-sizes ds-neg">
+    <figure><img src="./icons/icon-neg-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+    <figure><img src="./icons/icon-neg-32.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+    <figure><img src="./icons/icon-neg-48.png" width="48" height="48" alt=""><figcaption>48</figcaption></figure>
+    <figure><img src="./icons/icon-neg-64.png" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+    <figure><img src="./icons/icon-neg-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
+    <figure><img src="./icons/icon-neg-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
+    <figure><img src="./icons/icon-neg-256.png" width="256" height="256" alt=""><figcaption>256</figcaption></figure>
+  </div>
   <div class="ds-sizes">
     <figure><img src="./icons/stack-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
     <figure><img src="./icons/stack-32.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
@@ -331,6 +345,15 @@
     <figure><img src="./icons/stack-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
     <figure><img src="./icons/stack-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
     <figure><img src="./icons/stack-256.png" width="256" height="256" alt=""><figcaption>256</figcaption></figure>
+  </div>
+  <div class="ds-sizes ds-neg">
+    <figure><img src="./icons/stack-neg-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+    <figure><img src="./icons/stack-neg-32.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+    <figure><img src="./icons/stack-neg-48.png" width="48" height="48" alt=""><figcaption>48</figcaption></figure>
+    <figure><img src="./icons/stack-neg-64.png" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+    <figure><img src="./icons/stack-neg-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
+    <figure><img src="./icons/stack-neg-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
+    <figure><img src="./icons/stack-neg-256.png" width="256" height="256" alt=""><figcaption>256</figcaption></figure>
   </div>
 </main>
 
