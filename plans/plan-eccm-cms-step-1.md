@@ -27,7 +27,7 @@ session's scratchpad and does not enter this repository.
 
 ## The verdict
 
-Five tables, not eleven: `media`, `event`, `event_text`, `page`, `page_text`.
+Seven tables, not eleven: `media`, `event`, `event_text`, `event_credit`, `role`, `page`, `page_text`.
 One row per thing, one text row per language, which the sample confirms is
 the right cut: on eccm.ee the Estonian and English versions of one concert
 are two iCagenda rows with different ids (134 and 135, 109 and 110,
@@ -77,8 +77,26 @@ What this settles for the schema, each line MEASURED above:
   through `og:image`; the 900 px file on the page is a generated thumbnail.
   So `media` is one row per picture and both text rows point at one event row
   that points at it.
-- The credits are prose on eccm.ee and a definition list in `event.html`, per
-  language, so they are a per-language column and not shared facts.
+- The credits are prose on eccm.ee and a definition list in `event.html`, and
+  the two Gestures pages show three kinds of thing in them (MEASURED
+  2026-09-27 by listing the `Label: value` lines of both): the labels differ
+  (`Kunstnikud` against `Participating artists`, `Kaasprodutsent` against
+  `Coproducer`), the people's names are identical in both languages, and the
+  organisation names and a free clause are translated (`Eesti Kultuurkapital,
+  Tallinna linn, Ulysses platvorm` against `Estonian Cultural Endowment,
+  Tallinn, Ulysses Platform - co-funded by the European Union`). The English
+  page has seven lines to the Estonian eight, which is the drift a per-language
+  copy produces. So credits are NOT a per-language column: the label is a
+  dictionary entry, a name is typed once, and only organisation names and
+  free text are per language. Asked 2026-09-27: *"Why we create it per
+  language? We are just names, or is it about the labels which are
+  different?"* and, of credits, *"a quite loose bag of key values. The keys
+  are kind of repeating, but different productions can have different teams.
+  Multiple people can be in one role"*. The model in section 2 sits between
+  eccm.ee's prose lines and a theatre database's person entities: a small
+  role vocabulary, names as text, organisations translated, a free role for
+  the one-offs; person pages would need a person table later, and the
+  migration from names to references is mechanical.
 - The duration is a shared fact typed in one language only, so it is a column
   on `event`, nullable.
 - The English body is a third longer than the Estonian and carries a section
@@ -90,7 +108,7 @@ What this settles for the schema, each line MEASURED above:
 - The meta description is the first paragraph on every page read, so no
   column carries it.
 
-## 2. The step 1 schema, five tables, with the scheme contract
+## 2. The step 1 schema, seven tables, with the scheme contract
 
 Taken from `plan-eccm-cms.md` §7 (MEMORY for its reasoning, the SQL below is
 this plan's) and cut to what section 1 needs. Times are ISO 8601 text in
@@ -146,12 +164,33 @@ CREATE TABLE event_text (
   slug        TEXT NOT NULL,
   title       TEXT NOT NULL,
   body        TEXT NOT NULL DEFAULT '',    -- markdown, the subset trip's md.ts renders
-  credits     TEXT NOT NULL DEFAULT '[]',  -- JSON [["Kunstnikud","Marianna Liik, ..."], ...], the label in this language
   legacy_id   INTEGER,                     -- the iCagenda id in this language: 134 and 135 are one event
   PRIMARY KEY (event_id, lang),
   UNIQUE (lang, slug),
   UNIQUE (lang, legacy_id)
 );
+
+-- the credits: one line per role, in order, names typed once, labels from a
+-- dictionary; decided 2026-09-27, see section 1
+CREATE TABLE role (
+  key         TEXT PRIMARY KEY,            -- 'artists', 'dramaturge', 'graphic-design', 'creative-communication',
+                                           -- 'coproducer', 'project-manager', 'supporters', 'performers',
+                                           -- 'composer', 'conductor', 'collaboration'; seeded, extended by hand
+  label_et    TEXT NOT NULL,
+  label_en    TEXT NOT NULL,
+  sort        INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE event_credit (
+  id          INTEGER PRIMARY KEY,
+  event_id    INTEGER NOT NULL REFERENCES event(id) ON DELETE CASCADE,
+  position    INTEGER NOT NULL,            -- the line's order on the page
+  role_key    TEXT REFERENCES role(key),   -- NULL for a one-off role, typed below in both languages
+  label_et    TEXT,
+  label_en    TEXT,
+  people      TEXT NOT NULL DEFAULT '[]',  -- JSON [{"name":"Marianna Liik","note":{"et":"","en":""}}, ...]; the note is an instrument or a part
+  orgs        TEXT NOT NULL DEFAULT '[]'   -- JSON [{"et":"Eesti Nüüdismuusika Keskus","en":"Estonian Centre of Contemporary Music"}, ...]
+);
+CREATE INDEX event_credit_event ON event_credit (event_id, position);
 
 CREATE TABLE page (
   id          INTEGER PRIMARY KEY,
@@ -271,7 +310,13 @@ today does it (MEASURED against all four pages):
   a line in capitals with no full stop becomes `## ` plus the line
   sentence-cased, `<strong>` and `<em>` keep their marks, `<a href>` becomes a
   link, everything else is stripped. The trailing `Label: value` lines become
-  the `credits` JSON and leave the body.
+  `event_credit` rows and leave the body: the label is matched to a `role`
+  key by hand for the eight labels the two pages carry (`Kunstnikud` and
+  `Participating artists` are one key), the names split on commas and are
+  written once from the Estonian page, `Maria Hansar / Eesti Nüüdismuusika
+  Keskus` becomes one person and one organisation with both names, the
+  English page supplies the organisations' English names, and `Kestus` is
+  not a credit and goes to `duration_min`.
 - `legacy_id` from the URL's leading number, per language.
 - one `media` row per distinct `og:image` URL, with the width and height the
   page declares, `key` set to the thumbnail file already in `public/`
@@ -300,6 +345,24 @@ the script runs, so every existing page keeps its URL and nothing in step 1
 touches `public/*.html` (READ in `plan-eccm-setup.md` §4: assets are served
 before the Worker). The script answers only paths that begin with `/et/` or
 `/en/`, which no asset has, and 404s everything else itself.
+
+**No framework.** The script is plain JavaScript: a router of a dozen
+lines, the templates below as functions returning strings through one
+escaping helper, and the markdown renderer. Decided 2026-09-27 after a
+critical look at Astro, which trip uses: trip's build measures Astro's own
+server runtime at 179 KB gzipped (`entry.mjs` 116 KB, the render chunk
+63 KB), its whole server side at 824 KB gzipped in 111 chunks beside the
+2,478,606 byte resvg wasm (MEASURED, `gzip -c | wc -c` over
+`astro-prod/dist/server`), and its worklog records a framework default
+that answered 403 to a one-click POST and a wrong assumption about where
+its dev server runs that shaped a plan. Astro would give file routing,
+two-language routing, scoped components, a markdown pipeline and a name an
+inheritor knows; it would cost a build where `public/` is the source
+today, a yearly major with an adapter, and a runtime larger than this whole
+application, which is under a thousand lines an inheritor can read in an
+hour. What would flip it: an inheriting agency that works only in Astro,
+interactive components beyond forms, or more than about twenty template
+kinds.
 
 **Routes, six, each one query or two:**
 

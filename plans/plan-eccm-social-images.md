@@ -246,6 +246,12 @@ that trip treats scraper fetches as non-views.
   routes become two handlers in that router, `GET /og/e/...` and
   `GET /ig/e/...`, and `ctx.cache.set` becomes a `Cache-Control` header plus
   the `caches.default` API if wanted.
+  Confirmed 2026-09-27 after a critical look: trip's build measures Astro's
+  own server runtime at 179 KB gzipped and its whole server side at 824 KB
+  gzipped in 111 chunks (MEASURED over `astro-prod/dist/server`), against a
+  router, five templates and a 68 line markdown renderer here, so the two
+  card handlers join a plain JavaScript router and nothing is imported from
+  Astro; `plan-eccm-cms-step-1.md` section 4 carries the reasoning.
 - The content is an event in two languages: title, date and time, venue,
   category, the picture, from the `event`, `event_text` and `media` tables
   (READ, `plan-eccm-cms.md` section 7). trip hashes `bg_key`; eccm hashes the
