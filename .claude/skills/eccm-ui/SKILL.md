@@ -657,4 +657,6 @@ display weight each; Spectral and Castoro, static and without an optical size;
 STIX Two and Noto Serif, Times-like or generic; Playfair, overused and covered
 by Bodoni Moda with an axis. Asked the same evening: *"for serif page leave
 Schibsted Grotesk, Instrument Sans, Literata,"*, so the page keeps those three
-and the other nine serifs are in git at 475e4bb.
+and the other nine serifs are in git at 475e4bb. Then: *"use literata now on the
+derived page not the prev serif one"*, so Literata is the serif a derived page
+takes, set in `derive.html`, shown on `ds.html` and declared in `eccm.css`.

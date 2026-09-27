@@ -7,6 +7,15 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Open 2026-09-27: "create new page layout where you tray first several footers. eccm logo, with and without workmark, main links, credits etc. use Schibsted and Instrument" and "i mean page \"/layout\""
+
+Asked verbatim, mid-task, two messages. A new `public/layout.html` at https://eccm.positron.studio/layout: a study of several site footers, each with the mark (with the wordmark and without), the main links, the credits and the rest a footer carries, set in Schibsted Grotesk and in Instrument Sans. What a footer carries is taken from eccm.ee's own footer and the current `site-foot`, and every one is shown at the phone width and the desk.
+
+### Done 2026-09-27: "use literata now on the derived page not the prev serif one"
+
+Asked verbatim. `public/derive.html`: the serif a derived page takes when its picture reads as serif is Literata, in place of Source Serif 4, wherever that page names it.
+✅ Done in `derive.html` (the constant, the comment, the intro), `ds.html` (the type prose and the two serif specimens) and `eccm.css`, where Literata is declared in Source Serif 4's place; `type.html` declares Source Serif 4 for itself as its B. MEASURED locally on `?set=2`, the set with a serif verdict: Literata loaded, one sample set in it, Source Serif 4 nowhere. The default set reads no serif, so the face is not fetched there.
+
 ### Done 2026-09-27: "in square move eng up and est down so they have same y padding as they have x padding. sma"
 
 Asked verbatim. `public/wordmark.html`, the two bilingual squares: the language over the mark moves up and the one under it moves down until each sits 28 units from the square's edge, the letters' own margin at the sides; the mark stays centred on the square. MEASURED before: the lockup box is 267.8 tall in a 354 square, so the blocks sat 45 and 43 from the edges. The one-language square is not touched, one block cannot sit at both margins.
