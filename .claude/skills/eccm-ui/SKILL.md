@@ -635,7 +635,7 @@ condensed with tight counters; Roboto Flex as neither fresh nor small.
 **The serif a derived page takes, ten alternatives to Source Serif 4, 2026-09-27.**
 Asked as *"replacement options to Source Serif 4, come up with 10 version of
 moder sans, no garamod"*, read as ten modern serifs, since it replaces a serif
-and excludes Garamond. They are on `public/serif.html`, each in the three uses
+and excludes Garamond. They were on `public/serif.html`, each in the three uses
 the derived page makes of a serif (title, facts and credits over the sans; the
 body too on a ground near white; a dark ground with the body in the sans), and
 all ten draw from their own subsets under `public/vendor/` (MEASURED: each
@@ -655,4 +655,6 @@ and a display cut only, so the body stays in the sans under it. Fell before the
 ten: DM Serif, two static families of one weight; Young Serif and Gloock, one
 display weight each; Spectral and Castoro, static and without an optical size;
 STIX Two and Noto Serif, Times-like or generic; Playfair, overused and covered
-by Bodoni Moda with an axis.
+by Bodoni Moda with an axis. Asked the same evening: *"for serif page leave
+Schibsted Grotesk, Instrument Sans, Literata,"*, so the page keeps those three
+and the other nine serifs are in git at 475e4bb.

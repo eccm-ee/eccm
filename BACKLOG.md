@@ -7,6 +7,23 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Open 2026-09-27: "also both languages beside"
+
+Asked verbatim, mid-task. `public/wordmark.html`: a bilingual beside setting at 37 units. Two readings, both drawn so the owner can strike one: the four lines as one block to the right of the stave, centred on the E's middle bar, the languages parted by 12 units of air; and each language its own two-line block, side by side, each centred on the bar, the gap between them the same as after the stave.
+
+### Open 2026-09-27: "do variant with both languages under ECCM"
+
+Asked verbatim, mid-task. `public/wordmark.html`: a third setting, the mark with the English two lines and the Estonian two lines under it as one lockup, at the under setting's 40 units, the languages parted by the same 12 units of clear air the mark and the first line have.
+
+### Open 2026-09-27: "add more space between ECCM and beside wordmark"
+
+Asked verbatim, mid-task. `public/wordmark.html`, the beside setting: the gap between the stave's end and the two lines is 18 units; the same ask on 2026-09-27 ("Bit more horiz gap") took it to 28 in d61d4ff before that layout was reverted whole, so 28 is the number with a history.
+
+### Done 2026-09-27: "for serif page leave Schibsted Grotesk, Instrument Sans, Literata,"
+
+Asked verbatim. `public/serif.html` keeps K Schibsted Grotesk, M Instrument Sans and C Literata; the other ten leave the page, their files under `public/vendor` and their faces declared as before.
+✅ Done in the order named, K, M, C, under their letters; the ten are in git at 475e4bb. The two kept sans sections had `id="spec-newsreader"` copied onto them and carry their own ids now.
+
 ### Done 2026-09-27: "in https://eccm.positron.studio/wordmark under the mark do 40units for estonian and english. for beside make 37 units 2 line, vert centered. rm others"
 
 Asked verbatim. `public/wordmark.html`: the under layout at one size, 40 units, both languages at 20rem and 11rem; the beside layout at 37 units, two lines, centred on the E's middle bar as the page's centred shape already is; the line height and size studies, the other two beside sizes and the three other beside shapes leave the page (in git at 73e4d2a).

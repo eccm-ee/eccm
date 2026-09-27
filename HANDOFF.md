@@ -19,7 +19,7 @@ building on one.
 | https://eccm.positron.studio/derive | design from a picture, four sets of six pictures (`?set=1` to `4`) |
 | https://eccm.positron.studio/ds | the design system: type specimens, serif specimens, bios, colour, space, buttons with a disabled state, the logos, the square marks, the icon sizes, the stave element |
 | https://eccm.positron.studio/type | thirteen faces for body and titles: A Schibsted Grotesk (the default), B Source Serif 4, C Instrument Sans, D to M ten modern serifs |
-| https://eccm.positron.studio/serif | the same ten serifs and the three others, each in the derived page's three uses |
+| https://eccm.positron.studio/serif | three faces kept of thirteen, Schibsted Grotesk, Instrument Sans and Literata, each in the derived page's three uses |
 | https://eccm.positron.studio/wordmark | the tagline in Instrument Sans at width 75 in two settings, under the mark at 40 units and beside it at 37, two lines centred on the E's middle bar |
 | https://eccm.positron.studio/tagline | the tagline in DIN Condensed, 48 settings by casing, tracking, wrap and alignment |
 | https://eccm.positron.studio/tagline-47 | setting 47 taken apart: four DIN files and the same four in Instrument Sans |
