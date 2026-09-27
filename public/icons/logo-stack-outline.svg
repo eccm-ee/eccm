@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 270 270" width="270" height="270" color="#1a1a1a" role="img" aria-labelledby="t d">
+  <title id="t">ECCM</title>
+  <desc id="d">The ECCM mark stacked, EC over CM, ink on white, with a one pixel outline, no tagline. The letters are logo.svg's; the stave runs to the edge.</desc>
+  <!-- the square: 270 on a side. Two rows of the letters of logo.svg in its
+       units: E and C with the join between them, then C and M with their
+       join. The rows share one left edge, a gap of two stems (28) sits
+       between them, the margin above and below is two stems from the
+       letters, and the block of letters, 143 wide, is centred sideways. The
+       five stave hairlines run from the M to the square's right edge; the
+       join that crossed from the first C to the second is dropped, since the
+       rows part it -->
+  <rect width="270" height="270" fill="#ffffff"/>
+  <g fill="currentColor">
+    <g transform="translate(28.5 -1)">
+      <rect x="35" y="29" width="14" height="93"/><rect x="35" y="29" width="38" height="13"/><rect x="35" y="67" width="31" height="13"/><rect x="35" y="108" width="38" height="14"/><path d="M146 60 V49 A15 15 0 0 0 116 49 V101.5 A15 15 0 0 0 146 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/><rect x="73" y="108" width="36" height="1.5"/>
+    </g>
+    <g transform="translate(-126.5 120)">
+      <path d="M227 60 V49 A15 15 0 0 0 197 49 V101.5 A15 15 0 0 0 227 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/><rect x="273" y="29" width="14" height="93"/><rect x="319" y="29" width="14" height="93"/><polygon points="283,29 293,29 302.5,84 312,29 322,29 306,122 299,122"/><rect x="234" y="58.5" width="39" height="1.5"/><rect x="333" y="58.5" width="63.5" height="1.5"/><rect x="333" y="65.875" width="63.5" height="1.5"/><rect x="333" y="73.25" width="63.5" height="1.5"/><rect x="333" y="80.625" width="63.5" height="1.5"/><rect x="333" y="88" width="63.5" height="1.5"/>
+    </g>
+  </g>
+  <!-- the outline: a 2 device pixel non-scaling stroke on the edge, of which
+       the outer half is clipped, so exactly 1 px stays inside at any size -->
+  <rect width="270" height="270" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke"/>
+</svg>

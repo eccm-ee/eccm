@@ -12,7 +12,7 @@
      copied. The three logos are ./logo-et.svg, ./logo-en.svg and the two
      language ./logo.svg, and the header of every page takes the one of its
      language. Rules: .claude/skills/eccm-ui and positron-compose. -->
-<link rel="icon" href="/icons/logo-square.svg" type="image/svg+xml">
+<link rel="icon" href="/icons/logo-square-plain.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
 <link rel="manifest" href="/manifest.webmanifest">
@@ -56,6 +56,9 @@
     .ds-sizes { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--eccm-s-6); margin-block: var(--eccm-s-8); }
     .ds-sizes figure { margin: 0; }
     .ds-sizes img { display: block; }
+    .ds-stave-demo { position: relative; min-block-size: 10rem; padding: var(--eccm-s-8); }
+    .ds-stave-demo img { position: absolute; top: var(--eccm-s-6); right: 0; inline-size: 120px; block-size: 58px; }
+    .ds-stave-demo .ds-cap { margin: 0; }
     .ds-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--eccm-s-2); max-inline-size: var(--eccm-measure); }
     /* artist bios, plans/plan-eccm-bios.md section 3: no box, no tint, no
        rule, the name an h2 in the prose register, s-12 between bios against
@@ -278,16 +281,38 @@
     <figure class="phone"><img src="./logo-et.svg" width="310" height="133" alt=""><figcaption>at the phone width, 11rem</figcaption></figure>
   </div>
   <div class="prose flow">
-    <p>The square mark, no tagline, for icons and avatars: positive and negative, each with and without a one pixel outline that stays one pixel at any size. The square is the mark's width plus two stems of margin each side, and the E's middle bar sits on the square's centre line, which lifts the mark two units above the geometric centre, the way a wide mark asks.</p>
+    <p>The square mark, no tagline, for icons and avatars: positive and negative, each with and without a one pixel outline that stays one pixel at any size, and a plain one without the hairlines for the small sizes. The letters, E's left edge to M's right edge, are the block that is aligned: two stems of margin each side, and the E's middle bar on the square's centre line, which lifts the block two units above the geometric centre, the way a wide mark asks. The stave is ornament and runs from the M to the square's right edge.</p>
   </div>
   <div class="ds-squares">
-    <figure><img src="./icons/logo-square.svg" width="366" height="366" alt="ECCM mark, ink on white"><figcaption>logo-square.svg</figcaption></figure>
-    <figure><img src="./icons/logo-square-neg.svg" width="366" height="366" alt="ECCM mark, white on ink"><figcaption>logo-square-neg.svg</figcaption></figure>
-    <figure><img src="./icons/logo-square-outline.svg" width="366" height="366" alt="ECCM mark, ink on white, outlined"><figcaption>logo-square-outline.svg</figcaption></figure>
-    <figure><img src="./icons/logo-square-neg-outline.svg" width="366" height="366" alt="ECCM mark, white on ink, outlined"><figcaption>logo-square-neg-outline.svg</figcaption></figure>
+    <figure><img src="./icons/logo-square.svg" width="354" height="354" alt="ECCM mark, ink on white"><figcaption>logo-square.svg</figcaption></figure>
+    <figure><img src="./icons/logo-square-neg.svg" width="354" height="354" alt="ECCM mark, white on ink"><figcaption>logo-square-neg.svg</figcaption></figure>
+    <figure><img src="./icons/logo-square-outline.svg" width="354" height="354" alt="ECCM mark, ink on white, outlined"><figcaption>logo-square-outline.svg</figcaption></figure>
+    <figure><img src="./icons/logo-square-neg-outline.svg" width="354" height="354" alt="ECCM mark, white on ink, outlined"><figcaption>logo-square-neg-outline.svg</figcaption></figure>
+    <figure><img src="./icons/logo-square-plain.svg" width="354" height="354" alt="ECCM mark, ink on white, no hairlines"><figcaption>logo-square-plain.svg, under 128 px, the M's arms a stem wide</figcaption></figure>
   </div>
   <div class="prose flow">
-    <p>The icon sizes, rendered from the positive mark: 16, 32, 48, 64, 128, 180, 192, 256 and 512, and a favicon.ico holding 16, 32 and 48. At 32 the four letters read and the stave is a smudge; at 16 the mark is four grey blobs, since a stem is 0.6 px, and a true 16 px mark would have to drop the stave and the joins, which is a decision not taken here.</p>
+    <p>The stacked alternative, EC over CM: the rows share one left edge, two stems apart, the block centred in the square with the stave running to the right edge, and the join that crossed from the first C to the second dropped, since the rows part it.</p>
+  </div>
+  <div class="ds-squares">
+    <figure><img src="./icons/logo-stack.svg" width="270" height="270" alt="ECCM stacked mark, ink on white"><figcaption>logo-stack.svg</figcaption></figure>
+    <figure><img src="./icons/logo-stack-neg.svg" width="270" height="270" alt="ECCM stacked mark, white on ink"><figcaption>logo-stack-neg.svg</figcaption></figure>
+    <figure><img src="./icons/logo-stack-outline.svg" width="270" height="270" alt="ECCM stacked mark, ink on white, outlined"><figcaption>logo-stack-outline.svg</figcaption></figure>
+    <figure><img src="./icons/logo-stack-neg-outline.svg" width="270" height="270" alt="ECCM stacked mark, white on ink, outlined"><figcaption>logo-stack-neg-outline.svg</figcaption></figure>
+    <figure><img src="./icons/logo-stack-plain.svg" width="270" height="270" alt="ECCM stacked mark, no hairlines"><figcaption>logo-stack-plain.svg, under 128 px</figcaption></figure>
+  </div>
+  <div class="prose flow">
+    <p>The stave on its own, an element for graphics: five one pixel lines on a seven pixel pitch, used at its size or a whole multiple. It sits in the top right corner, flush to the right edge, with the padding from the top only, in the ink of the ground it is on.</p>
+  </div>
+  <div class="ds-ground ds-stave-demo">
+    <img src="./icons/stave.svg" width="60" height="29" alt="the five stave lines">
+    <p class="ds-cap">stave.svg at twice its size, in the corner of a white ground, flush right, padded from the top</p>
+  </div>
+  <div class="ds-ground ds-stave-demo" style="--ev-ground: #1b2746; --ev-ink: #ffffff">
+    <img src="./icons/stave.svg" width="60" height="29" alt="" style="filter: invert(1)">
+    <p class="ds-cap">the same on a dark ground</p>
+  </div>
+  <div class="prose flow">
+    <p>The icon sizes: 16, 32, 48, 64, 128, 180, 192, 256 and 512, and a favicon.ico holding 16, 32 and 48. From 128 up each size is its own drawing with the hairlines snapped to whole pixels on an integer pitch, which is what keeps five stave lines one shade; under 128 the hairlines are dropped and the M's arms are a stem wide. At 16 a stem is 0.6 px and the letters are still four blobs; a true 16 px mark with whole-pixel strokes is a decision not taken here.</p>
   </div>
   <div class="ds-sizes">
     <figure><img src="./icons/icon-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
@@ -297,6 +322,15 @@
     <figure><img src="./icons/icon-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
     <figure><img src="./icons/icon-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
     <figure><img src="./icons/icon-256.png" width="256" height="256" alt=""><figcaption>256</figcaption></figure>
+  </div>
+  <div class="ds-sizes">
+    <figure><img src="./icons/stack-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+    <figure><img src="./icons/stack-32.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+    <figure><img src="./icons/stack-48.png" width="48" height="48" alt=""><figcaption>48</figcaption></figure>
+    <figure><img src="./icons/stack-64.png" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+    <figure><img src="./icons/stack-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
+    <figure><img src="./icons/stack-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
+    <figure><img src="./icons/stack-256.png" width="256" height="256" alt=""><figcaption>256</figcaption></figure>
   </div>
 </main>
 

@@ -110,3 +110,30 @@ line these replace.
 - Whether the outline files are wanted at icon sizes at all; they are made
   for places where a hairline frame matters, an avatar on a grey ground.
 - `manifest.webmanifest` is not written; two lines when a page takes the icons.
+
+
+## Two rules that arrived after the first cut, 2026-09-27
+
+1. *"consider the thin lines on logo as extra ornaments, in alignment the
+   aligning / padding needs to consider E from left to M to right"*: the
+   square is 354 now, not 366. The margin of two stems is measured from the
+   letters, E's left edge at 35 to M's right edge at 333 in logo.svg's units,
+   and the stave's 12 units hang into the right margin. The vertical rule is
+   unchanged, the E's middle bar on the centre line.
+2. *"drop thin lines below 128"*: `logo-square-plain.svg` is the positive mark
+   without its eight hairlines (the five of the stave and the three joins), the
+   source for 16, 32, 48 and 64 and for the SVG favicon, which browsers draw
+   at tab size. 128 and up keep the full mark. This answers the first cut's
+   16 px question halfway: the smear is gone, the 0.6 px stems remain.
+
+3. The stave runs from the M to the square's right edge and the letters are the
+   centred block (*"consider ECCM as a block to align and 5 lines just extend
+   from M to right edge"*); the stave is an element of its own,
+   `public/icons/stave.svg`, 60 by 29 px, for the top right corner of a
+   graphic, flush right, padded from the top.
+4. The rasters at 128 and up are built per size by `tools/mark.mjs` with the
+   hairlines snapped to whole pixels on an integer pitch, after the five lines
+   came out in three shades; under 128 the plain marks with the M's arms a
+   stem wide. A stacked mark, EC over CM, exists in the same four files plus a
+   plain one and is rendered at the same sizes beside the wide one on /ds; the
+   favicon and the ICO stay the wide mark until the owner picks.

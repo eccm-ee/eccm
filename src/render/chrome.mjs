@@ -41,7 +41,7 @@ export const page = ({ lang, title, alternate, canonical, alternates, body }) =>
 <title>${title} ECCM</title>
 ${canonical ? html`<link rel="canonical" href="${canonical}">` : ''}
 ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflang}" href="${a.href}">`)}
-<link rel="icon" href="/icons/logo-square.svg" type="image/svg+xml">
+<link rel="icon" href="/icons/logo-square-plain.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
 <link rel="manifest" href="/manifest.webmanifest">

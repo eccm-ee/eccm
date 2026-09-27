@@ -7,6 +7,31 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "in sq examples consider ECCM as a block to align and 5 lines just extend from M to right edge" and "treat 5 1px lines next to em also as separate element we can use in social media graphics etc in top rigght corner, edget to right side, padding from top"
+
+Asked verbatim with a crop. In every square the letters are the centred block and the stave runs from the M to the square's right edge; the stave is also its own file, public/icons/stave.svg, five one-unit lines on the mark's pitch, with the rule for graphics written beside it: top right corner, flush to the right edge, padded from the top.
+ ✅ Done in all ten square files, in the size builder, and stave.svg is 60 by 29 px with one pixel lines on a seven pixel pitch, shown on /ds on a white and a dark ground.
+
+### Done 2026-09-27: "5 line strips look bad / uneven on smaller sizes. do we need canvas rendering to preserve pixel lines?" "on sall sizes"
+
+Asked verbatim with a crop of the stave at 128. MEASURED: at 128 a 1.5 unit hairline is 0.54 px on a 2.67 px pitch, so lines land on and between pixels and come out in three shades. No canvas: tools/mark.mjs builds one SVG per size with the letters as vectors and the hairlines as whole-pixel rectangles on an integer pitch with crispEdges, which is hinting by hand; the files under public/icons/ stay general-purpose.
+ ✅ Done: MEASURED on the size row at 3x, the five lines are one shade at 128, 180 and 256.
+
+### Done 2026-09-27: "M is bloby under 64. make it wider to compensate?" and "create EC / CM alternatives in squares"
+
+Asked verbatim, together. The plain mark for the small sizes gets an M whose V arms are a full stem wide, 14 instead of 10, so its strokes weigh the same as the stems at 32 and 64; the wide mark keeps the drawn M. And a stacked mark, EC over CM, in the same four files plus a plain one, rendered at the same sizes beside the wide one on /ds for the owner to pick; the favicon stays the wide mark until then.
+ ✅ Done: the plain marks carry the wide M, the stacked mark is four files plus a plain one, and both sets are rendered at the nine sizes on /ds.
+
+### Done 2026-09-27: "drop thin lines below 128"
+
+Asked verbatim. The icon sizes under 128 render from a plain square mark without the stave and the joins, which are 1.5 units and become smears; the SVG favicon, which browsers draw at 16 to 32, points at the plain one too.
+ ✅ Done: logo-square-plain.svg and logo-stack-plain.svg, tools/icons.mjs renders 16 to 64 from them, the SVG favicon is the plain mark.
+
+### Done 2026-09-27: "you need to consider the thin lines on logo as extra ornaments, in alignment the aligning / padding needs to consider E from left to M to right"
+
+Asked verbatim. The stave hairlines past the M are ornament: every margin and centring of the mark is measured from the E's left edge to the M's right edge, and the stave hangs into the margin. The square marks are re-cut, the icons re-rendered, the rule written into the skill and the icons plan, and the header checked.
+ ✅ Done: the squares are 354, margins from the letters, and after the later ask the stave runs to the edge; the header already aligned the E to the frame.
+
 ### Done 2026-09-27: "in bg work with logo. do in square positive and negative options (no subline), 1px outline and not, do classical icon sizes all the way to .ico"
 
 Asked verbatim. A background agent draws the square mark from logo.svg without the tagline, positive and negative, with and without a 1px outline, and renders the classical icon sizes down to a multi-size .ico, with no new binary on this machine; it touches no existing page and reports the head lines to add. ✅ Done: public/icons/ holds the four SVGs, nine PNGs and favicon.ico, tools/icons.mjs renders them in headless Chrome and writes the ICO in plain Node, plans/plan-eccm-icons.md has the geometry and the unsettled list; the session put the marks and the sizes on /ds, the four head lines into every page and the chrome, and a manifest at /manifest.webmanifest. At 16 px the mark is four blobs; a true 16 px mark is the owner's call.

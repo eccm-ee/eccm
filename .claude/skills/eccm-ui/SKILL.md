@@ -467,3 +467,36 @@ use semibold or medium for bold"*.
 - 🔴 **BOLD IN BODY TEXT IS 600, NOT 700.** `.prose b, .prose strong` at
   semibold: next to headings at 400 the face's 700 shouts, and 500 is too
   close to 400 in Schibsted Grotesk to read as emphasis.
+
+- 🔴 **THE MARK IS THE LETTERS, E TO M; THE STAVE IS ORNAMENT.** Dictated
+  2026-09-27: *"you need to consider the thin lines on logo as extra
+  ornaments, in alignment the aligning / padding needs to consider E from left
+  to M to right"*. Every margin, centring and alignment of the mark is measured
+  from the E's left edge to the M's right edge, 298 units of the 310 the ink
+  box spans, and the five hairlines past the M hang into whatever margin is
+  there. The header already aligns the E to the frame, since the viewBox
+  starts at the E; the square marks under `public/icons/` take a 28 unit
+  margin from the letters and let the stave reach 12 units into it. And below
+  128 px the hairlines are dropped altogether (*"drop thin lines below
+  128"*): `logo-square-plain.svg` is the letters alone, the source of the
+  small icon sizes and of the SVG favicon.
+- 🔴 **IN A SQUARE THE LETTERS ARE THE BLOCK AND THE STAVE RUNS TO THE EDGE.**
+  Dictated 2026-09-27 with a crop: *"in sq examples consider ECCM as a block
+  to align and 5 lines just extend from M to right edge"*. The block E to M is
+  centred with its margins, and the five lines run from the M to the square's
+  right edge in every square file and every rendered size.
+- 🔴 **THE STAVE IS ALSO AN ELEMENT OF ITS OWN**, `public/icons/stave.svg`,
+  one pixel lines on a seven pixel pitch: *"treat 5 1px lines next to M also
+  as separate element we can use in social media graphics etc in top right
+  corner, edge to right side, padding from top"*. In a graphic it sits in the
+  top right corner, flush to the right edge, padded from the top only, in the
+  ink of its ground, at its size or a whole multiple.
+- 🔴 **HAIRLINES IN A RASTER ARE SNAPPED, NEVER SCALED.** Reported 2026-09-27
+  as *"5 line strips look bad / uneven on smaller sizes. do we need canvas
+  rendering to preserve pixel lines?"*: at 128 px a 1.5 unit line is 0.54 px on
+  a 2.67 px pitch and five lines came out in three shades. No canvas:
+  `tools/mark.mjs` writes one SVG per size with the letters as vectors and
+  the hairlines as whole-pixel rectangles on an integer pitch, which is
+  hinting by hand, and under 128 drops them. The M's V arms are a full stem
+  wide in the small-size marks (*"M is bloby under 64. make it wider to
+  compensate?"*).

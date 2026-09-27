@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 29" width="60" height="29" color="#1a1a1a" role="img" aria-labelledby="t d">
+  <title id="t">ECCM stave</title>
+  <desc id="d">The five stave lines of the ECCM mark as an element of their own, in pixels: one pixel thick on a seven pixel pitch, 60 wide, which is the mark's 1.5 on 7.375 at the size where a unit is a pixel. In a graphic it sits in the top right corner, flush to the right edge, with the padding from the top only (asked 2026-09-27: "treat 5 1px lines next to M also as separate element we can use in social media graphics etc in top right corner, edge to right side, padding from top"). Use it at its natural size or a whole multiple, so the lines stay whole pixels; drawn with currentColor, it takes the ink of the ground it sits on, and tools/mark.mjs writes the same lines at any width for a raster.</desc>
+  <g fill="currentColor" shape-rendering="crispEdges">
+    <rect x="0" y="0" width="60" height="1"/>
+    <rect x="0" y="7" width="60" height="1"/>
+    <rect x="0" y="14" width="60" height="1"/>
+    <rect x="0" y="21" width="60" height="1"/>
+    <rect x="0" y="28" width="60" height="1"/>
+  </g>
+</svg>

@@ -8,11 +8,20 @@ import { spawn } from 'node:child_process';
 import { mkdtemp, rm, writeFile, readFile, mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { svgFor } from './mark.mjs';
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const SIZES = [16, 32, 48, 64, 128, 180, 192, 256, 512];
 const ROOT = resolve(import.meta.dirname, '..');
 const SVG = join(ROOT, 'public/icons/logo-square.svg');
+// under 128 the stave and the joins are dropped: a 1.5 unit line is a smear
+// there (asked 2026-09-27: "drop thin lines below 128")
+const PLAIN = join(ROOT, 'public/icons/logo-square-plain.svg');
+// the stacked alternative, EC over CM, rendered beside the wide one for the
+// owner to pick; the ICO stays the wide mark
+const STACK = join(ROOT, 'public/icons/logo-stack.svg');
+const STACK_PLAIN = join(ROOT, 'public/icons/logo-stack-plain.svg');
+const PLAIN_BELOW = 128;
 const OUT = join(ROOT, 'public/icons');
 const LOOK = join(ROOT, 'tmp/shots');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -48,16 +57,24 @@ await P('Page.enable');
 // is an opaque origin and may not load file:// pictures (MEASURED on the
 // first run, nine broken image glyphs)
 const svgUrl = `data:image/svg+xml;base64,${(await readFile(SVG)).toString('base64')}`;
+const plainUrl = `data:image/svg+xml;base64,${(await readFile(PLAIN)).toString('base64')}`;
+const stackUrl = `data:image/svg+xml;base64,${(await readFile(STACK)).toString('base64')}`;
+const stackPlainUrl = `data:image/svg+xml;base64,${(await readFile(STACK_PLAIN)).toString('base64')}`;
 const written = [];
-for (const n of SIZES) {
+// each size is its own SVG from tools/mark.mjs, the letters as vectors and
+// the hairlines snapped to whole pixels (reported 2026-09-27: the five stave
+// lines came out in three shades at 128 and 180); the files under
+// public/icons/ stay the general-purpose marks
+for (const [prefix, kind] of [['icon', 'square'], ['stack', 'stack']]) for (const n of SIZES) {
   await P('Emulation.setDeviceMetricsOverride', { width: n, height: n, deviceScaleFactor: 1, mobile: false });
-  const html = `<!doctype html><html><head><style>html,body{margin:0;background:#fff}img{display:block}</style></head><body><img src="${svgUrl}" width="${n}" height="${n}"></body></html>`;
+  const sized = `data:image/svg+xml;base64,${Buffer.from(svgFor(kind, n, n < PLAIN_BELOW)).toString('base64')}`;
+  const html = `<!doctype html><html><head><style>html,body{margin:0;background:#fff}img{display:block}</style></head><body><img src="${sized}" width="${n}" height="${n}"></body></html>`;
   await P('Page.navigate', { url: `data:text/html;charset=utf-8,${encodeURIComponent(html)}` });
   await sleep(300);
   const { data } = await P('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: n, height: n, scale: 1 } });
-  const file = join(OUT, `icon-${n}.png`);
+  const file = join(OUT, `${prefix}-${n}.png`);
   await writeFile(file, Buffer.from(data, 'base64'));
-  written.push(file);
+  if (prefix === 'icon') written.push(file);
 }
 // two enlarged looks: the 16 and the 32 raster at 8x, pixel for pixel
 await mkdir(LOOK, { recursive: true });
