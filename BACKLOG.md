@@ -15,9 +15,9 @@ Asked verbatim, the first with a crop of logo-et.svg. The Estonian tagline is ce
 
 Asked verbatim with a crop of eccm.ee's favicon, heavy ECCM letters filling an orange square. The stave goes back to its 12 units as in the logo in every square and every size; the letters keep their size; in the stacked mark the first row is right-aligned so its C ends on the M; and for 16 and 32 a bold set of the letters, stems of 20 units instead of 14, fills the square the way the original favicon does, and the SVG favicon points at it. ✅ Done; the first render of the bold set lost its C's to a broken path in the size builder, fixed before the commit.
 
-### Open 2026-09-27: "use or create a typography skill to propose alternatives to the Estonian Centre of Contemporary Music workmark its hard to read"
+### Done 2026-09-27: "use or create a typography skill to propose alternatives to the Estonian Centre of Contemporary Music workmark its hard to read"
 
-Asked verbatim. A background agent writes the tagline rules into the eccm-ui skill from typographic sources, measures the current tagline (DIN Condensed squeezed to 95 per cent, its x-height at the header and phone mark widths), and builds public/wordmark.html with six to eight alternatives under the mark, each measured, for the owner to pick; nothing changes in the logos until then.
+Asked verbatim. A background agent writes the tagline rules into the eccm-ui skill from typographic sources, measures the current tagline (DIN Condensed squeezed to 95 per cent, its x-height at the header and phone mark widths), and builds public/wordmark.html with six to eight alternatives under the mark, each measured, for the owner to pick; nothing changes in the logos until then. ✅ Done: section 7 of the eccm-ui skill, seven rules with sources; public/wordmark.html with eleven settings measured in both languages at 20rem and 11rem; the current line is squeezed 5.4 and 7.5 per cent and sits at 7.9 px of x-height on a phone, the floor; the recommendation is Schibsted Grotesk medium on two lines fitted to the mark, 10.3 px on a phone, no squeeze, the site's own face.
 
 ### Open 2026-09-27: "use Eesti nyydismuusika keskus / Estonian Centre of Contemporary Music alternatives", "borders around icons when hovered", "m's still bobby"
 

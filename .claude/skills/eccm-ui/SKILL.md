@@ -507,3 +507,103 @@ use semibold or medium for bold"*.
   so a page or a graphic can leave the lines out, run them to an edge, or
   animate them, and the letters never move. Nothing is animated yet; that is a
   design to be asked for.
+
+## 7. The tagline under the mark, the wordmark rules, 2026-09-27
+
+Asked: *"use or create a typography skill to propose alternatives to the
+Estonian Centre of Contemporary Music workmark its hard to read"*. The
+tagline is the line under the mark in `public/logo.svg`, `logo-et.svg` and
+`logo-en.svg`; `public/wordmark.html` shows it in eleven settings at the
+header's two widths, measured as the page opens. READ is a page fetched
+2026-09-27 and named; MEASURED is a number off `wordmark.html` that day;
+MEMORY is not checked today.
+
+🔴 **A LINE THAT HAS TO BE READ ON A PHONE NEEDS ABOUT 7 PX OF X-HEIGHT, AND
+X-HEIGHT IS THE MEASURE, NOT POINT SIZE.** Legge and Bigelow, *Does print size
+matter for reading?* (MEMORY, the PMC copy refused the fetch today): the
+critical print size below which reading slows is about 0.2 degrees of
+x-height, the fluent range runs from there to about 2 degrees, and reading
+acuity sits near 0.1 degrees; at a phone held at 50 to 60 cm, 0.2 degrees is
+1.7 to 2.1 mm, which is 6.5 to 8 CSS px at 96 dpi. A tagline is recognised
+more than read, so the floor is soft, but it is where the current one sits:
+MEASURED, DIN Condensed at 27 units under a 310 unit mark gives an x-height
+of **14.5 px at 20rem and 7.9 px at 11rem**; a normal-width face fitted to the
+same width on one line gives **9.8 and 5.4 px** (Schibsted Grotesk medium),
+under the floor on a phone; two lines give **18.7 and 10.3 px** in Schibsted
+and **25.3 and 13.9 px** in DIN Condensed. So on a phone the tagline is one
+of: condensed, two lines, or not shown.
+
+🔴 **NEVER SQUEEZE GLYPHS. CHANGE THE SIZE, THE FACE OR THE SPACING INSTEAD.**
+The logo files force each line to the width measured off the JPEG with
+`textLength` and `lengthAdjust="spacingAndGlyphs"`: MEASURED, the English
+line is squeezed **5.4 per cent** (natural 329 against 311) and the Estonian
+**7.5 per cent** (natural 239 against 221), so the vertical strokes are
+thinned while the horizontals keep their weight, and the counters of e, s and
+a close. That is the mechanical distortion every text on type warns against
+(Spiekermann and Ginger, *Stop Stealing Sheep*, MEMORY: type is drawn at one
+width and a stretched or squeezed letter is a different, worse letter). What
+fits a line to a width honestly: a smaller size, a face drawn narrow (DIN
+Condensed at its own width, Archivo on its width axis), a second line, or
+letter-spacing on capitals.
+
+🔴 **CONDENSED FACES BUY X-HEIGHT AND PAY IN COUNTERS.** At a given line
+width a condensed face is larger, which is why the current DIN line has an
+x-height the normal faces cannot reach on one line (MEASURED above). What it
+gives up is the width of counters and apertures, which is what tells e from
+a and s from 8 at small sizes; that trade is what legibility research on
+small sizes turns on (Legros and Grant, Beier, MEMORY). So a condensed
+tagline holds at 20rem and is the setting to be suspicious of at 11rem, and
+the way to check is to look at the e, the s and the ü on the phone shot.
+
+🔴 **LOWERCASE IS NOT LETTERSPACED; CAPITALS AND SMALL CAPS ALWAYS ARE.**
+Bringhurst 2.1.7 (READ, http://webtypography.net/2.1.7): *"Don't letterspace
+the lower case without a reason"* and *"The reason for not letterspacing lower
+case is that it hampers legibility."* Butterick (READ,
+https://practicaltypography.com/letterspacing.html): *"Lowercase letters
+don't ordinarily need letterspacing."* and *"You always add 5–12% extra
+letterspacing to text in all caps or small caps."*, *"Use 0.6–1.4 points of
+letterspacing for every 12 points of point size (this corresponds to
+5–12%)."* Bringhurst 2.1.6 (READ, http://webtypography.net/2.1.6): *"The
+normal value for letterspacing these sequences of small or full caps is 5%
+to 10% of the type size."* Setting I on `wordmark.html` tracks lowercase 6
+per cent and exists to show the reason: it is the hardest of the one-line
+settings to read.
+
+🔴 **CAPITALS ARE FOR A LINE SHORTER THAN ONE LINE, AND HERE THEY COST HALF
+THE SIZE.** Butterick (READ, https://practicaltypography.com/all-caps.html):
+*"Caps are suitable for headings shorter than one line (e.g., 'Table of
+Contents'), headers, footers, captions, or other labels."* and *"Always add
+letterspacing to caps to make them easier to read, and make sure kerning is
+turned on."* A tagline is exactly such a label, but capitals are wide:
+MEASURED, "ESTONIAN CENTRE OF CONTEMPORARY MUSIC" tracked 10 per cent fits
+the mark at **11.4 units**, a cap height of 8.5 px at 20rem and **4.7 px at
+11rem**, the smallest setting on the page. Small caps would need a face that
+carries them: Butterick (READ, https://practicaltypography.com/small-caps.html):
+*"The fake small caps that result are too tall, and their vertical strokes
+are too light."* and *"The rules for all caps also apply to small caps: use
+small caps sparingly, add letterspacing, and turn on kerning."* The vendored
+Schibsted subsets were not checked for a small-cap feature (MEMORY), so
+`font-variant: small-caps` here would be the fake ones.
+
+🔴 **THE TAGLINE'S WIDTH IS A DECISION, AND THE SIZE IS TAKEN FROM THE LONGER
+LANGUAGE.** Three relations exist and each is defensible (MEMORY, practice
+rather than a rule in any of the books): equal to the mark's width, which the
+original lockup uses and which makes a block that aligns by its edges; its
+natural width at a fixed size ratio to the mark, ragged; or a fixed fraction.
+Whichever is chosen, the two languages carry ONE size, taken from the longer
+line, the English, and the Estonian keeps it and runs shorter, ragged from
+the left edge; a size per language would make two lockups. The mark's own
+rule holds: the block is the letters E to M, so a line wider than the mark
+(setting B, DIN at its natural width, 6 per cent wider) breaks the block.
+
+✅ **WHAT `wordmark.html` MEASURED, 2026-09-27, x-height in CSS px at 20rem
+and 11rem:** A current DIN squeezed 14.5 and 7.9; B DIN natural, one line,
+14.1 and 7.8 and 6 per cent wider than the mark; C DIN two lines 25.3 and
+13.9; D Schibsted medium one line 9.8 and 5.4; E Schibsted medium two lines
+18.7 and 10.3; F Archivo condensed one line 9.3 and 5.1; G Inter one line 9.7
+and 5.4; H Plex one line 9.3 and 5.1; I Schibsted tracked lowercase 8.7 and
+4.8; J Schibsted capitals tracked 6.2 and 3.4; K Schibsted bold two lines
+17.4 and 9.6. The platform face behind the current line is DIN Condensed
+Bold (MEASURED, `CSS.getPlatformFontsForNode`), a macOS face; on Windows the
+files fall to Arial Narrow, which is one more reason the final tagline is
+outlines or a vendored face, never a system one.
