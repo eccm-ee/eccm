@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>ECCM: wordmark in Instrument Sans</title>
-<!-- public/wordmark.html: the tagline beside and under the mark in
-     Instrument Sans medium at width 75, lowercase, at 30, 36 and 42 units
-     (asked 2026-09-27: "Leave these for hor layout and put vert layout next
-     to them. Bit more horiz gap"): the horizontal lockup, the two lines to
-     the right of the stave with a gap of 28 units and centred on the E's
-     middle bar, and beside it the vertical one, the same lines under the
-     mark starting on the E at the same size and a line height of 0.95.
-     English and Estonian at 20rem and 11rem of mark width, the mark drawn
-     at the same width in both layouts. The Estonian breaks inside its long
-     word with a hairline of the mark's weight for its hyphen, placed from
-     the drawn line. The earlier studies of line height and fitted size are
-     in git. -->
+<!-- public/wordmark.html: the tagline under and beside the mark in
+     Instrument Sans medium at width 75, lowercase, developed from setting M
+     of the earlier comparison (asked 2026-09-27: "leave lowercase. reduce
+     lineheight of wordmark. try different text sizes and do variant of ECCM
+     flex layout"). Three studies: the line height of the two lines under
+     the mark; the size at the fit and three steps under it; and a beside
+     layout with the two lines to the right of the stave, centred on the E's
+     middle bar, at three sizes, the mark drawn at the same width as in the
+     under layout. Every fitted size is measured as the page opens by scaling
+     the longer line to the letters' width, 298 units; nothing is squeezed.
+     English and Estonian, the Estonian broken inside its long word with a
+     hairline of the mark's weight for its hyphen. -->
 <link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
@@ -29,9 +29,9 @@
     .wm h2 { margin-block: var(--eccm-s-24) var(--eccm-s-8); font-size: var(--eccm-t-l); }
     .wm h2:first-of-type { margin-block-start: var(--eccm-s-8); }
     .intro { max-inline-size: var(--eccm-measure); }
-    .cell { display: grid; row-gap: var(--eccm-s-8); margin-block-end: var(--eccm-s-16); }
+    .cell { display: grid; row-gap: var(--eccm-s-6); margin-block-end: var(--eccm-s-16); }
     .cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin: 0; }
-    .locks { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--eccm-s-16); }
+    .locks { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--eccm-s-12); }
     .locks figure { margin: 0; }
     .locks svg { display: block; overflow: visible; }
     .w20 { inline-size: 20rem; } .w11 { inline-size: 11rem; }
@@ -103,7 +103,7 @@
 <main class="frame wm">
   <h1 class="list-label">Wordmark in Instrument Sans</h1>
   <div class="prose flow intro">
-    <p>Instrument Sans medium at width 75, lowercase, at 30, 36 and 42 units: the horizontal lockup, with the two lines to the right of the stave and centred on the E's middle bar, and beside it the vertical one, the same lines under the mark starting on the E. English and Estonian at 20rem and 11rem of mark width. The Estonian breaks inside its long word, the hyphen a hairline of the mark's weight.</p>
+    <p>Instrument Sans medium at width 75, lowercase, two lines starting on the E. Three studies: the line height of the two lines under the mark; the size at the fit and three steps under it; and a layout with the two lines beside the mark, to the right of the stave and centred on the E's middle bar. The Estonian breaks inside its long word, the hyphen a hairline of the mark's weight. English and Estonian at 20rem and 11rem of mark width.</p>
   </div>
   <div id="cells"></div>
 </main>
@@ -113,7 +113,7 @@
 </footer>
 <script type="module">
 const EN = 'estonian centre of contemporary music', ET = 'eesti nüüdismuusika keskus';
-const BLOCK = 298, LEFT = 35, BOTTOM = 122, GAP = 12, CAP = 0.7, XH = 0.53, EBAR = 73.5, STAVE_END = 345, BESIDE_GAP = 28;
+const BLOCK = 298, LEFT = 35, BOTTOM = 122, GAP = 12, CAP = 0.7, XH = 0.53, EBAR = 73.5, STAVE_END = 345, BESIDE_GAP = 18;
 const NS = 'http://www.w3.org/2000/svg';
 const meter = document.createElementNS(NS, 'svg'); meter.setAttribute('width', '0'); meter.setAttribute('height', '0'); meter.style.position = 'absolute'; document.body.append(meter);
 const mt = document.createElementNS(NS, 'text'); mt.setAttribute('class', 'tag-is'); mt.setAttribute('font-size', '100'); meter.append(mt);
@@ -146,24 +146,36 @@ const lockup = (text, { layout, lh, size, rem }) => {
   svg.remove();
   return svg;
 };
+const cellOf = (id, capText, opts) => {
+  const cell = document.createElement('div'); cell.className = 'cell'; cell.id = id;
+  const p = document.createElement('p'); p.className = 'cap'; p.textContent = capText;
+  const locks = document.createElement('div'); locks.className = 'locks';
+  for (const [text] of [[EN], [ET]]) for (const rem of [20, 11]) { const f = document.createElement('figure'); const fc = document.createElement('figcaption'); fc.textContent = rem + 'rem'; f.append(lockup(text, { ...opts, rem }), fc); locks.append(f); }
+  cell.append(p, locks); return cell;
+};
 const draw = async () => {
   await document.fonts.load('500 100px "Instrument Sans"');
   const cells = document.getElementById('cells'); cells.replaceChildren();
+  const enFit = fitSize(split2(EN)), etFit = fitSize(split2(ET));
+  const px = (s) => `${s.toFixed(1)} units, ${(s * 176 / 310).toFixed(1)} px at 11rem`;
   let n = 0;
-  for (const size of [30, 36, 42]) {
-    const h2 = document.createElement('h2'); h2.textContent = `${size} units, ${(size * 176 / 310).toFixed(1)} px at 11rem`; cells.append(h2);
-    for (const [text, lang] of [[EN, 'English'], [ET, 'Estonian']]) {
-      const cell = document.createElement('div'); cell.className = 'cell'; cell.id = 'p' + (++n);
-      const p = document.createElement('p'); p.className = 'cap'; p.textContent = lang; cell.append(p);
-      for (const rem of [20, 11]) {
-        const locks = document.createElement('div'); locks.className = 'locks';
-        for (const layout of ['beside', 'under']) { const f = document.createElement('figure'); const fc = document.createElement('figcaption'); fc.textContent = `${rem}rem, ${layout === 'beside' ? 'horizontal' : 'vertical'}`; f.append(lockup(text, { layout, lh: 0.95, size, rem }), fc); locks.append(f); }
-        cell.append(locks);
-      }
-      cells.append(cell);
-    }
+  const section = (title) => { const h2 = document.createElement('h2'); h2.textContent = title; cells.append(h2); };
+  section('Line height, under the mark, at the fit');
+  for (const lh of [1.05, 0.95, 0.88]) {
+    const cell = cellOf('lh' + (++n), `line height ${lh}: English ${px(enFit)}; Estonian ${px(etFit)}`, { layout: 'under', lh, size: enFit });
+    // the Estonian at its own fit
+    [...cell.querySelectorAll('svg')].slice(2).forEach((svg, i) => svg.replaceWith(lockup(ET, { layout: 'under', lh, size: etFit, rem: i ? 11 : 20 })));
+    cells.append(cell);
   }
-  window.__wordmark = { count: n, instrument: document.fonts.check('500 100px "Instrument Sans"') };
+  section('Size, under the mark, at line height 0.95');
+  for (const k of [1, 0.9, 0.8, 0.7]) {
+    const cell = cellOf('sz' + (++n), `${Math.round(k * 100)} per cent of the fit: English ${px(enFit * k)}; Estonian ${px(etFit * k)}`, { layout: 'under', lh: 0.95, size: enFit * k });
+    [...cell.querySelectorAll('svg')].slice(2).forEach((svg, i) => svg.replaceWith(lockup(ET, { layout: 'under', lh: 0.95, size: etFit * k, rem: i ? 11 : 20 })));
+    cells.append(cell);
+  }
+  section('Beside the mark, at line height 0.95, the mark at its width');
+  for (const size of [30, 36, 42]) cells.append(cellOf('bs' + (++n), `${px(size)}, both languages at one size`, { layout: 'beside', lh: 0.95, size }));
+  window.__wordmark = { count: n, enFit: +enFit.toFixed(1), etFit: +etFit.toFixed(1), instrument: document.fonts.check('500 100px "Instrument Sans"') };
 };
 draw();
 </script>

@@ -7,6 +7,14 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "Revert latest wordmark change"
+
+Asked verbatim. /wordmark is back at the three studies (line height, size, beside) with the hairline placed from the drawn line; the paired horizontal and vertical layout is in git at d61d4ff.
+
+### Done 2026-09-27: "Bring all serifs and 3 others back"
+
+Asked verbatim. /serif shows the ten serifs again, A to J, and after them the three the type page keeps, K Schibsted Grotesk, the default, L Source Serif 4 and M Instrument Sans, each in the derived page's three uses.
+
 ### Done 2026-09-27: "Leave these for hor layout and put vert layoud next to them. Bit more horiz gap" (a phone screenshot of the beside lockups)
 
 Asked verbatim. /wordmark is one study now: at 30, 36 and 42 units, each language at 20rem and 11rem, the horizontal lockup with the lines right of the stave and, beside it, the vertical lockup with the same lines under the mark at the same size; the gap between the stave and the lines grows from 18 to 28 units. The line-height and size studies are in git.
