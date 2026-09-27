@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "add serif examples" and "add more space between examples / secions in ds"
+
+Asked verbatim, one after the other. /ds gains a serif specimen in Source Serif 4 as a derived page sets it, on white with the body in it too, and on a dark derived ground with the body back in the sans; the face declaration moves from derive.html into eccm.css so it is declared once. The gaps between specimens and above sections each grow one step.
+
 ### Done 2026-09-27: "rm --eccm-t-s ... the measure of prose and of a title"
 
 Asked verbatim, the whole type token table on /ds; the specimens stay.

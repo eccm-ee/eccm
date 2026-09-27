@@ -19,12 +19,12 @@
      type in them is the site's small register, and the only painted grounds
      are the ones whose colour is the content */
   @layer page {
-    .ds h2 { margin-block: var(--eccm-s-16) var(--eccm-s-6); font-size: var(--eccm-t-l); }
+    .ds h2 { margin-block: var(--eccm-s-24) var(--eccm-s-8); font-size: var(--eccm-t-l); }
     .ds h2:first-of-type { margin-block-start: var(--eccm-s-4); }
     .ds-tokens { display: grid; grid-template-columns: max-content max-content minmax(0, 1fr); column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); max-inline-size: 48rem; margin-block: var(--eccm-s-6); }
     .ds-tokens > code { font-family: ui-monospace, Menlo, monospace; font-size: 0.8125rem; }
     .ds-tokens > span:nth-child(3n) { color: var(--eccm-ink-2); }
-    .ds-spec { display: grid; row-gap: var(--eccm-s-12); margin-block: var(--eccm-s-8); }
+    .ds-spec { display: grid; row-gap: var(--eccm-s-16); margin-block: var(--eccm-s-8); }
     .ds-cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-3); }
     .ds-swatches { display: flex; flex-wrap: wrap; gap: var(--eccm-s-6); margin-block: var(--eccm-s-6); }
     .ds-swatch { inline-size: 9rem; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
@@ -34,10 +34,15 @@
     .ds-space > div { display: grid; grid-template-columns: 7rem minmax(0, 1fr); align-items: center; column-gap: var(--eccm-s-4); }
     .ds-space i { display: block; block-size: var(--eccm-s-3); background: var(--eccm-ink); }
     .ds-ground { padding: var(--eccm-s-8); background: var(--ev-ground, var(--eccm-ground)); color: var(--ev-ink, var(--eccm-ink)); }
-    .ds-ground + .ds-ground { margin-block-start: var(--eccm-s-4); }
+    .ds-ground + .ds-ground { margin-block-start: var(--eccm-s-6); }
+    .ds-ground .facts dt, .ds-ground .credits dt, .ds-ground .small { color: var(--ev-ink2, var(--eccm-ink-2)); }
+    /* the faces a derived page sets, as derive.html applies them */
+    .ds-serif h1, .ds-serif h2 { font-family: var(--ev-title-face, inherit); font-weight: var(--ev-title-weight, 400); }
+    .ds-serif .facts dd, .ds-serif .credits dd { font-family: var(--ev-title-face, inherit); }
+    .ds-serif .prose { font-family: var(--ev-body-face, inherit); }
     .ds-ground .ds-cap { color: inherit; opacity: 0.7; }
     .ds-btns { display: flex; flex-wrap: wrap; gap: var(--eccm-s-4); }
-    .ds-logos { display: grid; gap: var(--eccm-s-12); margin-block: var(--eccm-s-6); }
+    .ds-logos { display: grid; gap: var(--eccm-s-16); margin-block: var(--eccm-s-8); }
     .ds-logos figure { margin: 0; }
     .ds-logos img { display: block; inline-size: min(100%, var(--eccm-mark-w)); }
     .ds-logos .phone img { inline-size: 11rem; }
@@ -120,6 +125,34 @@
         <div><dt>Dramaturg</dt><dd>Alissa Šnaider</dd></div>
         <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
       </dl>
+    </div>
+    <div>
+      <p class="ds-cap">Serif, on a page whose picture reads as serif: title, facts and credits in Source Serif 4, and the body too on a ground near white</p>
+      <div class="ds-serif" lang="et" style="--ev-title-face: 'Source Serif 4', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Source Serif 4', Georgia, serif">
+        <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10</h1></div>
+        <dl class="facts">
+          <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12.11.2026 kell 19.00</time></dd></div>
+          <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+        </dl>
+        <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+          <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata.</p>
+        </div>
+        <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+          <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+          <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+        </dl>
+      </div>
+    </div>
+    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Source Serif 4', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">The same on a dark derived ground: title, facts and credits keep the serif, the body stays in the sans</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Uus kontserdisari: Up to Three / Kuni kolm</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-12-05T19:00+02:00">05.12.2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Kuni kolm esinejat, kuni kolm teost, kuni kolm veerandtundi. Sari, mis mahub ühte õhtusse ja jätab ruumi vestluseks.</p>
+      </div>
     </div>
   </div>
 
