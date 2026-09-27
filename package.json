@@ -8,6 +8,11 @@
     "check": "node tools/check-html.mjs public/*.html"
   },
   "devDependencies": {
-    "wrangler": "4.107.0"
+    "wrangler": "4.107.0",
+    "workerd": "1.20260701.1"
+  },
+  "overrides": {
+    "workerd": "1.20260701.1",
+    "@cloudflare/workerd-darwin-arm64": "1.20260701.1"
   }
 }

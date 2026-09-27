@@ -37,7 +37,13 @@ supports. This laptop's endpoint security lets only known binaries run, and the
 `workerd` that wrangler 4.141 ships is killed on start (MEASURED 2026-09-27:
 `workerd --version` exits 137, and wrangler reports it as `write EPIPE` from
 `wrangler dev` and every `d1 ... --local` command). trip pins the same version
-for the same reason. Upgrading wrangler here means a new binary to have allowed
+for the same reason. The binary itself is pinned too, asked 2026-09-27 ("pin
+workerd in eccm"): `workerd` `1.20260701.1` as a devDependency and as an
+`overrides` entry with its platform package, so no wrangler bump can pull
+another; `workerd --version` prints `workerd 2026-07-01` and the binary's
+sha256 is `edd9ecf3b9ca100cbfba5e2960874443dc6937b0bc94ba9d47b73a43e8dc1410`
+(MEASURED with `shasum -a 256 node_modules/@cloudflare/workerd-darwin-arm64/bin/workerd`).
+A different hash after an install is the thing to check before blaming code. Upgrading wrangler here means a new binary to have allowed
 first; `wrangler deploy` never runs workerd and works on any version.
 
 ## Deploy

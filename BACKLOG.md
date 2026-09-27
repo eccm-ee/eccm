@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "pin workerd in eccm"
+
+Asked verbatim. The workerd binary is pinned by name and exact version in `package.json`, with an override so a wrangler bump cannot pull another, and its version and hash are written into CLAUDE.md beside the wrangler pin. ✅ Done: `workerd` 1.20260701.1 in devDependencies and overrides, the binary's hash unchanged after the reinstall, a local D1 query still answering.
+
 ### Done 2026-09-27: "Cms 1 and 2"
 
 Asked verbatim after "Where to start?". Sessions 1 and 2 of `plans/plan-eccm-cms-step-1.md`: the migration with the seven tables, the D1 binding, `src/index.mjs` with the event route, the Gestures Estonian row seeded by hand and shown from D1; then the English twin, its route, the switch between twins and the fallback line. The two open decisions go with the plans' recommendations, the flat scheme JSON and the localised path words `/et/sundmused/` and `/en/events/`. Local D1 only; the remote database is session 6. ✅ Done: `migrations/0001_step1.sql`, `data/seed-step1.sql` and `seed-step2.sql`, `src/index.mjs` and `src/render/` (html, md, chrome, event), the `DB` binding in `wrangler.jsonc`. MEASURED on the dev server: `/et/sundmused/gestuurid-situatsioonid-ilma-partituurita-kuulamine` 200 and parsing, the English URL with the Estonian slug 200 with the fallback line and a canonical to the Estonian page, `/en/events/gestures-situations-listening-without-a-score` 200 with hreflang pairs both ways, an unknown path 404, the static pages still 200; shots at 375 and 1280. ⚠️ Two things found on the way: this laptop kills the workerd of wrangler 4.141, so wrangler is pinned to 4.107.0 (CLAUDE.md); and the credits list collapsed its second column at desk width on the static page too, fixed by one line in `eccm.css`. Not deployed: the Worker needs the remote database of session 6.
