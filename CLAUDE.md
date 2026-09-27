@@ -20,12 +20,25 @@ It left the positron repository on 2026-09-27 with its history
 ## Run and check
 
 ```sh
-npx wrangler dev --env staging                 # http://127.0.0.1:8787/
+npx wrangler d1 migrations apply eccm-staging --local --env staging   # the schema into the local database, once and after every new migration
+npx wrangler d1 execute eccm-staging --local --env staging --file data/seed-step1.sql   # the seeded rows (then seed-step2.sql)
+npx wrangler dev --env staging                 # http://127.0.0.1:8787/ , the pages under /et/ and /en/ come from D1
 node tools/check-html.mjs public/*.html        # every module block parses, no browser
 node tools/shot.mjs http://127.0.0.1:8787/ 375 1280   # LOOK, on an iPhone mini and at the desk, before saying it is done
 node tools/which-rule-won.mjs http://127.0.0.1:8787/event '.ev-title' font-size
 node tools/ancestry.mjs http://127.0.0.1:8787/ '.ev' padding-top --width 375
 ```
+
+## The wrangler pin, and why it is exact
+
+`package.json` pins `wrangler` to exactly `4.107.0` and `wrangler.jsonc` sets
+`compatibility_date` to `2026-07-08`, the newest that version's runtime
+supports. This laptop's endpoint security lets only known binaries run, and the
+`workerd` that wrangler 4.141 ships is killed on start (MEASURED 2026-09-27:
+`workerd --version` exits 137, and wrangler reports it as `write EPIPE` from
+`wrangler dev` and every `d1 ... --local` command). trip pins the same version
+for the same reason. Upgrading wrangler here means a new binary to have allowed
+first; `wrangler deploy` never runs workerd and works on any version.
 
 ## Deploy
 

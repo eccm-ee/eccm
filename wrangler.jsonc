@@ -8,8 +8,13 @@
   //   npx wrangler deploy --env staging      this account, https://eccm.positron.studio/
   //   npx wrangler deploy --env production   ECCM's own account and eccm.ee, once both exist
   "name": "eccm",
+  // session 1 of plans/plan-eccm-cms-step-1.md: the script behind the assets,
+  // reached only by paths no file under public/ answers
+  "main": "src/index.mjs",
   "account_id": "dc1ee8d72a1fb7da857c46479a8503b8",
-  "compatibility_date": "2026-09-27",
+  // the newest date the workerd of wrangler 4.107.0 supports, and 4.107.0 is
+  // the version whose binary this managed laptop lets run (CLAUDE.md)
+  "compatibility_date": "2026-07-08",
   "workers_dev": false,
   "assets": {
     "directory": "./public",
@@ -24,7 +29,11 @@
       // the same line positron's workers use for <name>.positron.studio;
       // Cloudflare writes the DNS record and the certificate on deploy
       "routes": [{ "pattern": "eccm.positron.studio", "custom_domain": true }],
-      "workers_dev": true
+      "workers_dev": true,
+      // the database: local only until session 6 runs wrangler d1 create and
+      // writes the real id here; the zero id is a placeholder wrangler needs
+      // for the local file, and a remote deploy with it would fail on purpose
+      "d1_databases": [{ "binding": "DB", "database_name": "eccm-staging", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "migrations" }]
     },
     "production": {
       "name": "eccm"
