@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>ECCM: serif alternatives</title>
+<!-- public/serif.html: ten modern serifs as replacements for Source Serif 4,
+     the face a derived page takes when its picture reads as serif
+     (derive.html, and the serif specimens on ds.html). Asked 2026-09-27: "in
+     parallel work on replacement options to Source Serif 4, come up with 10
+     version of moder sans, no garamod", read as ten modern serifs since it
+     replaces a serif and excludes Garamond. Each face is shown three ways,
+     the derived page's own: title, facts and credits in the serif over the
+     site's sans; the body in the serif too, which the page allows on a ground
+     near white; and a dark derived ground where the body stays in the sans.
+     Every face is an OFL subset under ./vendor with its licence beside it,
+     fetched from Google Fonts' CSS endpoint the way the others were. -->
+<link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
+<link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="./eccm.css">
+<style>
+  /* the ten faces, latin and latin-ext, one variable file per subset where the family is variable */
+  @font-face { font-family: 'Fraunces'; font-weight: 100 900; font-display: swap; src: url('./vendor/fraunces-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Fraunces'; font-weight: 100 900; font-display: swap; src: url('./vendor/fraunces-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Newsreader'; font-weight: 200 800; font-display: swap; src: url('./vendor/newsreader-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Newsreader'; font-weight: 200 800; font-display: swap; src: url('./vendor/newsreader-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Literata'; font-weight: 200 900; font-display: swap; src: url('./vendor/literata-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Literata'; font-weight: 200 900; font-display: swap; src: url('./vendor/literata-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Roboto Serif'; font-weight: 100 900; font-stretch: 50% 150%; font-display: swap; src: url('./vendor/roboto-serif-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Roboto Serif'; font-weight: 100 900; font-stretch: 50% 150%; font-display: swap; src: url('./vendor/roboto-serif-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Piazzolla'; font-weight: 100 900; font-display: swap; src: url('./vendor/piazzolla-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Piazzolla'; font-weight: 100 900; font-display: swap; src: url('./vendor/piazzolla-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Bodoni Moda'; font-weight: 400 900; font-display: swap; src: url('./vendor/bodoni-moda-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Bodoni Moda'; font-weight: 400 900; font-display: swap; src: url('./vendor/bodoni-moda-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Petrona'; font-weight: 100 900; font-display: swap; src: url('./vendor/petrona-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Petrona'; font-weight: 100 900; font-display: swap; src: url('./vendor/petrona-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Brygada 1918'; font-weight: 400 700; font-display: swap; src: url('./vendor/brygada-1918-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Brygada 1918'; font-weight: 400 700; font-display: swap; src: url('./vendor/brygada-1918-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Besley'; font-weight: 400 900; font-display: swap; src: url('./vendor/besley-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Besley'; font-weight: 400 900; font-display: swap; src: url('./vendor/besley-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Instrument Serif'; font-weight: 400; font-display: swap; src: url('./vendor/instrument-serif-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Instrument Serif'; font-weight: 400; font-display: swap; src: url('./vendor/instrument-serif-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @layer page {
+    .spec { margin-block-start: var(--eccm-s-24); }
+    .spec:first-of-type { margin-block-start: var(--eccm-s-8); }
+    .spec-name { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); max-inline-size: var(--eccm-measure); margin-block-end: var(--eccm-s-8); }
+    .spec > div + div { margin-block-start: var(--eccm-s-12); }
+    .ds-cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-3); font-family: 'Schibsted Grotesk', Helvetica, Arial, sans-serif; }
+    .ds-ground { padding: var(--eccm-s-8); background: var(--ev-ground, var(--eccm-ground)); color: var(--ev-ink, var(--eccm-ink)); }
+    .ds-ground .facts dt, .ds-ground .credits dt, .ds-ground .small { color: var(--ev-ink2, var(--eccm-ink-2)); }
+    .ds-ground .ds-cap { color: inherit; opacity: 0.7; }
+    /* the faces a derived page sets, as derive.html applies them */
+    .ds-serif h1, .ds-serif h2 { font-family: var(--ev-title-face, inherit); font-weight: var(--ev-title-weight, 400); }
+    .ds-serif .facts dd, .ds-serif .credits dd { font-family: var(--ev-title-face, inherit); }
+    .ds-serif .prose { font-family: var(--ev-body-face, inherit); }
+    .intro { max-inline-size: var(--eccm-measure); }
+  }
+</style>
+</head>
+<body>
+<header class="site-head">
+  <div class="frame">
+    <a class="mark" href="./"><img src="./logo-en.svg" width="310" height="133" alt="Estonian Centre of Contemporary Music"></a>
+    <span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Menu">
+  <div class="frame">
+    <ul class="nav">
+      <li><a href="./">Home</a></li>
+      <li><a href="https://eccm.ee/index.php/en/eccm-new-eng">ECCM</a></li>
+      <li><a href="https://eccm.ee/index.php/en/tallinn-1965-eng">Tallinn 1965</a></li>
+      <li><a href="https://eccm.ee/nan/">NAN</a></li>
+      <li><a href="https://eccm.ee/index.php/en/ulysses-eng">Ulysses</a></li>
+      <li><a href="https://eccm.ee/index.php/en/open-calls">Open calls</a></li>
+      <li><a href="https://eccm.ee/index.php/en/eventseng">Events</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="frame">
+  <h1 class="list-label">Serif alternatives</h1>
+  <div class="prose flow intro">
+    <p>Ten modern serifs in place of Source Serif 4, the face a page takes when its picture reads as serif. Each is shown the way that page uses it: the title, the facts and the credits in the serif over the site's sans; the body in the serif too, which the page allows on a ground near white; and a dark derived ground where the body stays in the sans. No Garamond and no other old-style revival. <span id="face-note"></span></p>
+  </div>
+  <section class="spec" id="spec-fraunces">
+    <p class="spec-name">A. Fraunces, weights 100 to 900, optical sizes 9 to 144. A soft, old-style-flavoured serif of 2020 with an optical size axis that goes wonky at display sizes and quiet at text sizes; the most character of the ten.</p>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Fraunces', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">The derived page: title, facts and credits in the serif, the body in Schibsted Grotesk</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Fraunces', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Fraunces', Georgia, serif">
+      <p class="ds-cap" lang="en">On a ground near white the body takes the serif too</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Fraunces', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">On a dark derived ground: title, facts and credits keep the serif, the body stays in the sans</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Uus kontserdisari: Up to Three / Kuni kolm</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-12-05T19:00+02:00">5. detsember 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Kuni kolm esinejat, kuni kolm teost, kuni kolm veerandtundi. Sari, mis mahub ühte õhtusse ja jätab ruumi vestluseks. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+  </section>
+  <section class="spec" id="spec-newsreader">
+    <p class="spec-name">B. Newsreader, weights 200 to 800, optical sizes 6 to 72. An editorial serif of 2020 drawn for screens, with a text cut that reads at 18 px and a display cut with tighter fit and higher contrast; the calmest of the ten.</p>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Newsreader', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">The derived page: title, facts and credits in the serif, the body in Schibsted Grotesk</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Newsreader', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Newsreader', Georgia, serif">
+      <p class="ds-cap" lang="en">On a ground near white the body takes the serif too</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Newsreader', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">On a dark derived ground: title, facts and credits keep the serif, the body stays in the sans</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Uus kontserdisari: Up to Three / Kuni kolm</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-12-05T19:00+02:00">5. detsember 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Kuni kolm esinejat, kuni kolm teost, kuni kolm veerandtundi. Sari, mis mahub ühte õhtusse ja jätab ruumi vestluseks. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+  </section>
+  <section class="spec" id="spec-literata">
+    <p class="spec-name">C. Literata, weights 200 to 900, optical sizes 7 to 72. The reading serif of Google Play Books, 2016 onward, tuned for long text on screens; sturdy, even, a little dark.</p>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Literata', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">The derived page: title, facts and credits in the serif, the body in Schibsted Grotesk</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Literata', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Literata', Georgia, serif">
+      <p class="ds-cap" lang="en">On a ground near white the body takes the serif too</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Literata', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">On a dark derived ground: title, facts and credits keep the serif, the body stays in the sans</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Uus kontserdisari: Up to Three / Kuni kolm</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-12-05T19:00+02:00">5. detsember 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Kuni kolm esinejat, kuni kolm teost, kuni kolm veerandtundi. Sari, mis mahub ühte õhtusse ja jätab ruumi vestluseks. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+  </section>
+  <section class="spec" id="spec-roboto-serif">
+    <p class="spec-name">D. Roboto Serif, weights 100 to 900, optical sizes 8 to 144, widths 50 to 150. A serif made to sit beside a grotesk, 2022, with a width axis a condensed mark could use; its file is the heaviest here, 379 KB of latin, because of that axis.</p>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Roboto Serif', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">The derived page: title, facts and credits in the serif, the body in Schibsted Grotesk</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Roboto Serif', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Roboto Serif', Georgia, serif">
+      <p class="ds-cap" lang="en">On a ground near white the body takes the serif too</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Roboto Serif', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">On a dark derived ground: title, facts and credits keep the serif, the body stays in the sans</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Uus kontserdisari: Up to Three / Kuni kolm</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-12-05T19:00+02:00">5. detsember 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Kuni kolm esinejat, kuni kolm teost, kuni kolm veerandtundi. Sari, mis mahub ühte õhtusse ja jätab ruumi vestluseks. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+  </section>
+  <section class="spec" id="spec-piazzolla">
+    <p class="spec-name">E. Piazzolla, weights 100 to 900, optical sizes 8 to 30. A text serif of 2020 with an optical size axis for text sizes only, a warm, slightly narrow hand; lively without shouting.</p>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Piazzolla', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">The derived page: title, facts and credits in the serif, the body in Schibsted Grotesk</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Piazzolla', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Piazzolla', Georgia, serif">
+      <p class="ds-cap" lang="en">On a ground near white the body takes the serif too</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Piazzolla', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">On a dark derived ground: title, facts and credits keep the serif, the body stays in the sans</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Uus kontserdisari: Up to Three / Kuni kolm</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-12-05T19:00+02:00">5. detsember 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Kuni kolm esinejat, kuni kolm teost, kuni kolm veerandtundi. Sari, mis mahub ühte õhtusse ja jätab ruumi vestluseks. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+  </section>
+  <section class="spec" id="spec-bodoni-moda">
+    <p class="spec-name">F. Bodoni Moda, weights 400 to 900, optical sizes 6 to 96. A modern Didone of 2019 with an optical size axis, so its hairlines hold at text size and open at display size; the most formal voice here.</p>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Bodoni Moda', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">The derived page: title, facts and credits in the serif, the body in Schibsted Grotesk</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Bodoni Moda', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Bodoni Moda', Georgia, serif">
+      <p class="ds-cap" lang="en">On a ground near white the body takes the serif too</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Bodoni Moda', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">On a dark derived ground: title, facts and credits keep the serif, the body stays in the sans</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Uus kontserdisari: Up to Three / Kuni kolm</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-12-05T19:00+02:00">5. detsember 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Kuni kolm esinejat, kuni kolm teost, kuni kolm veerandtundi. Sari, mis mahub ühte õhtusse ja jätab ruumi vestluseks. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+  </section>
+  <section class="spec" id="spec-petrona">
+    <p class="spec-name">G. Petrona, weights 100 to 900. A text serif of 2019 with a low contrast and a wide stance, drawn for screens; distinctive a and g, no optical size axis.</p>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Petrona', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">The derived page: title, facts and credits in the serif, the body in Schibsted Grotesk</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Petrona', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Petrona', Georgia, serif">
+      <p class="ds-cap" lang="en">On a ground near white the body takes the serif too</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Petrona', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">On a dark derived ground: title, facts and credits keep the serif, the body stays in the sans</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Uus kontserdisari: Up to Three / Kuni kolm</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-12-05T19:00+02:00">5. detsember 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Kuni kolm esinejat, kuni kolm teost, kuni kolm veerandtundi. Sari, mis mahub ühte õhtusse ja jätab ruumi vestluseks. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+  </section>
+  <section class="spec" id="spec-brygada-1918">
+    <p class="spec-name">H. Brygada 1918, weights 400 to 700. A Polish text serif revived in 2020 for the centenary of independence, drawn with the full central European set first; sober and even, no optical size axis.</p>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Brygada 1918', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">The derived page: title, facts and credits in the serif, the body in Schibsted Grotesk</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Brygada 1918', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Brygada 1918', Georgia, serif">
+      <p class="ds-cap" lang="en">On a ground near white the body takes the serif too</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Brygada 1918', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">On a dark derived ground: title, facts and credits keep the serif, the body stays in the sans</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Uus kontserdisari: Up to Three / Kuni kolm</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-12-05T19:00+02:00">5. detsember 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Kuni kolm esinejat, kuni kolm teost, kuni kolm veerandtundi. Sari, mis mahub ühte õhtusse ja jätab ruumi vestluseks. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+  </section>
+  <section class="spec" id="spec-besley">
+    <p class="spec-name">I. Besley, weights 400 to 900. A Clarendon of 2019, slab serifs and a firm stance; the least bookish of the ten and the closest to a grotesk in colour.</p>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Besley', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">The derived page: title, facts and credits in the serif, the body in Schibsted Grotesk</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Besley', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Besley', Georgia, serif">
+      <p class="ds-cap" lang="en">On a ground near white the body takes the serif too</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Besley', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">On a dark derived ground: title, facts and credits keep the serif, the body stays in the sans</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Uus kontserdisari: Up to Three / Kuni kolm</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-12-05T19:00+02:00">5. detsember 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Kuni kolm esinejat, kuni kolm teost, kuni kolm veerandtundi. Sari, mis mahub ühte õhtusse ja jätab ruumi vestluseks. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+  </section>
+  <section class="spec" id="spec-instrument-serif">
+    <p class="spec-name">J. Instrument Serif, weight 400 only. A condensed display serif of 2022 with a Didone tone, drawn for headlines; one weight and no text cut, so the body stays in the sans under it.</p>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Instrument Serif', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">The derived page: title, facts and credits in the serif, the body in Schibsted Grotesk</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-serif" lang="et" style="--ev-title-face: 'Instrument Serif', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Instrument Serif', Georgia, serif">
+      <p class="ds-cap" lang="en">On a ground near white the body takes the serif too</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10: Tallinna Uue Muusika Ansambel ja defunensemble</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12. november 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Instrument Serif', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+      <p class="ds-cap" lang="en">On a dark derived ground: title, facts and credits keep the serif, the body stays in the sans</p>
+      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Uus kontserdisari: Up to Three / Kuni kolm</h1></div>
+      <dl class="facts">
+        <div><dt>Millal</dt><dd><time datetime="2026-12-05T19:00+02:00">5. detsember 2026 kell 19.00</time></dd></div>
+        <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+      </dl>
+      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
+        <p>Kuni kolm esinejat, kuni kolm teost, kuni kolm veerandtundi. Sari, mis mahub ühte õhtusse ja jätab ruumi vestluseks. Žest, šokk, õnne, äkki, öö, üksi.</p>
+      </div>
+      <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
+        <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
+        <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<footer class="frame site-foot">
+  <span>Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinn</span>
+</footer>
+<script type="module">
+// which faces drew: each family loaded, and its ü measured against Georgia's
+const FACES = ["Fraunces","Newsreader","Literata","Roboto Serif","Piazzolla","Bodoni Moda","Petrona","Brygada 1918","Besley","Instrument Serif"];
+const c = document.createElement('canvas').getContext('2d');
+const w = (family) => { c.font = `400 40px "${family}"`; return c.measureText('ü õ ä ö š ž').width; };
+await Promise.all(FACES.map((f) => document.fonts.load(`400 40px "${f}"`)));
+const georgia = w('Georgia');
+const report = FACES.map((f) => ({ face: f, loaded: document.fonts.check(`400 40px "${f}"`), width: +w(f).toFixed(1), fallback: Math.abs(w(f) - georgia) < 0.5 }));
+window.__serif = report;
+const fell = report.filter((r) => r.fallback || !r.loaded).map((r) => r.face);
+document.getElementById('face-note').textContent = fell.length ? 'Not drawn from its own file: ' + fell.join(', ') + '.' : 'All ten draw from their own files.';
+</script>
+</body>
+</html>

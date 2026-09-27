@@ -7,17 +7,17 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
-### Open 2026-09-27: "https://eccm.positron.studio/type - only use our default and then source sans and instuments and the rest 10 has to be serif fonts, mordern"
+### Done 2026-09-27: "https://eccm.positron.studio/type - only use our default and then source sans and instuments and the rest 10 has to be serif fonts, mordern"
 
-Asked verbatim. /type keeps three of its twelve, A Schibsted Grotesk (the default), B Source Serif 4 and C Instrument Sans, read with "source sans" as the Source Serif 4 the site uses; the ten modern serifs the background agent is fetching become D to M on the same page when they land, and the unused face declarations leave the page.
+Asked verbatim. /type keeps three of its twelve, A Schibsted Grotesk (the default), B Source Serif 4 and C Instrument Sans, read with "source sans" as the Source Serif 4 the site uses; the ten modern serifs the background agent is fetching become D to M on the same page when they land, and the unused face declarations leave the page. ✅ Done: D Newsreader, E Fraunces, F Piazzolla, G Literata, H Bodoni Moda, I Brygada 1918, J Petrona, K Besley, L Roboto Serif, M Instrument Serif (titles only), in the ranking's order; "source serif" confirmed.
 
 ### Done 2026-09-27: "develop these further, rm the rest. do the nyydis-, different cases and 2 workmark sizes" (setting M, with a crop)
 
 Asked verbatim. /wordmark is setting M alone now: Instrument Sans medium at width 75 on two lines fitted to the letters, in lowercase, sentence case, words capitalised and uppercase, at 20rem and 11rem, English and Estonian with the break inside the long word and the hairline hyphen; the fifteen other settings are gone, their faces stay under public/vendor and on /type.
 
-### Open 2026-09-27: "in parallel work on replacement options to Source Serif 4, come up with 10 version of moder sans, no garamod"
+### Done 2026-09-27: "in parallel work on replacement options to Source Serif 4, come up with 10 version of moder sans, no garamod"
 
-Asked verbatim. Read as ten modern serifs, since it replaces a serif and excludes Garamond; a background agent fetches ten as subsets with licences and builds public/serif.html with each in the derived page's use, title and facts in the serif over the sans body, the body in it too on white, and a dark ground where the body stays sans, then ranks them.
+Asked verbatim. Read as ten modern serifs, since it replaces a serif and excludes Garamond; a background agent fetches ten as subsets with licences and builds public/serif.html with each in the derived page's use, title and facts in the serif over the sans body, the body in it too on white, and a dark ground where the body stays sans, then ranks them. ✅ Done: public/serif.html with the ten in the three uses, 30 files under public/vendor, the ranking in section 7 of the skill: Newsreader, Fraunces, Piazzolla put forward.
 
 ### Done 2026-09-27: "and use instument sans too, make similar versions too. rm other stuff."
 

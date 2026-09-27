@@ -631,3 +631,28 @@ the size it lands on, since its widths change with size (Bricolage came out
 Onest and Geist as Inter's neighbours rather than fresher; Space Grotesk and
 Syne for lowercase quirks that fight a small line; Big Shoulders as a display
 condensed with tight counters; Roboto Flex as neither fresh nor small.
+
+**The serif a derived page takes, ten alternatives to Source Serif 4, 2026-09-27.**
+Asked as *"replacement options to Source Serif 4, come up with 10 version of
+moder sans, no garamod"*, read as ten modern serifs, since it replaces a serif
+and excludes Garamond. They are on `public/serif.html`, each in the three uses
+the derived page makes of a serif (title, facts and credits over the sans; the
+body too on a ground near white; a dark ground with the body in the sans), and
+all ten draw from their own subsets under `public/vendor/` (MEASURED: each
+face's diacritic line measures a different width from Georgia's). Ranked
+against sections 1, 2 and 7, the three to put forward: **Newsreader**, an
+editorial serif with an optical size axis, so the text cut holds counters at
+18 px and the display cut carries a title at weight 400, and the calmest
+beside Schibsted; **Fraunces**, the most character of the ten with the same
+kind of axis, quiet at text size, and a serif that a picture's own serif can
+be echoed by; **Piazzolla**, warm and slightly narrow, an optical size axis for
+text sizes and the smallest files of the axis faces. Then Literata, sturdy and a
+little dark; Bodoni Moda, a Didone whose hairlines thin at 18 px on screen, a
+title face; Brygada 1918 and Petrona, sober and distinctive but without an
+optical size axis; Besley, a Clarendon that is the least bookish; Roboto Serif,
+generic and 379 KB of latin for its width axis; Instrument Serif, one weight
+and a display cut only, so the body stays in the sans under it. Fell before the
+ten: DM Serif, two static families of one weight; Young Serif and Gloock, one
+display weight each; Spectral and Castoro, static and without an optical size;
+STIX Two and Noto Serif, Times-like or generic; Playfair, overused and covered
+by Bodoni Moda with an axis.
