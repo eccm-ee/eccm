@@ -11,7 +11,9 @@
      do 40units for estonian and english. for beside make 37 units 2 line,
      vert centered. rm others", then "add more space between ECCM and beside
      wordmark", "do variant with both languages under ECCM" and "also both
-     languages beside"): under the mark at 40 units, one language or both;
+     languages beside", then "move estonian version on top of ECCM in the
+     'English then Estonian'"): under the mark at 40 units, one language,
+     or both with the Estonian over the mark and the English under it;
      to the right of the stave at 37 units after 28 units of air, one
      language, both as one block, or both side by side, every block centred
      on the E's middle bar. The mark is drawn at one width throughout, both
@@ -108,7 +110,7 @@
 <main class="frame wm">
   <h1 class="list-label">Wordmark in Instrument Sans</h1>
   <div class="prose flow intro">
-    <p>Instrument Sans medium at width 75, lowercase, two lines a language, starting on the E, both languages at one size. Under the mark at 40 units, one language or both; beside it to the right of the stave at 37 units, one language, both as one block, or both side by side, every block centred on the E's middle bar. The Estonian breaks inside its long word, the hyphen a hairline of the mark's weight. Each lockup at 20rem and 11rem of mark width.</p>
+    <p>Instrument Sans medium at width 75, lowercase, two lines a language, starting on the E, both languages at one size. Under the mark at 40 units, one language, or the Estonian over the mark and the English under it; beside it to the right of the stave at 37 units, one language, both as one block, or both side by side, every block centred on the E's middle bar. The Estonian breaks inside its long word, the hyphen a hairline of the mark's weight. Each lockup at 20rem and 11rem of mark width.</p>
   </div>
   <div id="cells"></div>
 </main>
@@ -118,7 +120,7 @@
 </footer>
 <script type="module">
 const EN = 'estonian centre of contemporary music', ET = 'eesti nüüdismuusika keskus';
-const BLOCK = 298, LEFT = 35, BOTTOM = 122, GAP = 12, CAP = 0.7, XH = 0.53, EBAR = 73.5, STAVE_END = 345, LH = 0.95;
+const BLOCK = 298, LEFT = 35, TOP = 29, BOTTOM = 122, GAP = 12, CAP = 0.7, XH = 0.53, EBAR = 73.5, STAVE_END = 345, LH = 0.95;
 // the air after the stave, 18 until 2026-09-27 ("add more space between ECCM and beside wordmark"), and the air between two blocks set side by side
 const BESIDE_GAP = 28;
 // the two sizes, in units of the mark's 310, asked 2026-09-27: 40 under the mark, 37 beside it
@@ -132,7 +134,8 @@ const fitSize = (lines) => 100 * BLOCK / Math.max(...lines.map(widthOf));
 const blockWidth = (lines, size) => Math.max(...lines.map(widthOf)) * size / 100;
 // one lockup of one or two languages: layout 'under' or 'beside', a size in units, the svg's width in rem;
 // 'columns' sets two languages side by side rather than one under the other
-const lockup = (texts, { layout, size, rem, columns = false }) => {
+// 'above' puts the first language over the mark and the rest under it
+const lockup = (texts, { layout, size, rem, columns = false, above = false }) => {
   const blocks = texts.map(split2);
   const pitch = LH * size;
   // from one block's last baseline to the next block's first: the descent, the same air the mark and the first line have, and a cap
@@ -140,12 +143,19 @@ const lockup = (texts, { layout, size, rem, columns = false }) => {
   const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('aria-hidden', 'true');
   const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '29'); use.setAttribute('width', '310'); use.setAttribute('height', '93'); svg.append(use);
   const placed = []; // [x, baseline, line]
-  const stack = (x, y) => { for (const lines of blocks) { lines.forEach((l, i) => placed.push([x, y + i * pitch, l])); y += (lines.length - 1) * pitch + air; } };
+  const stack = (x, y, list = blocks) => { for (const lines of list) { lines.forEach((l, i) => placed.push([x, y + i * pitch, l])); y += (lines.length - 1) * pitch + air; } };
   const centred = (lines) => EBAR - (CAP * size + (lines.length - 1) * pitch) / 2 + CAP * size; // the first baseline of a block centred on the E's middle bar
   let vb;
   if (layout === 'under') {
-    stack(LEFT, BOTTOM + GAP + CAP * size);
-    vb = [35, 27, 310, placed[placed.length - 1][1] + 0.25 * size - 27];
+    if (above) {
+      // the first language's last baseline sits the same 12 units over the mark's top as the next language's cap top sits under its bottom
+      const [first, ...rest] = blocks;
+      const y1 = TOP - GAP - (first.length - 1) * pitch;
+      first.forEach((l, i) => placed.push([LEFT, y1 + i * pitch, l]));
+      stack(LEFT, BOTTOM + GAP + CAP * size, rest);
+    } else stack(LEFT, BOTTOM + GAP + CAP * size);
+    const top = Math.min(27, Math.min(...placed.map(([, y]) => y)) - CAP * size - 2);
+    vb = [35, top, 310, placed[placed.length - 1][1] + 0.25 * size - top];
   } else if (columns) {
     let x = STAVE_END + BESIDE_GAP;
     for (const lines of blocks) { const y1 = centred(lines); lines.forEach((l, i) => placed.push([x, y1 + i * pitch, l])); x += blockWidth(lines, size) + BESIDE_GAP; }
@@ -195,7 +205,7 @@ const draw = async () => {
   const ONE = [[EN], [ET]], BOTH = [[EN, ET]];
   section('Under the mark');
   cells.append(cellOf('under', `${px(UNDER)}, line height ${LH}, one language`, { layout: 'under', size: UNDER }, ONE));
-  cells.append(cellOf('under-both', `${px(UNDER)}, both languages, English then Estonian, ${GAP} units of air between them`, { layout: 'under', size: UNDER }, BOTH));
+  cells.append(cellOf('under-both', `${px(UNDER)}, both languages, the Estonian above the mark and the English under it, ${GAP} units of air each side`, { layout: 'under', size: UNDER, above: true }, [[ET, EN]]));
   section('Beside the mark');
   cells.append(cellOf('beside', `${px(BESIDE)}, line height ${LH}, one language, ${BESIDE_GAP} units after the stave, centred on the E's middle bar`, { layout: 'beside', size: BESIDE }, ONE));
   cells.append(cellOf('beside-both', `${px(BESIDE)}, both languages as one block, English over Estonian, centred on the E's middle bar`, { layout: 'beside', size: BESIDE }, BOTH));

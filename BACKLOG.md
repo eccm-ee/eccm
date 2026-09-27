@@ -7,6 +7,11 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "move estonian version on top of ECCM in the \"English then Estonian\""
+
+Asked verbatim. `public/wordmark.html`, the bilingual under lockup: the Estonian two lines go above the mark, their last baseline 12 units over the mark's top, the same air the English keeps under its bottom; the English stays under.
+✅ Done. MEASURED at 20rem: the box is 310 by 261 units, from 49 over the mark's top to 88 under its bottom.
+
 ### Done 2026-09-27: "also both languages beside"
 
 Asked verbatim, mid-task. `public/wordmark.html`: a bilingual beside setting at 37 units. Two readings, both drawn so the owner can strike one: the four lines as one block to the right of the stave, centred on the E's middle bar, the languages parted by 12 units of air; and each language its own two-line block, side by side, each centred on the bar, the gap between them the same as after the stave.
