@@ -1,58 +1,43 @@
 <!doctype html>
-<html lang="et">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>ECCM: tunnuslause proovid</title>
-<!-- public/wordmark.html: the tagline under the mark in sixteen settings, at
-     the header's 20rem and the phone's 11rem, in both languages, each measured
-     as the page opens (x-height and cap height in CSS px off a canvas, the
-     size in px, the squeeze of the current one off an SVG text without its
-     textLength). Asked 2026-09-27: "use or create a typography skill to
-     propose alternatives to the Estonian Centre of Contemporary Music
-     workmark its hard to read". The rules it is judged against are the
-     wordmark section of .claude/skills/eccm-ui/SKILL.md. The mark is
-     logo.svg's letters and lines, once, as a symbol; the current tagline is
-     the logo files themselves. A fitted tagline takes its size from the
-     English line, the longer, and the Estonian line keeps that size, ragged.
-     Not graded. -->
+<title>ECCM: wordmark in Instrument Sans</title>
+<!-- public/wordmark.html: the tagline under the mark in Instrument Sans
+     medium at width 75, two lines fitted to the letters E to M, developed
+     from setting M of the earlier comparison after the owner picked it
+     (asked 2026-09-27: "develop these further, rm the rest. do the nyydis-,
+     different cases and 2 wordmark sizes"): four casings, at the header's
+     20rem and the phone's 11rem, in English and in Estonian, whose line
+     breaks inside its long word with a hairline of the mark's weight for
+     its hyphen. Every size is computed as the page opens by measuring the
+     longer line at 100 units and scaling it to the letters' width, 298
+     units; nothing is squeezed. The uppercase carries 0.06em, the rest no
+     tracking, by the skill's rule. The fifteen settings this page held
+     before are in git; their faces stay under public/vendor and on
+     type.html. -->
 <link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="./eccm.css">
 <style>
-  @font-face { font-family: 'Inter'; font-weight: 100 900; font-display: swap; src: url('./vendor/inter-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-  @font-face { font-family: 'Inter'; font-weight: 100 900; font-display: swap; src: url('./vendor/inter-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-  @font-face { font-family: 'Archivo'; font-weight: 400 700; font-stretch: 62% 125%; font-display: swap; src: url('./vendor/archivo-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-  @font-face { font-family: 'Archivo'; font-weight: 400 700; font-stretch: 62% 125%; font-display: swap; src: url('./vendor/archivo-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-  @font-face { font-family: 'IBM Plex Sans'; font-weight: 100 700; font-display: swap; src: url('./vendor/plex-sans-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-  @font-face { font-family: 'IBM Plex Sans'; font-weight: 100 700; font-display: swap; src: url('./vendor/plex-sans-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-  @font-face { font-family: 'Bricolage Grotesque'; font-weight: 200 800; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/bricolage-grotesque-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-  @font-face { font-family: 'Bricolage Grotesque'; font-weight: 200 800; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/bricolage-grotesque-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
   @font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
   @font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-  @font-face { font-family: 'Sofia Sans Condensed'; font-weight: 1 1000; font-display: swap; src: url('./vendor/sofia-sans-condensed-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-  @font-face { font-family: 'Sofia Sans Condensed'; font-weight: 1 1000; font-display: swap; src: url('./vendor/sofia-sans-condensed-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-  @font-face { font-family: 'Familjen Grotesk'; font-weight: 400 700; font-display: swap; src: url('./vendor/familjen-grotesk-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-  @font-face { font-family: 'Familjen Grotesk'; font-weight: 400 700; font-display: swap; src: url('./vendor/familjen-grotesk-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-  @font-face { font-family: 'Anybody'; font-weight: 100 900; font-stretch: 50% 150%; font-display: swap; src: url('./vendor/anybody-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-  @font-face { font-family: 'Anybody'; font-weight: 100 900; font-stretch: 50% 150%; font-display: swap; src: url('./vendor/anybody-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
   @layer page {
+    .wm h2 { margin-block: var(--eccm-s-24) var(--eccm-s-8); font-size: var(--eccm-t-l); }
+    .wm h2:first-of-type { margin-block-start: var(--eccm-s-8); }
     .intro { max-inline-size: var(--eccm-measure); }
-    .intro + .intro { margin-block-start: 1lh; }
-    .alt { margin-block-start: var(--eccm-s-16); }
-    .spec-name { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-6); padding-block-start: var(--eccm-s-4); border-block-start: 1px solid var(--eccm-rule); max-inline-size: var(--eccm-measure); }
-    .locks { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--eccm-s-8) var(--eccm-s-12); }
-    /* a lockup is as wide as the header's mark and scales like it: the
-       tagline's size is a fraction of the width, so 11rem is 20rem shrunk */
-    .lock { margin: 0; inline-size: var(--w); flex: none; container-type: inline-size; }
-    .lock img, .lock .mark-svg { display: block; inline-size: 100%; block-size: auto; }
-    .lock .tag { margin: 0; margin-block-start: var(--gap, 5.5cqw); line-height: 1.05; white-space: nowrap; font-family: var(--face); font-weight: var(--weight); font-stretch: var(--stretch); letter-spacing: var(--tracking); text-transform: var(--caps); font-size: var(--size, 8.71cqw); color: var(--eccm-ink); }
-    .lock figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-    .measure { margin-block-start: var(--eccm-s-4); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); font-variant-numeric: tabular-nums; max-inline-size: var(--eccm-measure); }
-    .din-probe { position: absolute; inline-size: 310px; block-size: 0; overflow: hidden; }
+    .cell { display: grid; row-gap: var(--eccm-s-6); margin-block-end: var(--eccm-s-16); }
+    .cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin: 0; }
+    .locks { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--eccm-s-12); }
+    .locks figure { margin: 0; }
+    .locks svg { display: block; overflow: visible; }
+    .w20 { inline-size: 20rem; } .w11 { inline-size: 11rem; }
+    .locks figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+    .tag-is { font-family: 'Instrument Sans', Helvetica, Arial, sans-serif; font-stretch: 75%; font-weight: 500; }
   }
 </style>
 </head>
@@ -97,163 +82,92 @@
         <rect x="73" y="108" width="36" height="1.5"/></g></g></symbol></svg>
 <header class="site-head">
   <div class="frame">
-    <a class="mark" href="./"><img src="./logo-et.svg" width="310" height="133" alt="Eesti nüüdismuusika keskus"></a>
-    <span class="lang"><span aria-current="page" lang="et">ET</span><a href="https://eccm.ee/index.php/en/" lang="en">EN</a></span>
+    <a class="mark" href="./"><img src="./logo-en.svg" width="310" height="133" alt="Estonian Centre of Contemporary Music"></a>
+    <span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span>
   </div>
 </header>
-<nav class="site-nav" aria-label="Menüü">
+<nav class="site-nav" aria-label="Menu">
   <div class="frame">
     <ul class="nav">
-      <li><a href="./">Avaleht</a></li>
-      <li><a href="./logo.html">Logo</a></li>
-      <li><a href="./type.html">Kirjatüüp</a></li>
-      <li><a href="./wordmark.html" aria-current="page">Tunnuslause</a></li>
-      <li><a href="./ds.html">Kujundussüsteem</a></li>
+      <li><a href="./">Home</a></li>
+      <li><a href="https://eccm.ee/index.php/en/eccm-new-eng">ECCM</a></li>
+      <li><a href="https://eccm.ee/index.php/en/tallinn-1965-eng">Tallinn 1965</a></li>
+      <li><a href="https://eccm.ee/nan/">NAN</a></li>
+      <li><a href="https://eccm.ee/index.php/en/ulysses-eng">Ulysses</a></li>
+      <li><a href="https://eccm.ee/index.php/en/open-calls">Open calls</a></li>
+      <li><a href="https://eccm.ee/index.php/en/eventseng">Events</a></li>
     </ul>
   </div>
 </nav>
 
-<main class="frame">
-  <h1>Tunnuslause proovid</h1>
-  <p class="intro" lang="en">The line under the mark, "estonian centre of contemporary music" and "eesti nüüdismuusika keskus", in sixteen settings at the header's two widths, 20rem on a desk and 11rem on a phone; L to P are five faces added the same day on "give me some fresher stuff". Every setting is measured as the page opens: the type size, the x-height and the cap height in CSS pixels, and for the current one the squeeze its two lines carry.</p>
-  <p class="intro" lang="en">What to look for: whether the x-height clears the floor the skill sets for a line that has to be read on a phone; whether the counters of e, s, a and the ü stay open at 11rem; and whether the line still belongs to the mark, at its width or ragged under it.</p>
-
-  <section class="alt" id="alt-a" data-alt="a" style="" data-current="1">
-    <p class="spec-name">A. The current tagline: DIN Condensed bold at 27 units, squeezed to the widths measured off the JPEG, 311 and 221.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><img src="./logo-en.svg" width="310" height="133" alt=""><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><img src="./logo-en.svg" width="310" height="133" alt=""><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><img src="./logo-et.svg" width="310" height="133" alt=""><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><img src="./logo-et.svg" width="310" height="133" alt=""><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-b" data-alt="b" style="--face: 'DIN Condensed', 'Helvetica Neue', 'Arial Narrow', sans-serif; --weight: 700; --stretch: condensed; --tracking: 0em; --caps: none;" data-size="27">
-    <p class="spec-name">B. DIN Condensed bold at its natural width, the same 27 units, one line: 6 per cent wider than the mark.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-c" data-alt="c" style="--face: 'DIN Condensed', 'Helvetica Neue', 'Arial Narrow', sans-serif; --weight: 700; --stretch: condensed; --tracking: 0em; --caps: none;" data-fit="1">
-    <p class="spec-name">C. DIN Condensed bold on two lines, the longer line fitted to the mark.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-d" data-alt="d" style="--face: 'Schibsted Grotesk', Helvetica, Arial, sans-serif; --weight: 500; --stretch: normal; --tracking: 0em; --caps: none;" data-fit="1">
-    <p class="spec-name">D. Schibsted Grotesk, the site's face, medium, one line fitted to the mark.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-e" data-alt="e" style="--face: 'Schibsted Grotesk', Helvetica, Arial, sans-serif; --weight: 500; --stretch: normal; --tracking: 0em; --caps: none;" data-fit="1">
-    <p class="spec-name">E. Schibsted Grotesk medium on two lines, the longer fitted to the mark.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-f" data-alt="f" style="--face: 'Archivo', Helvetica, Arial, sans-serif; --weight: 600; --stretch: condensed; --tracking: 0em; --caps: none;" data-fit="1">
-    <p class="spec-name">F. Archivo condensed (width 75), semibold, one line fitted: a narrow face that keeps its counters.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-g" data-alt="g" style="--face: 'Inter', Helvetica, Arial, sans-serif; --weight: 500; --stretch: normal; --tracking: 0em; --caps: none;" data-fit="1">
-    <p class="spec-name">G. Inter medium, one line fitted: the large x-height screen grotesque.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-h" data-alt="h" style="--face: 'IBM Plex Sans', Helvetica, Arial, sans-serif; --weight: 500; --stretch: normal; --tracking: 0em; --caps: none;" data-fit="1">
-    <p class="spec-name">H. IBM Plex Sans medium, one line fitted.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-i" data-alt="i" style="--face: 'Schibsted Grotesk', Helvetica, Arial, sans-serif; --weight: 500; --stretch: normal; --tracking: 0.06em; --caps: none;" data-fit="1">
-    <p class="spec-name">I. Schibsted Grotesk medium, lowercase tracked 6 per cent, one line fitted: what Bringhurst says not to do without a reason, shown so the reason can be judged.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-j" data-alt="j" style="--face: 'Schibsted Grotesk', Helvetica, Arial, sans-serif; --weight: 500; --stretch: normal; --tracking: 0.1em; --caps: uppercase;" data-fit="1">
-    <p class="spec-name">J. Schibsted Grotesk medium, capitals tracked 10 per cent, one line fitted: smaller, since capitals are wide.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-k" data-alt="k" style="--face: 'Schibsted Grotesk', Helvetica, Arial, sans-serif; --weight: 700; --stretch: normal; --tracking: 0em; --caps: none;" data-fit="1">
-    <p class="spec-name">K. Schibsted Grotesk bold on two lines, the longer fitted: the heavier weight of the candidate that measures best.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-l" data-alt="l" style="--face: 'Bricolage Grotesque', Helvetica, Arial, sans-serif; --weight: 500; --stretch: semi-condensed; --tracking: 0em; --caps: none;" data-fit="1">
-    <p class="spec-name">L. Bricolage Grotesque medium at its 87.5 width, two lines fitted: a 2022 grotesk with an optical size axis, so its small sizes are drawn open.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-m" data-alt="m" style="--face: 'Instrument Sans', Helvetica, Arial, sans-serif; --weight: 500; --stretch: condensed; --tracking: 0em; --caps: none;" data-fit="1">
-    <p class="spec-name">M. Instrument Sans medium at its narrowest, 75, two lines fitted: a 2022 face with a width axis, the closest a text grotesk comes to the mark's condensed voice.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-n" data-alt="n" style="--face: 'Sofia Sans Condensed', Helvetica, Arial, sans-serif; --weight: 500; --stretch: normal; --tracking: 0em; --caps: none;" data-fit="1">
-    <p class="spec-name">N. Sofia Sans Condensed medium, two lines fitted: a condensed family drawn for small sizes, with counters kept open on purpose.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-o" data-alt="o" style="--face: 'Familjen Grotesk', Helvetica, Arial, sans-serif; --weight: 500; --stretch: normal; --tracking: 0em; --caps: none;" data-fit="1">
-    <p class="spec-name">O. Familjen Grotesk medium, two lines fitted: a 2021 Stockholm grotesk with large apertures and a warm a and e.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
-  <section class="alt" id="alt-p" data-alt="p" style="--face: 'Anybody', Helvetica, Arial, sans-serif; --weight: 500; --stretch: condensed; --tracking: 0em; --caps: none;" data-fit="1">
-    <p class="spec-name">P. Anybody medium at width 75, two lines fitted: a width axis from 50 to 150, set here as a proper condensed under a condensed mark.</p>
-    <div class="locks"><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="en"><span>estonian centre of</span><br><span>contemporary music</span></p><figcaption>11rem</figcaption></figure><figure class="lock" style="--w: 20rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>20rem</figcaption></figure><figure class="lock" style="--w: 11rem"><svg viewBox="0 0 310 93" class="mark-svg" aria-hidden="true"><use href="#mark" width="310" height="93"/></svg><p class="tag" lang="et"><span>eesti nüüdismuusika</span><br><span>keskus</span></p><figcaption>11rem</figcaption></figure></div>
-    <p class="measure" data-measure></p>
-  </section>
+<main class="frame wm">
+  <h1 class="list-label">Wordmark in Instrument Sans</h1>
+  <div class="prose flow intro">
+    <p>Instrument Sans medium at width 75 on two lines fitted to the letters, the setting picked from the comparison, in four casings at the header's 20rem and the phone's 11rem, English and Estonian. The Estonian breaks inside its long word, the hyphen a hairline of the mark's weight. Both lines start on the E. The uppercase carries 0.06em; the rest no tracking.</p>
+  </div>
+  <div id="cells"></div>
 </main>
 
-<svg class="din-probe" viewBox="0 0 400 60" aria-hidden="true"><g font-family="'DIN Condensed', 'Helvetica Neue', 'Arial Narrow', sans-serif" font-stretch="condensed" font-weight="700" font-size="27"><text class="din-en" x="0" y="30">estonian centre of contemporary music</text><text class="din-et" x="0" y="55">eesti nüüdismuusika keskus</text></g></svg>
-
 <footer class="frame site-foot">
-  <span>Eesti Nüüdismuusika Keskus, Pühavaimu 9, Tallinn</span>
+  <span>Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinn</span>
 </footer>
-
 <script type="module">
-// the measurement: each fitted setting takes the size at which its longest
-// English line is as wide as the mark, the Estonian keeps that size; then
-// the x-height and the cap height are read off a canvas, which is the ink
-// of "x" and "H" above the baseline (TextMetrics.actualBoundingBoxAscent)
-const MARK = 310; // the mark's width in the logo's units, the lockup's own width in px is var(--w)
-const canvas = document.createElement('canvas').getContext('2d');
-const fontOf = (s, px) => `${s.stretch} ${s.weight} ${px}px ${s.face}`;
-const widthAt = (s, text, px) => { canvas.font = fontOf(s, px); canvas.letterSpacing = `${(s.tracking || 0) * px}px`; const t = s.caps ? text.toUpperCase() : text; return canvas.measureText(t).width; };
-const ink = (s, glyph, px) => { canvas.font = fontOf(s, px); canvas.letterSpacing = '0px'; return canvas.measureText(glyph).actualBoundingBoxAscent; };
-const out = (window.__wordmark = {});
-await document.fonts.ready;
-for (const sec of document.querySelectorAll('.alt')) {
-  const id = sec.dataset.alt;
-  const m = sec.querySelector('[data-measure]');
-  if (sec.dataset.current) {
-    // the squeeze: the natural width of the DIN line at 27 units against the
-    // textLength the logo forces, 311 and 221
-    const nat = { en: document.querySelector('.din-en').getComputedTextLength(), et: document.querySelector('.din-et').getComputedTextLength() };
-    const rows = [];
-    for (const [w, px] of [['20rem', 320], ['11rem', 176]]) rows.push(`${w}: size ${(27 * px / MARK).toFixed(1)} px, x-height ${(14 * px / MARK).toFixed(1)} px, cap height ${(20 * px / MARK).toFixed(1)} px`);
-    out[id] = { squeezeEn: 1 - 311 / nat.en, squeezeEt: 1 - 221 / nat.et, natEn: nat.en, natEt: nat.et, rows };
-    m.textContent = `${rows.join('; ')}. The English line is squeezed ${Math.round(100 * (1 - 311 / nat.en))} per cent (natural ${nat.en.toFixed(0)} against 311), the Estonian ${Math.round(100 * (1 - 221 / nat.et))} per cent (natural ${nat.et.toFixed(0)} against 221); the x-height is the raster's 14 units.`;
-    continue;
+const EN = 'estonian centre of contemporary music', ET = 'eesti nüüdismuusika keskus';
+const SMALL = new Set(['of']);
+const CASES = {
+  'lowercase': (s) => s,
+  'sentence case': (s) => s[0].toUpperCase() + s.slice(1),
+  'words capitalised': (s) => s.split(' ').map((w) => (SMALL.has(w) ? w : w[0].toUpperCase() + w.slice(1))).join(' '),
+  'uppercase': (s) => s.toUpperCase(),
+};
+const TRACK = { 'lowercase': 0, 'sentence case': 0, 'words capitalised': 0, 'uppercase': 0.06 };
+const BLOCK = 298, LEFT = 35, BOTTOM = 122, GAP = 12, CAP = 0.7, LINE = 1.05;
+const NS = 'http://www.w3.org/2000/svg';
+const meter = document.createElementNS(NS, 'svg'); meter.setAttribute('width', '0'); meter.setAttribute('height', '0'); meter.style.position = 'absolute'; document.body.append(meter);
+const mt = document.createElementNS(NS, 'text'); mt.setAttribute('class', 'tag-is'); mt.setAttribute('font-size', '100'); meter.append(mt);
+const widthOf = (s, track) => { mt.style.letterSpacing = (track * 100) + 'px'; mt.textContent = s; return mt.getComputedTextLength(); };
+const split2 = (s) => { const et = s.match(/^(.*nüüdis)(muusika keskus)$/i); if (et) return [et[1] + '-', et[2]]; const w = s.split(' '); let best = null; for (let i = 1; i < w.length; i++) { const a = w.slice(0, i).join(' '), b = w.slice(i).join(' '); const m = Math.max(a.length, b.length); if (!best || m < best.m) best = { a, b, m }; } return [best.a, best.b]; };
+const lockup = (text, cse, widthClass) => {
+  const track = TRACK[cse];
+  const lines = split2(CASES[cse](text)).map((l) => (cse === 'sentence case' && l === l.toLowerCase() ? l : l));
+  const size = 100 * BLOCK / Math.max(...lines.map((l) => widthOf(l, track)));
+  const first = BOTTOM + GAP + CAP * size, last = first + LINE * size, h = last + 0.25 * size - 27;
+  const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', `35 27 310 ${h.toFixed(1)}`); svg.setAttribute('class', widthClass); svg.setAttribute('aria-hidden', 'true');
+  const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '29'); use.setAttribute('width', '310'); use.setAttribute('height', '93'); svg.append(use);
+  lines.forEach((l, i) => {
+    const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'tag-is'); t.setAttribute('font-size', size.toFixed(2)); t.style.letterSpacing = (track * size).toFixed(2) + 'px'; t.setAttribute('fill', '#1a1a1a');
+    t.setAttribute('x', LEFT); t.setAttribute('text-anchor', 'start');
+    const y = first + i * LINE * size; t.setAttribute('y', y.toFixed(1));
+    const hy = /-$/.test(l); t.textContent = hy ? l.slice(0, -1) : l; svg.append(t);
+    if (hy) {
+      const wFull = widthOf(l, track) * size / 100, wText = widthOf(l.slice(0, -1), track) * size / 100;
+      const slot = wFull - wText, len = slot * 0.7;
+      const upper = l === l.toUpperCase(), mid = y - (upper ? CAP * 0.5 : 0.53 * 0.5) * size;
+      const dash = document.createElementNS(NS, 'rect'); dash.setAttribute('x', (LEFT + wText + (slot - len) / 2).toFixed(1)); dash.setAttribute('y', (mid - 0.75).toFixed(2)); dash.setAttribute('width', len.toFixed(1)); dash.setAttribute('height', '1.5'); dash.setAttribute('fill', '#1a1a1a'); svg.append(dash);
+    }
+  });
+  return { svg, size };
+};
+const draw = async () => {
+  await document.fonts.load('500 100px "Instrument Sans"');
+  const cells = document.getElementById('cells'); cells.replaceChildren();
+  let n = 0;
+  for (const cse of Object.keys(CASES)) {
+    const h2 = document.createElement('h2'); h2.textContent = cse[0].toUpperCase() + cse.slice(1) + (TRACK[cse] ? ', tracking ' + TRACK[cse] + 'em' : ''); cells.append(h2);
+    const cell = document.createElement('div'); cell.className = 'cell'; cell.id = 'c' + (++n);
+    const locks = document.createElement('div'); locks.className = 'locks';
+    let cap = '';
+    for (const [text, lang] of [[EN, 'English'], [ET, 'Estonian']]) for (const w of ['w20', 'w11']) {
+      const l = lockup(text, cse, w);
+      const f = document.createElement('figure'); const fc = document.createElement('figcaption'); fc.textContent = (w === 'w20' ? '20rem' : '11rem'); f.append(l.svg, fc); locks.append(f);
+      if (w === 'w20') cap += (cap ? '; ' : '') + `${lang} ${l.size.toFixed(1)} units, ${(l.size * 320 / 310).toFixed(1)} px at 20rem and ${(l.size * 176 / 310).toFixed(1)} px at 11rem`;
+    }
+    const p = document.createElement('p'); p.className = 'cap'; p.textContent = cap;
+    cell.append(p, locks); cells.append(cell);
   }
-  const cs = getComputedStyle(sec);
-  const s = { face: cs.getPropertyValue('--face').trim(), weight: cs.getPropertyValue('--weight').trim(), stretch: cs.getPropertyValue('--stretch').trim(), tracking: parseFloat(cs.getPropertyValue('--tracking')) || 0, caps: cs.getPropertyValue('--caps').trim() === 'uppercase' };
-  await document.fonts.load(fontOf(s, 20), 'estonian ü').catch((e) => console.log('font load', e.message));
-  const lines = [...sec.querySelector('.lock .tag[lang="en"]').querySelectorAll('span')].map((e) => e.textContent);
-  const longest = lines.reduce((a, b) => (widthAt(s, a, 100) >= widthAt(s, b, 100) ? a : b));
-  // the size in mark units: fitted so the longest line spans 310, or the fixed size of the setting
-  let units = sec.dataset.fit ? 100 * MARK / widthAt(s, longest, 100) : Number(sec.dataset.size);
-  // a face with an optical size axis changes its widths with the size, so the
-  // fit is refined at the size it lands on (Bricolage came out 12 per cent
-  // wide on the first pass)
-  if (sec.dataset.fit) for (let i = 0; i < 3; i++) units = units * MARK / widthAt(s, longest, units);
-  for (const lock of sec.querySelectorAll('.lock')) lock.style.setProperty('--size', `${(100 * units / MARK).toFixed(3)}cqw`);
-  const rows = [], rec = { units: +units.toFixed(2) };
-  for (const [w, px] of [['20rem', 320], ['11rem', 176]]) {
-    const size = units * px / MARK;
-    const x = ink(s, 'x', size), cap = ink(s, 'H', size);
-    rec[w] = { size: +size.toFixed(2), x: +x.toFixed(2), cap: +cap.toFixed(2) };
-    rows.push(`${w}: size ${size.toFixed(1)} px, x-height ${x.toFixed(1)} px, cap height ${cap.toFixed(1)} px`);
-  }
-  rec.enWidthUnits = +widthAt(s, longest, units).toFixed(1);
-  out[id] = rec;
-  m.textContent = `${rows.join('; ')}. ${units.toFixed(1)} units on the mark's 310, the longest English line ${widthAt(s, longest, units).toFixed(0)} wide.`;
-}
+  window.__wordmark = { count: n, instrument: document.fonts.check('500 100px "Instrument Sans"') };
+};
+draw();
 </script>
 </body>
 </html>
