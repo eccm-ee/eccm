@@ -242,6 +242,11 @@
      than a third of the width, label over value where it would not (asked
      2026-09-27 with a phone crop of Loovkommunikatsioon taking half the row) */
   .credits { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-1); }
+  /* the pair wrappers dissolve so dt and dd are the cells; without this the
+     wrappers alternate between the two columns and the second column is one
+     letter wide (MEASURED 2026-09-27 on the desk shot of /event, present since
+     the wrappers came in for the phone layout below, which puts them back) */
+  .credits > div { display: contents; }
   .credits dt { color: var(--eccm-ink-2); }
   .small { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
   /* a button: a word in a 3rem box ruled in ink, no radius, no shadow, always
