@@ -7,6 +7,11 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "the Estonian above the mark and the English under it,  - estonian needs mor space under it cause typography. do inversed languaged verson too"
+
+Asked verbatim. `public/wordmark.html`, the bilingual under lockup. Why it reads tight: under the mark the 12 units run from the mark's edge to the cap line, and a lowercase line's bulk sits at the x-height, 6.8 units lower at 40 units, so the eye reads 18.8; over the mark the line sits on its baseline with no descenders, so the eye reads the bare 12. The air over the mark is measured to the x-height as well, which puts the baseline 18.8 units over the mark's top at this size. And a second lockup with the English over the mark and the Estonian under it.
+✅ Done, both. The rule in the page is one line: the baseline over the mark keeps GAP plus (CAP minus XH) times the size, 18.8 units at 40. MEASURED at 20rem: each bilingual box is 310 by 267.8 units. One shot at 1280.
+
 ### Done 2026-09-27: "C ups and downs are cut off, adjust svg \"padding\"" (a crop of the mark, the C's top curves flat)
 
 Asked with a picture. The two C's are stadiums whose stroke reaches 27 above and 123.5 below, 2 over the E and M's top at 29 and 1.5 under their bottom at 122, the round letter's overshoot. A box of `35 29 310 93` on the mark clips both. The box has to carry the ink, `35 27 310 96.5`, wherever the mark is drawn.

@@ -7,14 +7,15 @@
 <title>ECCM: wordmark in Instrument Sans</title>
 <!-- public/wordmark.html: the tagline under and beside the mark in
      Instrument Sans medium at width 75, lowercase, two lines a language,
-     starting on the E. Four lockups since 2026-09-27 (asked: "under the mark
+     starting on the E. Five lockups since 2026-09-27 (asked: "under the mark
      do 40units for estonian and english. for beside make 37 units 2 line,
      vert centered. rm others", then "add more space between ECCM and beside
      wordmark", "do variant with both languages under ECCM" and "also both
      languages beside", then "move estonian version on top of ECCM in the
      'English then Estonian'" and "rm ... both languages as one block"):
-     under the mark at 40 units, one language,
-     or both with the Estonian over the mark and the English under it;
+     under the mark at 40 units, one language, or both with one language
+     over the mark and the other under it, either way round, the air over
+     the mark read at the x-height like the air under it;
      to the right of the stave at 37 units after 28 units of air, one
      language or both side by side, every block centred on the E's middle
      bar. The mark is drawn at one width throughout, both
@@ -111,7 +112,7 @@
 <main class="frame wm">
   <h1 class="list-label">Wordmark in Instrument Sans</h1>
   <div class="prose flow intro">
-    <p>Instrument Sans medium at width 75, lowercase, two lines a language, starting on the E, both languages at one size. Under the mark at 40 units, one language, or the Estonian over the mark and the English under it; beside it to the right of the stave at 37 units, one language or both side by side, every block centred on the E's middle bar. The Estonian breaks inside its long word, the hyphen a hairline of the mark's weight. Each lockup at 20rem and 11rem of mark width.</p>
+    <p>Instrument Sans medium at width 75, lowercase, two lines a language, starting on the E, both languages at one size. Under the mark at 40 units, one language, or one language over the mark and the other under it, either way round; beside it to the right of the stave at 37 units, one language or both side by side, every block centred on the E's middle bar. The Estonian breaks inside its long word, the hyphen a hairline of the mark's weight. Each lockup at 20rem and 11rem of mark width.</p>
   </div>
   <div id="cells"></div>
 </main>
@@ -149,9 +150,11 @@ const lockup = (texts, { layout, size, rem, columns = false, above = false }) =>
   let vb;
   if (layout === 'under') {
     if (above) {
-      // the first language's last baseline sits the same 12 units over the mark's top as the next language's cap top sits under its bottom
+      // the air is read at the x-height on both sides: under the mark the 12 units reach the cap line and a lowercase line's
+      // bulk sits (CAP - XH) lower, so over the mark, where the line sits on its baseline, the baseline keeps that much more
+      // (reported 2026-09-27: "estonian needs mor space under it cause typography")
       const [first, ...rest] = blocks;
-      const y1 = TOP - GAP - (first.length - 1) * pitch;
+      const y1 = TOP - GAP - (CAP - XH) * size - (first.length - 1) * pitch;
       first.forEach((l, i) => placed.push([LEFT, y1 + i * pitch, l]));
       stack(LEFT, BOTTOM + GAP + CAP * size, rest);
     } else stack(LEFT, BOTTOM + GAP + CAP * size);
@@ -205,7 +208,9 @@ const draw = async () => {
   const ONE = [[EN], [ET]], BOTH = [[EN, ET]];
   section('Under the mark');
   cells.append(cellOf('under', `${px(UNDER)}, line height ${LH}, one language`, { layout: 'under', size: UNDER }, ONE));
-  cells.append(cellOf('under-both', `${px(UNDER)}, both languages, the Estonian above the mark and the English under it, ${GAP} units of air each side`, { layout: 'under', size: UNDER, above: true }, [[ET, EN]]));
+  const over = (GAP + (CAP - XH) * UNDER).toFixed(1);
+  cells.append(cellOf('under-both', `${px(UNDER)}, both languages, the Estonian above the mark and the English under it, ${GAP} units of air to the cap line under the mark and ${over} to the baseline over it`, { layout: 'under', size: UNDER, above: true }, [[ET, EN]]));
+  cells.append(cellOf('under-both-en', `${px(UNDER)}, both languages, the English above the mark and the Estonian under it, the same air`, { layout: 'under', size: UNDER, above: true }, [[EN, ET]]));
   section('Beside the mark');
   cells.append(cellOf('beside', `${px(BESIDE)}, line height ${LH}, one language, ${BESIDE_GAP} units after the stave, centred on the E's middle bar`, { layout: 'beside', size: BESIDE }, ONE));
   cells.append(cellOf('beside-columns', `${px(BESIDE)}, both languages side by side, each centred on the E's middle bar, ${BESIDE_GAP} units between them`, { layout: 'beside', size: BESIDE, columns: true }, BOTH));
