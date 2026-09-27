@@ -7,6 +7,18 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Open 2026-09-27: "in parallel work on replacement options to Source Serif 4, come up with 10 version of moder sans, no garamod"
+
+Asked verbatim. Read as ten modern serifs, since it replaces a serif and excludes Garamond; a background agent fetches ten as subsets with licences and builds public/serif.html with each in the derived page's use, title and facts in the serif over the sans body, the body in it too on white, and a dark ground where the body stays sans, then ranks them.
+
+### Done 2026-09-27: "and use instument sans too, make similar versions too. rm other stuff."
+
+Asked verbatim, on the 47 page. It holds only the four DIN lockups of setting 1 and the same four in Instrument Sans condensed, uppercase at 0.08em on two lines fitted, drawn by the page from the webfont; the twelve variants and the sizes are gone. An Instrument Sans lockup as a file needs the letters as outlines, which is a step not taken.
+
+### Done 2026-09-27: "where are sans examples?" then "i mean sans body texts etc" and "and titles"
+
+Asked verbatim: the five fresh sans faces as specimens for the site's body text and titles, the way /type compares the earlier seven, not as taglines. Five specimens added to /type in the five faces already under public/vendor. ✅ H to L on https://eccm.positron.studio/type: Bricolage Grotesque (titles at width 90), Instrument Sans (titles at 85), Sofia Sans Condensed, Familjen Grotesk, Anybody (titles at 85), each the same row, facts, diacritics line and paragraph as A to G.
+
 ### Done 2026-09-27: "take first on 1 example in 47 and do estonian and centered versions"
 
 Asked verbatim with a crop of setting 1 on /tagline-47: uppercase DIN Condensed at 0.08em on two lines fitted to the letters, left aligned, full size. Four files under public/: the English and the Estonian lockup, each left aligned and centred, the Estonian with the hairline hyphen, the sizes measured on the page; shown at the top of /tagline-47. ✅ wordmark-en-left.svg, wordmark-en-centred.svg at 34.6 units and wordmark-et-left.svg, wordmark-et-centred.svg at 45.0, each fitted on its longer line.
