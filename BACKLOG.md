@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Open 2026-09-27: "a good story on sitemap, on RSS, and also a fallback story for existing links which need to map to the new URLs, maybe simpler ones. I want to lose that PHP thing from a URL, but how to keep old links working. Also SEO, redirection, consideration, etc."
+
+Asked verbatim, mid-task. An inventory of eccm.ee's URL shapes as fetched today, a simpler URL scheme without `index.php`, the redirect story (a table from a crawl plus pattern rules, 301, one hop, kept for years), the sitemap and RSS from D1 in two languages, and what trip already has for both. Written to `plans/plan-eccm-urls-sitemap-rss.md`, not executed.
+
 ### Open 2026-09-27: "look up trip image handling in the posts and index pages, size optimizations, responsive and size handling and 2x and all that stuff"
 
 Asked verbatim, mid-task. A reading of trip's image pipeline for pages (not cards): originals, transforms, variants, srcset and sizes, 2x, formats, the CLS attributes, caching and the free tier, and what eccm takes for its list, event page and the derive reading. Written to `plans/plan-eccm-images.md`, not executed.
