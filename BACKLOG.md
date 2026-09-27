@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "i feels like E C C M is a fixed thing and those various extended lines are thing than come go, can be animated etc"
+
+Said verbatim, a principle. Written into the skill and the icons plan, and made real in the files: every mark SVG holds the letters in a group with the class letters and the hairlines in a group with the class lines, so a page or a graphic can leave the lines out, extend them or animate them without touching the letters. No animation drawn.
+
 ### Done 2026-09-27: "in sq examples consider ECCM as a block to align and 5 lines just extend from M to right edge" and "treat 5 1px lines next to em also as separate element we can use in social media graphics etc in top rigght corner, edget to right side, padding from top"
 
 Asked verbatim with a crop. In every square the letters are the centred block and the stave runs from the M to the square's right edge; the stave is also its own file, public/icons/stave.svg, five one-unit lines on the mark's pitch, with the rule for graphics written beside it: top right corner, flush to the right edge, padded from the top.

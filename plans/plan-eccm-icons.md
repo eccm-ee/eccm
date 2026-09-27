@@ -137,3 +137,8 @@ line these replace.
    stem wide. A stacked mark, EC over CM, exists in the same four files plus a
    plain one and is rendered at the same sizes beside the wide one on /ds; the
    favicon and the ICO stay the wide mark until the owner picks.
+5. The principle behind all of it, said the same day: the letters are the
+   fixed mark and the lines are a layer that comes and goes. Every SVG holds
+   them in two groups, `.letters` and `.lines`; `tools/mark.mjs` keeps the
+   same split, which is what let the lines be snapped and dropped per size.
+   An animation of the lines is possible from here and not designed.

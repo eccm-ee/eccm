@@ -500,3 +500,10 @@ use semibold or medium for bold"*.
   hinting by hand, and under 128 drops them. The M's V arms are a full stem
   wide in the small-size marks (*"M is bloby under 64. make it wider to
   compensate?"*).
+- 🔴 **THE LETTERS ARE THE MARK; THE LINES ARE A LAYER.** Said 2026-09-27:
+  *"E C C M is a fixed thing and those various extended lines are things that
+  come and go, can be animated etc"*. Every mark file keeps the letters in a
+  group of class `letters` and the hairlines in a group of class `lines`,
+  so a page or a graphic can leave the lines out, run them to an edge, or
+  animate them, and the letters never move. Nothing is animated yet; that is a
+  design to be asked for.
