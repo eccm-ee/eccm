@@ -5,6 +5,7 @@
 import { html, raw } from './html.mjs';
 import { md } from './md.mjs';
 import { T, OTHER, page } from './chrome.mjs';
+import { dateLong, dayMonth, clock, mapsUrl } from './dates.mjs';
 
 const CATEGORY = {
   eccm: { et: 'ECCM', en: 'ECCM' }, koostoo: { et: 'Koostöö', en: 'Collaboration' }, improtest: { et: 'Improtest', en: 'Improtest' },
@@ -23,8 +24,6 @@ export const offsetFor = (local) => {
 const pad = (n) => String(n).padStart(2, '0');
 const toUtc = (local, off) => { const sign = off[0] === '-' ? 1 : -1; const [h, m] = off.slice(1).split(':').map(Number); return new Date(new Date(local + ':00Z').getTime() + sign * (h * 60 + m) * 60000); };
 const stamp = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
-const dayText = (local) => { const [y, mo, d] = local.slice(0, 10).split('-'); return `${d}.${mo}.${y}`; };
-const clock = (local, lang) => { const [h, m] = local.slice(11, 16).split(':'); return lang === 'et' ? `${h}.${m}` : `${h}:${m}`; };
 
 // the derived scheme, the flat contract, as the nine custom properties on the article
 const VARS = { ground: '--ev-ground', ink: '--ev-ink', ink2: '--ev-ink2', accent: '--ev-accent', btnFill: '--ev-btn-fill', onBtn: '--ev-on-btn', titleFace: '--ev-title-face', titleWeight: '--ev-title-weight', bodyFace: '--ev-body-face' };
@@ -70,8 +69,8 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
         ${fallback ? html`<p class="small">${t.fallback}</p>` : ''}
         <h1 lang="${textLang}">${title}</h1>
         <dl class="facts">
-          <div><dt>${t.when}</dt><dd><time datetime="${ev.starts_at}${off}">${dayText(ev.starts_at)} ${t.at} ${clock(ev.starts_at, lang)}</time>${ev.duration_min ? html`, <time datetime="PT${ev.duration_min}M">${ev.duration_min} ${t.min}</time>` : ''}</dd></div>
-          <div><dt>${t.where}</dt><dd>${where}</dd></div>
+          <div><dt>${t.when}</dt><dd><time datetime="${ev.starts_at}${off}">${dateLong(ev.starts_at, lang)} ${t.at} ${clock(ev.starts_at, lang)}</time>${ev.duration_min ? html`, <time datetime="PT${ev.duration_min}M">${ev.duration_min} ${t.min}</time>` : ''}</dd></div>
+          <div><dt>${t.where}</dt><dd><a class="place" href="${mapsUrl(where)}">${where}</a></dd></div>
           ${ev.category !== 'eccm' ? html`<div><dt>${t.series}</dt><dd>${CATEGORY[ev.category][lang]}</dd></div>` : ''}
           <div><dt>${t.calendar}</dt><dd><a href="${gcal}">Google</a> <a href="${outlook}">Outlook</a></dd></div>
           <div><dt>${t.ask}</dt><dd><a href="tel:${CONTACT.tel}">${CONTACT.telText}</a>, <a href="${CONTACT.site}">${CONTACT.siteText}</a></dd></div>
@@ -99,7 +98,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
     <section class="next">
       <h2>${t.next}</h2>
       <ol class="next-list">
-        ${next.map((n) => html`<li><time datetime="${n.starts_at}${offsetFor(n.starts_at)}">${n.starts_at.slice(8, 10)}.${n.starts_at.slice(5, 7)}</time><span><a href="${eventPath(n.tlang, n.slug)}"${n.tlang !== lang ? raw(` lang="${n.tlang}"`) : ''}>${n.title}</a><small>${n.venue}</small></span></li>`)}
+        ${next.map((n) => html`<li><time datetime="${n.starts_at}${offsetFor(n.starts_at)}">${dayMonth(n.starts_at, lang)}</time><span><a href="${eventPath(n.tlang, n.slug)}"${n.tlang !== lang ? raw(` lang="${n.tlang}"`) : ''}>${n.title}</a><small>${n.venue}</small></span></li>`)}
       </ol>
     </section>` : ''}
   </article>`;

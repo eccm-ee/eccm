@@ -252,6 +252,19 @@
      the wrappers came in for the phone layout below, which puts them back) */
   .credits > div { display: contents; }
   .credits dt { color: var(--eccm-ink-2); }
+  /* a place is a link to a map, with a lighter line than a text link, since
+     the standard one would weigh on a line of facts (asked 2026-09-27:
+     "locations need to be links to gmaps but std underline might be too
+     heavy") */
+  a.place { text-decoration-color: var(--eccm-rule); }
+  a.place:hover { text-decoration-color: var(--eccm-accent); }
+  /* bold in body text is semibold, not the face's 700, which shouts next to
+     headings at 400 (asked 2026-09-27: "in body text perhaps use semibold or
+     medium for bold"; 600 chosen, 500 too close to 400 in this face) */
+  .prose b, .prose strong { font-weight: 600; }
+  /* a date carries both its forms and the layout shows one: the long month
+     where there is room, the short one in the compact row (dates.mjs) */
+  .d-short { display: none; }
   .small { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
   /* a button: a word in a 3rem box ruled in ink, no radius, no shadow, always
      in the system face whatever face the page around it wears (asked
@@ -347,6 +360,8 @@
 }
 
 @container (max-width: 47rem) {
+    .ev-kicker .d-long { display: none; }
+    .ev-kicker .d-short { display: inline; }
   @layer components {
     .events { row-gap: var(--eccm-s-6); }
     .ev { column-gap: var(--eccm-s-4); grid-template-columns: 5.5rem minmax(0, 1fr); }

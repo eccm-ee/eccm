@@ -7,6 +7,22 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Open 2026-09-27: "in bg work with logo. do in square positive and negative options (no subline), 1px outline and not, do classical icon sizes all the way to .ico"
+
+Asked verbatim. A background agent draws the square mark from logo.svg without the tagline, positive and negative, with and without a 1px outline, and renders the classical icon sizes down to a multi-size .ico, with no new binary on this machine; it touches no existing page and reports the head lines to add.
+
+### Done 2026-09-27: three general rules, dictated
+
+*"general rule: use jaanuar / veebruar etc on dates when you have space and jan / veebr ... when not (narrow cols / mobile). locations need to be links to gmaps but std udnerline might be too heavy. in body text perhaps use semibold or medium for bold"*. Dates with the month's name, long where there is room and the short form in narrow columns and the compact row; places as links to Google Maps with a lighter underline than a text link; bold in body text at a lighter weight. Into eccm.css, the rendered event page, the static list and event pages, and the eccm-ui skill; /ds after the bios agent hands the file back. ✅ Done: src/render/dates.mjs, the event template, eccm.css (a.place, .prose b at 600, .d-long and .d-short with the compact row showing the short one), the static list and event pages, and the skill; MEASURED on the shots: "30. september 2026" on the desk, "30. sept 2026" on the phone, places with the light line.
+
+### Done 2026-09-27: "colour -> color"
+
+Asked verbatim: American spelling on /ds, the heading and the page's own prose. Handed to the bios agent, which holds the file, so that two writers do not meet in it. ✅ Done in the same pass as the bio specimen, 3 occurrences.
+
+### Done 2026-09-27: artist bios, "i do not see artist bios. how do desin them? in a box? how to deal with multiple bios? figure out your style bases on the skill ... how to model? are they just sections after body text. look up in data how currently performer bios are are prensented (inside body or out) multiple bios? photos (squares?) wor in bg"
+
+Asked verbatim with Alissa Šnaider's bio pasted as the example. A background agent surveys eccm.ee's event pages for how bios appear today (inside the body, where, how many, with photos or not), decides the model (a section of the body, a per-event bio row attached to a credit line, or a person table) and the design from the eccm-ui skill, writes `plans/plan-eccm-bios.md`, and adds the specimen to /ds for the owner to judge. Nothing in the schema changes until the plan is read. ✅ plans/plan-eccm-bios.md written and the specimen on /ds: MEASURED on 13 eccm.ee event pages, 2 carry a bio, one each, inside the body before the credits, no heading, no photo anywhere; the model chosen is an event_bio row per event with text per language and an optional photo; the design a section after the body, names as prose headings, no box, a 5.5rem square photo when there is one.
+
 ### Done 2026-09-27: "add serif examples" and "add more space between examples / secions in ds"
 
 Asked verbatim, one after the other. /ds gains a serif specimen in Source Serif 4 as a derived page sets it, on white with the body in it too, and on a dark derived ground with the body back in the sans; the face declaration moves from derive.html into eccm.css so it is declared once. The gaps between specimens and above sections each grow one step.

@@ -440,3 +440,30 @@ is the demo as it was before the day's corrections.
 §4 are a copy of `eccm.css` and the numbers in §5 are a copy of the plan; both
 are one `grep` and one `diff` from being checked, and a rule an agent is going
 to build on is worth that command first (CLAUDE.md).
+
+
+## Dates, places and bold, three rules dictated 2026-09-27
+
+Verbatim: *"general rule: use jaanuar / veebruar etc on dates when you have
+space and jan / veebr ... when not (narrow cols / mobile). locations need to
+be links to gmaps but std udnerline might be too heavy. in body text perhaps
+use semibold or medium for bold"*.
+
+- 🔴 **A DATE IS WRITTEN WITH ITS MONTH'S NAME, NEVER AS `30.09.2026`.** The
+  long form, `30. september 2026` and `30 September 2026`, wherever there is
+  room: the facts on an event page, the kicker on a desk. The short form,
+  `30. sept 2026` and `8. okt`, in a narrow column or the compact row under
+  47rem. `src/render/dates.mjs` writes both, and a `<time>` in the kicker
+  carries both as `.d-long` and `.d-short` with the container query showing
+  one, so the choice is the layout's and never the writer's. The Estonian
+  short months are jaan, veebr, märts, apr, mai, juuni, juuli, aug, sept, okt,
+  nov, dets; the English ones Jan, Feb, Mar, Apr, May, June, July, Aug, Sept,
+  Oct, Nov, Dec.
+- 🔴 **A PLACE IS A LINK TO A MAP, WITH A LIGHTER LINE.** `a.place` goes to
+  Google Maps with the venue and its address as the query, and its underline
+  is `--eccm-rule` rather than the text link's `--eccm-rule-strong`, the
+  accent on hover as everywhere. A line of facts would otherwise carry the
+  heaviest rule on the page.
+- 🔴 **BOLD IN BODY TEXT IS 600, NOT 700.** `.prose b, .prose strong` at
+  semibold: next to headings at 400 the face's 700 shouts, and 500 is too
+  close to 400 in Schibsted Grotesk to read as emphasis.
