@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "rm One page of everything the new eccm.ee pages are made of. ..."
+
+Asked verbatim: the opening paragraph of /ds goes; the page starts at its first heading.
+
 ### Done 2026-09-27: "ds page is in english"
 
 Asked verbatim. /ds speaks English (its chrome, headings, captions and prose), with the English logo and menu; the specimens stay the site's Estonian, marked lang="et", because they show the site as it is.

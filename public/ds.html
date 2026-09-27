@@ -20,7 +20,7 @@
      are the ones whose colour is the content */
   @layer page {
     .ds h2 { margin-block: var(--eccm-s-16) var(--eccm-s-6); font-size: var(--eccm-t-l); }
-    .ds h2:first-of-type { margin-block-start: var(--eccm-s-8); }
+    .ds h2:first-of-type { margin-block-start: var(--eccm-s-4); }
     .ds-tokens { display: grid; grid-template-columns: max-content max-content minmax(0, 1fr); column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); max-inline-size: 48rem; margin-block: var(--eccm-s-6); }
     .ds-tokens > code { font-family: ui-monospace, Menlo, monospace; font-size: 0.8125rem; }
     .ds-tokens > span:nth-child(3n) { color: var(--eccm-ink-2); }
@@ -76,9 +76,6 @@
 
 <main class="frame ds">
   <h1 class="list-label">Design system</h1>
-  <div class="prose flow">
-    <p>One page of everything the new eccm.ee pages are made of. Every value is eccm.css's own and is read here through the same classes the pages use, so a change to the stylesheet shows here first. The specimens are the site's own Estonian text.</p>
-  </div>
 
   <h2>Typography</h2>
   <div class="prose flow">
