@@ -1,0 +1,13 @@
+{
+  "name": "eccm",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --env staging",
+    "deploy": "wrangler deploy --env staging",
+    "check": "node tools/check-html.mjs public/*.html"
+  },
+  "devDependencies": {
+    "wrangler": "^4.75.0"
+  }
+}

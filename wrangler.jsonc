@@ -1,0 +1,35 @@
+{
+  // eccm: the site for eccm.ee while it is built, served as static assets.
+  // Session 0 of plans/plan-eccm-setup.md: there is no Worker script yet, the
+  // pages and their files under public/ are the whole site, and public/ is the
+  // SOURCE, not a build output.
+  //
+  // Two environments from day one, and nothing deploys without one:
+  //   npx wrangler deploy --env staging      this account, https://eccm.positron.studio/
+  //   npx wrangler deploy --env production   ECCM's own account and eccm.ee, once both exist
+  "name": "eccm",
+  "account_id": "dc1ee8d72a1fb7da857c46479a8503b8",
+  "compatibility_date": "2026-09-27",
+  "workers_dev": false,
+  "assets": {
+    "directory": "./public",
+    // /event serves event.html, the way positron's edge did for /eccm/event
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  },
+  "observability": { "enabled": true },
+  "env": {
+    "staging": {
+      "name": "eccm-staging",
+      // the same line positron's workers use for <name>.positron.studio;
+      // Cloudflare writes the DNS record and the certificate on deploy
+      "routes": [{ "pattern": "eccm.positron.studio", "custom_domain": true }],
+      "workers_dev": true
+    },
+    "production": {
+      "name": "eccm"
+      // ECCM's account_id, eccm.ee and www.eccm.ee go here at cutover
+      // (plans/plan-eccm-setup.md section 8); until then this deploys nowhere
+    }
+  }
+}

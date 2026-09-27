@@ -1,7 +1,14 @@
 ---
 name: eccm-ui
-description: A white reading site set in type, for eccm.ee and hosted as a positron demo: whitespace as an element with a shape, the measure, leading and the space between things counted in it, a scale of few sizes with large contrast, plain pictures beside text, and the event list those rules make. Load before any change under demo/eccm/, before any page for eccm.ee, and before any claim about type on a white page.
+description: A white reading site set in type, for eccm.ee, its own site at eccm.positron.studio since 2026-09-27: whitespace as an element with a shape, the measure, leading and the space between things counted in it, a scale of few sizes with large contrast, plain pictures beside text, and the event list those rules make. Load before any change under demo/eccm/, before any page for eccm.ee, and before any claim about type on a white page.
 ---
+
+> Written in positron as `.claude/skills/eccm-ui/SKILL.md` on 2026-09-26 and carried
+> here with its history on 2026-09-27, when the site left that repository for
+> https://eccm.positron.studio/ (https://github.com/kristjanjansen/positron). The
+> pages it describes were `demo/eccm/` there and are `public/` here. It leans on
+> `positron-compose`, copied beside it, and every measurement and quoted report
+> below is from positron's checkout on the day named.
 
 # White is the material and type is the object
 
@@ -21,7 +28,7 @@ verbatim and dated.
 
 ## 0. When to load it, and what it leaves to positron-compose
 
-Load before any change under `demo/eccm/`, before any page that is for eccm.ee
+Load before any change under `public/`, before any page that is for eccm.ee
 wherever it ends up hosted, and before any claim about type on a white page.
 Load `positron-compose` beside it every time: this file is the type half and
 that one is the composition half, and nothing is written twice. What is that
@@ -191,7 +198,7 @@ http://webtypography.net/3.1.1), the same rule about spacing as about type.
 ## 2. Type
 
 🔴 **ONE FAMILY, SCHIBSTED GROTESK, SELF HOSTED IN TWO SUBSETS.** Chosen
-2026-09-26 as *"Use font e"* off `demo/eccm/type.html`, where seven setups
+2026-09-26 as *"Use font e"* off `public/type.html`, where seven setups
 were shown in the page's own sizes. Before that the instruction was *"use same
 font as eccm (thay they actyually serve, not roboto not prenent)"*: eccm.ee
 declares Roboto and serves nothing, so it draws **Helvetica** on a Mac and
@@ -330,7 +337,7 @@ beside it is the text, so one link per event reaches a keyboard.
 
 ## 4. The list and the page, in the tokens that exist
 
-Every `--eccm-*` below is declared in `demo/eccm/eccm.css` today. The plan's
+Every `--eccm-*` below is declared in `public/eccm.css` today. The plan's
 wide measure token for list rows was never built; do not name it.
 
 - **The frame** is the window less two `--eccm-gutter` (1 rem on a phone,
