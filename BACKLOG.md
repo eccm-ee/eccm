@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "rm --eccm-t-s ... the measure of prose and of a title"
+
+Asked verbatim, the whole type token table on /ds; the specimens stay.
+
 ### Done 2026-09-27: "rm , served from here."
 
 Asked verbatim: the clause leaves the typography paragraph on /ds.
