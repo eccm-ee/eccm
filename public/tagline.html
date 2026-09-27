@@ -110,7 +110,7 @@
 <main class="frame tl">
   <h1 class="list-label">Tagline in DIN</h1>
   <div class="prose flow intro">
-    <p>The line under the mark in DIN Condensed, the face nearest the original, in every combination of casing, tracking and wrap, fitted to the letters and in ink, a shorter line centred on the letters or starting on the E: 48 settings (the greys and the line wider than the letters were asked off on 2026-09-27). Each is drawn at the phone's 11rem in English and in Estonian, with the size in the logo's units and the x-height on a phone under it. Nothing is squeezed: a fitted line is sized to the letters' width, E to M. <span class="face-note" id="face-note"></span></p>
+    <p>The line under the mark in DIN Condensed, the face nearest the original, in every combination of casing, tracking and wrap, fitted to the letters and in ink, a shorter line centred on the letters or starting on the E: 48 settings (the greys and the line wider than the letters were asked off on 2026-09-27). Each is drawn at the phone's 11rem in English and in Estonian, with the size in the logo's units and the x-height on a phone under it. Nothing is squeezed: a fitted line is sized to the letters' width, E to M, and both lines of a pair are centred on the letters or both start on the E. <span class="face-note" id="face-note"></span></p>
   </div>
   <h2>The reference, squeezed as today</h2>
   <div class="ref">
@@ -157,10 +157,14 @@ const lockup = (text, cse, track, wrap, ink, widthClass, align) => {
   const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '29'); use.setAttribute('width', '310'); use.setAttribute('height', '93'); svg.append(use);
   lines.forEach((l, i) => {
     const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'tag'); t.setAttribute('font-size', size.toFixed(2)); t.setAttribute('letter-spacing', (track * size).toFixed(2)); t.setAttribute('fill', ink);
-    const w = widthOf(l, track) * size / 100;
-    // a line the block's width starts on the E; a shorter one is centred on the letters or, left aligned, starts on the E too
-    const fitted = Math.abs(w - BLOCK) < 1;
-    t.setAttribute('x', fitted || align === 'left aligned' ? LEFT : (CENTRE - w / 2).toFixed(1)); t.setAttribute('y', (first + i * LINE * size).toFixed(1)); t.textContent = l; svg.append(t);
+    // every line follows the setting: centred on the letters' axis, or starting
+    // on the E (said 2026-09-27: "Either both lines left aligned or both
+    // centered"); the tracking is set as a style as well, since Safari drew the
+    // attribute's tracking narrower than Chrome measured it
+    t.style.letterSpacing = (track * size).toFixed(2) + 'px';
+    if (align === 'left aligned') { t.setAttribute('x', LEFT); t.setAttribute('text-anchor', 'start'); }
+    else { t.setAttribute('x', CENTRE); t.setAttribute('text-anchor', 'middle'); }
+    t.setAttribute('y', (first + i * LINE * size).toFixed(1)); t.textContent = l; svg.append(t);
   });
   return { svg, size };
 };

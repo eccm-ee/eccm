@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "There is no such thing. Either both lines left aligned or both centered."
+
+Said with a phone screenshot of setting 8, where the fitted line started on the E and the shorter one was centred. Every line of a lockup now follows the setting, centred on the letters' axis with text-anchor middle or starting on the E, and the tracking travels as a style too, since Safari drew the tracked line narrower than Chrome measured it.
+
 ### Done 2026-09-27: "try to pack more examples to page. rm 20 rem versions for now"
 
 Asked verbatim. /tagline shows each setting at 11rem only, English and Estonian side by side, in a grid of three cells a row on a desk, the caption a step above its pair.
