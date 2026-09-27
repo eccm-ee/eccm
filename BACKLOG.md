@@ -7,6 +7,11 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "in https://eccm.positron.studio/wordmark under the mark do 40units for estonian and english. for beside make 37 units 2 line, vert centered. rm others"
+
+Asked verbatim. `public/wordmark.html`: the under layout at one size, 40 units, both languages at 20rem and 11rem; the beside layout at 37 units, two lines, centred on the E's middle bar as the page's centred shape already is; the line height and size studies, the other two beside sizes and the three other beside shapes leave the page (in git at 73e4d2a).
+✅ MEASURED as the page opens: the English fit is 41.8 units and the Estonian 55.3, so at 40 the widest English line is 284.8 units and the Estonian 215.6 against the letters' 298, both inside the block; beside at 37 the lines run 263.5 and 199.5 units past the stave. Shot at 375 and 1280, nothing sideways.
+
 ### Done 2026-09-27: "save handoff"
 
 HANDOFF.md written in this repository for the first time, with every number counted by a command.

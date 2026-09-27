@@ -20,7 +20,7 @@ building on one.
 | https://eccm.positron.studio/ds | the design system: type specimens, serif specimens, bios, colour, space, buttons with a disabled state, the logos, the square marks, the icon sizes, the stave element |
 | https://eccm.positron.studio/type | thirteen faces for body and titles: A Schibsted Grotesk (the default), B Source Serif 4, C Instrument Sans, D to M ten modern serifs |
 | https://eccm.positron.studio/serif | the same ten serifs and the three others, each in the derived page's three uses |
-| https://eccm.positron.studio/wordmark | the tagline in Instrument Sans at width 75: line height, size, and a beside layout in four shapes |
+| https://eccm.positron.studio/wordmark | the tagline in Instrument Sans at width 75 in two settings, under the mark at 40 units and beside it at 37, two lines centred on the E's middle bar |
 | https://eccm.positron.studio/tagline | the tagline in DIN Condensed, 48 settings by casing, tracking, wrap and alignment |
 | https://eccm.positron.studio/tagline-47 | setting 47 taken apart: four DIN files and the same four in Instrument Sans |
 | https://eccm.positron.studio/logo | the mark measured off eccm.ee's JPEG |
@@ -92,7 +92,7 @@ with the move. Every one was relayed in full in the session that made it.
 ## Open, for the owner
 
 - The tagline's face and shape: DIN Condensed setting 47 (uppercase, 0.08em,
-  two lines) has four files; Instrument Sans at width 75 has the studies on
+  two lines) has four files; Instrument Sans at width 75 has two settings on
   /wordmark. Either needs the letters as outlines to become a file that works
   off this machine, since DIN Condensed is a macOS face and Instrument Sans
   is a webfont.

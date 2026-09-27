@@ -6,17 +6,19 @@
 <meta name="robots" content="noindex">
 <title>ECCM: wordmark in Instrument Sans</title>
 <!-- public/wordmark.html: the tagline under and beside the mark in
-     Instrument Sans medium at width 75, lowercase, developed from setting M
-     of the earlier comparison (asked 2026-09-27: "leave lowercase. reduce
-     lineheight of wordmark. try different text sizes and do variant of ECCM
-     flex layout"). Three studies: the line height of the two lines under
-     the mark; the size at the fit and three steps under it; and a beside
-     layout with the two lines to the right of the stave, centred on the E's
-     middle bar, at three sizes, the mark drawn at the same width as in the
-     under layout. Every fitted size is measured as the page opens by scaling
-     the longer line to the letters' width, 298 units; nothing is squeezed.
-     English and Estonian, the Estonian broken inside its long word with a
-     hairline of the mark's weight for its hyphen. -->
+     Instrument Sans medium at width 75, lowercase, two lines starting on
+     the E. Two settings since 2026-09-27 (asked: "under the mark do 40units
+     for estonian and english. for beside make 37 units 2 line, vert
+     centered. rm others"): under the mark at 40 units, and to the right of
+     the stave at 37 units with the two lines centred on the E's middle bar,
+     the mark drawn at one width in both. Both languages at one size,
+     English and Estonian at 20rem and 11rem of mark width, the Estonian
+     broken inside its long word with a hairline of the mark's weight for
+     its hyphen. The fit, the size at which the longer line is as wide as
+     the letters' 298 units, is measured as the page opens and reported in
+     window.__wordmark; nothing is squeezed. The line height and size
+     studies and the four beside shapes at three sizes are in git at
+     73e4d2a. -->
 <link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
@@ -103,7 +105,7 @@
 <main class="frame wm">
   <h1 class="list-label">Wordmark in Instrument Sans</h1>
   <div class="prose flow intro">
-    <p>Instrument Sans medium at width 75, lowercase, two lines starting on the E. Three studies: the line height of the two lines under the mark; the size at the fit and three steps under it; and a layout beside the mark, to the right of the stave, in four shapes: two lines or one, centred on the E's middle bar or set on the letters' baseline. The Estonian breaks inside its long word, the hyphen a hairline of the mark's weight. English and Estonian at 20rem and 11rem of mark width.</p>
+    <p>Instrument Sans medium at width 75, lowercase, two lines starting on the E, both languages at one size. Under the mark at 40 units, and beside it to the right of the stave at 37 units with the two lines centred on the E's middle bar. The Estonian breaks inside its long word, the hyphen a hairline of the mark's weight. English and Estonian at 20rem and 11rem of mark width.</p>
   </div>
   <div id="cells"></div>
 </main>
@@ -113,27 +115,29 @@
 </footer>
 <script type="module">
 const EN = 'estonian centre of contemporary music', ET = 'eesti nüüdismuusika keskus';
-const BLOCK = 298, LEFT = 35, BOTTOM = 122, GAP = 12, CAP = 0.7, XH = 0.53, EBAR = 73.5, STAVE_END = 345, BESIDE_GAP = 18;
+const BLOCK = 298, LEFT = 35, BOTTOM = 122, GAP = 12, CAP = 0.7, XH = 0.53, EBAR = 73.5, STAVE_END = 345, BESIDE_GAP = 18, LH = 0.95;
+// the two sizes, in units of the mark's 310, asked 2026-09-27: 40 under the mark, 37 beside it
+const UNDER = 40, BESIDE = 37;
 const NS = 'http://www.w3.org/2000/svg';
 const meter = document.createElementNS(NS, 'svg'); meter.setAttribute('width', '0'); meter.setAttribute('height', '0'); meter.style.position = 'absolute'; document.body.append(meter);
 const mt = document.createElementNS(NS, 'text'); mt.setAttribute('class', 'tag-is'); mt.setAttribute('font-size', '100'); meter.append(mt);
 const widthOf = (s) => { mt.textContent = s; return mt.getComputedTextLength(); };
 const split2 = (s) => { const et = s.match(/^(.*nüüdis)(muusika keskus)$/i); if (et) return [et[1] + '-', et[2]]; const w = s.split(' '); let best = null; for (let i = 1; i < w.length; i++) { const a = w.slice(0, i).join(' '), b = w.slice(i).join(' '); const m = Math.max(a.length, b.length); if (!best || m < best.m) best = { a, b, m }; } return [best.a, best.b]; };
 const fitSize = (lines) => 100 * BLOCK / Math.max(...lines.map(widthOf));
-// one lockup: layout 'under' or 'beside', a line height as a factor of the size, a size in units
-const lockup = (text, { layout, lh, size, rem, one = false, valign = 'centre' }) => {
-  const lines = one ? [text] : split2(text);
+// one lockup: layout 'under' or 'beside', a size in units, the svg's width in rem
+const lockup = (text, { layout, size, rem }) => {
+  const lines = split2(text);
   const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('aria-hidden', 'true');
   const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '29'); use.setAttribute('width', '310'); use.setAttribute('height', '93'); svg.append(use);
   let x, y1, vb;
-  if (layout === 'under') { x = LEFT; y1 = BOTTOM + GAP + CAP * size; const y2 = y1 + lh * size; vb = [35, 27, 310, y2 + 0.25 * size - 27]; }
+  if (layout === 'under') { x = LEFT; y1 = BOTTOM + GAP + CAP * size; const y2 = y1 + LH * size; vb = [35, 27, 310, y2 + 0.25 * size - 27]; }
   else {
+    // the two lines to the right of the stave, their block centred on the E's middle bar
     x = STAVE_END + BESIDE_GAP;
-    const block = CAP * size + (lines.length - 1) * lh * size;
-    // centred on the E's middle bar, or the last line on the letters' baseline (asked 2026-09-27: "bottom aligned variants")
-    y1 = valign === 'bottom' ? BOTTOM - (lines.length - 1) * lh * size : EBAR - block / 2 + CAP * size;
+    const block = CAP * size + LH * size;
+    y1 = EBAR - block / 2 + CAP * size;
     const wText = Math.max(...lines.map(widthOf)) * size / 100;
-    vb = [35, 27, x + wText - 35, Math.max(95, y1 + (lines.length - 1) * lh * size + 0.25 * size - 27)];
+    vb = [35, 27, x + wText - 35, Math.max(95, y1 + LH * size + 0.25 * size - 27)];
   }
   svg.setAttribute('viewBox', vb.map((v) => (typeof v === 'number' ? +v.toFixed(1) : v)).join(' '));
   // the mark keeps one width: the svg is as many rem as its viewBox is wide against the mark's 310
@@ -142,7 +146,7 @@ const lockup = (text, { layout, lh, size, rem, one = false, valign = 'centre' })
   document.body.append(svg);
   lines.forEach((l, i) => {
     const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'tag-is'); t.setAttribute('font-size', size.toFixed(2)); t.setAttribute('fill', '#1a1a1a'); t.setAttribute('x', x); t.setAttribute('text-anchor', 'start');
-    const y = y1 + i * lh * size; t.setAttribute('y', y.toFixed(1));
+    const y = y1 + i * LH * size; t.setAttribute('y', y.toFixed(1));
     const hy = /-$/.test(l); t.textContent = hy ? l.slice(0, -1) : l; svg.append(t);
     if (hy) {
       // from the drawn line itself, so a browser that measures the face at another width still puts the dash after the s
@@ -157,7 +161,7 @@ const cellOf = (id, capText, opts) => {
   const cell = document.createElement('div'); cell.className = 'cell'; cell.id = id;
   const p = document.createElement('p'); p.className = 'cap'; p.textContent = capText;
   const locks = document.createElement('div'); locks.className = 'locks';
-  for (const [text] of [[EN], [ET]]) for (const rem of [20, 11]) { const f = document.createElement('figure'); const fc = document.createElement('figcaption'); fc.textContent = rem + 'rem'; f.append(lockup(text, { ...opts, rem }), fc); locks.append(f); }
+  for (const text of [EN, ET]) for (const rem of [20, 11]) { const f = document.createElement('figure'); const fc = document.createElement('figcaption'); fc.textContent = rem + 'rem'; f.append(lockup(text, { ...opts, rem }), fc); locks.append(f); }
   cell.append(p, locks); return cell;
 };
 const draw = async () => {
@@ -165,25 +169,14 @@ const draw = async () => {
   const cells = document.getElementById('cells'); cells.replaceChildren();
   const enFit = fitSize(split2(EN)), etFit = fitSize(split2(ET));
   const px = (s) => `${s.toFixed(1)} units, ${(s * 176 / 310).toFixed(1)} px at 11rem`;
-  let n = 0;
   const section = (title) => { const h2 = document.createElement('h2'); h2.textContent = title; cells.append(h2); };
-  section('Line height, under the mark, at the fit');
-  for (const lh of [1.05, 0.95, 0.88]) {
-    const cell = cellOf('lh' + (++n), `line height ${lh}: English ${px(enFit)}; Estonian ${px(etFit)}`, { layout: 'under', lh, size: enFit });
-    // the Estonian at its own fit
-    [...cell.querySelectorAll('svg')].slice(2).forEach((svg, i) => svg.replaceWith(lockup(ET, { layout: 'under', lh, size: etFit, rem: i ? 11 : 20 })));
-    cells.append(cell);
-  }
-  section('Size, under the mark, at line height 0.95');
-  for (const k of [1, 0.9, 0.8, 0.7]) {
-    const cell = cellOf('sz' + (++n), `${Math.round(k * 100)} per cent of the fit: English ${px(enFit * k)}; Estonian ${px(etFit * k)}`, { layout: 'under', lh: 0.95, size: enFit * k });
-    [...cell.querySelectorAll('svg')].slice(2).forEach((svg, i) => svg.replaceWith(lockup(ET, { layout: 'under', lh: 0.95, size: etFit * k, rem: i ? 11 : 20 })));
-    cells.append(cell);
-  }
-  section('Beside the mark, at line height 0.95, the mark at its width');
-  const SHAPES = [['two lines, centred on the E\'s bar', {}], ['two lines, the last on the baseline', { valign: 'bottom' }], ['one line, centred on the E\'s bar', { one: true }], ['one line, on the baseline', { one: true, valign: 'bottom' }]];
-  for (const size of [30, 36, 42]) for (const [name, shape] of SHAPES) cells.append(cellOf('bs' + (++n), `${name}: ${px(size)}, both languages at one size`, { layout: 'beside', lh: 0.95, size, ...shape }));
-  window.__wordmark = { count: n, enFit: +enFit.toFixed(1), etFit: +etFit.toFixed(1), instrument: document.fonts.check('500 100px "Instrument Sans"') };
+  section('Under the mark');
+  cells.append(cellOf('under', `${px(UNDER)}, line height ${LH}, both languages at one size`, { layout: 'under', size: UNDER }));
+  section('Beside the mark');
+  cells.append(cellOf('beside', `${px(BESIDE)}, line height ${LH}, two lines centred on the E's middle bar`, { layout: 'beside', size: BESIDE }));
+  // the widest line of each language at the under size, in units, against the letters' 298
+  const widest = (text, size) => +(Math.max(...split2(text).map(widthOf)) * size / 100).toFixed(1);
+  window.__wordmark = { count: 2, under: UNDER, beside: BESIDE, enFit: +enFit.toFixed(1), etFit: +etFit.toFixed(1), enUnder: widest(EN, UNDER), etUnder: widest(ET, UNDER), enBeside: widest(EN, BESIDE), etBeside: widest(ET, BESIDE), instrument: document.fonts.check('500 100px "Instrument Sans"') };
 };
 draw();
 </script>
