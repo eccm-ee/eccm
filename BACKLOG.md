@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "ds page is in english"
+
+Asked verbatim. /ds speaks English (its chrome, headings, captions and prose), with the English logo and menu; the specimens stay the site's Estonian, marked lang="et", because they show the site as it is.
+
 ### Done 2026-09-27: "ECCM saal, Herne 11A, Tallinn - where its from? it might be a post box but eccm venue is not there ... location is ECCM (pin icon). its At Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinna, Estonia. -- i am surprised its not shown anywhere on page"
 
 Asked verbatim. MEASURED: Herne 11A, 10135 Tallinn is the postal address on eccm.ee's contact page (plan-eccm-design.md line 247, read 2026-09-26), and the first shaping of public/event.html took it for the venue; the venue is Pühavaimu 9, which eccm.ee prints in its lists as "ECCM saal, Pühavaimu 9" and "Stuudio 1965, Pühavaimu 9" and, on the English event page only, as the map's geocoded address. ✅ Pühavaimu 9, Tallinn now in the seed and both databases, the static event, edit, derive and ds pages, and every footer (the footer names the place people go to; the postal address belongs on the contact page when it exists); the CMS and markup plans corrected the same way.
