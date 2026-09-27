@@ -7,6 +7,11 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "C ups and downs are cut off, adjust svg \"padding\"" (a crop of the mark, the C's top curves flat)
+
+Asked with a picture. The two C's are stadiums whose stroke reaches 27 above and 123.5 below, 2 over the E and M's top at 29 and 1.5 under their bottom at 122, the round letter's overshoot. A box of `35 29 310 93` on the mark clips both. The box has to carry the ink, `35 27 310 96.5`, wherever the mark is drawn.
+✅ Done on the three pages that draw the mark from an inline symbol, wordmark, tagline and tagline-47: the symbol's box and the use's box are `35 27 310 96.5`, and the beside boxes on /wordmark read 96.5 tall instead of 95. The standalone logo and wordmark SVGs and the icons already box from 27 and were not touched. One shot at 1280: the C's arcs rise over the E's top.
+
 ### Done 2026-09-27: "rm 37.0 units, 21.0 px at 11rem, both languages as one block, English over Estonian, centred on the E's middle bar"
 
 Asked verbatim, the caption of the cell. `public/wordmark.html`: the one-block bilingual beside lockup leaves the page, so of the two readings of "also both languages beside" the side-by-side one stays; the one-block shape is in git at 5e3102d.

@@ -50,7 +50,7 @@
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="mark" viewBox="35 29 310 93"><g fill="currentColor"><g class="letters"><!-- E: a 14 stem, two 38 bars and a 31 bar; the bottom bar starts at
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="mark" viewBox="35 27 310 96.5"><g fill="currentColor"><g class="letters"><!-- E: a 14 stem, two 38 bars and a 31 bar; the bottom bar starts at
          row 108, where the raster's join to the C runs along its top edge -->
     <rect x="35" y="29" width="14" height="93"/>
     <rect x="35" y="29" width="38" height="13"/>
@@ -141,7 +141,7 @@ const lockup = (text, track, align, cls) => {
   const size = 100 * BLOCK / Math.max(...lines.map((l) => widthOf(l, track, cls)));
   const first = BOTTOM + GAP + CAP * size, last = first + (lines.length - 1) * LINE * size, h = last + 0.25 * size - 27;
   const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', `35 27 310 ${h.toFixed(1)}`); svg.setAttribute('aria-hidden', 'true');
-  const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '29'); use.setAttribute('width', '310'); use.setAttribute('height', '93'); svg.append(use);
+  const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '27'); use.setAttribute('width', '310'); use.setAttribute('height', '96.5'); svg.append(use);
   // the lockup sits in the document while its lines are laid, since a detached text measures as zero
   document.body.append(svg);
   lines.forEach((l, i) => {

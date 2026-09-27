@@ -50,7 +50,7 @@
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="mark" viewBox="35 29 310 93"><g fill="currentColor"><g class="letters"><!-- E: a 14 stem, two 38 bars and a 31 bar; the bottom bar starts at
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="mark" viewBox="35 27 310 96.5"><!-- the box is the ink, 27 to 123.5: the C's stroke reaches 2 over the E and M's top at 29 and 1.5 under their bottom at 122, the round letter's overshoot, and a box of 29 to 122 cut both (reported 2026-09-27, "C ups and downs are cut off") --><g fill="currentColor"><g class="letters"><!-- E: a 14 stem, two 38 bars and a 31 bar; the bottom bar starts at
          row 108, where the raster's join to the C runs along its top edge -->
     <rect x="35" y="29" width="14" height="93"/>
     <rect x="35" y="29" width="38" height="13"/>
@@ -142,7 +142,7 @@ const lockup = (texts, { layout, size, rem, columns = false, above = false }) =>
   // from one block's last baseline to the next block's first: the descent, the same air the mark and the first line have, and a cap
   const air = 0.25 * size + GAP + CAP * size;
   const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('aria-hidden', 'true');
-  const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '29'); use.setAttribute('width', '310'); use.setAttribute('height', '93'); svg.append(use);
+  const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '27'); use.setAttribute('width', '310'); use.setAttribute('height', '96.5'); svg.append(use);
   const placed = []; // [x, baseline, line]
   const stack = (x, y, list = blocks) => { for (const lines of list) { lines.forEach((l, i) => placed.push([x, y + i * pitch, l])); y += (lines.length - 1) * pitch + air; } };
   const centred = (lines) => EBAR - (CAP * size + (lines.length - 1) * pitch) / 2 + CAP * size; // the first baseline of a block centred on the E's middle bar
@@ -167,7 +167,7 @@ const lockup = (texts, { layout, size, rem, columns = false, above = false }) =>
   if (!vb) {
     const right = Math.max(...placed.map(([x, , l]) => x + widthOf(l) * size / 100));
     const top = Math.min(27, Math.min(...placed.map(([, y]) => y)) - CAP * size - 2);
-    const bottom = Math.max(122, Math.max(...placed.map(([, y]) => y)) + 0.25 * size);
+    const bottom = Math.max(123.5, Math.max(...placed.map(([, y]) => y)) + 0.25 * size);
     vb = [35, top, right - 35, bottom - top];
   }
   svg.setAttribute('viewBox', vb.map((v) => +v.toFixed(1)).join(' '));
