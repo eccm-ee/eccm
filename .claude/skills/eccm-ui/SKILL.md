@@ -607,3 +607,27 @@ and 5.4; H Plex one line 9.3 and 5.1; I Schibsted tracked lowercase 8.7 and
 Bold (MEASURED, `CSS.getPlatformFontsForNode`), a macOS face; on Windows the
 files fall to Arial Narrow, which is one more reason the final tagline is
 outlines or a vendored face, never a system one.
+
+✅ **FIVE MORE FACES, 2026-09-27, ON "GIVE ME SOME FRESHER STUFF", ALL SANS
+AND NONE A GARAMOND**, settings L to P on `wordmark.html`, each two lines
+fitted to the mark, medium weight, MEASURED x-height on a phone at 11rem:
+L Bricolage Grotesque at its 87.5 width **11.1 px**; M Instrument Sans at its
+narrowest width, 75, **12.6 px**; N Sofia Sans Condensed **12.2 px**; O
+Familjen Grotesk **9.9 px**; P Anybody at width 75 **14.2 px**; against E,
+Schibsted Grotesk medium, 10.3 px. All five clear the 7 px floor, and the
+three narrow ones sit closest to the mark's condensed voice while keeping
+the counters a condensed face usually pays with. The two to put beside E:
+**M, Instrument Sans condensed**, a text grotesk drawn with a width axis so
+its 75 is a designed width and not a squeeze, the cleanest lowercase of the
+five and the largest cap height; and **N, Sofia Sans Condensed**, drawn for
+small sizes with open apertures and a softer e and s. P has the largest
+x-height but at 75 its forms turn display and the Estonian double letters
+crowd; L carries the most character, an optical size axis and a distinctive
+y and g, which may argue with the mark; O is the warmest but a normal width,
+so the smallest. Every face is an OFL subset under `public/vendor/` with its
+licence beside it; a face with an optical size axis needs its fit refined at
+the size it lands on, since its widths change with size (Bricolage came out
+12 per cent wide on the first pass). Fell before the five: Hanken Grotesk,
+Onest and Geist as Inter's neighbours rather than fresher; Space Grotesk and
+Syne for lowercase quirks that fight a small line; Big Shoulders as a display
+condensed with tight counters; Roboto Flex as neither fresh nor small.

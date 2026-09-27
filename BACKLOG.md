@@ -7,9 +7,13 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
-### Open 2026-09-27: "On EC / CM align E to left and C to right" and "Give me five more alternative fonts, no Garamond. Give me some fresher stuff."
+### Done 2026-09-27: "None of the proposed wordmark versions work. Those first DIN examples are the best, but work now hard on this font size. Letter spacing and also casing, capital casing, full uppercase, words uppercase, sentence case, font size, wrapping, so create a lot of variants, make it work, maybe also a gray version, not sure about it, do it"
 
-Asked verbatim, with "Where are alt wordmark fonts" in between, answered with the URL. The stacked mark's first row spreads to the block: the E on the left edge over the C, the C on the right edge over the M, the join between them the longer for it, in every stacked file and in the size builder. Five contemporary faces, none a Garamond, are fetched as latin and latin-ext subsets with their licences, set as settings L to P on /wordmark in both languages at both widths and measured like the others. ✅ The stacked mark is done and deployed; the five faces are with a background agent.
+Asked, dictated. public/tagline.html: the tagline in DIN Condensed under the mark in every combination of four casings (lowercase, sentence case, words capitalised, uppercase), three trackings, three wraps (one line fitted to the letters E to M, one line at the current 27 units unsqueezed, two lines fitted) and three inks (ink, muted ink, light grey), 108 settings, each at 20rem and 11rem with the size in units and the x-height on the phone printed, both languages, the current squeezed line as the reference at the top. ✅ Done at https://eccm.positron.studio/tagline, 108 settings, DIN Condensed confirmed drawing by the fitted size matching the measured natural width; the fitted one-liner is 24.5 units, 7.2 px of x-height on a phone, under the floor, the two-liners about 45 units, over it.
+
+### Done 2026-09-27: "On EC / CM align E to left and C to right" and "Give me five more alternative fonts, no Garamond. Give me some fresher stuff."
+
+Asked verbatim, with "Where are alt wordmark fonts" in between, answered with the URL. The stacked mark's first row spreads to the block: the E on the left edge over the C, the C on the right edge over the M, the join between them the longer for it, in every stacked file and in the size builder. Five contemporary faces, none a Garamond, are fetched as latin and latin-ext subsets with their licences, set as settings L to P on /wordmark in both languages at both widths and measured like the others. ✅ The stacked mark is done and deployed; the five faces are with a background agent. ✅ Bricolage Grotesque, Instrument Sans, Sofia Sans Condensed, Familjen Grotesk and Anybody as settings L to P on /wordmark, all over the 7 px floor on a phone; Instrument Sans condensed and Sofia Sans Condensed put forward; fifteen files under public/vendor.
 
 ### Done 2026-09-27: "center workmark", "do icons inverted too", "add disabled buttons variants to ds"
 

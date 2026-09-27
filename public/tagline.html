@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>ECCM: tagline in DIN</title>
+<!-- public/tagline.html: the tagline under the mark, in DIN Condensed only,
+     in every combination of four casings, three trackings, three wraps and
+     three inks, 108 settings, each drawn at the header's 20rem and the
+     phone's 11rem in English and at 11rem in Estonian, with the size in the
+     logo's units and the x-height on a phone printed (asked 2026-09-27:
+     "Those first DIN examples are the best, but work now hard on this font
+     size. Letter spacing and also casing, capital casing, full uppercase,
+     words uppercase, sentence case, font size, wrapping, so create a lot of
+     variants, make it work, maybe also a gray version"). Every size is
+     computed as the page opens by measuring the line at 100 units and
+     scaling it to the letters' width, E to M, 298 units; nothing is squeezed.
+     DIN Condensed is a macOS face, so on another machine the page falls to
+     Arial Narrow and says so in the first line. The x-height is size times
+     0.52, the ratio measured on wordmark.html. -->
+<link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
+<link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="./eccm.css">
+<style>
+  @layer page {
+    .tl h2 { margin-block: var(--eccm-s-24) var(--eccm-s-6); font-size: var(--eccm-t-l); }
+    .tl h2:first-of-type { margin-block-start: var(--eccm-s-8); }
+    .intro { max-inline-size: var(--eccm-measure); }
+    .ref { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--eccm-s-8); margin-block: var(--eccm-s-6); }
+    .ref img { display: block; }
+    .cell { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: var(--eccm-s-2); padding-block: var(--eccm-s-6); border-block-start: 1px solid var(--eccm-rule); }
+    .cell .cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin: 0; }
+    .locks { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--eccm-s-8); }
+    .locks svg { display: block; overflow: visible; }
+    .locks .w20 { inline-size: 20rem; } .locks .w11 { inline-size: 11rem; }
+    .locks figure { margin: 0; }
+    .locks figcaption { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-start: var(--eccm-s-2); }
+    .tag { font-family: 'DIN Condensed', 'Helvetica Neue', 'Arial Narrow', sans-serif; font-weight: 700; }
+    .face-note { font-size: var(--eccm-t-s); color: var(--eccm-ink-2); }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="mark" viewBox="35 29 310 93"><g fill="currentColor"><g class="letters"><!-- E: a 14 stem, two 38 bars and a 31 bar; the bottom bar starts at
+         row 108, where the raster's join to the C runs along its top edge -->
+    <rect x="35" y="29" width="14" height="93"/>
+    <rect x="35" y="29" width="38" height="13"/>
+    <rect x="35" y="67" width="31" height="13"/>
+    <rect x="35" y="108" width="38" height="14"/>
+    <!-- C and C: a stadium 44 wide and 97 tall, stroke 14, open on the right
+         between y 60 and y 88; the second is the first moved 81 to the right -->
+    <path d="M146 60 V49 A15 15 0 0 0 116 49 V101.5 A15 15 0 0 0 146 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/>
+    <path d="M227 60 V49 A15 15 0 0 0 197 49 V101.5 A15 15 0 0 0 227 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/>
+    <!-- M: two 14 stems and a V whose arms are 10 wide horizontally, start
+         inside the stems at the top and meet on the baseline -->
+    <rect x="273" y="29" width="14" height="93"/>
+    <rect x="319" y="29" width="14" height="93"/>
+    <polygon points="283,29 293,29 302.5,84 312,29 322,29 306,122 299,122"/>
+    <!-- the stave: five hairlines past the M on a 7.375 pitch, and three joins
+         between the letters. Every join runs FLUSH along an edge of the letter
+         it meets, which is how the raster draws them (rows 58 and 59 are the
+         second C's upper terminal's last two rows, 88 and 89 the first C's
+         lower terminal's first two, 108 and 109 the E's bottom bar's first
+         two), so the first line sits on the terminal's bottom edge at 60 and
+         the fifth on the terminal's top edge at 88. Reported 2026-09-26 as
+         "left and center thin line does not line up with typeface" when they
+         were centred on their rows instead -->
+    <!-- the tagline: x-height 14, baselines at 153 and 174, each line squeezed
+         to the width the raster measures, 311 and 221. DIN Condensed first
+       because its natural width for the first line is 329 px against the
+       picture's 311, a 5 per cent squeeze, where Helvetica Neue Condensed
+       Bold needs 26 and Arial Narrow 25 (MEASURED on ./logo.html, 2026-09-26) -->
+    <g font-family="'DIN Condensed', 'Helvetica Neue', 'Arial Narrow', sans-serif" font-stretch="condensed" font-weight="700" font-size="27" lengthAdjust="spacingAndGlyphs">
+      <text x="34" y="153" textLength="311">estonian centre of contemporary music</text></g><g class="lines"><rect x="333" y="58.5" width="12" height="1.5"/>
+        <rect x="333" y="65.875" width="12" height="1.5"/>
+        <rect x="333" y="73.25" width="12" height="1.5"/>
+        <rect x="333" y="80.625" width="12" height="1.5"/>
+        <rect x="333" y="88" width="12" height="1.5"/>
+        <rect x="234" y="58.5" width="39" height="1.5"/>
+        <rect x="153" y="88" width="37" height="1.5"/>
+        <rect x="73" y="108" width="36" height="1.5"/></g></g></symbol></svg>
+<header class="site-head">
+  <div class="frame">
+    <a class="mark" href="./"><img src="./logo-en.svg" width="310" height="133" alt="Estonian Centre of Contemporary Music"></a>
+    <span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Menu">
+  <div class="frame">
+    <ul class="nav">
+      <li><a href="./">Home</a></li>
+      <li><a href="https://eccm.ee/index.php/en/eccm-new-eng">ECCM</a></li>
+      <li><a href="https://eccm.ee/index.php/en/tallinn-1965-eng">Tallinn 1965</a></li>
+      <li><a href="https://eccm.ee/nan/">NAN</a></li>
+      <li><a href="https://eccm.ee/index.php/en/ulysses-eng">Ulysses</a></li>
+      <li><a href="https://eccm.ee/index.php/en/open-calls">Open calls</a></li>
+      <li><a href="https://eccm.ee/index.php/en/eventseng">Events</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="frame tl">
+  <h1 class="list-label">Tagline in DIN</h1>
+  <div class="prose flow intro">
+    <p>The line under the mark in DIN Condensed, the face nearest the original, in every combination of casing, tracking, wrap and ink: 108 settings. Each is drawn at the header's 20rem and the phone's 11rem in English and at 11rem in Estonian, with the size in the logo's units and the x-height on a phone under it. Nothing is squeezed: a fitted line is sized to the letters' width, E to M. <span class="face-note" id="face-note"></span></p>
+  </div>
+  <h2>The reference, squeezed as today</h2>
+  <div class="ref">
+    <img src="./logo-en.svg" width="320" height="137" alt="">
+    <img src="./logo-en.svg" width="176" height="76" alt="">
+    <img src="./logo-et.svg" width="176" height="76" alt="">
+  </div>
+  <div id="cells"></div>
+</main>
+
+<footer class="frame site-foot">
+  <span>Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinn</span>
+</footer>
+<script type="module">
+const EN = 'estonian centre of contemporary music', ET = 'eesti nüüdismuusika keskus';
+const SMALL = new Set(['of']);
+const CASES = {
+  'lowercase': (s) => s,
+  'sentence case': (s) => s[0].toUpperCase() + s.slice(1),
+  'words capitalised': (s) => s.split(' ').map((w) => (SMALL.has(w) ? w : w[0].toUpperCase() + w.slice(1))).join(' '),
+  'uppercase': (s) => s.toUpperCase(),
+};
+const TRACK = { 'lowercase': [0, 0.02, 0.05], 'sentence case': [0, 0.02, 0.05], 'words capitalised': [0, 0.02, 0.05], 'uppercase': [0.04, 0.08, 0.12] };
+const WRAPS = ['one line fitted', 'one line at 27', 'two lines fitted'];
+const INKS = [['ink', '#1a1a1a'], ['muted ink', '#555555'], ['light grey', '#999999']];
+const BLOCK = 298, LEFT = 35, CENTRE = 184, BOTTOM = 122, GAP = 12, CAP = 0.7, LINE = 1.05, XH = 0.52;
+const NS = 'http://www.w3.org/2000/svg';
+// a hidden measuring text
+const meter = document.createElementNS(NS, 'svg'); meter.setAttribute('width', '0'); meter.setAttribute('height', '0'); meter.style.position = 'absolute';
+const mt = document.createElementNS(NS, 'text'); mt.setAttribute('class', 'tag'); mt.setAttribute('font-size', '100'); meter.append(mt); document.body.append(meter);
+const widthOf = (s, track) => { mt.setAttribute('letter-spacing', String(track * 100)); mt.textContent = s; return mt.getComputedTextLength(); };
+const split2 = (s) => { const w = s.split(' '); let best = null; for (let i = 1; i < w.length; i++) { const a = w.slice(0, i).join(' '), b = w.slice(i).join(' '); const m = Math.max(a.length, b.length); if (!best || m < best.m) best = { a, b, m }; } return [best.a, best.b]; };
+const lockup = (text, cse, track, wrap, ink, widthClass) => {
+  const s = CASES[cse](text);
+  let lines, size;
+  if (wrap === 'two lines fitted') { lines = split2(s); size = 100 * BLOCK / Math.max(...lines.map((l) => widthOf(l, track))); }
+  else if (wrap === 'one line at 27') { lines = [s]; size = 27; }
+  else { lines = [s]; size = 100 * BLOCK / widthOf(s, track); }
+  const first = BOTTOM + GAP + CAP * size;
+  const last = first + (lines.length - 1) * LINE * size;
+  const h = last + 0.25 * size - 27;
+  const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', `35 27 310 ${h.toFixed(1)}`); svg.setAttribute('class', widthClass); svg.setAttribute('aria-hidden', 'true');
+  const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '29'); use.setAttribute('width', '310'); use.setAttribute('height', '93'); svg.append(use);
+  lines.forEach((l, i) => {
+    const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'tag'); t.setAttribute('font-size', size.toFixed(2)); t.setAttribute('letter-spacing', (track * size).toFixed(2)); t.setAttribute('fill', ink);
+    const w = widthOf(l, track) * size / 100;
+    // a line the block's width starts on the E; a shorter or a wider one is centred on the letters
+    const fitted = Math.abs(w - BLOCK) < 1;
+    t.setAttribute('x', fitted ? LEFT : (CENTRE - w / 2).toFixed(1)); t.setAttribute('y', (first + i * LINE * size).toFixed(1)); t.textContent = l; svg.append(t);
+  });
+  return { svg, size };
+};
+const cells = document.getElementById('cells');
+let n = 0;
+for (const cse of Object.keys(CASES)) {
+  const h2 = document.createElement('h2'); h2.textContent = cse[0].toUpperCase() + cse.slice(1); cells.append(h2);
+  for (const wrap of WRAPS) for (const track of TRACK[cse]) for (const [inkName, ink] of INKS) {
+    n++;
+    const cell = document.createElement('div'); cell.className = 'cell'; cell.id = 'v' + n;
+    const en20 = lockup(EN, cse, track, wrap, ink, 'w20'), en11 = lockup(EN, cse, track, wrap, ink, 'w11'), et11 = lockup(ET, cse, track, wrap, ink, 'w11');
+    const px11 = en20.size * (176 / 310), xh = px11 * XH, capPx = px11 * CAP;
+    const cap = document.createElement('p'); cap.className = 'cap';
+    cap.textContent = `${n}. ${cse}, tracking ${track}em, ${wrap}, ${inkName}: ${en20.size.toFixed(1)} units, ${px11.toFixed(1)} px on a phone, ${cse === 'uppercase' ? 'cap height ' + capPx.toFixed(1) : 'x-height ' + xh.toFixed(1)} px`;
+    const locks = document.createElement('div'); locks.className = 'locks';
+    for (const [l, capText] of [[en20, '20rem'], [en11, '11rem'], [et11, '11rem, Estonian']]) { const f = document.createElement('figure'); const fc = document.createElement('figcaption'); fc.textContent = capText; f.append(l.svg, fc); locks.append(f); }
+    cell.append(cap, locks); cells.append(cell);
+  }
+}
+// which face drew it: DIN Condensed sets the English line at about 1219 units per 100 of size, Arial Narrow and Helvetica Neue Condensed at about 1540
+try { const w = widthOf('estonian centre of contemporary music', 0); document.getElementById('face-note').textContent = w < 1350 ? 'DIN Condensed is drawing this page.' : 'DIN Condensed is not on this machine; a fallback is drawing the lines, and the sizes are its.'; } catch {}
+window.__tagline = { count: n };
+</script>
+</body>
+</html>
