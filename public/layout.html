@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>ECCM: footers</title>
+<!-- public/layout.html: five footers for the site, tried side by side
+     (asked 2026-09-27: "create new page layout where you tray first several
+     footers. eccm logo, with and without workmark, main links, credits etc.
+     use Schibsted and Instrument", "i mean page /layout", "look aroind other
+     footers too"). Each footer carries the mark, alone or with its Estonian
+     wordmark in Instrument Sans at 40 units as the wordmark page has it, and
+     some of the main links, the contact, the credits, a newsletter field and
+     the funders' slots; each is drawn in Schibsted Grotesk and in Instrument
+     Sans, at the desk and in a 375 px box, and the footer decides its own
+     arrangement from its container, not from the window. What a footer
+     carries was read off seven comparable sites on 2026-09-27, one fetch
+     each, and the table below is that reading. The mark symbol is the one
+     wordmark.html draws, boxed to its ink. -->
+<link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
+<link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="./eccm.css">
+<style>
+  @font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @layer page { .tag-is { font-family: 'Instrument Sans', Helvetica, Arial, sans-serif; font-stretch: 75%; font-variation-settings: 'wdth' 75; font-weight: 500; } }
+  @layer page {
+    .intro { max-inline-size: var(--eccm-measure); }
+    .lay h2 { margin-block: var(--eccm-s-24) var(--eccm-s-4); font-size: var(--eccm-t-l); }
+    .lay h2:first-of-type { margin-block-start: var(--eccm-s-12); }
+    .cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin: 0 0 var(--eccm-s-3); max-inline-size: var(--eccm-measure); }
+    .lay table { border-collapse: collapse; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); margin-block: var(--eccm-s-8); max-inline-size: var(--eccm-measure); }
+    .lay th, .lay td { text-align: start; vertical-align: top; padding: var(--eccm-s-2) var(--eccm-s-4) var(--eccm-s-2) 0; border-block-end: 1px solid var(--eccm-rule); }
+    .lay th { color: var(--eccm-ink-2); font-weight: 400; }
+    /* one rendering: a box that is the footer's container, so the footer inside decides by the box and not by the window */
+    .box { border: 1px solid var(--eccm-rule); container-type: inline-size; margin-block-end: var(--eccm-s-8); }
+    .phones { display: flex; flex-wrap: wrap; gap: var(--eccm-s-8); align-items: flex-start; }
+    /* the phone box is sized on the figure, not on the box: a flex item's percentage has nothing to resolve against, and the box went 163 px wide the first time (MEASURED 2026-09-27) */
+    .phones figure { margin: 0; flex: none; inline-size: min(375px, 100%); }
+    .phones .box { inline-size: 100%; }
+    .phones figcaption { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-start: var(--eccm-s-3); }
+    figure.desk { margin: 0 0 var(--eccm-s-8); }
+    figure.desk figcaption { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-start: var(--eccm-s-3); }
+    figure.desk .box { margin-block-end: 0; }
+
+    /* the footer itself: the site's footer rule, set at the small size in the second ink, s-8 above and s-12 below, and a gutter that follows the container */
+    .ft { --g: var(--eccm-s-8); padding: var(--eccm-s-8) var(--g) var(--eccm-s-12); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+    @container (max-width: 48rem) { .ft { --g: var(--eccm-s-4); } }
+    .ft a { text-decoration: none; }
+    .ft a:hover { text-decoration-line: underline; text-decoration-color: var(--eccm-accent); }
+    .ft ul { list-style: none; margin: 0; padding: 0; }
+    .ft p { margin: 0; }
+    .ft .mk { display: block; color: var(--eccm-ink); }
+    .ft .mk svg { display: block; inline-size: var(--w, 11rem); max-inline-size: 100%; }
+    .ft .label { color: var(--eccm-ink); margin-block-end: var(--eccm-s-2); }
+    /* a row with two ends, wrapping into a stack when the container is narrow */
+    .ft .row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--eccm-s-6) var(--eccm-s-8); }
+    .ft .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: var(--eccm-s-8); }
+    .ft .menu { display: flex; flex-wrap: wrap; column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-1); }
+    .ft .stack li + li { margin-block-start: var(--eccm-s-1); }
+    .ft .line { display: flex; flex-wrap: wrap; gap: var(--eccm-s-2) var(--eccm-s-8); margin-block-start: var(--eccm-s-8); }
+    .ft .line.top { margin-block-start: 0; margin-block-end: var(--eccm-s-8); }
+    .ft .lang { display: flex; column-gap: var(--eccm-s-3); }
+    .ft .news { display: flex; flex-wrap: wrap; gap: var(--eccm-s-2); align-items: end; }
+    .ft .news label { display: grid; gap: var(--eccm-s-1); }
+    .ft input { font: inherit; block-size: 3rem; inline-size: 14rem; max-inline-size: 100%; padding-inline: var(--eccm-s-3); border: 1px solid var(--eccm-ink); border-radius: 0; background: transparent; color: var(--eccm-ink); }
+    .ft .btn { color: var(--eccm-ink); border-color: var(--eccm-ink); }
+    .ft .slots { display: flex; flex-wrap: wrap; gap: var(--eccm-s-4); }
+    .ft .slot { inline-size: 7rem; block-size: 3.5rem; border: 1px solid var(--eccm-rule-strong); display: grid; place-items: center; }
+    /* white on black: the ink and the ground trade places, and the second ink lightens to keep its contrast */
+    .ft.dark { --eccm-ink: #ffffff; --eccm-ink-2: #c9c9c9; --eccm-rule-strong: #777777; background: #1a1a1a; }
+    .is { font-family: 'Instrument Sans', Helvetica, Arial, sans-serif; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="mark" viewBox="35 27 310 96.5"><!-- the box is the ink, 27 to 123.5: the C's stroke reaches 2 over the E and M's top at 29 and 1.5 under their bottom at 122, the round letter's overshoot, and a box of 29 to 122 cut both (reported 2026-09-27, "C ups and downs are cut off") --><g fill="currentColor"><g class="letters"><!-- E: a 14 stem, two 38 bars and a 31 bar; the bottom bar starts at
+         row 108, where the raster's join to the C runs along its top edge -->
+    <rect x="35" y="29" width="14" height="93"/>
+    <rect x="35" y="29" width="38" height="13"/>
+    <rect x="35" y="67" width="31" height="13"/>
+    <rect x="35" y="108" width="38" height="14"/>
+    <!-- C and C: a stadium 44 wide and 97 tall, stroke 14, open on the right
+         between y 60 and y 88; the second is the first moved 81 to the right -->
+    <path d="M146 60 V49 A15 15 0 0 0 116 49 V101.5 A15 15 0 0 0 146 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/>
+    <path d="M227 60 V49 A15 15 0 0 0 197 49 V101.5 A15 15 0 0 0 227 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"/>
+    <!-- M: two 14 stems and a V whose arms are 10 wide horizontally, start
+         inside the stems at the top and meet on the baseline -->
+    <rect x="273" y="29" width="14" height="93"/>
+    <rect x="319" y="29" width="14" height="93"/>
+    <polygon points="283,29 293,29 302.5,84 312,29 322,29 306,122 299,122"/>
+    <!-- the stave: five hairlines past the M on a 7.375 pitch, and three joins
+         between the letters. Every join runs FLUSH along an edge of the letter
+         it meets, which is how the raster draws them (rows 58 and 59 are the
+         second C's upper terminal's last two rows, 88 and 89 the first C's
+         lower terminal's first two, 108 and 109 the E's bottom bar's first
+         two), so the first line sits on the terminal's bottom edge at 60 and
+         the fifth on the terminal's top edge at 88. Reported 2026-09-26 as
+         "left and center thin line does not line up with typeface" when they
+         were centred on their rows instead -->
+    <!-- the tagline: x-height 14, baselines at 153 and 174, each line squeezed
+         to the width the raster measures, 311 and 221. DIN Condensed first
+       because its natural width for the first line is 329 px against the
+       picture's 311, a 5 per cent squeeze, where Helvetica Neue Condensed
+       Bold needs 26 and Arial Narrow 25 (MEASURED on ./logo.html, 2026-09-26) -->
+    <g font-family="'DIN Condensed', 'Helvetica Neue', 'Arial Narrow', sans-serif" font-stretch="condensed" font-weight="700" font-size="27" lengthAdjust="spacingAndGlyphs">
+      <text x="34" y="153" textLength="311">estonian centre of contemporary music</text></g><g class="lines"><rect x="333" y="58.5" width="12" height="1.5"/>
+        <rect x="333" y="65.875" width="12" height="1.5"/>
+        <rect x="333" y="73.25" width="12" height="1.5"/>
+        <rect x="333" y="80.625" width="12" height="1.5"/>
+        <rect x="333" y="88" width="12" height="1.5"/>
+        <rect x="234" y="58.5" width="39" height="1.5"/>
+        <rect x="153" y="88" width="37" height="1.5"/>
+        <rect x="73" y="108" width="36" height="1.5"/></g></g></symbol></svg>
+<header class="site-head">
+  <div class="frame">
+    <a class="mark" href="./"><img src="./logo-en.svg" width="310" height="133" alt="Estonian Centre of Contemporary Music"></a>
+    <span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Menu">
+  <div class="frame">
+    <ul class="nav">
+      <li><a href="./">Home</a></li>
+      <li><a href="https://eccm.ee/index.php/en/eccm-new-eng">ECCM</a></li>
+      <li><a href="https://eccm.ee/index.php/en/tallinn-1965-eng">Tallinn 1965</a></li>
+      <li><a href="https://eccm.ee/nan/">NAN</a></li>
+      <li><a href="https://eccm.ee/index.php/en/ulysses-eng">Ulysses</a></li>
+      <li><a href="https://eccm.ee/index.php/en/open-calls">Open calls</a></li>
+      <li><a href="https://eccm.ee/index.php/en/eventseng">Events</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="frame lay">
+  <h1 class="list-label">Footers</h1>
+  <div class="prose flow intro">
+    <p>Five footers for the site, each with the mark, alone or with its wordmark, and some of the main links, the contact, the credits, a newsletter field and the funders' slots. Each is drawn in Schibsted Grotesk and in Instrument Sans, at the desk and in a 375 px box, and decides its own arrangement from its container. Left out on purpose: a phone, an email and social links, because none of ECCM's is on record here, and a privacy line, because no such page exists yet.</p>
+    <p>What a footer carries, read off seven comparable sites on 2026-09-27, one fetch each. Every one gives the organisation's name and address; five repeat the menu; four give an email and four a phone; four carry a privacy or legal line; three a copyright line, three social links and three a newsletter field; two the funders and two a registry number. eccm.ee's own footer today is Joomla's login form.</p>
+  </div>
+  <table>
+    <thead><tr><th>site</th><th>what its footer carries</th></tr></thead>
+    <tbody>
+      <tr><td>eestikontsert.ee</td><td>four columns of links (about, news, visitor, services), name, address, phone, email, registry code</td></tr>
+      <tr><td>erso.ee</td><td>name, address, phone, email, registry and VAT numbers, a newsletter field with its consent line, tickets, six social links</td></tr>
+      <tr><td>helilooja.ee</td><td>name, address, phone, email, the menu again, Facebook, a copyright line with the years 1924 to 2026</td></tr>
+      <tr><td>gaudeamus.nl</td><td>funders under "Gefinancierd door", four social links, about and festival columns, a quick-links column, the language, address, privacy</td></tr>
+      <tr><td>hcmf.co.uk</td><td>about, privacy, code of conduct, account, archive, email, two phones, address, copyright, charity number</td></tr>
+      <tr><td>ircam.fr</td><td>teams, partners, support, jobs, a contact form, the newsletter, Centre Pompidou, copyright, cookies, privacy, legal, terms</td></tr>
+      <tr><td>saal.ee</td><td>name, address, the association, a newsletter field</td></tr>
+    </tbody>
+  </table>
+  <div id="tries"></div>
+</main>
+
+<footer class="frame site-foot">
+  <span>Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinn</span>
+</footer>
+<script type="module">
+const ET = 'eesti nüüdismuusika keskus';
+// the wordmark page's under lockup: Instrument Sans medium at width 75, two lines at 40 units, 12 units under the mark
+const LEFT = 35, BOTTOM = 122, GAP = 12, CAP = 0.7, XH = 0.53, LH = 0.95, UNDER = 40;
+const NS = 'http://www.w3.org/2000/svg';
+const meter = document.createElementNS(NS, 'svg'); meter.setAttribute('width', '0'); meter.setAttribute('height', '0'); meter.style.position = 'absolute'; document.body.append(meter);
+const mt = document.createElementNS(NS, 'text'); mt.setAttribute('class', 'tag-is'); mt.setAttribute('font-size', '100'); meter.append(mt);
+const widthOf = (s) => { mt.textContent = s; return mt.getComputedTextLength(); };
+const split2 = (s) => { const m = s.match(/^(.*nüüdis)(muusika keskus)$/i); return [m[1] + '-', m[2]]; };
+// the mark, alone or with the wordmark under it, as an svg that draws in the current colour
+const markSvg = (tagline) => {
+  const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('aria-hidden', 'true');
+  const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '27'); use.setAttribute('width', '310'); use.setAttribute('height', '96.5'); svg.append(use);
+  if (!tagline) { svg.setAttribute('viewBox', '35 27 310 96.5'); return svg; }
+  const lines = split2(ET), size = UNDER, y1 = BOTTOM + GAP + CAP * size;
+  svg.setAttribute('viewBox', `35 27 310 ${(y1 + LH * size + 0.25 * size - 27).toFixed(1)}`);
+  document.body.append(svg);
+  lines.forEach((l, i) => {
+    const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'tag-is'); t.setAttribute('font-size', size); t.setAttribute('fill', 'currentColor'); t.setAttribute('x', LEFT); t.setAttribute('y', (y1 + i * LH * size).toFixed(1)); t.setAttribute('text-anchor', 'start');
+    const hy = /-$/.test(l); t.textContent = hy ? l.slice(0, -1) : l; svg.append(t);
+    if (hy) { const w = t.getComputedTextLength(), mid = y1 + i * LH * size - XH * 0.5 * size; const d = document.createElementNS(NS, 'rect'); d.setAttribute('x', (LEFT + w + size * 0.08).toFixed(1)); d.setAttribute('y', (mid - 0.75).toFixed(2)); d.setAttribute('width', (size * 0.3).toFixed(1)); d.setAttribute('height', '1.5'); d.setAttribute('fill', 'currentColor'); svg.append(d); }
+  });
+  svg.remove(); return svg;
+};
+
+const MENU = [['Avaleht', './'], ['ECCM', 'https://eccm.ee/index.php/et/eccm'], ['Tallinn 1965', 'https://eccm.ee/index.php/et/tallinn-1965'], ['NAN', 'https://eccm.ee/nan/'], ['Ulysses', 'https://eccm.ee/index.php/et/ulysses'], ['Konkursid', 'https://eccm.ee/index.php/et/konkursid'], ['Sündmused', 'https://eccm.ee/index.php/et/syndmusest']];
+const menu = (cls) => `<ul class="${cls}">${MENU.map(([t, h]) => `<li><a href="${h}">${t}</a></li>`).join('')}</ul>`;
+const NAME = 'Eesti Nüüdismuusika Keskus', VENUE = 'Pühavaimu 9, Tallinn', POST = 'Herne 11A, 10135 Tallinn';
+const lang = '<span class="lang"><span aria-current="page" lang="et">ET</span><a href="https://eccm.ee/index.php/en/" lang="en">EN</a></span>';
+const copy = `© 2026 ${NAME}`, city = 'Tallinn, UNESCO muusikalinn';
+const mark = (tagline, w) => `<a class="mk" href="./" style="--w: ${w}rem" data-tagline="${tagline ? 1 : ''}" aria-label="${NAME}"></a>`;
+
+// the five footers: each a shape, and what it carries
+const TRIES = [
+  ['A. One row', 'the mark alone at the start; the name, the venue and the language switch at the end', `
+    <div class="row">${mark(false, 8)}<div class="line" style="margin:0"><span>${NAME}, ${VENUE}</span>${lang}</div></div>`],
+  ['B. Wordmark and the menu', 'the mark with its wordmark at the start and the menu at the end, on one row; under them the name, the venue and the copyright line', `
+    <div class="row">${mark(true, 11)}${menu('menu')}</div>
+    <div class="line"><span>${NAME}, ${VENUE}</span><span>${copy}</span>${lang}</div>`],
+  ['C. Three columns', 'the mark with its wordmark and the copyright under it; the menu as a column; the contact as a column with the venue and the postal address as label over value', `
+    <div class="cols">
+      <div>${mark(true, 11)}<p style="margin-block-start: var(--eccm-s-6)">${copy}</p></div>
+      <div><p class="label">Menüü</p>${menu('stack')}</div>
+      <div><p class="label">Kontakt</p><p>${NAME}</p><p style="margin-block-start: var(--eccm-s-3)">Saal<br>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">Postiaadress<br>${POST}</p></div>
+    </div>`],
+  ['D. Four columns and a newsletter', 'the mark alone; the menu; the contact; a newsletter field with its button; under everything a line with the copyright, the city and the switch, and the funders as slots', `
+    <div class="cols">
+      <div>${mark(false, 8)}</div>
+      <div><p class="label">Menüü</p>${menu('stack')}</div>
+      <div><p class="label">Kontakt</p><p>${NAME}</p><p>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">Postiaadress<br>${POST}</p></div>
+      <div><p class="label">Uudiskiri</p><form class="news" onsubmit="return false"><label><span>E-post</span><input type="email" name="email" autocomplete="email"></label><button class="btn" type="submit">Liitu</button></form></div>
+    </div>
+    <div class="line" style="align-items: center"><span>Toetajad</span><span class="slots"><span class="slot">toetaja</span><span class="slot">toetaja</span><span class="slot">toetaja</span></span></div>
+    <div class="line"><span>${copy}</span><span>${city}</span>${lang}</div>`],
+  ['E. White on black', 'the wordmark large across the top, the menu as a row under it, then the contact and the copyright, the ink and the ground traded', `
+    <div class="line top" style="align-items: flex-end; justify-content: space-between">${mark(true, 20)}${lang}</div>
+    ${menu('menu')}
+    <div class="line"><span>${NAME}, ${VENUE}</span><span>${copy}</span><span>${city}</span></div>`],
+];
+const FACES = [['Schibsted Grotesk', ''], ['Instrument Sans', 'is']];
+const footer = (html, face, dark) => `<footer class="ft${dark ? ' dark' : ''}${face ? ' ' + face : ''}" lang="et">${html}</footer>`;
+const tries = document.getElementById('tries');
+let n = 0;
+for (const [title, what, html] of TRIES) {
+  const dark = title.startsWith('E.');
+  const h2 = document.createElement('h2'); h2.textContent = title; tries.append(h2);
+  const cap = document.createElement('p'); cap.className = 'cap'; cap.textContent = what; tries.append(cap);
+  for (const [name, cls] of FACES) {
+    const f = document.createElement('figure'); f.className = 'desk';
+    f.innerHTML = `<div class="box">${footer(html, cls, dark)}</div><figcaption>${name}, the desk</figcaption>`; tries.append(f); n++;
+  }
+  const phones = document.createElement('div'); phones.className = 'phones';
+  for (const [name, cls] of FACES) {
+    const f = document.createElement('figure');
+    f.innerHTML = `<div class="box">${footer(html, cls, dark)}</div><figcaption>${name}, 375 px</figcaption>`; phones.append(f); n++;
+  }
+  tries.append(phones);
+}
+await document.fonts.load('500 100px "Instrument Sans"');
+for (const a of document.querySelectorAll('.mk')) a.replaceChildren(markSvg(!!a.dataset.tagline));
+window.__layout = { footers: n, tries: TRIES.length, marks: document.querySelectorAll('.mk svg').length, instrument: document.fonts.check('500 100px "Instrument Sans"') };
+</script>
+</body>
+</html>

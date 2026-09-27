@@ -17,7 +17,7 @@ It left the positron repository on 2026-09-27 with its history
 | `plans/` | every plan, eleven today (`ls plans/*.md \| wc -l`, counted and never remembered): the four that came with the move and the seven of 2026-09-27, each relayed in full when written |
 | `.claude/skills/eccm-ui` | the type half of the design system, with every rule's measurement and the owner's words. Load before any change under `public/` |
 | `.claude/skills/positron-compose` | the composition half, copied from positron. Load beside `eccm-ui` |
-| `tools/` | `shot.mjs`, `which-rule-won.mjs`, `ancestry.mjs`, `check-html.mjs`, copied from positron with a header saying so, and `mark.mjs` with `icons.mjs`, which draw the mark per icon size and write the ICOs |
+| `tools/` | `shot.mjs`, `which-rule-won.mjs`, `ancestry.mjs`, `check-html.mjs`, copied from positron with a header saying so (`shot.mjs` gained `--from px` here on 2026-09-27, owed to positron's copy by hand), and `mark.mjs` with `icons.mjs`, which draw the mark per icon size and write the ICOs |
 | `archive/` | what was removed and why, verbatim |
 | `wrangler.jsonc` | two environments. `staging` is this account and `eccm.positron.studio`; `production` is ECCM's account and `eccm.ee`, blank until cutover |
 

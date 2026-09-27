@@ -7,9 +7,11 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
-### Open 2026-09-27: "create new page layout where you tray first several footers. eccm logo, with and without workmark, main links, credits etc. use Schibsted and Instrument" and "i mean page \"/layout\""
+### Done 2026-09-27: "create new page layout where you tray first several footers. eccm logo, with and without workmark, main links, credits etc. use Schibsted and Instrument" and "i mean page \"/layout\""
 
 Asked verbatim, mid-task, two messages. A new `public/layout.html` at https://eccm.positron.studio/layout: a study of several site footers, each with the mark (with the wordmark and without), the main links, the credits and the rest a footer carries, set in Schibsted Grotesk and in Instrument Sans. What a footer carries is taken from eccm.ee's own footer and the current `site-foot`, and every one is shown at the phone width and the desk.
+⚠️ Added mid-task: *"look aroind other footers too"*: the footers of comparable sites, read once each, one fetch a site, for what they carry; the inventory goes in the page's intro and here.
+✅ Done: https://eccm.positron.studio/layout, five footers (one row; wordmark and the menu; three columns; four columns with a newsletter field and funders' slots; white on black), each in Schibsted Grotesk and Instrument Sans at the desk and in a 375 px box that is the footer's container, 20 footers and 20 marks drawn. Left out, said on the page: a phone, an email and social links (none of ECCM's on record here) and a privacy line (no page). The inventory, seven sites fetched once each on 2026-09-27 (eestikontsert.ee, erso.ee, helilooja.ee, gaudeamus.nl, hcmf.co.uk, ircam.fr, saal.ee; arvopart.ee and eestimuusikapaevad.ee answered with no footer element, eccm.ee's is Joomla's login form): every one gives the name and address, five repeat the menu, four an email, four a phone, four a privacy or legal line, three a copyright line, three social links, three a newsletter field, two the funders, two a registry number. MEASURED: the first cut's phone boxes were 163 px wide at the desk, a flex item's percentage with nothing to resolve against, so the width sits on the figure now and reads 375. `tools/shot.mjs` gained `--from px` to capture a page taller than 6000 px in parts, owed to positron's copy by hand.
 
 ### Done 2026-09-27: "use literata now on the derived page not the prev serif one"
 

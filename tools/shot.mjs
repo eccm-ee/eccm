@@ -10,6 +10,7 @@
 //   node demo/shot.mjs kit --hash instrument-panel
 //   node demo/shot.mjs kit --base https://positron.studio
 //   node demo/shot.mjs kit --clip 2400          # stop the capture 2400 px down
+//   node tools/shot.mjs layout 1280 --from 6000  # start it 6000 px down, for a page taller than one capture (eccm, 2026-09-27)
 //
 // 🔴 IT EXISTS BECAUSE THIS PROJECT CANNOT SEE ITS OWN PHONE LAYOUTS, AND THAT
 // IS WRITTEN DOWN IN THREE PLACES AS A KNOWN HOLE RATHER THAN AS A THING
@@ -87,11 +88,12 @@ const widths = bare.filter((a) => /^\d+$/.test(a)).map(Number);
 const BASE = flag('base', process.env.ECCM_BASE || 'http://127.0.0.1:8787');
 const HASH = flag('hash', '');
 const CLIP = Number(flag('clip', 0)) || 0;
+const FROM = Number(flag('from', 0)) || 0; // start the capture this many px down, for a page taller than one capture (added in eccm, 2026-09-27)
 const WAIT = Number(flag('wait', 2500));
 const OUT = flag('out', 'tmp/shots');
 
 if (!slug) {
-  console.error('usage: node tools/shot.mjs <URL or slug> [width ...] [--base URL] [--hash id] [--clip px] [--wait ms] [--out dir]');
+  console.error('usage: node tools/shot.mjs <URL or slug> [width ...] [--base URL] [--hash id] [--clip px] [--from px] [--wait ms] [--out dir]');
   process.exit(2);
 }
 
@@ -191,7 +193,7 @@ for (const w of (widths.length ? widths : WIDTHS)) {
 
   const { result } = await S('Runtime.evaluate', {
     expression: `JSON.stringify({
-      w: innerWidth, h: Math.min(document.documentElement.scrollHeight, 6000),
+      w: innerWidth, full: document.documentElement.scrollHeight,
       // 🔴 AGAINST clientWidth, NOT innerWidth. MEASURED 2026-09-26 on /eccm/ at
       // 375: a title with no break opportunity ran the page to 404 px, and
       // mobile Chrome widened the LAYOUT viewport to match, so innerWidth read
@@ -202,7 +204,10 @@ for (const w of (widths.length ? widths : WIDTHS)) {
     })`, returnByValue: true,
   });
   const page = JSON.parse(result.value);
-  // with --hash the capture starts AT the block, not at the top of the page
+  // with --hash the capture starts AT the block, with --from that many px down, and never runs past 6000 px in one
+  // capture, because a capture of a 23,800 px page never answered (positron LESSONS #123)
+  page.top = HASH ? page.top : Math.min(FROM, Math.max(0, page.full - 1));
+  page.h = Math.min(page.full, page.top + 6000);
   const height = Math.min(CLIP || page.h, page.h - page.top);
 
   const { data } = await S('Page.captureScreenshot', {
@@ -210,7 +215,7 @@ for (const w of (widths.length ? widths : WIDTHS)) {
     clip: { x: 0, y: page.top, width: w, height, scale: 1 },
   });
   const name = /^https?:/.test(slug) ? (new URL(slug).pathname.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'index') : slug;
-  const file = join(OUT, `${name}-${w}${HASH ? `-${HASH}` : ''}.png`);
+  const file = join(OUT, `${name}-${w}${HASH ? `-${HASH}` : ''}${FROM && !HASH ? `-from${FROM}` : ''}.png`);
   await writeFile(file, Buffer.from(data, 'base64'));
   shots.push({ w, file, page, height });
 
