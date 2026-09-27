@@ -28,7 +28,8 @@
     .ds-cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-3); }
     .ds-swatches { display: flex; flex-wrap: wrap; gap: var(--eccm-s-6); margin-block: var(--eccm-s-6); }
     .ds-swatch { inline-size: 9rem; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
-    .ds-swatch i { display: block; block-size: 4rem; border: 1px solid var(--eccm-rule); margin-block-end: var(--eccm-s-2); }
+    .ds-swatch i { display: block; block-size: 4rem; margin-block-end: var(--eccm-s-2); }
+    .ds-swatch.white i { border: 1px solid var(--eccm-rule); }   /* white has no other edge */
     .ds-space { display: grid; row-gap: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); margin-block: var(--eccm-s-6); max-inline-size: var(--eccm-measure); }
     .ds-space > div { display: grid; grid-template-columns: 7rem minmax(0, 1fr); align-items: center; column-gap: var(--eccm-s-4); }
     .ds-space i { display: block; block-size: var(--eccm-s-3); background: var(--eccm-ink); }
@@ -138,7 +139,7 @@
     <p>White is the material and type is the object. Every pair is computed against white and colour is never the only cue: the accent sits only on an underline under the pointer and on the focus ring.</p>
   </div>
   <div class="ds-swatches">
-    <div class="ds-swatch"><i style="background: #ffffff"></i><code>--eccm-ground</code><br>#ffffff</div>
+    <div class="ds-swatch white"><i style="background: #ffffff"></i><code>--eccm-ground</code><br>#ffffff</div>
     <div class="ds-swatch"><i style="background: #1a1a1a"></i><code>--eccm-ink</code><br>#1a1a1a, 17.40:1</div>
     <div class="ds-swatch"><i style="background: #555555"></i><code>--eccm-ink-2</code><br>#555555, 7.46:1</div>
     <div class="ds-swatch"><i style="background: #d9d9d9"></i><code>--eccm-rule</code><br>#d9d9d9</div>
