@@ -145,7 +145,7 @@ CREATE TABLE event (
   ends_at       TEXT,                      -- NULL for one evening
   duration_min  INTEGER,                   -- 60 for Gestures; NULL when nobody typed it
   venue         TEXT NOT NULL DEFAULT '',  -- 'ECCM saal'
-  address       TEXT NOT NULL DEFAULT '',  -- 'Herne 11A, Tallinn'
+  address       TEXT NOT NULL DEFAULT '',  -- 'Pühavaimu 9, Tallinn' (the venue; Herne 11A is the postal address on the contact page, corrected 2026-09-27)
   ticket_url    TEXT NOT NULL DEFAULT '',
   website_url   TEXT NOT NULL DEFAULT '',  -- 'https://www.arvopart.ee/...' on Feldman
   category      TEXT NOT NULL DEFAULT 'eccm'

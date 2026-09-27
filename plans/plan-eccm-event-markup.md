@@ -166,7 +166,7 @@ an `aria-label`, `footer.site-foot`, `html lang="et"`, and the ticket as an
         <h1>…</h1>
         <dl class="facts">
           <div><dt>Millal</dt><dd><time datetime="2026-09-30T19:00:00+03:00">30.09.2026 kell 19.00</time>, <time datetime="PT1H">60 min</time></dd></div>
-          <div><dt>Kus</dt><dd>ECCM saal, Herne 11A, Tallinn</dd></div>
+          <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
           …
         </dl>
         <p class="event-actions"><a class="btn btn-pri" href="https://fienta.com/…">Osta pilet</a> <a class="btn" href="/et/events/….ics" type="text/calendar">Kalendrisse</a></p>
@@ -178,7 +178,7 @@ an `aria-label`, `footer.site-foot`, `html lang="et"`, and the ticket as an
     <section class="next"><h2>Järgmised üritused</h2><ol class="next-list">…</ol></section>
   </article>
 </main>
-<footer class="frame site-foot"><address>Eesti Nüüdismuusika Keskus, Herne 11A, 10135 Tallinn</address> …</footer>
+<footer class="frame site-foot"><address>Eesti Nüüdismuusika Keskus, Pühavaimu 9, Tallinn</address> …</footer>
 ```
 
 - **`header` inside the article.** The crumb, the title, the facts, the
@@ -305,7 +305,7 @@ fact).
   "location": {
     "@type": "Place",
     "name": "ECCM saal",
-    "address": { "@type": "PostalAddress", "streetAddress": "Herne 11A", "addressLocality": "Tallinn", "postalCode": "10135", "addressCountry": "EE" }
+    "address": { "@type": "PostalAddress", "streetAddress": "Pühavaimu 9", "addressLocality": "Tallinn", "postalCode": "10135", "addressCountry": "EE" }
   },
   "image": [
     "https://eccm.ee/media/<key>/1200x900.jpg",

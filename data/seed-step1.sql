@@ -25,7 +25,7 @@ INSERT INTO media (id, key, width, height, alt_et, alt_en) VALUES
    'Gestures/Situations, the series’ graphic in black and red');
 
 INSERT INTO event (id, starts_at, duration_min, venue, address, ticket_url, category, image_id, status, publish_at) VALUES
-  (1, '2026-09-30T19:00', 60, 'ECCM saal', 'Herne 11A, Tallinn',
+  (1, '2026-09-30T19:00', 60, 'ECCM saal', 'Pühavaimu 9, Tallinn',
    'https://fienta.com/et/gestuurid-situatsioonid-ilma-partituurita-kuulamine-marianna-liik-artjom-astrov-maryn-liis-ruutelmaa',
    'ulysses', 1, 'published', '2026-09-01T12:00');
 

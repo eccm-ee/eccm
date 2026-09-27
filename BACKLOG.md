@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "ECCM saal, Herne 11A, Tallinn - where its from? it might be a post box but eccm venue is not there ... location is ECCM (pin icon). its At Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinna, Estonia. -- i am surprised its not shown anywhere on page"
+
+Asked verbatim. MEASURED: Herne 11A, 10135 Tallinn is the postal address on eccm.ee's contact page (plan-eccm-design.md line 247, read 2026-09-26), and the first shaping of public/event.html took it for the venue; the venue is Pühavaimu 9, which eccm.ee prints in its lists as "ECCM saal, Pühavaimu 9" and "Stuudio 1965, Pühavaimu 9" and, on the English event page only, as the map's geocoded address. ✅ Pühavaimu 9, Tallinn now in the seed and both databases, the static event, edit, derive and ds pages, and every footer (the footer names the place people go to; the postal address belongs on the contact page when it exists); the CMS and markup plans corrected the same way.
+
 ### Done 2026-09-27: "make /ds page for desing system elements. typography, buttons, logo. make 2 variants of logo, estonian and english and switch them on site header based on language. keep 2language logo version also around"
 
 Asked verbatim. `public/ds.html` at /ds: the tokens with their values, every text style in use as a specimen, the buttons in both modes on the page ground and on a derived ground, the colours, and the three logos. `public/logo-et.svg` and `public/logo-en.svg` beside `public/logo.svg` (the two-language one, kept); the site header takes the language's one on the static pages and in the rendered chrome. ✅ Done and deployed; the one-language logos keep the mark and one tagline on the first baseline with the box cut to the ink below it, 310 by 133; the Estonian line alone sits left on the E's edge at its measured width rather than stretched. MEASURED: /ds parses, shots at 375 and 1280 with nothing sideways after the token table learned to stack on a phone.
