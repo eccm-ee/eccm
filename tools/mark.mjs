@@ -29,8 +29,11 @@ const JOIN_EC = [73, 109, 108], JOIN_CC = [153, 190, 88], JOIN_CM = [234, 273, 5
 export const MARKS = {
   square: { side: 354, rows: [{ dx: -7, plainDx: -13, dy: 103.5, letters: (mode) => (mode === 'bold' ? E_B + C_B(0) + C_B(81) : E + C(0) + C(81)) + M(mode), lines: [JOIN_EC, JOIN_CC, JOIN_CM, ...STAVE] }] },
   stack: { side: 270, rows: [
-    // the rows are right-aligned: the first row's C ends on the M (asked 2026-09-27)
-    { dx: 53.5, plainDx: 59.5, dy: -1, letters: (mode) => (mode === 'bold' ? E_B + C_B(0) : E + C(0)), lines: [JOIN_EC] },
+    // the first row spreads to the block: the E on the left edge over the C,
+    // the C on the right edge over the M, the join across the gap (asked
+    // 2026-09-27: "align E to left and C to right"); the E's offset is the
+    // row's, the C's is 25 units more in the full mark and 37 in the others
+    { dx: 28.5, plainDx: 22.5, dy: -1, letters: (mode) => (mode === 'bold' ? E_B + `<g transform="translate(37 0)">${C_B(0)}</g>` : mode === 'plain' ? E + `<g transform="translate(37 0)">${C(0)}</g>` : E + `<g transform="translate(25 0)">${C(0)}</g>`), lines: [[73, 134, 108]] },
     { dx: -126.5, plainDx: -132.5, dy: 120, letters: (mode) => (mode === 'bold' ? C_B(81) : C(81)) + M(mode), lines: [JOIN_CM, ...STAVE] },
   ] },
 };

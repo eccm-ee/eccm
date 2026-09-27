@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Open 2026-09-27: "On EC / CM align E to left and C to right" and "Give me five more alternative fonts, no Garamond. Give me some fresher stuff."
+
+Asked verbatim, with "Where are alt wordmark fonts" in between, answered with the URL. The stacked mark's first row spreads to the block: the E on the left edge over the C, the C on the right edge over the M, the join between them the longer for it, in every stacked file and in the size builder. Five contemporary faces, none a Garamond, are fetched as latin and latin-ext subsets with their licences, set as settings L to P on /wordmark in both languages at both widths and measured like the others. ✅ The stacked mark is done and deployed; the five faces are with a background agent.
+
 ### Done 2026-09-27: "center workmark", "do icons inverted too", "add disabled buttons variants to ds"
 
 Asked verbatim, the first with a crop of logo-et.svg. The Estonian tagline is centred under the letters E to M; the icon rasters exist in the negative too, icon-neg-<n>.png and stack-neg-<n>.png with a favicon-neg.ico, shown on /ds under the positive rows; and the buttons have a disabled state, faded to 45 per cent with no pointer, in both modes on every ground on /ds.
