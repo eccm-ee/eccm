@@ -7,17 +7,17 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
-### Open 2026-09-27: "a good story on sitemap, on RSS, and also a fallback story for existing links which need to map to the new URLs, maybe simpler ones. I want to lose that PHP thing from a URL, but how to keep old links working. Also SEO, redirection, consideration, etc."
+### Done 2026-09-27: "a good story on sitemap, on RSS, and also a fallback story for existing links which need to map to the new URLs, maybe simpler ones. I want to lose that PHP thing from a URL, but how to keep old links working. Also SEO, redirection, consideration, etc."
 
-Asked verbatim, mid-task. An inventory of eccm.ee's URL shapes as fetched today, a simpler URL scheme without `index.php`, the redirect story (a table from a crawl plus pattern rules, 301, one hop, kept for years), the sitemap and RSS from D1 in two languages, and what trip already has for both. Written to `plans/plan-eccm-urls-sitemap-rss.md`, not executed.
+Asked verbatim, mid-task. An inventory of eccm.ee's URL shapes as fetched today, a simpler URL scheme without `index.php`, the redirect story (a table from a crawl plus pattern rules, 301, one hop, kept for years), the sitemap and RSS from D1 in two languages, and what trip already has for both. Written to `plans/plan-eccm-urls-sitemap-rss.md`, not executed. ✅ 453 lines: 228 old URLs inventoried in ten shapes, `/et/sundmused/{slug}` and `/en/events/{slug}` with ASCII slugs, three redirect layers keyed on language and Joomla id, one sitemap with language pairs, RSS 2.0 and an iCalendar feed per language, sessions 7 to 10; the CMS plan gained a section 11 taking its URL scheme.
 
-### Open 2026-09-27: "look up trip image handling in the posts and index pages, size optimizations, responsive and size handling and 2x and all that stuff"
+### Done 2026-09-27: "look up trip image handling in the posts and index pages, size optimizations, responsive and size handling and 2x and all that stuff"
 
 Asked verbatim, mid-task. A reading of trip's image pipeline for pages (not cards): originals, transforms, variants, srcset and sizes, 2x, formats, the CLS attributes, caching and the free tier, and what eccm takes for its list, event page and the derive reading. Written to `plans/plan-eccm-images.md`, not executed.
 
-### Open 2026-09-27: "look up what, how should we mark up the event pages. What is the standard here?"
+### Open 2026-09-27: "look up what, how ✅ `plan-eccm-images.md`, 394 lines: trip rents every rendition from a hashed R2 master through one URL function; three ladders for eccm; the 300 px thumbnails are soft on 2x and the masters exist on eccm.ee as og:image. should we mark up the event pages. What is the standard here?"
 
-Asked verbatim, mid-task, after the credits assessment mentioned schema.org. The standard for an event page: schema.org Event and MusicEvent as JSON-LD, what Google requires and recommends, the HTML5 semantics, hreflang and Open Graph for two languages, ics, what eccm.ee and arvopart.ee carry today. Written to `plans/plan-eccm-event-markup.md` with a worked example for event 134, not executed.
+Asked verbatim, mid-task, after the credits assessment mentioned schema.org. The standard for an event page: schema.org Event and MusicEvent as JSON-LD, what Google requires and recommends, the HTML5 semantics, hreflang and Open Graph for two languages, ics, what eccm.ee and arvopart.ee carry today. Written to `plans/plan-eccm-event-markup.md` with a worked example for event 134, not executed. ✅ `plan-eccm-event-markup.md`, 466 lines: MusicEvent as JSON-LD, the HTML5 skeleton off event.html, the two-language head, event 134 mapped onto the seven tables; neither eccm.ee nor arvopart.ee carries event structured data.
 
 ### Done 2026-09-27: "do it", the credits shape and the plain router, into both plans
 

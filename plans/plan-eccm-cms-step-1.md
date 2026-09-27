@@ -545,3 +545,15 @@ section 2 above. Recommended: the flat shape, for the reason given in that
 plan's section 10, with `scheme_v` kept as the integer column and a nine line
 map in the renderer turning the flat keys into the `--ev-*` properties. To be
 settled at session 3, before the first scheme row is written.
+
+## 11. The URL scheme is decided in plan-eccm-urls-sitemap-rss.md, 2026-09-27
+
+That plan's section 2 changes two choices of section 3 above: the path word is
+localised, `/et/sundmused/{slug}` and `/en/events/{slug}`, because a URL is
+part of the page's text and `sundmused` is the word on the menu; and the slug
+is derived from the title as ASCII (`ü` to `u`, `õ` to `o`, `š` to `s`), cut
+at 60 characters, with no leading Joomla id, stable for the event's life, a
+title collision taking the ISO date. The Joomla alias is not the slug: it goes
+into the redirect table, and old links are answered by language and Joomla id
+through `event_text.legacy_id`, which section 2 already carries. Session 1
+routes accordingly.
