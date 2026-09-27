@@ -7,6 +7,14 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "try to pack more examples to page. rm 20 rem versions for now"
+
+Asked verbatim. /tagline shows each setting at 11rem only, English and Estonian side by side, in a grid of three cells a row on a desk, the caption a step above its pair.
+
+### Done 2026-09-27: "add leftaligned text versions"
+
+Asked verbatim. Every setting on /tagline exists twice now: a shorter line centred on the letters, as before, and a shorter line starting on the E's edge; 48 settings.
+
 ### Done 2026-09-27: "rm all grays and ones where text is wider than ECCM"
 
 Asked verbatim. On /tagline the muted and light grey inks go and so does the one-line setting at 27 units, whose English line runs wider than the letters; 24 settings remain, all in ink and all fitted to the block.

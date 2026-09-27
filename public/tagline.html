@@ -7,7 +7,8 @@
 <title>ECCM: tagline in DIN</title>
 <!-- public/tagline.html: the tagline under the mark, in DIN Condensed only,
      in every combination of four casings, three trackings, two wraps, in
-     ink, 24 settings (three inks and a third, wider wrap were asked off), each drawn at the header's 20rem and the
+     ink, centred or left aligned, 48 settings (three inks and a third, wider
+     wrap were asked off, the left aligned versions asked on), each drawn at the header's 20rem and the
      phone's 11rem in English and at 11rem in Estonian, with the size in the
      logo's units and the x-height on a phone printed (asked 2026-09-27:
      "Those first DIN examples are the best, but work now hard on this font
@@ -34,7 +35,8 @@
     /* no rule between cells; the caption stands a long way above its lockups
        and the cells further apart than that (asked 2026-09-27: "rm horiz
        lines and add a looooot vert space between explanations and logos") */
-    .cell { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: var(--eccm-s-12); padding-block: var(--eccm-s-16); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(24rem, 100%), 1fr)); column-gap: var(--eccm-s-12); row-gap: var(--eccm-s-16); }
+    .cell { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: var(--eccm-s-4); align-content: start; }
     .cell .cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin: 0; }
     .locks { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--eccm-s-8); }
     .locks svg { display: block; overflow: visible; }
@@ -108,7 +110,7 @@
 <main class="frame tl">
   <h1 class="list-label">Tagline in DIN</h1>
   <div class="prose flow intro">
-    <p>The line under the mark in DIN Condensed, the face nearest the original, in every combination of casing, tracking and wrap, fitted to the letters and in ink: 24 settings (the greys and the line wider than the letters were asked off on 2026-09-27). Each is drawn at the header's 20rem and the phone's 11rem in English and at 11rem in Estonian, with the size in the logo's units and the x-height on a phone under it. Nothing is squeezed: a fitted line is sized to the letters' width, E to M. <span class="face-note" id="face-note"></span></p>
+    <p>The line under the mark in DIN Condensed, the face nearest the original, in every combination of casing, tracking and wrap, fitted to the letters and in ink, a shorter line centred on the letters or starting on the E: 48 settings (the greys and the line wider than the letters were asked off on 2026-09-27). Each is drawn at the phone's 11rem in English and in Estonian, with the size in the logo's units and the x-height on a phone under it. Nothing is squeezed: a fitted line is sized to the letters' width, E to M. <span class="face-note" id="face-note"></span></p>
   </div>
   <h2>The reference, squeezed as today</h2>
   <div class="ref">
@@ -134,6 +136,7 @@ const CASES = {
 const TRACK = { 'lowercase': [0, 0.02, 0.05], 'sentence case': [0, 0.02, 0.05], 'words capitalised': [0, 0.02, 0.05], 'uppercase': [0.04, 0.08, 0.12] };
 const WRAPS = ['one line fitted', 'two lines fitted'];
 const INKS = [['ink', '#1a1a1a']];
+const ALIGNS = ['centred', 'left aligned'];
 const BLOCK = 298, LEFT = 35, CENTRE = 184, BOTTOM = 122, GAP = 12, CAP = 0.7, LINE = 1.05, XH = 0.52;
 const NS = 'http://www.w3.org/2000/svg';
 // a hidden measuring text
@@ -141,7 +144,7 @@ const meter = document.createElementNS(NS, 'svg'); meter.setAttribute('width', '
 const mt = document.createElementNS(NS, 'text'); mt.setAttribute('class', 'tag'); mt.setAttribute('font-size', '100'); meter.append(mt); document.body.append(meter);
 const widthOf = (s, track) => { mt.setAttribute('letter-spacing', String(track * 100)); mt.textContent = s; return mt.getComputedTextLength(); };
 const split2 = (s) => { const w = s.split(' '); let best = null; for (let i = 1; i < w.length; i++) { const a = w.slice(0, i).join(' '), b = w.slice(i).join(' '); const m = Math.max(a.length, b.length); if (!best || m < best.m) best = { a, b, m }; } return [best.a, best.b]; };
-const lockup = (text, cse, track, wrap, ink, widthClass) => {
+const lockup = (text, cse, track, wrap, ink, widthClass, align) => {
   const s = CASES[cse](text);
   let lines, size;
   if (wrap === 'two lines fitted') { lines = split2(s); size = 100 * BLOCK / Math.max(...lines.map((l) => widthOf(l, track))); }
@@ -155,9 +158,9 @@ const lockup = (text, cse, track, wrap, ink, widthClass) => {
   lines.forEach((l, i) => {
     const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'tag'); t.setAttribute('font-size', size.toFixed(2)); t.setAttribute('letter-spacing', (track * size).toFixed(2)); t.setAttribute('fill', ink);
     const w = widthOf(l, track) * size / 100;
-    // a line the block's width starts on the E; a shorter or a wider one is centred on the letters
+    // a line the block's width starts on the E; a shorter one is centred on the letters or, left aligned, starts on the E too
     const fitted = Math.abs(w - BLOCK) < 1;
-    t.setAttribute('x', fitted ? LEFT : (CENTRE - w / 2).toFixed(1)); t.setAttribute('y', (first + i * LINE * size).toFixed(1)); t.textContent = l; svg.append(t);
+    t.setAttribute('x', fitted || align === 'left aligned' ? LEFT : (CENTRE - w / 2).toFixed(1)); t.setAttribute('y', (first + i * LINE * size).toFixed(1)); t.textContent = l; svg.append(t);
   });
   return { svg, size };
 };
@@ -165,16 +168,17 @@ const cells = document.getElementById('cells');
 let n = 0;
 for (const cse of Object.keys(CASES)) {
   const h2 = document.createElement('h2'); h2.textContent = cse[0].toUpperCase() + cse.slice(1); cells.append(h2);
-  for (const wrap of WRAPS) for (const track of TRACK[cse]) for (const [inkName, ink] of INKS) {
+  const grid = document.createElement('div'); grid.className = 'grid'; cells.append(grid);
+  for (const wrap of WRAPS) for (const align of ALIGNS) for (const track of TRACK[cse]) for (const [inkName, ink] of INKS) {
     n++;
     const cell = document.createElement('div'); cell.className = 'cell'; cell.id = 'v' + n;
-    const en20 = lockup(EN, cse, track, wrap, ink, 'w20'), en11 = lockup(EN, cse, track, wrap, ink, 'w11'), et11 = lockup(ET, cse, track, wrap, ink, 'w11');
-    const px11 = en20.size * (176 / 310), xh = px11 * XH, capPx = px11 * CAP;
+    const en11 = lockup(EN, cse, track, wrap, ink, 'w11', align), et11 = lockup(ET, cse, track, wrap, ink, 'w11', align);
+    const px11 = en11.size * (176 / 310), xh = px11 * XH, capPx = px11 * CAP;
     const cap = document.createElement('p'); cap.className = 'cap';
-    cap.textContent = `${n}. ${cse}, tracking ${track}em, ${wrap}, ${inkName}: ${en20.size.toFixed(1)} units, ${px11.toFixed(1)} px on a phone, ${cse === 'uppercase' ? 'cap height ' + capPx.toFixed(1) : 'x-height ' + xh.toFixed(1)} px`;
+    cap.textContent = `${n}. tracking ${track}em, ${wrap}, ${align}: ${en11.size.toFixed(1)} units, ${cse === 'uppercase' ? 'cap height ' + capPx.toFixed(1) : 'x-height ' + xh.toFixed(1)} px on a phone`;
     const locks = document.createElement('div'); locks.className = 'locks';
-    for (const [l, capText] of [[en20, '20rem'], [en11, '11rem'], [et11, '11rem, Estonian']]) { const f = document.createElement('figure'); const fc = document.createElement('figcaption'); fc.textContent = capText; f.append(l.svg, fc); locks.append(f); }
-    cell.append(cap, locks); cells.append(cell);
+    for (const l of [en11, et11]) { const f = document.createElement('figure'); f.append(l.svg); locks.append(f); }
+    cell.append(cap, locks); grid.append(cell);
   }
 }
 // which face drew it: DIN Condensed sets the English line at about 1219 units per 100 of size, Arial Narrow and Helvetica Neue Condensed at about 1540
