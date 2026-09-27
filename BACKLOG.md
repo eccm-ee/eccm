@@ -7,6 +7,12 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "c. smaller logo. menu in 2 col? No \"Menyy\" https://muusikalinntallinn.ee/ logo hast to be somewhere as well (right side?)"
+
+Asked verbatim, about footer C on `public/layout.html`: the mark smaller, the menu in two columns without its label, and the Tallinn UNESCO City of Music mark in the footer, at the right. The mark is fetched once off https://muusikalinntallinn.ee/ and kept under `public/` with a note of where it came from; eccm.ee shows it today in its sidebar as a 120 by 118 JPEG.
+⚠️ Added mid-task: *"look up city of music svg if posisble"*: an official vector is looked for first, on muusikalinntallinn.ee, in Tallinn's brand kit and by search; a redraw only if none is published.
+✅ Done, and the vector was found: Tallinn's identity site publishes the pack at https://identiteet.tallinn.ee/#/logode-ja-dokumentide-failid/tallinna-muusikalinn (a zip dated 2022-02-11, Estonian and English, blue, black and white, RGB SVG plus CMYK and PMS PDFs, and the UCCN guidelines PDF), with the rule *"Logo kasutatakse valgena või Tallinna sinisena. Kui värvikasutus ei ole võimalik, kasutatakse logo mustana"* and *"Võimalusel kasutage alati .svg faile"*. The six screen SVGs are under `public/partners/` with `SOURCE.md`; muusikalinntallinn.ee itself is a Readymag app with no SVG in its markup, tallinn.ee's English City of Music page carries only a 500 px PNG, and the Estonian page answers 403 to a fetch. Footer C: the mark 8rem instead of 11, the menu in two columns of four and three with no label, the Estonian blue mark 6rem wide at the end of the row, and last in the stack on the phone. The `Kontakt` label stays, not asked about. MEASURED: an `auto` track beside an auto-fit repeat is not a valid track list (`CSS.supports` false), so the four tracks are written out. Shot at 1280.
+
 ### Done 2026-09-27: "create new page layout where you tray first several footers. eccm logo, with and without workmark, main links, credits etc. use Schibsted and Instrument" and "i mean page \"/layout\""
 
 Asked verbatim, mid-task, two messages. A new `public/layout.html` at https://eccm.positron.studio/layout: a study of several site footers, each with the mark (with the wordmark and without), the main links, the credits and the rest a footer carries, set in Schibsted Grotesk and in Instrument Sans. What a footer carries is taken from eccm.ee's own footer and the current `site-foot`, and every one is shown at the phone width and the desk.

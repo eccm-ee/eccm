@@ -61,6 +61,15 @@
     .ft .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: var(--eccm-s-8); }
     .ft .menu { display: flex; flex-wrap: wrap; column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-1); }
     .ft .stack li + li { margin-block-start: var(--eccm-s-1); }
+    /* the menu in two columns: seven items fall four and three, and the row gap is the stack's */
+    .ft .two { display: grid; grid-template-columns: repeat(2, max-content); column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-1); grid-auto-flow: row; }
+    /* a partner's mark at the end of the columns: three columns that share the width and a fourth that takes only its own, and the mark 6rem wide
+       (an auto track beside an auto-fit repeat is not a valid track list, and Chrome fell back to the plain repeat, which only read right because the frame caps at four columns) */
+    .ft .cols.four { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; }
+    .ft .end { justify-self: end; }
+    .ft .partner { display: block; inline-size: 6rem; }
+    .ft .partner img { display: block; inline-size: 100%; block-size: auto; }
+    @container (max-width: 48rem) { .ft .cols.four { grid-template-columns: minmax(0, 1fr); } .ft .end { justify-self: start; } }
     .ft .line { display: flex; flex-wrap: wrap; gap: var(--eccm-s-2) var(--eccm-s-8); margin-block-start: var(--eccm-s-8); }
     .ft .line.top { margin-block-start: 0; margin-block-end: var(--eccm-s-8); }
     .ft .lang { display: flex; column-gap: var(--eccm-s-3); }
@@ -189,6 +198,8 @@ const menu = (cls) => `<ul class="${cls}">${MENU.map(([t, h]) => `<li><a href="$
 const NAME = 'Eesti Nüüdismuusika Keskus', VENUE = 'Pühavaimu 9, Tallinn', POST = 'Herne 11A, 10135 Tallinn';
 const lang = '<span class="lang"><span aria-current="page" lang="et">ET</span><a href="https://eccm.ee/index.php/en/" lang="en">EN</a></span>';
 const copy = `© 2026 ${NAME}`, city = 'Tallinn, UNESCO muusikalinn';
+// the Tallinn UNESCO City of Music mark, the Estonian blue screen file from the city's identity site (public/partners/SOURCE.md)
+const partner = '<a class="partner" href="https://muusikalinntallinn.ee/"><img src="./partners/tallinn-muusikalinn-sinine_RGB.svg" alt="Tallinn, UNESCO muusikalinn"></a>';
 const mark = (tagline, w) => `<a class="mk" href="./" style="--w: ${w}rem" data-tagline="${tagline ? 1 : ''}" aria-label="${NAME}"></a>`;
 
 // the five footers: each a shape, and what it carries
@@ -198,11 +209,12 @@ const TRIES = [
   ['B. Wordmark and the menu', 'the mark with its wordmark at the start and the menu at the end, on one row; under them the name, the venue and the copyright line', `
     <div class="row">${mark(true, 11)}${menu('menu')}</div>
     <div class="line"><span>${NAME}, ${VENUE}</span><span>${copy}</span>${lang}</div>`],
-  ['C. Three columns', 'the mark with its wordmark and the copyright under it; the menu as a column; the contact as a column with the venue and the postal address as label over value', `
-    <div class="cols">
-      <div>${mark(true, 11)}<p style="margin-block-start: var(--eccm-s-6)">${copy}</p></div>
-      <div><p class="label">Menüü</p>${menu('stack')}</div>
+  ['C. Three columns and a partner', 'the mark with its wordmark, smaller, and the copyright under it; the menu in two columns with no label; the contact with the venue and the postal address as label over value; the City of Music mark at the end, as Tallinn publishes it (asked 2026-09-27: "smaller logo. menu in 2 col? No Menyy ... logo hast to be somewhere as well (right side?)")', `
+    <div class="cols four">
+      <div>${mark(true, 8)}<p style="margin-block-start: var(--eccm-s-6)">${copy}</p></div>
+      <div>${menu('two')}</div>
       <div><p class="label">Kontakt</p><p>${NAME}</p><p style="margin-block-start: var(--eccm-s-3)">Saal<br>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">Postiaadress<br>${POST}</p></div>
+      <div class="end">${partner}</div>
     </div>`],
   ['D. Four columns and a newsletter', 'the mark alone; the menu; the contact; a newsletter field with its button; under everything a line with the copyright, the city and the switch, and the funders as slots', `
     <div class="cols">
