@@ -6,8 +6,8 @@
 <meta name="robots" content="noindex">
 <title>ECCM: tagline in DIN</title>
 <!-- public/tagline.html: the tagline under the mark, in DIN Condensed only,
-     in every combination of four casings, three trackings, three wraps and
-     three inks, 108 settings, each drawn at the header's 20rem and the
+     in every combination of four casings, three trackings, two wraps, in
+     ink, 24 settings (three inks and a third, wider wrap were asked off), each drawn at the header's 20rem and the
      phone's 11rem in English and at 11rem in Estonian, with the size in the
      logo's units and the x-height on a phone printed (asked 2026-09-27:
      "Those first DIN examples are the best, but work now hard on this font
@@ -108,7 +108,7 @@
 <main class="frame tl">
   <h1 class="list-label">Tagline in DIN</h1>
   <div class="prose flow intro">
-    <p>The line under the mark in DIN Condensed, the face nearest the original, in every combination of casing, tracking, wrap and ink: 108 settings. Each is drawn at the header's 20rem and the phone's 11rem in English and at 11rem in Estonian, with the size in the logo's units and the x-height on a phone under it. Nothing is squeezed: a fitted line is sized to the letters' width, E to M. <span class="face-note" id="face-note"></span></p>
+    <p>The line under the mark in DIN Condensed, the face nearest the original, in every combination of casing, tracking and wrap, fitted to the letters and in ink: 24 settings (the greys and the line wider than the letters were asked off on 2026-09-27). Each is drawn at the header's 20rem and the phone's 11rem in English and at 11rem in Estonian, with the size in the logo's units and the x-height on a phone under it. Nothing is squeezed: a fitted line is sized to the letters' width, E to M. <span class="face-note" id="face-note"></span></p>
   </div>
   <h2>The reference, squeezed as today</h2>
   <div class="ref">
@@ -132,8 +132,8 @@ const CASES = {
   'uppercase': (s) => s.toUpperCase(),
 };
 const TRACK = { 'lowercase': [0, 0.02, 0.05], 'sentence case': [0, 0.02, 0.05], 'words capitalised': [0, 0.02, 0.05], 'uppercase': [0.04, 0.08, 0.12] };
-const WRAPS = ['one line fitted', 'one line at 27', 'two lines fitted'];
-const INKS = [['ink', '#1a1a1a'], ['muted ink', '#555555'], ['light grey', '#999999']];
+const WRAPS = ['one line fitted', 'two lines fitted'];
+const INKS = [['ink', '#1a1a1a']];
 const BLOCK = 298, LEFT = 35, CENTRE = 184, BOTTOM = 122, GAP = 12, CAP = 0.7, LINE = 1.05, XH = 0.52;
 const NS = 'http://www.w3.org/2000/svg';
 // a hidden measuring text

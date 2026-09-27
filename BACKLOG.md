@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-27: "rm all grays and ones where text is wider than ECCM"
+
+Asked verbatim. On /tagline the muted and light grey inks go and so does the one-line setting at 27 units, whose English line runs wider than the letters; 24 settings remain, all in ink and all fitted to the block.
+
 ### Done 2026-09-27: "in tagline rm horiz lines and add a looooot vert space between explanations and logos themselves"
 
 Asked verbatim. On /tagline the rule above every cell goes; the caption sits a long way above its lockups, three steps up the scale, and the cells sit further apart than that.
