@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "similar samples: equal paddings just first has inivisible border" and "so get y aligmnet" (a crop of one set of three lockups)
+
+Asked with a picture. The plain lockup of each set takes the frame's box, the square or the rectangle with its 28 unit margin, with no line round it, so the plain, the bordered and the inverted lockups of a set share one box and one y.
+
 ### Done 2026-09-28: "rm estonian top / english below logo examples"
 
 Asked verbatim. The wordmark studies on the design system page lose the lockup with the Estonian over the mark and the English under it; the English-over-Estonian one stays, with the one-language and the beside lockups.

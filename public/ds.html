@@ -456,7 +456,8 @@ const lockup = (texts, { layout, size, rem, columns = false, above = false, face
 };
 // the same lockup in a frame: a square for the under layout, centred on the letters (35 to 333) so the stave reaches 12 units into
 // the margin as in the square marks; a rectangle round the whole ink for the beside layout. 'inv' draws it white on black
-const framed = (svg, { square, inv }) => {
+// 'plain' gives the lockup the frame's box with no line round it, so the three of a set sit on one y (asked 2026-09-28: "similar samples: equal paddings just first has invisible border")
+const framed = (svg, { square, inv, plain = false }) => {
   const f = svg.cloneNode(true);
   const [x, y, w, h] = svg.dataset.box.split(' ').map(Number);
   const ink = square ? { x: 35, y, w: 298, h } : { x, y, w, h };
@@ -479,7 +480,7 @@ const framed = (svg, { square, inv }) => {
   }
   f.setAttribute('viewBox', box.join(' ')); f.dataset.box = box.join(' ');
   f.style.setProperty('--k', (fw / 310).toFixed(3));
-  f.classList.add(inv ? 'inv' : 'frame');
+  f.classList.add(inv ? 'inv' : plain ? 'plain' : 'frame');
   return f;
 };
 // a cell: a caption, then each set of languages at 20rem and 11rem, each plain, in a frame, and white on black; 'frames: false' keeps the plain one alone
@@ -491,7 +492,7 @@ const cellOf = (id, capText, opts, sets, { frames = true } = {}) => {
   const fig = (svg, text) => { const f = document.createElement('figure'); const fc = document.createElement('figcaption'); fc.textContent = text; f.append(svg, fc); locks.append(f); };
   for (const texts of sets) for (const rem of [11]) {
     const svg = lockup(texts, { ...opts, rem });
-    fig(svg, rem + 'rem');
+    fig(framed(svg, { square, plain: true }), rem + 'rem');
     if (!frames) continue;
     fig(framed(svg, { square }), `${rem}rem, in a ${shape}`);
     fig(framed(svg, { square, inv: true }), `${rem}rem, white on black`);
