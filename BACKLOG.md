@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "why this accent?" then "none. keep it black inc outliens."
+
+Asked verbatim. The accent was eccm.ee's own orange darkened to read on white; it is the ink now, so a hovered prose underline, the focus ring and an error draw in black. The token stays for the derived pages, which take their accent from their picture.
+
 ### Done 2026-09-28: "rm Liquid glass, simulated part"
 
 Asked verbatim. The simulated glass icon and its rules leave the design system page; the icon sizes end the page.

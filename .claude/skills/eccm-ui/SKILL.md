@@ -393,9 +393,10 @@ wide measure token for list rows was never built; do not name it.
   `--eccm-ink-2`, with `--eccm-s-8` above and `--eccm-s-12` below.
 - **Colour** is `--eccm-ink` on `--eccm-ground`; `--eccm-ink-2` for meta and
   the footer; `--eccm-rule` for the three rules; `--eccm-rule-strong` under a
-  prose link; `--eccm-accent` for a hovered underline in prose and a focus ring and for
-  nothing else; a hovered link in a menu, the switch or a footer underlines
-  in the ink (asked 2026-09-28: *"no accent colors in menus, just black"*).
+  prose link; `--eccm-accent` is the ink since 2026-09-28 (*"none. keep it black inc
+  outlines"*): no accent anywhere, a hovered underline, a focus ring and an
+  error all in the ink; the token stays so a derived page's own accent can
+  still be a different value.
 
 ## 5. What was measured and which rule answers it
 

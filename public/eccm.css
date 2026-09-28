@@ -81,7 +81,8 @@
     --eccm-ink-2: #555555;
     --eccm-rule: #d9d9d9;
     --eccm-rule-strong: #999999;
-    --eccm-accent: #b3400f;
+    /* no accent: the one that was eccm.ee's orange darkened is the ink since 2026-09-28 ("none. keep it black inc outlines"), so a hovered underline, a focus ring and an error read in the ink */
+    --eccm-accent: var(--eccm-ink);
     /* the picture column is the thumbnail's own width: eccm.ee makes them 300
        on the long side, so 300 draws eight of the ten at 1:1. The first cut
        had 224, and the picture came out 146 px tall beside text of 170 to
