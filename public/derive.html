@@ -52,6 +52,13 @@
     /* the event's own picture after the buttons, at the measure's width, as the event page has it (asked 2026-09-28: "put images onto derive blocks") */
     .sample .pic { margin: 2lh 0 0; max-inline-size: var(--eccm-measure); }
     .sample .pic img { display: block; inline-size: 100%; block-size: auto; }
+    /* from 40rem the picture sits at the top right of the sample at its own width, the text keeping its measure on the left
+       (asked 2026-09-28: "move image to the right in desktop"); under 40rem it stays in the flow after the buttons */
+    @media (min-width: 40rem) {
+      .sample { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--eccm-s-12); align-items: start; }
+      .sample > * { grid-column: 1; }
+      .sample .pic { grid-column: 2; grid-row: 1 / span 6; margin: 0; inline-size: min(24rem, 40vw); }
+    }
     /* the same sample at a phone's width, drawn by this page itself in an iframe so the phone rules apply, sized by the child's message */
     .phone-view { margin-block-start: var(--eccm-s-6); }
     .phone-view iframe { display: block; inline-size: 375px; max-inline-size: 100%; border: 1px solid var(--eccm-rule); }

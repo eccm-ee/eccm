@@ -7,6 +7,18 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "no accent colors in menus, just black" (a crop of the footer's Facebook link hovered orange)
+
+Asked with a picture. A hovered link in the site's menu, the language switch and the footers underlines in the ink, not the accent: the rule in `eccm.css` and the footer rule on the layout page; the accent stays on a hovered prose link and the focus ring.
+
+### Done 2026-09-28: "fix lang links. make hamburger 5 rows and align with logo ones verically." (a crop of the phone menu open)
+
+Asked with a picture. In the opened menu the EN link carried the row padding and the current ET did not, so the two sat on different baselines; both carry it now. The button is five hairlines again, drawn in the mark's own units at the stave's rows (y 58.5 to 88 on a 7.375 pitch, 1.5 tall) in an svg as tall as the mark, at the frame's edge, so the lines sit on the same rows as the stave past the M.
+
+### Done 2026-09-28: "move image to the right in desktop"
+
+Asked verbatim, the derive page's samples. From 40rem the sample is two columns, the text at its measure on the left and the picture at the top right, at its own width up to 24rem; under 40rem, and so in the phone iframes, the picture stays in the flow after the buttons.
+
 ### Done 2026-09-28: "put images onto derive blocks and also make mobile views"
 
 Asked verbatim. `derive.html`: each sample event page carries its own picture, at the measure's width after the facts and the buttons as the event page has it; and beside each desk sample the same sample at a phone's width, drawn by the page itself in a 375 px iframe so the phone rules really apply, sized by a message from the child.

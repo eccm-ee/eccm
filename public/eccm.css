@@ -165,7 +165,8 @@
      text, up beside the mark where eccm.ee keeps its flag */
   .nav { display: flex; flex-wrap: wrap; column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-1); }
   .nav a, .lang a { text-decoration: none; }
-  .nav a:hover, .lang a:hover { text-decoration-line: underline; text-decoration-color: var(--eccm-accent); }
+  /* a hovered menu link underlines in the ink, never the accent (asked 2026-09-28 with a crop: "no accent colors in menus, just black") */
+  .nav a:hover, .lang a:hover { text-decoration-line: underline; text-decoration-color: currentColor; }
   .nav [aria-current="page"], .lang [aria-current="page"] { text-decoration-line: underline; text-decoration-color: currentColor; text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
   /* the switch: the current language is text and carries the menu's own
      current-page line, the other is a link with no line until hovered, both

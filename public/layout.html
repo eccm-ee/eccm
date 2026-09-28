@@ -11,8 +11,8 @@
      leave H-B. One line, centred, a step larger / A. Three columns and a
      partner / several content pages in between. for mobile use stnd 3 lines
      1px black": the one-line header with the mark and its wordmark, centred,
-     the mark at 10rem and the menu at 16 px, the phone menu behind three
-     hairlines; the three-column footer with the contact, the social links
+     the mark at 10rem and the menu at 16 px, the phone menu behind five
+     hairlines on the stave's rows; the three-column footer with the contact, the social links
      and the City of Music mark as the city publishes it. Each page is drawn
      at the desk, spanning the window with the site's frame inside, and in a
      375 px box; one figure shows the phone menu open. The derived examples
@@ -77,6 +77,11 @@
     /* in a narrow box the switch leaves the mark's line and closes the opened menu as its last row (asked 2026-09-28: "move et en to mobile menu") */
     .hd .lang-in { display: none; }
     .menu-btn svg { display: block; fill: currentColor; shape-rendering: crispEdges; }
+    /* the switch and the button start at the mark's top in a narrow box, so the button's rows meet the stave's */
+    @container (max-width: 48rem) { .hd .sw { align-self: flex-start; } .hd .sw .menu-btn { align-self: flex-start; } }
+    /* in the opened menu the current language and the link share one baseline and one row of air (asked 2026-09-28: "fix lang links") */
+    .hd[data-open] .lang-in .lang { align-items: baseline; }
+    .hd[data-open] .lang-in .lang > * { display: inline-block; padding-block: var(--eccm-s-2); }
     @container (max-width: 48rem) {
       .menu-btn { display: block; }
       .hd .sw .lang { display: none; }
@@ -115,7 +120,7 @@
     /* the footer itself: the site's footer rule, set at the small size in the second ink, s-8 above and s-12 below, and a gutter that follows the container */
     .ft { padding-block: var(--eccm-s-8) var(--eccm-s-12); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
     .ft a { text-decoration: none; }
-    .ft a:hover { text-decoration-line: underline; text-decoration-color: var(--eccm-accent); }
+    .ft a:hover { text-decoration-line: underline; text-decoration-color: currentColor; }
     .ft ul { list-style: none; margin: 0; padding: 0; }
     .ft p { margin: 0; }
     .ft .mk { display: block; color: var(--eccm-ink); }
@@ -212,7 +217,7 @@
 <main class="frame lay">
   <h1 class="list-label">The page</h1>
   <div class="prose flow intro">
-    <p>One header and one footer over six event pages, each in the scheme the derive page read off its picture: the header with the mark and its wordmark on one line, centred, the menu at 16 px; the footer in three columns with the City of Music mark at the end. At the desk each page spans the window; beside it the same page in a 375 px box, where the menu sits behind three hairlines.</p>
+    <p>One header and one footer over six event pages, each in the scheme the derive page read off its picture: the header with the mark and its wordmark on one line, centred, the menu at 16 px; the footer in three columns with the City of Music mark at the end. At the desk each page spans the window; beside it the same page in a 375 px box, where the menu sits behind five hairlines on the stave's own rows.</p>
   </div>
   <div id="pages"></div>
 </main>
@@ -273,8 +278,11 @@ const L = {
 const menu = (p, cls) => `<ul class="${cls}">${p.menu.map(([t, h]) => `<li><a href="${h}">${t}</a></li>`).join('')}${cls === 'nav' ? `<li class="lang-in">${p.sw}</li>` : ''}</ul>`;
 const mark = (p, w, wordmark = false) => `<a class="mk" href="./" style="--w: ${w}rem"${wordmark ? ` data-wordmark="${p.lang}"` : ''} aria-label="${p.name}"></a>`;
 // the phone menu's button: the usual three hairlines, one pixel each, in the ink (asked 2026-09-28: "for mobile use stnd 3 lines 1px black")
-const menuBtn = (p, open = false) => `<button class="menu-btn" type="button" aria-expanded="${open}" aria-label="${p.menuLabel}"><svg width="24" height="17" viewBox="0 0 24 17" aria-hidden="true">${[0, 8, 16].map((y) => `<rect y="${y}" width="24" height="1"/>`).join('')}</svg></button>`;
-const sw = (p, o = {}) => `<span class="sw">${p.sw}${menuBtn(p, !!o.open)}</span>`;
+// the phone menu's button: the stave's own five hairlines, drawn in the mark's units at the stave's rows (y 58.5 to 88 on a 7.375
+// pitch, 1.5 tall) in an svg as tall as the mark's lockup, so at the frame's edge they sit on the rows the stave has past the M
+// (asked 2026-09-28 with a crop: "make hamburger 5 rows and align with logo ones vertically"); w is the mark's width in rem
+const menuBtn = (p, open = false, w = 10) => `<button class="menu-btn" type="button" aria-expanded="${open}" aria-label="${p.menuLabel}"><svg viewBox="0 27 46 183" style="inline-size: calc(${w}rem * 46 / 310); block-size: calc(${w}rem * 183 / 310)" aria-hidden="true">${[0, 1, 2, 3, 4].map((i) => `<rect y="${(58.5 + i * 7.375).toFixed(3)}" width="46" height="1.5"/>`).join('')}</svg></button>`;
+const sw = (p, o = {}, w = 10) => `<span class="sw">${p.sw}${menuBtn(p, !!o.open, w)}</span>`;
 // the City of Music mark; black where the footer carries no colour, which the city's rule allows (asked 2026-09-27: "tallinn muusikalinn -> make it black")
 const partner = (p, black) => `<a class="partner" href="${p.partnerHref}"><img src="./partners/${black ? p.partnerBlack : p.partner}" alt="${p.partnerAlt}"></a>`;
 // Instagram and Facebook as text links, each on its own line under the contact form
@@ -306,7 +314,7 @@ const DERIVED = {
 // the four headers, each shown on a whole page over one derived example and footer A
 // the header: the mark with its wordmark on one line, centred on the mark's middle, the mark at 10rem and the menu at 16 px
 const header = (p, o = {}) => `
-    <header class="hd one centre"${o.open ? ' data-open' : ''} style="--nav-size: 1rem"><div class="frame">${mark(p, 10, true)}${sw(p, o)}${menu(p, 'nav')}</div></header>`;
+    <header class="hd one centre"${o.open ? ' data-open' : ''} style="--nav-size: 1rem"><div class="frame">${mark(p, 10, true)}${sw(p, o, 10)}${menu(p, 'nav')}</div></header>`;
 const page = (head, ex, foot) => `<div class="pg">${head}<div class="pg-main" style="${ex.style}"><div class="frame">${ex.html}</div></div>${foot}</div>`;
 const pagesEl = document.getElementById('pages');
 let pages = 0;
