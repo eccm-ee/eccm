@@ -45,11 +45,6 @@
     .ds-serif .prose { font-family: var(--ev-body-face, inherit); }
     .ds-ground .ds-cap { color: inherit; opacity: 0.7; }
     .ds-btns { display: flex; flex-wrap: wrap; gap: var(--eccm-s-4); }
-    .ds-logos { display: grid; gap: var(--eccm-s-16); margin-block: var(--eccm-s-8); }
-    .ds-logos figure { margin: 0; }
-    .ds-logos img { display: block; inline-size: min(100%, var(--eccm-mark-w)); }
-    .ds-logos .phone img { inline-size: 11rem; }
-    .ds-logos figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
     .ds-squares { display: flex; flex-wrap: wrap; gap: var(--eccm-s-8); margin-block: var(--eccm-s-8); }
     .ds-squares figure { margin: 0; }
     .ds-squares img { display: block; inline-size: 8rem; block-size: 8rem; }
@@ -59,7 +54,6 @@
     .ds-neg img { background: #1a1a1a; }
     .ds-sizes img { display: block; }
     /* the icon's square shows on hover, since a positive mark on white has no edge (asked 2026-09-27) */
-    .ds-sizes img:hover, .ds-squares img:hover, .ds-logos img:hover { outline: 1px solid var(--eccm-rule-strong); }
     .ds-stave-demo { position: relative; min-block-size: 10rem; padding: var(--eccm-s-8); }
     .ds-stave-demo img { position: absolute; top: var(--eccm-s-6); right: 0; inline-size: 120px; block-size: 58px; }
     .ds-stave-demo .ds-cap { margin: 0; }
@@ -318,15 +312,6 @@
   </div>
 
   <h2>Logo</h2>
-  <div class="prose flow">
-    <p>Three files of one mark. An Estonian page carries the Estonian one in its header, an English page the English one, and the two-language one stays for the places where one language would be wrong. The mark is drawn row by row off the JPEG eccm.ee serves and its viewBox is the ink's own box, so a page aligns to ink and not to air. The tagline's face is interim, DIN Condensed squeezed to the measured width, until ECCM names the typeface or sends the vector.</p>
-  </div>
-  <div class="ds-logos">
-    <figure><img src="./logo-et.svg" width="310" height="133" alt="Eesti nüüdismuusika keskus"><figcaption>logo-et.svg, Estonian, 310 by 133</figcaption></figure>
-    <figure><img src="./logo-en.svg" width="310" height="133" alt="Estonian Centre of Contemporary Music"><figcaption>logo-en.svg, English, 310 by 133</figcaption></figure>
-    <figure><img src="./logo.svg" width="310" height="147" alt="Eesti nüüdismuusika keskus, Estonian Centre of Contemporary Music"><figcaption>logo.svg, two languages, 310 by 147</figcaption></figure>
-    <figure class="phone"><img src="./logo-et.svg" width="310" height="133" alt=""><figcaption>at the phone width, 11rem</figcaption></figure>
-  </div>
   <div class="prose flow">
     <p>The square mark, no tagline, for icons and avatars: positive and negative, each with and without a one pixel outline that stays one pixel at any size, and a plain one without the hairlines for the small sizes. The letters, E's left edge to M's right edge, are the block that is aligned: two stems of margin each side, and the E's middle bar on the square's centre line, which lifts the block two units above the geometric centre, the way a wide mark asks. The stave is ornament at its own width, as in the logo, hanging into the right margin.</p>
   </div>

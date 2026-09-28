@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "rm old logo stuff from ds" then "i mean workmark stuff" and "i mean rm these" (a crop of the four logo files)
+
+Asked with a picture. The design system page's Logo section loses the three tagline-bearing logo files and the phone-width one with their paragraph and rules (the DIN Condensed wordmark of the interim redraw); the square marks, the stacked marks and the stave stay, and the wordmark studies at the foot are the current wordmark.
+
 ### Done 2026-09-28: "use newsreader in derive"
 
 Asked verbatim. The derive page's serif is Newsreader, Literata and Roboto Serif the alternatives on the switch; the design system page's serif specimens and the stylesheet's declaration follow, and the skill's dated line.
