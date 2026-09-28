@@ -1,15 +1,19 @@
 // editor.mjs: the editor's pages, in Estonian, on the site's own chrome and
-// stylesheet: the list of events, the form for one event, the login page and
-// the closed door. The form is public/edit.html's form grown to the schema
-// (plans/plan-eccm-cms-step-1.md section 2): the shared facts first, then the
-// two languages side by side where the frame allows it, then the credits as
-// one line per role, then publishing. Native fields with visible labels, no
-// placeholder as a label, no script; the server validates and answers in
-// words (src/editor.mjs). What the whole editor is meant to become is
-// plans/plan-eccm-cms.md section 8.
+// stylesheet: the list of events, the form for one event, the list of text
+// pages and the form for one (since 2026-09-28, asked as "page from d1 and
+// with edit?"), the login page and the closed door. The event form is
+// public/edit.html's form grown to the schema (plans/plan-eccm-cms-step-1.md
+// section 2): the shared facts first, then the two languages side by side
+// where the frame allows it, then the credits as one line per role, then
+// publishing. The page form is the same form with nothing a page lacks: the
+// two titles and slugs, publishing, the two texts. Native fields with visible
+// labels, no placeholder as a label, no script; the server validates and
+// answers in words (src/editor.mjs). What the whole editor is meant to become
+// is plans/plan-eccm-cms.md section 8.
 import { html, raw } from './html.mjs';
 import { page } from './chrome.mjs';
 import { dateShort, clock } from './dates.mjs';
+import { pagePath } from './page.mjs';
 
 // a blank credit block, the one the form shows when an event has none and the one Lisa tegija adds
 export const BLANK_CREDIT = () => ({ role_key: '', label_et: '', label_en: '', people: '', orgs_et: '', orgs_en: '' });
@@ -32,12 +36,25 @@ const field = ({ id, label, hint, err, control, cls = '' }) => html`<div class="
         ${err ? html`<p class="hint err">${err}</p>` : hint ? html`<p class="hint">${hint}</p>` : ''}
       </div>`;
 const input = (id, name, value, attrs = '') => html`<input id="${id}" name="${name}" value="${value ?? ''}"${raw(attrs)}>`;
+// one language's fields, in two parts: the title and the slug open the form, the text sits under Tekst
+// (asked 2026-09-28: "move pealkiri and slug to their own section, first"); the event form and the page
+// form share it, v being either form's values and err its error lookup
+const langBlock = (v, err, lang, name, tLabel, sLabel, bLabel, part) => html`<section lang="${lang}">
+        <h3 class="field-name">${name}</h3>
+        ${part === 'body' ? '' : field({ id: `f-title-${lang}`, label: tLabel, err: err(`title_${lang}`), control: input(`f-title-${lang}`, `title_${lang}`, v[lang].title) })}
+        ${part === 'body' ? '' : field({ id: `f-slug-${lang}`, label: sLabel, err: err(`slug_${lang}`), hint: lang === 'et' ? 'Tühjaks jättes tuletatakse pealkirjast. Väikesed tähed a kuni z, numbrid ja sidekriipsud.' : 'Leave empty to derive from the title.', control: input(`f-slug-${lang}`, `slug_${lang}`, v[lang].slug, ' spellcheck="false"') })}
+        ${part === 'head' ? '' : field({ id: `f-body-${lang}`, label: bLabel, err: err(`body_${lang}`), hint: lang === 'et' ? 'Tühi rida alustab uut lõiku, rida algusega ## on vahepealkiri, **tekst** on rasvane, [sõnad](https://…) on link.' : 'A blank line starts a paragraph, a line starting with ## is a heading.', control: html`<textarea id="f-body-${lang}" name="body_${lang}" rows="18">${v[lang].body}</textarea>` })}
+      </section>`;
+// the two texts keep one height: a drag on either resizes the other (asked 2026-09-28: "when resizing textarea in one col, other height should change too")
+const SAME_HEIGHT = `      const tas = [...document.querySelectorAll('.langs textarea')];
+      const ro = new ResizeObserver((entries) => { for (const en of entries) { const h = en.target.offsetHeight; for (const t of tas) if (t !== en.target && t.offsetHeight !== h) t.style.height = h + 'px'; } });
+      tas.forEach((t) => ro.observe(t));`;
 
 export const editorList = ({ events }) => page({
   lang: 'et', title: 'Sündmused.', alternate: ALT,
   body: html`  <p class="crumb">Toimeta</p>
   <h1>Sündmused</h1>
-  <p class="actions"><a class="btn btn-pri" href="/edit/events/new">Uus sündmus</a> <a class="btn" href="/logout">Logi välja</a></p>
+  <p class="actions"><a class="btn btn-pri" href="/edit/events/new">Uus sündmus</a> <a class="btn" href="/edit/pages">Lehed</a> <a class="btn" href="/logout">Logi välja</a></p>
   ${events.length ? html`<ol class="edit-list">
     ${events.map((e) => html`<li><time datetime="${e.starts_at}">${dateShort(e.starts_at, 'et')} ${clock(e.starts_at, 'et')}</time><span><a href="/edit/events/${e.id}">${e.title_et || e.title_en || '(pealkirjata)'}</a><small>${e.status === 'published' ? 'Avaldatud' : 'Mustand'}, ${e.title_en ? 'ET ja EN' : 'ainult ET'}, muudetud ${tallinnStamp(e.updated_at)}</small></span></li>`)}
   </ol>` : html`<p class="note">Ühtegi sündmust ei ole.</p>`}`,
@@ -57,14 +74,6 @@ export const editorForm = ({ v, errors = [], roles, media, saved, texts = {} }) 
   const pic = media.find((m) => String(m.id) === String(v.image_id));
   const imageKey = v.image_key ?? (pic ? pic.key : '');
   const title = isNew ? 'Uus sündmus' : (v.et.title || v.en.title || 'Sündmus');
-  // one language's fields, in two parts: the title and the slug open the form, the description sits under Tekst
-  // (asked 2026-09-28: "move pealkiri and slug to their own section, first")
-  const langBlock = (lang, name, tLabel, sLabel, bLabel, part) => html`<section lang="${lang}">
-        <h3 class="field-name">${name}</h3>
-        ${part === 'body' ? '' : field({ id: `f-title-${lang}`, label: tLabel, err: err(`title_${lang}`), control: input(`f-title-${lang}`, `title_${lang}`, v[lang].title) })}
-        ${part === 'body' ? '' : field({ id: `f-slug-${lang}`, label: sLabel, err: err(`slug_${lang}`), hint: lang === 'et' ? 'Tühjaks jättes tuletatakse pealkirjast. Väikesed tähed a kuni z, numbrid ja sidekriipsud.' : 'Leave empty to derive from the title.', control: input(`f-slug-${lang}`, `slug_${lang}`, v[lang].slug, ' spellcheck="false"') })}
-        ${part === 'head' ? '' : field({ id: `f-body-${lang}`, label: bLabel, err: err(`body_${lang}`), hint: lang === 'et' ? 'Tühi rida alustab uut lõiku, rida algusega ## on vahepealkiri, **tekst** on rasvane, [sõnad](https://…) on link.' : 'A blank line starts a paragraph, a line starting with ## is a heading.', control: html`<textarea id="f-body-${lang}" name="body_${lang}" rows="18">${v[lang].body}</textarea>` })}
-      </section>`;
   // one credit block; k is the index in the names and ids, a string so the template below can carry a placeholder
   const credit = (c, i, k = String(i)) => html`<div class="credit">
         <div class="field-row">
@@ -90,8 +99,8 @@ export const editorForm = ({ v, errors = [], roles, media, saved, texts = {} }) 
     <input type="hidden" name="credit_count" value="${v.credits.length}">
     <h2>Pealkiri</h2>
     <div class="langs">
-      ${langBlock('et', 'Eesti keeles', 'Pealkiri', 'Slug', 'Kirjeldus', 'head')}
-      ${langBlock('en', 'Inglise keeles', 'Title', 'Slug', 'Description', 'head')}
+      ${langBlock(v, err, 'et', 'Eesti keeles', 'Pealkiri', 'Slug', 'Kirjeldus', 'head')}
+      ${langBlock(v, err, 'en', 'Inglise keeles', 'Title', 'Slug', 'Description', 'head')}
     </div>
 
     <h2>Pilt</h2>
@@ -119,8 +128,8 @@ export const editorForm = ({ v, errors = [], roles, media, saved, texts = {} }) 
     </div>
     <h2>Tekst</h2>
     <div class="langs">
-      ${langBlock('et', 'Eesti keeles', 'Pealkiri', 'Slug', 'Kirjeldus', 'body')}
-      ${langBlock('en', 'Inglise keeles', 'Title', 'Slug', 'Description', 'body')}
+      ${langBlock(v, err, 'et', 'Eesti keeles', 'Pealkiri', 'Slug', 'Kirjeldus', 'body')}
+      ${langBlock(v, err, 'en', 'Inglise keeles', 'Title', 'Slug', 'Description', 'body')}
     </div>
 
     <h2>Tegijad</h2>
@@ -130,10 +139,7 @@ export const editorForm = ({ v, errors = [], roles, media, saved, texts = {} }) 
     <p class="add-credit"><button class="btn" type="submit" name="do" value="add-credit" formnovalidate>Lisa tegija</button></p>
     <template id="credit-tpl">${credit(BLANK_CREDIT(), v.credits.length, '__i__')}</template>
     <script type="module">
-      // the two descriptions keep one height: a drag on either resizes the other (asked 2026-09-28: "when resizing textarea in one col, other height should change too")
-      const tas = [...document.querySelectorAll('.langs textarea')];
-      const ro = new ResizeObserver((entries) => { for (const en of entries) { const h = en.target.offsetHeight; for (const t of tas) if (t !== en.target && t.offsetHeight !== h) t.style.height = h + 'px'; } });
-      tas.forEach((t) => ro.observe(t));
+${raw(SAME_HEIGHT)}
       // with script the block is added in place; without, the same button posts the form and the server adds it
       const btn = document.querySelector('[name="do"][value="add-credit"]'), tpl = document.getElementById('credit-tpl'), list = document.querySelector('.credits-edit'), count = document.querySelector('[name="credit_count"]');
       btn.addEventListener('click', (e) => {
@@ -155,6 +161,65 @@ export const editorForm = ({ v, errors = [], roles, media, saved, texts = {} }) 
   return page({ lang: 'et', title: `${title}.`, alternate: ALT, body });
 };
 
+// ── the text pages: the same two views with nothing a page lacks ────────────
+// the key in the first column is the row's name in the page table, which the form does not change
+export const pageList = ({ pages }) => page({
+  lang: 'et', title: 'Lehed.', alternate: ALT,
+  body: html`  <p class="crumb">Toimeta</p>
+  <h1>Lehed</h1>
+  <p class="actions"><a class="btn btn-pri" href="/edit/pages/new">Uus leht</a> <a class="btn" href="/edit/events">Sündmused</a> <a class="btn" href="/logout">Logi välja</a></p>
+  ${pages.length ? html`<ol class="edit-list">
+    ${pages.map((p) => html`<li><small>${p.key}</small><span><a href="/edit/pages/${p.id}">${p.title_et || p.title_en || '(pealkirjata)'}</a><small>${p.title_et && p.title_en ? html`EN: ${p.title_en}` : p.title_et ? 'ainult ET' : 'ainult EN'}</small><small>${p.status === 'published' ? 'Avaldatud' : 'Mustand'}, muudetud ${tallinnStamp(p.updated_at)}</small></span></li>`)}
+  </ol>` : html`<p class="note">Ühtegi lehte ei ole.</p>`}`,
+});
+
+// v: the form's values (src/editor.mjs, pageFromRows or parsePage); errors,
+// saved and texts as editorForm takes them
+export const pageForm = ({ v, errors = [], saved, texts = {} }) => {
+  const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
+  const isNew = !v.id;
+  const action = isNew ? '/edit/pages/new' : `/edit/pages/${v.id}`;
+  const title = isNew ? 'Uus leht' : (v.et.title || v.en.title || 'Leht');
+  const links = ['et', 'en'].filter((l) => texts[l]).map((l) => html`<a href="${pagePath(l, texts[l].slug)}" hreflang="${l}">${l.toUpperCase()}</a>`);
+  const body = html`  <p class="crumb"><a href="/edit/pages">Lehed</a></p>
+  <h1>${title}</h1>
+  ${links.length ? html`<p class="note">Avalik leht: ${raw(links.map(String).join(" "))}${v.status !== 'published' ? html` <span class="small">(mustand, avalikult ei näe)</span>` : ''}</p>` : ''}
+  ${saved ? html`<p class="note">Salvestatud kell ${tallinnClock(saved)}.</p>` : ''}
+  ${errors.length ? html`<div class="errors" role="alert"><p>Ei salvestatud. Paranda:</p><ul>${errors.map((e) => html`<li>${e.msg}</li>`)}</ul></div>` : ''}
+
+  <form class="form form-wide" method="post" action="${action}">
+    <input type="hidden" name="rev" value="${v.rev}">
+    <h2>Pealkiri</h2>
+    <div class="langs">
+      ${langBlock(v, err, 'et', 'Eesti keeles', 'Pealkiri', 'Slug', 'Tekst', 'head')}
+      ${langBlock(v, err, 'en', 'Inglise keeles', 'Title', 'Slug', 'Text', 'head')}
+    </div>
+
+    <h2>Avaldamine</h2>
+    <div class="fields">
+      ${field({ id: 'f-status', label: 'Olek', hint: 'Mustandit avalikul lehel ei näe.', control: html`<select id="f-status" name="status">${opts(STATUSES, v.status)}</select>` })}
+      ${field({ id: 'f-publish', label: 'Avalda alates', err: err('publish_at'), hint: 'Tühi = kohe.', control: input('f-publish', 'publish_at', v.publish_at, ' type="datetime-local"') })}
+    </div>
+
+    <h2>Tekst</h2>
+    <div class="langs">
+      ${langBlock(v, err, 'et', 'Eesti keeles', 'Pealkiri', 'Slug', 'Tekst', 'body')}
+      ${langBlock(v, err, 'en', 'Inglise keeles', 'Title', 'Slug', 'Text', 'body')}
+    </div>
+    <script type="module">
+${raw(SAME_HEIGHT)}
+    </script>
+
+    <div class="actions">
+      <button class="btn btn-pri" type="submit" name="do" value="save">Salvesta</button>
+      <button class="btn" type="submit" name="do" value="preview-et">Eelvaade ET</button>
+      <button class="btn" type="submit" name="do" value="preview-en">Eelvaade EN</button>
+      <a class="btn" href="/edit/pages">Loobu</a>
+    </div>
+  </form>`;
+  return page({ lang: 'et', title: `${title}.`, alternate: ALT, body });
+};
+
 export const loginPage = ({ next, wrong }) => page({
   lang: 'et', title: 'Sisselogimine.', alternate: ALT,
   body: html`  <p class="crumb">Toimeta</p>
@@ -171,11 +236,13 @@ export const gatePage = ({ status, reason }) => {
   const what = status === 503
     ? ['Toimetaja ei ole seadistatud.', 'Sellel serveril ei ole sisselogimise viisi seatud, nii et toimetada ei saa keegi.']
     : status === 404
-      ? ['Sellist sündmust ei ole.', html`Nimekiri on <a href="/edit/events">sündmuste all</a>.`]
+      ? (reason === 'page'
+        ? ['Sellist lehte ei ole.', html`Nimekiri on <a href="/edit/pages">lehtede all</a>.`]
+        : ['Sellist sündmust ei ole.', html`Nimekiri on <a href="/edit/events">sündmuste all</a>.`])
       : status === 403
         ? ['Päring tuli mujalt.', 'Vorm saadeti teiselt saidilt ja seda ei võetud vastu. Ava toimetaja uuesti ja saada sealt.']
         : status === 500
-          ? ['Toimetaja ei vasta.', 'Andmebaas vastas veaga. Värskel paigaldusel on põhjus enamasti rakendamata migratsioon migrations/0002_editing.sql.']
+          ? ['Toimetaja ei vasta.', 'Andmebaas vastas veaga. Värskel paigaldusel on põhjus enamasti rakendamata migratsioon, migrations/0002_editing.sql või 0003_page_editing.sql.']
           : reason === 'access'
             ? ['Sisselogimine ei kehti.', 'Access ei kinnitanud seda päringut. Ava leht uuesti ja logi sisse.']
             : ['Toimetamine on lukus.', html`Sisse saab võtmega: <a href="/login">logi sisse</a>.`];

@@ -7,7 +7,11 @@
 // The fallback runs both ways here, unlike the event page's Estonian-only
 // one, because on eccm.ee the NAN and Ulysses pages are English and Tallinn
 // 1965 is Estonian: a route in a language with no row shows the other row
-// under the visitor's chrome with one line saying so.
+// under the visitor's chrome with one line saying so. Since 2026-09-28 the
+// lead is the event page's header without the picture, so the Muuda button
+// sits under the title the way event.mjs shows it and the prose follows at
+// the same distance; the editor (src/editor.mjs) renders this same function
+// for a preview, with a notice and an editHref of its own.
 import { html, raw } from './html.mjs';
 import { md } from './md.mjs';
 import { T, OTHER, page } from './chrome.mjs';
@@ -16,8 +20,10 @@ export const pagePath = (lang, slug) => `/${lang}/${slug}`;
 
 // text: the page_text row shown, in the requested language or, when fallback
 // is true, in the other one; twin: { lang, slug } of the other language's row
-// when it exists, which in the fallback case is the row shown
-export const renderPage = ({ lang, text, fallback, twin, origin, path }) => {
+// when it exists, which in the fallback case is the row shown; editHref:
+// where the edit button goes, the row's own editor page unless the caller
+// says otherwise (a preview of an unsaved page); notice: chrome.mjs
+export const renderPage = ({ lang, text, fallback, twin, origin, path, notice, editHref }) => {
   const t = T[lang];
   const textLang = fallback ? text.lang : lang;
   const alternate = { lang: OTHER[lang], href: pagePath(OTHER[lang], twin ? twin.slug : text.slug) };
@@ -29,13 +35,18 @@ export const renderPage = ({ lang, text, fallback, twin, origin, path }) => {
   const canonical = origin + (fallback ? pagePath(text.lang, text.slug) : path);
 
   const body = html`  <article class="event">
-    <div class="event-lead">
-      ${fallback ? html`<p class="small">${t.fallback}</p>` : ''}
-      <h1 lang="${textLang}">${text.title}</h1>
-    </div>
+    <header class="event-top">
+      <div class="event-lead">
+        ${fallback ? html`<p class="small">${t.fallback}</p>` : ''}
+        <h1 lang="${textLang}">${text.title}</h1>
+        <p class="event-actions">
+          <a class="btn" href="${editHref || `/edit/pages/${text.page_id}`}">${t.edit}</a>
+        </p>
+      </div>
+    </header>
     <div class="prose flow" lang="${textLang}">
       ${raw(md(text.body))}
     </div>
   </article>`;
-  return page({ lang, title: text.title, alternate, canonical, alternates, body });
+  return page({ lang, title: text.title, alternate, canonical, alternates, body, notice });
 };

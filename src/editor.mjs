@@ -5,6 +5,9 @@
 //   GET  /edit/events                          every event, any status
 //   GET  /edit/events/new, POST                a blank form, then an insert
 //   GET  /edit/events/{id}, POST               the form from D1, then a save
+//   GET  /edit/pages                           every text page, any status
+//   GET  /edit/pages/new, POST                 a blank form, then an insert
+//   GET  /edit/pages/{id}, POST                the form from D1, then a save
 //
 // A save is one D1 batch, which is one transaction: every statement is
 // guarded by the event's rev as the form saw it, and the event UPDATE that
@@ -12,10 +15,15 @@
 // at all and the reply is 409 with the typed values kept. Preview renders the
 // public template from the POST body without saving (plan-eccm-cms.md section
 // 8: preview and published cannot disagree because they are one function).
-// Every reply here is no-store and noindex; nothing under /edit is a page for
-// a visitor or a crawler.
+// The text pages (page and page_text, the five of data/seed-step3.sql) have
+// the same three routes, the same guard and the same preview since 2026-09-28
+// ("page from d1 and with edit?"), with nothing an event has: no facts, no
+// picture, no credits. Every reply here is no-store and noindex; nothing
+// under /edit is a page for a visitor or a crawler.
 import { renderEvent } from './render/event.mjs';
-import { editorList, editorForm, loginPage, gatePage, CATEGORIES, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
+import { renderPage, pagePath } from './render/page.mjs';
+import { OTHER } from './render/chrome.mjs';
+import { editorList, editorForm, pageList, pageForm, loginPage, gatePage, CATEGORIES, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
 import { identify, tokenMatches, setCookie, clearCookie } from './gate.mjs';
 
 const HEAD = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' };
@@ -171,7 +179,116 @@ async function save(db, v, before, who) {
   return { id: v.id, stale: results[results.length - 1].meta.changes !== 1 };
 }
 
+// ── the text pages: values, validation, save and preview ────────────────────
+// the same shape as the event's with the columns a page has: two text rows,
+// a status and a publish time; key is the row's name in the page table
+// ('eccm', 'tallinn-1965'), set once at the insert and never by the form
+export const pageFromRows = (pg, texts) => ({
+  id: pg?.id, rev: pg?.rev ?? 0, key: pg?.key ?? '',
+  status: pg?.status ?? 'draft', publish_at: pg?.publish_at ?? '',
+  et: text(texts, 'et'), en: text(texts, 'en'),
+});
+export const parsePage = (fd, before) => ({
+  id: before.id, rev: parseInt(s(fd, 'rev'), 10) || 0, key: before.key,
+  status: s(fd, 'status'), publish_at: local(s(fd, 'publish_at')),
+  et: { title: s(fd, 'title_et'), slug: s(fd, 'slug_et').toLowerCase(), body: s(fd, 'body_et'), exists: before.et.exists },
+  en: { title: s(fd, 'title_en'), slug: s(fd, 'slug_en').toLowerCase(), body: s(fd, 'body_en'), exists: before.en.exists },
+});
+// the one segment after the language that is not a page: the events list of
+// plans/plan-eccm-urls-sitemap-rss.md section 2
+const RESERVED = { et: ['sundmused'], en: ['events'] };
+export async function validatePage(v, db) {
+  const errors = [];
+  const bad = (field, msg) => errors.push({ field, msg });
+  if (!STATUSES.some(([k]) => k === v.status)) bad('status', 'Olek on valimata.');
+  if (v.publish_at && !isLocal(v.publish_at)) bad('publish_at', 'Avaldamise aeg ei ole kuupäev ja kellaaeg.');
+  // the texts: either language may be missing, since on eccm.ee NAN and
+  // Ulysses are English only and Tallinn 1965 is Estonian only, but not
+  // both, and a language cannot be emptied once it exists, because its row
+  // carries the eccm.ee path
+  if (!v.et.title && !v.en.title) bad('title_et', 'Pealkiri on tühi mõlemas keeles. Vähemalt üks keel peab olema täidetud.');
+  for (const lang of ['et', 'en']) {
+    const t = v[lang];
+    const name = lang === 'et' ? 'Eestikeelne' : 'Ingliskeelne';
+    if (!t.title) {
+      if (t.exists) bad(`title_${lang}`, `${name} pealkiri on tühi, aga ${name.toLowerCase()} tekst on olemas ja seda ei saa siit kustutada.`);
+      else if (t.slug || t.body) bad(`title_${lang}`, `${name} pealkiri on tühi, aga slug või tekst on täidetud.`);
+      continue;
+    }
+    if (!t.slug) t.slug = slugify(t.title);
+    if (!SLUG.test(t.slug)) { bad(`slug_${lang}`, `${name} slug tohib sisaldada ainult väikesi tähti a kuni z, numbreid ja sidekriipse.`); continue; }
+    if (RESERVED[lang].includes(t.slug)) { bad(`slug_${lang}`, `${name} slug ${t.slug} on sündmuste nimekirja aadress.`); continue; }
+    const taken = await db.prepare('SELECT page_id FROM page_text WHERE lang = ? AND slug = ? AND page_id != ?').bind(lang, t.slug, v.id ?? 0).first();
+    if (taken) bad(`slug_${lang}`, `${name} slug ${t.slug} on juba teisel lehel kasutusel.`);
+  }
+  // a new page's key is its first slug, Estonian before English
+  if (!v.id && !errors.length) {
+    v.key = v.et.slug || v.en.slug;
+    if (await db.prepare('SELECT id FROM page WHERE key = ?').bind(v.key).first()) bad(v.et.slug ? 'slug_et' : 'slug_en', `Lehe võti ${v.key} on juba teisel lehel kasutusel. Vali teine slug.`);
+  }
+  return errors;
+}
+
+async function savePage(db, v, who) {
+  const texts = ['et', 'en'].filter((l) => v[l].title);
+  if (!v.id) {
+    const ins = await db.prepare('INSERT INTO page (key, status, publish_at, updated_by) VALUES (?,?,?,?)').bind(v.key, v.status, v.publish_at || null, who).run();
+    const id = ins.meta.last_row_id;
+    await db.batch(texts.map((l) => db.prepare('INSERT INTO page_text (page_id, lang, slug, title, body) VALUES (?,?,?,?,?)').bind(id, l, v[l].slug, v[l].title, v[l].body)));
+    return { id };
+  }
+  // every statement guarded by the rev the form saw; the bump comes last, and
+  // its changed-row count says whether anything happened at all
+  const guard = 'EXISTS (SELECT 1 FROM page WHERE id = ? AND rev = ?)';
+  const g = [v.id, v.rev];
+  const stmts = texts.map((l) => db.prepare(`INSERT INTO page_text (page_id, lang, slug, title, body) SELECT ?,?,?,?,? WHERE ${guard} ON CONFLICT (page_id, lang) DO UPDATE SET slug = excluded.slug, title = excluded.title, body = excluded.body`).bind(v.id, l, v[l].slug, v[l].title, v[l].body, ...g))
+    .concat([db.prepare(`UPDATE page SET status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = ?, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(v.status, v.publish_at || null, who, ...g)]);
+  const results = await db.batch(stmts);
+  return { id: v.id, stale: results[results.length - 1].meta.changes !== 1 };
+}
+
+function previewPage(v, lang, url) {
+  if (!v[lang].title) lang = OTHER[lang];
+  const text = { page_id: v.id, lang, slug: v[lang].slug, title: v[lang].title, body: v[lang].body };
+  const other = OTHER[lang];
+  const twin = v[other].title ? { lang: other, slug: v[other].slug } : null;
+  const notice = lang === 'et' ? 'Eelvaade. Midagi ei ole salvestatud; sulge see vahekaart ja salvesta vormilt.' : 'Preview. Nothing is saved; close this tab and save from the form.';
+  return reply(renderPage({ lang, text, fallback: false, twin, origin: url.origin, path: pagePath(lang, text.slug), notice, editHref: v.id ? `/edit/pages/${v.id}` : '/edit/pages/new' }));
+}
+
+async function loadPage(db, id) {
+  const pg = await db.prepare('SELECT * FROM page WHERE id = ?').bind(id).first();
+  if (!pg) return null;
+  const texts = (await db.prepare('SELECT * FROM page_text WHERE page_id = ?').bind(id).all()).results;
+  return { pg, texts, values: pageFromRows(pg, texts) };
+}
+
+async function pageRoute(request, env, url, id, who) {
+  const db = env.DB;
+  const before = id === 'new' ? { pg: null, texts: [], values: pageFromRows(null, []) } : await loadPage(db, +id);
+  if (!before) return reply(gatePage({ status: 404, reason: 'page' }), 404);
+  const texts = Object.fromEntries(before.texts.map((t) => [t.lang, t]));
+  if (request.method !== 'POST') {
+    const saved = url.searchParams.get('saved') && before.pg ? before.pg.updated_at : null;
+    return reply(pageForm({ v: before.values, saved, texts }));
+  }
+  if (crossSite(request)) return reply(gatePage({ status: 403, reason: 'origin' }), 403);
+  const fd = await request.formData();
+  const v = parsePage(fd, before.values);
+  const action = s(fd, 'do');
+  const errors = await validatePage(v, db);
+  if (errors.length) return reply(pageForm({ v, errors, texts }), 422);
+  if (action.startsWith('preview')) return previewPage(v, action.endsWith('en') ? 'en' : 'et', url);
+  const out = await savePage(db, v, who);
+  if (out.stale) return reply(pageForm({ v, errors: [{ field: 'rev', msg: 'Keegi teine salvestas selle lehe vahepeal. Ava leht uues vahekaardis, võrdle ja tee muudatus uuesti.' }], texts }), 409);
+  return redirect(`/edit/pages/${out.id}?saved=1`);
+}
+
 // ── the routes ──────────────────────────────────────────────────────────────
+// a cross-site form post cannot carry the cookie (SameSite=Lax), and a
+// browser that says where the post came from is believed
+const crossSite = (request) => { const site = request.headers.get('sec-fetch-site'); return !!site && site !== 'same-origin' && site !== 'none'; };
+// where /login sends a person after the cookie is set: anything under /edit/, the events' list or the pages'
 const safeNext = (n) => (typeof n === 'string' && /^\/edit\/[a-z0-9/_-]*$/i.test(n) ? n : '/edit/events');
 
 async function login(request, env, url) {
@@ -222,10 +339,7 @@ async function form(request, env, url, id, who) {
     const saved = url.searchParams.get('saved') && before.ev ? before.ev.updated_at : null;
     return reply(editorForm({ v: padded(before.values), roles, media, saved, texts }));
   }
-  // a cross-site form post cannot carry the cookie (SameSite=Lax), and a
-  // browser that says where the post came from is believed
-  const site = request.headers.get('sec-fetch-site');
-  if (site && site !== 'same-origin' && site !== 'none') return reply(gatePage({ status: 403, reason: 'origin' }), 403);
+  if (crossSite(request)) return reply(gatePage({ status: 403, reason: 'origin' }), 403);
   const fd = await request.formData();
   const v = parse(fd, before.values);
   const action = s(fd, 'do');
@@ -254,10 +368,19 @@ export async function editor(request, env, url) {
     }
     const m = /^\/edit\/events\/(new|\d+)$/.exec(p);
     if (m) return form(request, env, url, m[1], id.who);
+    if (p === '/edit/pages') {
+      const pages = (await env.DB.prepare(`SELECT p.id, p.key, p.status, p.updated_at, t0.title AS title_et, t1.title AS title_en
+        FROM page p LEFT JOIN page_text t0 ON t0.page_id = p.id AND t0.lang = 'et' LEFT JOIN page_text t1 ON t1.page_id = p.id AND t1.lang = 'en'
+        ORDER BY p.menu_order, p.id`).bind().all()).results;
+      return reply(pageList({ pages }));
+    }
+    const pm = /^\/edit\/pages\/(new|\d+)$/.exec(p);
+    if (pm) return pageRoute(request, env, url, pm[1], id.who);
     return null;
   } catch (e) {
     // a plain sentence, never a stack: the likeliest cause on a fresh deploy
-    // is migrations/0002_editing.sql not yet applied to the remote database
+    // is migrations/0002_editing.sql or 0003_page_editing.sql not yet applied
+    // to the remote database
     console.error('editor', e && e.message);
     return reply(gatePage({ status: 500 }), 500);
   }

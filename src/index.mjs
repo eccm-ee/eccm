@@ -4,13 +4,13 @@
 // (plans/plan-eccm-cms-step-1.md section 4). Session 1 and 2: the event page
 // in both languages, with the fallback of section 2 when the English text row
 // is missing. The URL words are plans/plan-eccm-urls-sitemap-rss.md section 2.
-// The editor (src/editor.mjs) answers /edit/events* behind its gate, and
-// /login and /logout are the gate's own; /edit itself is still the static
-// public/edit.html, served before this runs. Since 2026-09-28 the text pages
-// the menu names, /et/{slug} and /en/{slug}, come from page_text through
-// src/render/page.mjs, with the fallback running both ways (its header says
-// why); the event and page routes cannot collide, since a page path has one
-// segment after the language and an event path has two.
+// The editor (src/editor.mjs) answers /edit/events* and /edit/pages* behind
+// its gate, and /login and /logout are the gate's own; /edit itself is still
+// the static public/edit.html, served before this runs. Since 2026-09-28 the
+// text pages the menu names, /et/{slug} and /en/{slug}, come from page_text
+// through src/render/page.mjs, with the fallback running both ways (its
+// header says why); the event and page routes cannot collide, since a page
+// path has one segment after the language and an event path has two.
 import { renderEvent } from './render/event.mjs';
 import { renderPage } from './render/page.mjs';
 import { notFound, OTHER } from './render/chrome.mjs';
