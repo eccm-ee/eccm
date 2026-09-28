@@ -7,6 +7,15 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "brin literate back to derive"
+
+Asked verbatim. The derive page's serif is Literata again by default and Roboto Serif the alternative on `?serif=roboto`, the switch line under the intro unchanged in shape.
+
+### Done 2026-09-28: "implement this layout on all pages now, rm layout. merge sans and serfi pages into typo. rm The other sans faces from workmark and inttegrate workmark into bottom on ds page and rm wordmark"
+
+Asked verbatim. The layout page's header (the mark with its wordmark on one line, centred, the menu at 16 px, the switch, the phone menu behind the stave's five hairlines) and footer (three columns, the contact with the social links, the City of Music mark) become the site's own chrome on every static page and on the Worker's rendered pages, their rules in `eccm.css` and the menu's script in one shared module; `layout.html` goes. The serif and sans three-use specimens fold into `type.html` as its second part and `serif.html` and `sans.html` go. The wordmark page loses its other sans faces and its studies move to the bottom of `ds.html`; `wordmark.html` goes.
+✅ Done. The chrome's rules live in `eccm.css` with the wordmark's face declared there, the markup in every static page and in `src/render/mark.mjs` for the Worker, the menu's script in `public/site.mjs`; the lockups are the wordmark page's own drawn svgs, both languages, as static markup. MEASURED locally: the front page at 1280 with the wordmark beside the mark at 277 px, the menu at 16 px centred on the gap's middle, the header 131 px, the footer in four columns with the City of Music ink on the mark's top and its edge on the frame's; at 375 the wordmark under the mark, the button's rows on the stave's to 0.0 px, the menu opening to eight rows, nothing sideways; the Worker's event route with the new chrome and its hreflang switch; the design system page drawing the five wordmark cells; the type page with 17 specimens and 16 more in the three uses, all faces from their files. Nine pages remain.
+
 ### Done 2026-09-28: "not same w of 5-line as in logo. messed up menu items intendt" (a crop of the phone header with the menu open)
 
 Asked with a picture. The indent was a cascade tie: the rule starting the opened menu's rows and the rule centring the menu share a specificity and the centring one came later, so it won; the opening rule carries the header's class now and the rows start at the frame's edge. The wider tap padding of the button had also reached 24 px past the frame, 8 px beyond the narrow gutter, and dragged the phone page sideways; its right padding is the gutter's 16 px now. MEASURED: the button's lines 6.19 px wide and 0.77 tall, the same as the stave's twelve units at the mark's scale, and on the stave's rows to 0.0 px; the tap box 46 by 118, the lines at the frame's edge, nothing sideways at 375.

@@ -4,6 +4,7 @@
 // points at eccm.ee for the pages this site does not render yet; each link
 // moves here when its page does.
 import { html, raw } from './html.mjs';
+import { SYMBOL, HEADER, FOOTER } from './mark.mjs';
 
 export const T = {
   et: {
@@ -50,28 +51,16 @@ ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflan
 <link rel="stylesheet" href="/eccm.css">
 </head>
 <body>
-<header class="site-head">
-  <div class="frame">
-    <a class="mark" href="/"><img src="/logo-${lang}.svg" width="310" height="133" alt="${t.markAlt}"></a>
-    <span class="lang"><span aria-current="page" lang="${lang}">${LABEL[lang]}</span><a href="${alternate.href}" hreflang="${alternate.lang}" lang="${alternate.lang}">${LABEL[alternate.lang]}</a></span>
-  </div>
-</header>
-<nav class="site-nav" aria-label="${t.menu}">
-  <div class="frame">
-    <ul class="nav">
-      ${t.nav.map(([href, label]) => html`<li><a href="${href}">${label}</a></li>`)}
-    </ul>
-  </div>
-</nav>
+${raw(SYMBOL)}
+${raw(alternate ? HEADER[lang].replace(/<a href="[^"]*" lang="(?:en|et)">/, `<a href="${alternate.href}" hreflang="${alternate.lang}" lang="${alternate.lang}">`) : HEADER[lang])}
 
 ${notice ? html`<div class="notice"><p class="frame">${notice}</p></div>` : ''}
 <main class="frame">
 ${body}
 </main>
 
-<footer class="frame site-foot">
-  <span>${t.foot}</span>
-</footer>
+${raw(FOOTER[lang])}
+<script type="module" src="/site.mjs"></script>
 </body>
 </html>
 `;

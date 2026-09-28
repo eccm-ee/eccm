@@ -30,6 +30,8 @@
   src: url('./vendor/schibsted-grotesk-latin-ext.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
+@font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 /* the serif a derived page may set (plans/plan-eccm-design-from-image.md),
    declared here rather than in derive.html so it is declared once. Roboto
    Serif since 2026-09-28 ("replace literata with roboto serif"), and
@@ -87,8 +89,8 @@
        101, just-a-bit-different sizes are nervous"). A typed pixel, because
        it is the size of an object, not a relationship (positron-compose §0) */
     --eccm-pic-w: 300px;
-    /* the mark, on a desk. eccm.ee draws it at 381 px */
-    --eccm-mark-w: 20rem;
+    /* the mark in the header, with its wordmark beside it on a desk and under it on a phone (the layout study of 2026-09-28) */
+    --eccm-mark-w: 10rem;
   }
   @media (min-width: 48rem) { :root { --eccm-gutter: var(--eccm-s-8); } }
 
@@ -128,42 +130,71 @@
      menu) with its orange rule and its stickiness left out. The head band is
      a row with exactly two ends, the mark and the switch, and the frame gives
      it a width to spread across (positron-compose §6) */
-  .site-head { padding-block: var(--eccm-s-6); }
-  /* baseline: the mark's box is its ink and its bottom edge is the tagline's
-     baseline, so the switch sits on that line (asked 2026-09-26: "et en lang
-     position / stylying neds work", when it floated 24 px above the E on the
-     JPEG's empty margin) */
-  .site-head > .frame { display: flex; justify-content: space-between; align-items: baseline; column-gap: var(--eccm-s-6); }
-  /* the menu band is ruled in the logo's own ink, not the hairline grey
-     (asked 2026-09-26: "use black on top menu borders to mach with logo") */
-  .site-nav { border-block: 1px solid var(--eccm-ink); }
-  .site-nav > .frame {
-    display: flex; flex-wrap: wrap; align-items: baseline;
-    column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-1);
-    padding-block: var(--eccm-s-3);
-  }
   /* main is the box the list asks about its width (positron-compose §6, a
      component asks its own box, never the window), because the row's shape
      depends on whether 45 ch of text fits beside a 300 px picture */
   main { padding-block: var(--eccm-s-8) var(--eccm-s-16); container-type: inline-size; }
-  /* the footer carries no rule above it (asked 2026-09-27: "rm border above
-     eccm footer"); the air alone separates it */
-  .site-foot {
-    padding-block: var(--eccm-s-8) var(--eccm-s-12);
-    display: flex; flex-wrap: wrap; gap: var(--eccm-s-2) var(--eccm-s-8);
-    font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2);
-  }
 }
 
 @layer components {
-  /* the mark: the SVG redraw at its own proportions, never wider than its frame */
-  .mark { display: block; inline-size: min(100%, var(--eccm-mark-w)); }
-  .mark img { inline-size: 100%; }
 
   /* the menu is a start row that wraps as a cluster: every item its own size,
      one gap, nothing past the gutter, no hamburger; the language switch is
      text, up beside the mark where eccm.ee keeps its flag */
-  .nav { display: flex; flex-wrap: wrap; column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-1); }
+  /* the site's header, the layout study of 2026-09-28 made the chrome ("implement this layout on all pages"): the mark with its
+     wordmark on one line, centred on the mark's middle, the menu centred between the mark and the switch at 16 px, a leading and a
+     half of air above and below, no rule. Under 48rem the wordmark drops under the mark and the menu and the switch hide behind a
+     button of the stave's own five hairlines, drawn in the mark's units on the stave's rows, and open under the mark's line one
+     item a line with the switch last. Every vertical distance is a whole number of the body's leading */
+  .site-head > .frame { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--eccm-s-8); row-gap: 1lh; padding-block: 1.5lh; }
+  .site-head .mark { display: block; color: var(--eccm-ink); }
+  .site-head .mark svg { display: block; inline-size: calc(var(--eccm-mark-w) * var(--k, 1)); max-inline-size: 100%; }
+  .site-head .mark svg.under { display: none; }
+  .site-head .nav { order: 1; flex: 1; justify-content: center; }
+  .site-head .sw { order: 2; display: flex; align-items: center; column-gap: var(--eccm-s-6); }
+  .nav, .lang { font-size: 1rem; line-height: var(--eccm-lh-meta); }
+  .nav { display: flex; flex-wrap: wrap; column-gap: var(--eccm-s-8); row-gap: var(--eccm-s-2); }
+  .lang { display: flex; column-gap: var(--eccm-s-3); }
+  .lang-in { display: none; }
+  /* the button's tap area is the padding, 24 px into the header's air and the narrow gutter's 16 px past the frame, pulled back by
+     the same steps so the lines stay at the frame's edge; the lines are drawn exactly as the mark draws its stave */
+  .menu-btn { display: none; padding: var(--eccm-s-3) var(--eccm-s-4) var(--eccm-s-3) var(--eccm-s-6); margin: calc(-1 * var(--eccm-s-3)) calc(-1 * var(--eccm-s-4)) calc(-1 * var(--eccm-s-3)) calc(-1 * var(--eccm-s-6)); border: 0; background: none; color: var(--eccm-ink); cursor: pointer; }
+  .menu-btn svg { display: block; fill: currentColor; inline-size: calc(var(--eccm-mark-w) * 12 / 310); block-size: calc(var(--eccm-mark-w) * 183 / 310); }
+  @media (max-width: 48rem) {
+    .site-head .mark svg.beside { display: none; }
+    .site-head .mark svg.under { display: block; }
+    .site-head .sw { margin-inline-start: auto; align-self: flex-start; }
+    .site-head .sw .lang { display: none; }
+    .menu-btn { display: block; align-self: flex-start; }
+    .site-head .nav { display: none; }
+    .site-head[data-open] .nav { display: grid; order: 3; flex-basis: 100%; margin-block-start: 1lh; justify-content: start; }
+    .site-head[data-open] .nav a { display: inline-block; padding-block: var(--eccm-s-2); }
+    .site-head[data-open] .lang-in { display: block; margin-block-start: var(--eccm-s-4); }
+    .site-head[data-open] .lang-in .lang { display: flex; align-items: baseline; }
+    .site-head[data-open] .lang-in .lang > * { display: inline-block; padding-block: var(--eccm-s-2); }
+  }
+  /* the site's footer, footer A of the same study: the mark alone at 6rem with the copyright under it, the menu in two columns, the
+     contact as label over value with the form link and the social links, and the Tallinn UNESCO City of Music mark as the city
+     publishes it at the end, its ink on the mark's top (the file carries about 60 units of air round the ink in a 446.46 box) */
+  .site-foot { padding-block: var(--eccm-s-8) var(--eccm-s-12); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+  .site-foot a { text-decoration: none; }
+  .site-foot a:hover { text-decoration-line: underline; text-decoration-color: currentColor; }
+  .site-foot .mk { display: block; color: var(--eccm-ink); }
+  .site-foot .mk svg { display: block; inline-size: 6rem; }
+  .site-foot .copy { margin-block-start: var(--eccm-s-6); }
+  .site-foot .cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; gap: var(--eccm-s-8); }
+  .site-foot .two { display: grid; grid-template-columns: repeat(2, max-content); column-gap: var(--eccm-s-12); row-gap: var(--eccm-s-2); }
+  .site-foot .contact p + p { margin-block-start: var(--eccm-s-3); }
+  .site-foot .end { justify-self: end; }
+  .site-foot .partner { --pw: 4rem; display: block; inline-size: var(--pw); margin-block-start: calc(var(--pw) * -0.1355); margin-inline-end: calc(var(--pw) * -0.136); }
+  .site-foot .partner img { display: block; inline-size: 100%; block-size: auto; }
+  @media (max-width: 48rem) {
+    .site-foot .cols { grid-template-columns: minmax(0, 1fr); }
+    .site-foot .end { justify-self: start; }
+    .site-foot .partner { margin-inline: calc(var(--pw) * -0.136) 0; }
+  }
+  /* the wordmark's face, Instrument Sans medium at width 75 */
+  .tag-is { font-family: 'Instrument Sans', Helvetica, Arial, sans-serif; font-stretch: 75%; font-variation-settings: 'wdth' 75; font-weight: 500; }
   .nav a, .lang a { text-decoration: none; }
   /* a hovered menu link underlines in the ink, never the accent (asked 2026-09-28 with a crop: "no accent colors in menus, just black") */
   .nav a:hover, .lang a:hover { text-decoration-line: underline; text-decoration-color: currentColor; }
@@ -172,7 +203,6 @@
      current-page line, the other is a link with no line until hovered, both
      at the menu's size (asked 2026-09-26: "et en underlines do not match
      menu ones") */
-  .lang { display: flex; column-gap: var(--eccm-s-3); }
 
   /* the event list, in eccm.ee's own shape: the picture at the start, the
      title and the facts beside it. The picture is plain, nothing drawn over
@@ -395,8 +425,6 @@
     .credits { row-gap: var(--eccm-s-3); }
   }
   @layer layout {
-    .site-head { padding-block: var(--eccm-s-4); }
-    .site-nav > .frame { padding-block: var(--eccm-s-2); }
     main { padding-block: var(--eccm-s-6) var(--eccm-s-16); }
   }
 }

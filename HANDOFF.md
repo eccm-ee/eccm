@@ -18,12 +18,8 @@ building on one.
 | https://eccm.positron.studio/edit | the HTML-only edit form, saves nothing |
 | https://eccm.positron.studio/edit/events | the editor from D1 behind the gate: the list, `/edit/events/{id}`, `/edit/events/new`; `/login?token=...` opens it on staging |
 | https://eccm.positron.studio/derive | design from a picture, four sets of six pictures (`?set=1` to `4`) |
-| https://eccm.positron.studio/ds | the design system: type specimens, serif specimens, bios, colour, space, buttons with a disabled state, the logos, the square marks, the icon sizes, the stave element |
-| https://eccm.positron.studio/type | thirteen faces for body and titles: A Schibsted Grotesk (the default), B Source Serif 4, C Instrument Sans, D to M ten modern serifs |
-| https://eccm.positron.studio/sans | six sans faces, the default, Instrument Sans and the four fresher ones, each in the derived page's three uses |
-| https://eccm.positron.studio/serif | the ten modern serifs, A to J, each in the derived page's three uses |
-| https://eccm.positron.studio/wordmark | the tagline in Instrument Sans at width 75 in five lockups, under the mark at 40 units for one language or one language over the mark and the other under it either way round, and beside it at 37 after 28 units of air for one language or both side by side, each plain, in a bordered square or rectangle, and white on black |
-| https://eccm.positron.studio/layout | four headers, each on a whole page with a derived event page from `derive.html` between it and footer A, then four footers, the first in both languages, the mark alone, the menu, the contact, the credits, a newsletter field and the Tallinn UNESCO City of Music mark as the city publishes it (`public/partners/`), each in Schibsted Grotesk at the desk and in a 375 px box, with a table of what seven comparable sites' footers carry |
+| https://eccm.positron.studio/ds | the design system, with the wordmark studies at its foot: type specimens, serif specimens, bios, colour, space, buttons with a disabled state, the logos, the square marks, the icon sizes, the stave element |
+| https://eccm.positron.studio/type | seventeen faces for body and titles, then the six sans and the ten serifs in the derived page's three uses |
 | https://eccm.positron.studio/tagline | the tagline in DIN Condensed, 48 settings by casing, tracking, wrap and alignment |
 | https://eccm.positron.studio/tagline-47 | setting 47 taken apart: four DIN files and the same four in Instrument Sans |
 | https://eccm.positron.studio/logo | the mark measured off eccm.ee's JPEG |
