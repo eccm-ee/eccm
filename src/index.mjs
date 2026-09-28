@@ -5,8 +5,10 @@
 // in both languages, with the fallback of section 2 when the English text row
 // is missing. The URL words are plans/plan-eccm-urls-sitemap-rss.md section 2.
 // The editor (src/editor.mjs) answers /edit/events* and /edit/pages* behind
-// its gate, and /login and /logout are the gate's own; /edit itself is still
-// the static public/edit.html, served before this runs. Since 2026-09-28 the
+// its gate, and /login and /logout are the gate's own; /edit itself goes to
+// the events list behind the same gate since 2026-09-28, when the static
+// public/edit.html, the form that saved nothing, was removed (asked as "rm
+// https://eccm.positron.studio/edit, make real edit stff"). Since 2026-09-28 the
 // text pages the menu names, /et/{slug} and /en/{slug}, come from page_text
 // through src/render/page.mjs, with the fallback running both ways (its
 // header says why); the event and page routes cannot collide, since a page
@@ -87,7 +89,7 @@ export default {
     if (LIST_LANG[p]) return reply(await eventsList(env, LIST_LANG[p], url));
     const pm = PAGE.exec(p);
     if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }
-    if (p === '/login' || p === '/logout' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
+    if (p === '/login' || p === '/logout' || p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
   },

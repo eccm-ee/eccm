@@ -7,6 +7,15 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "rm https://eccm.positron.studio/edit, make real edit stff"
+
+Asked verbatim. The static `public/edit.html`, the HTML-only form that saved nothing, goes, and `/edit` answers with the real editor: a redirect to the events list behind the gate. Files: `public/edit.html` (deleted), `src/index.mjs`, `src/editor.mjs`, whatever linked to the demo form.
+✅ `public/edit.html` deleted; `/edit` goes through the gate and then 303 to `/edit/events`; the static event page's Muuda button leads to `/edit/events/1`. MEASURED on 8800: `/edit` 401 without the cookie, 303 to `/edit/events` with it.
+
+### Open 2026-09-28: "apply event views and edits on all fronpage events"
+
+Asked verbatim. The front page's ten events are static rows in `public/index.html`, nine of them linking to eccm.ee; each gets an event row in D1 with its texts, credits and picture, so it has the event view at `/et/sundmused/{slug}` with its Muuda button and the editor behind it, and the front page's links go to those views. Each eccm.ee event page is read once, in the languages it has, by a background agent that reports and does not commit; the session seeds the remote database, commits and deploys. Files: a new `data/seed-step4.sql`, `public/index.html`, pictures under `public/`.
+
 ### Done 2026-09-28: "make classic horiz radions (o) () instead of radiobuttons"
 
 Asked verbatim, after the segmented pair went live: the status is two native radio buttons in a row with their labels, no box. Files: `src/render/editor.mjs`, `public/eccm.css`.

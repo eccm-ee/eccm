@@ -2,6 +2,7 @@
 // step. Editing?". Routes under /edit and the two gate routes:
 //
 //   GET  /login, POST /login, GET /logout      the staging stand-in (gate.mjs)
+//   GET  /edit                                 to the events list
 //   GET  /edit/events                          every event, any status
 //   GET  /edit/events/new, POST                a blank form, then an insert
 //   GET  /edit/events/{id}, POST               the form from D1, then a save
@@ -361,6 +362,7 @@ export async function editor(request, env, url) {
     if (p === '/logout') return redirect('/login', { 'set-cookie': clearCookie() });
     const id = await identify(request, env);
     if (id.status) return reply(gatePage(id), id.status);
+    if (p === '/edit') return redirect('/edit/events');
     if (p === '/edit/events') {
       const events = (await env.DB.prepare(`SELECT e.id, e.starts_at, e.status, e.updated_at, t0.title AS title_et, t1.title AS title_en
         FROM event e LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et' LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = 'en'

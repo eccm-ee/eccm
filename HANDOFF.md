@@ -16,7 +16,7 @@ building on one.
 | https://eccm.positron.studio/en/events/gestures-situations-listening-without-a-score | its English twin from D1, hreflang pairs both ways |
 | https://eccm.positron.studio/en/events/gestuurid-situatsioonid-ilma-partituurita-kuulamine | the fallback: Estonian text under English chrome with one line saying so |
 | https://eccm.positron.studio/et/eccm | the five text pages from D1, ECCM, Tallinn 1965, NAN, Ulysses, Konkursid, at `/et/{slug}` and `/en/{slug}`, a fallback where a language has no text |
-| https://eccm.positron.studio/edit | the HTML-only edit form, saves nothing |
+| https://eccm.positron.studio/edit | the editor, behind the gate: it goes to the events list (the HTML-only demo form that stood here went 2026-09-28) |
 | https://eccm.positron.studio/edit/events | the editor from D1 behind the gate: the list, `/edit/events/{id}`, `/edit/events/new`; `/login?token=...` opens it on staging |
 | https://eccm.positron.studio/edit/pages/1 | one text page's form, reached from the Muuda/Edit button every public page carries (the list at `/edit/pages` went the same day, asked as "rm edit/pages page") |
 | https://eccm.positron.studio/et/sundmused | the events list from D1, and `/en/events`, the last menu item that led to eccm.ee, with a Muuda button to the events editor |
@@ -53,8 +53,8 @@ is set, and on staging a cookie set by `/login?token=` against the
 `eccm.positron.studio/edit*` exists (setup plan section 2); every editor
 reply is `no-store` and `noindex`. A save is one D1 batch guarded by `rev`, a
 stale form answers 409, preview renders the real template without writing.
-Everything else 404s; assets under `public/` are served first, so `/edit`
-with no path is still the static form. The remote database is `eccm-staging`
+Everything else 404s; assets under `public/` are served first, and `/edit`
+with no path goes to the events list behind the gate. The remote database is `eccm-staging`
 (id in `wrangler.jsonc`), migrated with `migrations/0001_step1.sql`,
 `0002_editing.sql` and `0003_page_editing.sql` and seeded with
 `data/seed-step1.sql`, `seed-step2.sql` and `seed-step3.sql` (the five pages).
