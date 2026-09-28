@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "use newsreader in derive"
+
+Asked verbatim. The derive page's serif is Newsreader, Literata and Roboto Serif the alternatives on the switch; the design system page's serif specimens and the stylesheet's declaration follow, and the skill's dated line.
+
 ### Done 2026-09-28: "brin literate back to derive"
 
 Asked verbatim. The derive page's serif is Literata again by default and Roboto Serif the alternative on `?serif=roboto`, the switch line under the intro unchanged in shape.

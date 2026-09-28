@@ -661,5 +661,8 @@ Schibsted Grotesk, Instrument Sans, Literata,"*, so the page keeps those three
 and the other nine serifs are in git at 475e4bb. Then: *"use literata now on the
 derived page not the prev serif one"*, so Literata was the serif a derived page
 took for a day; since 2026-09-28 (*"replace literata with roboto serif"*) it
-is Roboto Serif, set in `derive.html`, shown on `ds.html` and declared in
-`eccm.css`, the ten serifs back on `serif.html` and the sans on `sans.html`.
+was Roboto Serif for an hour, then Literata again, and since *"use newsreader
+in derive"* the same day it is Newsreader, set in `derive.html`, shown on
+`ds.html` and declared in `eccm.css`; Literata and Roboto Serif stay as the
+switch's alternatives. The serif and sans pages folded into `type.html` that
+evening.

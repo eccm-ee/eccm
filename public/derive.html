@@ -25,7 +25,7 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="./eccm.css">
 <style>
-  /* Roboto Serif and Literata, the serif and its alternative, are declared in eccm.css beside Schibsted */
+  /* Newsreader, the serif, and its two alternatives are declared in eccm.css beside Schibsted */
   @layer page {
     .intro { max-inline-size: var(--eccm-measure); }
     .intro + .intro { margin-block-start: 1lh; }
@@ -466,9 +466,10 @@
 
   // the serif is Roboto Serif since 2026-09-28 ("replace literata with roboto serif"), and Literata, the day before's
   // choice, stays as the alternative on ?serif=literata ("put literata to derive as well as alternative")
-  // Literata is the default again since later that day ("bring literata back to derive"), Roboto Serif the alternative on ?serif=roboto
-  const SERIFS = { literata: { name: 'Literata', family: "'Literata', Georgia, serif", weight: 400 }, roboto: { name: 'Roboto Serif', family: "'Roboto Serif', Georgia, serif", weight: 400 } };
-  const serifKey = new URL(location.href).searchParams.get('serif') === 'roboto' ? 'roboto' : 'literata';
+  // Newsreader since 2026-09-28 ("use newsreader in derive"); Literata and Roboto Serif, the day's earlier choices, stay as the
+  // alternatives on ?serif=literata and ?serif=roboto
+  const SERIFS = { newsreader: { name: 'Newsreader', family: "'Newsreader', Georgia, serif", weight: 400 }, literata: { name: 'Literata', family: "'Literata', Georgia, serif", weight: 400 }, roboto: { name: 'Roboto Serif', family: "'Roboto Serif', Georgia, serif", weight: 400 } };
+  const serifKey = SERIFS[new URL(location.href).searchParams.get('serif')] ? new URL(location.href).searchParams.get('serif') : 'newsreader';
   const SERIF = SERIFS[serifKey];
   {
     // the line under the intro that switches the serif on the same set
