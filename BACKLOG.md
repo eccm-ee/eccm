@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "align text and image to top" (a crop of a bio on the design system page)
+
+Asked with a picture. The bio's grid aligns its items to the start and the name's line box is its own height, so the name's top sits on the picture's top.
+
 ### Done 2026-09-28: "implement sompe simpler top level pages now"
 
 Asked verbatim. A background agent takes the step plan's session 5 and widens it: a `page` and `page_text` schema as the CMS plan has it, the top-level pages the menu names (ECCM, Tallinn 1965, NAN, Ulysses, Konkursid) rendered from D1 in both languages at `/et/{slug}` and `/en/{slug}`, their texts read once off eccm.ee's own pages and seeded, the menu on rendered and static pages pointing at them, with the same chrome. The agent reports and does not commit; the session migrates, seeds and deploys.
