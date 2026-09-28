@@ -7,6 +7,20 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "credtist: create comojent that shows first but allows add more items" and "move image to top"
+
+Asked verbatim, mid-task, the editor form. The credits section shows the credits that exist and no blank blocks, with a button that adds one; the button works with no script through the server, which re-renders the form with one more block and saves nothing, and a few lines of script add the block in place when they can. The picture moves to the top of the form, shown with its select under it, its own section before Millal ja kus.
+⚠️ Added mid-task: *"move avaldamine above text"*: the order becomes Pilt, Millal ja kus, Avaldamine, Tekst, Tegijad.
+⚠️ Added mid-task: *"when resizing textarea in one col, other height should change too"*: the two description fields follow each other's height through a ResizeObserver, a few lines of script.
+⚠️ Added mid-task: *"move pealkiri and slut to their own section, first"*: the title and the slug of both languages open the form as a section of their own, and Tekst keeps the descriptions.
+⚠️ Added mid-task: *"pr pilt textfield for now"*, read as put: the picture field is a text field holding the file name for now, resolved against the media rows on save, since a media row needs a width and a height that a typed name cannot give; an unknown name is refused with a sentence naming the files that exist.
+✅ All six done. The order is Pealkiri, Pilt, Millal ja kus, Avaldamine, Tekst, Tegijad. MEASURED on the agent's server: 7 credit blocks and no blank one, a click adds an eighth in place with its names `c7_*` and the label `Tegija 8, roll`, the same button through the server answers 200 with eight blocks and the count at 8; the two descriptions read 400 px each after one was set to 400; the picture field is a text field holding the file name, a bogus name answers 422 with `Sellist pilti ei ole. Olemas: ...` naming the one file, the right name passes. Shot at 1280 and 375.
+
+### Done 2026-09-28: "fix alignment, make a fields grid component or smh" (a crop of the editor's Millal ja kus fields)
+
+Asked with a picture: the first row holds three fields whose tops and heights differ, the date-time fields taller than the number, a hint under one pushing nothing and lining up with nothing, and the rows under it two columns wide so no edge lines up with the row above. One `.fields` grid in `eccm.css`: two equal columns from 48rem and one under, every control 3rem tall, the label one line above, the hint one small line below, a short control its own width inside its column.
+✅ Done: `.fields` in `eccm.css`, and the cause of the misaligned tops found on the way: the field grid stretched to its row and shared the spare height between the label and the control, so a field with a hint sat its control higher; every field starts at its row's top now. MEASURED at 1280 on the agent's server: two columns, every control in a row on one line, the column edges at 64 and 656 px down the section, controls 48 px tall, the dates 256 px and the number 128 px wide.
+
 ### Done 2026-09-28: "So next cms step. Editing?" and "In bg"
 
 Asked verbatim. A background agent takes the next sessions of `plans/plan-eccm-cms-step-1.md` up to and including the editor: the scheme column the handoff names as next, then the editing route and the form saving to D1 behind a gate, on its own local database and port so the session's dev server is untouched. It reports and does not commit; the session commits, migrates the remote database and deploys.

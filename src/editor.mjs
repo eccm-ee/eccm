@@ -15,7 +15,7 @@
 // Every reply here is no-store and noindex; nothing under /edit is a page for
 // a visitor or a crawler.
 import { renderEvent } from './render/event.mjs';
-import { editorList, editorForm, loginPage, gatePage, CATEGORIES, STATUSES, eventPath } from './render/editor.mjs';
+import { editorList, editorForm, loginPage, gatePage, CATEGORIES, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
 import { identify, tokenMatches, setCookie, clearCookie } from './gate.mjs';
 
 const HEAD = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' };
@@ -58,8 +58,10 @@ export const fromRows = (ev, texts, credits) => ({
     orgs_en: people(c.orgs).map((o) => o.en ?? '').join('; '),
   })),
 });
-// two blank lines under the credits, so a credit can be added with no script
-const padded = (v) => ({ ...v, credits: v.credits.concat([{}, {}].map(() => ({ role_key: '', label_et: '', label_en: '', people: '', orgs_et: '', orgs_en: '' }))) });
+// the credits that exist and nothing more, one blank block only when there are none; another is added by the
+// Lisa tegija button, through the add-credit action below with no script and in place with one (asked
+// 2026-09-28: "credits: create component that shows first but allows add more items")
+const padded = (v) => ({ ...v, credits: v.credits.length ? v.credits : [BLANK_CREDIT()] });
 
 const s = (fd, k) => String(fd.get(k) ?? '').replace(/\r\n/g, '\n').trim();
 export const parse = (fd, before) => {
@@ -68,7 +70,7 @@ export const parse = (fd, before) => {
     id: before.id, rev: parseInt(s(fd, 'rev'), 10) || 0,
     starts_at: local(s(fd, 'starts_at')), ends_at: local(s(fd, 'ends_at')), duration_min: s(fd, 'duration_min'),
     venue: s(fd, 'venue'), address: s(fd, 'address'), ticket_url: s(fd, 'ticket_url'), website_url: s(fd, 'website_url'),
-    category: s(fd, 'category'), image_id: s(fd, 'image_id'), status: s(fd, 'status'), publish_at: local(s(fd, 'publish_at')),
+    category: s(fd, 'category'), image_key: s(fd, 'image_key'), image_id: '', status: s(fd, 'status'), publish_at: local(s(fd, 'publish_at')),
     et: { title: s(fd, 'title_et'), slug: s(fd, 'slug_et').toLowerCase(), body: s(fd, 'body_et'), exists: before.et.exists },
     en: { title: s(fd, 'title_en'), slug: s(fd, 'slug_en').toLowerCase(), body: s(fd, 'body_en'), exists: before.en.exists },
     credits: [],
@@ -92,7 +94,12 @@ export async function validate(v, db, roles, media) {
   if (v.website_url && !URLISH.test(v.website_url)) bad('website_url', 'Veebilehe aadress algab https:// või http://.');
   if (!CATEGORIES.some(([k]) => k === v.category)) bad('category', 'Sari on valimata.');
   if (!STATUSES.some(([k]) => k === v.status)) bad('status', 'Olek on valimata.');
-  if (v.image_id && !media.some((m) => String(m.id) === v.image_id)) bad('image_id', 'Sellist pilti ei ole.');
+  // the typed file name becomes the media row's id, or a sentence naming the files that exist
+  if (v.image_key !== undefined) {
+    const m = v.image_key ? media.find((m) => m.key === v.image_key) : null;
+    if (v.image_key && !m) bad('image_key', `Sellist pilti ei ole. Olemas: ${media.map((m) => m.key).join(', ') || 'mitte ükski'}.`);
+    v.image_id = m ? String(m.id) : '';
+  } else if (v.image_id && !media.some((m) => String(m.id) === v.image_id)) bad('image_id', 'Sellist pilti ei ole.');
   if (v.publish_at && !isLocal(v.publish_at)) bad('publish_at', 'Avaldamise aeg ei ole kuupäev ja kellaaeg.');
   // the texts: Estonian is required, English is optional but cannot be
   // emptied once it exists, because its row carries the Joomla id
@@ -221,8 +228,10 @@ async function form(request, env, url, id, who) {
   if (site && site !== 'same-origin' && site !== 'none') return reply(gatePage({ status: 403, reason: 'origin' }), 403);
   const fd = await request.formData();
   const v = parse(fd, before.values);
-  const errors = await validate(v, db, roles, media);
   const action = s(fd, 'do');
+  // one more blank credit block, the typed values kept, nothing validated and nothing saved
+  if (action === 'add-credit') return reply(editorForm({ v: { ...v, credits: v.credits.concat([BLANK_CREDIT()]) }, roles, media, texts }));
+  const errors = await validate(v, db, roles, media);
   if (errors.length) return reply(editorForm({ v: padded(v), errors, roles, media, texts }), 422);
   if (action.startsWith('preview')) return preview(db, v, action.endsWith('en') ? 'en' : 'et', before, roles, media, url);
   const out = await save(db, v, before, who);

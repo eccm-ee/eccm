@@ -289,9 +289,22 @@
      fields a finger tall, ruled in the strong hairline, ink on white */
   .note { color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-8); }
   .form { display: grid; gap: var(--eccm-s-6); max-inline-size: var(--eccm-measure); }
-  .field { display: grid; gap: var(--eccm-s-1); }
+  /* a field is a label, a control and maybe a hint, stacked from the top: without align-content the grid
+     stretched the field to its row and shared the spare height between the label and the control, so a
+     field with a hint sat its control higher than its neighbour without one (asked 2026-09-28 with a crop:
+     "fix alignment, make a fields grid component") */
+  .field { display: grid; gap: var(--eccm-s-1); align-content: start; }
   .field label { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-  .field-row { display: grid; gap: var(--eccm-s-6); grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
+  .field-row { display: grid; gap: var(--eccm-s-6); grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); align-items: start; }
+  /* the fields grid: one column system for a whole section, two equal columns from 48rem and one under, a
+     leading between rows and the wide step between columns, every field starting at its row's top, so every
+     control in a row sits on one line and every column edge is one edge down the section. A field that is
+     the only one of its row spans both columns, and a short control keeps its own width inside its column
+     (a thing is its own size, positron-compose section 3): a date and time 16rem, a number 8rem */
+  .fields { display: grid; gap: 1lh var(--eccm-s-8); grid-template-columns: minmax(0, 1fr); align-items: start; }
+  @media (min-width: 48rem) { .fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } .fields .field.solo { grid-column: 1 / -1; } }
+  .fields input[type="datetime-local"] { max-inline-size: 16rem; }
+  .fields input[type="number"] { max-inline-size: 8rem; }
   .form input, .form select, .form textarea { inline-size: 100%; border: 1px solid var(--eccm-rule-strong); border-radius: 0; background: var(--eccm-ground); color: var(--eccm-ink); padding: var(--eccm-s-3) var(--eccm-s-4); font: inherit; }
   /* a step more air in the fields and the buttons (asked 2026-09-26: "add
      biiit more padding on input fields and buttons"): 3rem tall, 12 by 16 in */
@@ -338,6 +351,7 @@
   /* a credit is one group of three rows; the gap inside it sits two steps
      under the gap between credits, which is the grouping (compose §1) */
   .credits-edit { display: grid; gap: var(--eccm-s-8); }
+  .add-credit { margin-block-start: var(--eccm-s-4); }
   .credit { display: grid; gap: var(--eccm-s-4); }
   .credit .field-row { gap: var(--eccm-s-4); }
   /* the picture the select names, at the thumbnail's own width */

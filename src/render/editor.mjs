@@ -11,6 +11,9 @@ import { html, raw } from './html.mjs';
 import { page } from './chrome.mjs';
 import { dateShort, clock } from './dates.mjs';
 
+// a blank credit block, the one the form shows when an event has none and the one Lisa tegija adds
+export const BLANK_CREDIT = () => ({ role_key: '', label_et: '', label_en: '', people: '', orgs_et: '', orgs_en: '' });
+
 const ALT = { lang: 'en', href: '/en/' };
 export const CATEGORIES = [['eccm', 'ECCM'], ['koostoo', 'Koostöö'], ['improtest', 'Improtest'], ['schoenberg', 'Schönbergi sari'], ['ulysses', 'Ulysses'], ['u', 'U:']];
 export const STATUSES = [['draft', 'Mustand'], ['published', 'Avaldatud']];
@@ -23,7 +26,7 @@ export const tallinnClock = (utc) => fmtClock.format(new Date(utc)).replace(':',
 const tallinnStamp = (utc) => fmtStamp.format(new Date(utc)).replace(/(\d+):(\d+)$/, '$1.$2');
 
 const opts = (options, value) => options.map(([v, label]) => html`<option value="${v}"${String(v) === String(value ?? '') ? raw(' selected') : ''}>${label}</option>`);
-const field = ({ id, label, hint, err, control }) => html`<div class="field">
+const field = ({ id, label, hint, err, control, cls = '' }) => html`<div class="field${cls ? ' ' + cls : ''}">
         <label for="${id}">${label}</label>
         ${control}
         ${err ? html`<p class="hint err">${err}</p>` : hint ? html`<p class="hint">${hint}</p>` : ''}
@@ -49,25 +52,30 @@ export const editorForm = ({ v, errors = [], roles, media, saved, texts = {} }) 
   const isNew = !v.id;
   const action = isNew ? '/edit/events/new' : `/edit/events/${v.id}`;
   const roleOpts = [['', 'vaba roll, nimetus kõrval']].concat(roles.map((r) => [r.key, r.label_et]));
-  const mediaOpts = [['', 'pilti ei ole']].concat(media.map((m) => [m.id, `${m.key} (${m.width} × ${m.height})`]));
+  // the picture as a text field for now, the file name under public/ (asked 2026-09-28: "put pilt textfield for now");
+  // the name is resolved against the media rows on save, and the figure shows the row the event has
   const pic = media.find((m) => String(m.id) === String(v.image_id));
+  const imageKey = v.image_key ?? (pic ? pic.key : '');
   const title = isNew ? 'Uus sündmus' : (v.et.title || v.en.title || 'Sündmus');
-  const langBlock = (lang, name, tLabel, sLabel, bLabel) => html`<section lang="${lang}">
+  // one language's fields, in two parts: the title and the slug open the form, the description sits under Tekst
+  // (asked 2026-09-28: "move pealkiri and slug to their own section, first")
+  const langBlock = (lang, name, tLabel, sLabel, bLabel, part) => html`<section lang="${lang}">
         <h3 class="field-name">${name}</h3>
-        ${field({ id: `f-title-${lang}`, label: tLabel, err: err(`title_${lang}`), control: input(`f-title-${lang}`, `title_${lang}`, v[lang].title) })}
-        ${field({ id: `f-slug-${lang}`, label: sLabel, err: err(`slug_${lang}`), hint: lang === 'et' ? 'Tühjaks jättes tuletatakse pealkirjast. Väikesed tähed a kuni z, numbrid ja sidekriipsud.' : 'Leave empty to derive from the title.', control: input(`f-slug-${lang}`, `slug_${lang}`, v[lang].slug, ' spellcheck="false"') })}
-        ${field({ id: `f-body-${lang}`, label: bLabel, err: err(`body_${lang}`), hint: lang === 'et' ? 'Tühi rida alustab uut lõiku, rida algusega ## on vahepealkiri, **tekst** on rasvane, [sõnad](https://…) on link.' : 'A blank line starts a paragraph, a line starting with ## is a heading.', control: html`<textarea id="f-body-${lang}" name="body_${lang}" rows="18">${v[lang].body}</textarea>` })}
+        ${part === 'body' ? '' : field({ id: `f-title-${lang}`, label: tLabel, err: err(`title_${lang}`), control: input(`f-title-${lang}`, `title_${lang}`, v[lang].title) })}
+        ${part === 'body' ? '' : field({ id: `f-slug-${lang}`, label: sLabel, err: err(`slug_${lang}`), hint: lang === 'et' ? 'Tühjaks jättes tuletatakse pealkirjast. Väikesed tähed a kuni z, numbrid ja sidekriipsud.' : 'Leave empty to derive from the title.', control: input(`f-slug-${lang}`, `slug_${lang}`, v[lang].slug, ' spellcheck="false"') })}
+        ${part === 'head' ? '' : field({ id: `f-body-${lang}`, label: bLabel, err: err(`body_${lang}`), hint: lang === 'et' ? 'Tühi rida alustab uut lõiku, rida algusega ## on vahepealkiri, **tekst** on rasvane, [sõnad](https://…) on link.' : 'A blank line starts a paragraph, a line starting with ## is a heading.', control: html`<textarea id="f-body-${lang}" name="body_${lang}" rows="18">${v[lang].body}</textarea>` })}
       </section>`;
-  const credit = (c, i) => html`<div class="credit">
+  // one credit block; k is the index in the names and ids, a string so the template below can carry a placeholder
+  const credit = (c, i, k = String(i)) => html`<div class="credit">
         <div class="field-row">
-          ${field({ id: `f-c${i}-role`, label: `Tegija ${i + 1}, roll`, err: err(`c${i}_role`), control: html`<select id="f-c${i}-role" name="c${i}_role">${opts(roleOpts, c.role_key)}</select>` })}
-          ${field({ id: `f-c${i}-label-et`, label: 'Vaba rolli nimetus', control: input(`f-c${i}-label-et`, `c${i}_label_et`, c.label_et) })}
-          ${field({ id: `f-c${i}-label-en`, label: 'Free role, in English', control: input(`f-c${i}-label-en`, `c${i}_label_en`, c.label_en) })}
+          ${field({ id: `f-c${k}-role`, label: `Tegija ${i + 1}, roll`, err: err(`c${k}_role`), control: html`<select id="f-c${k}-role" name="c${k}_role">${opts(roleOpts, c.role_key)}</select>` })}
+          ${field({ id: `f-c${k}-label-et`, label: 'Vaba rolli nimetus', control: input(`f-c${k}-label-et`, `c${k}_label_et`, c.label_et) })}
+          ${field({ id: `f-c${k}-label-en`, label: 'Free role, in English', control: input(`f-c${k}-label-en`, `c${k}_label_en`, c.label_en) })}
         </div>
-        ${field({ id: `f-c${i}-people`, label: 'Nimed', hint: i === 0 ? 'Komaga eraldatud, ühes keeles. Tühjenda nimed ja organisatsioonid, et rida kustutada.' : '', control: input(`f-c${i}-people`, `c${i}_people`, c.people) })}
+        ${field({ id: `f-c${k}-people`, label: 'Nimed', hint: i === 0 ? 'Komaga eraldatud, ühes keeles. Tühjenda nimed ja organisatsioonid, et rida kustutada.' : '', control: input(`f-c${k}-people`, `c${k}_people`, c.people) })}
         <div class="field-row">
-          ${field({ id: `f-c${i}-orgs-et`, label: 'Organisatsioonid', hint: i === 0 ? 'Semikooloniga eraldatud, sest nimes võib olla koma.' : '', control: input(`f-c${i}-orgs-et`, `c${i}_orgs_et`, c.orgs_et) })}
-          ${field({ id: `f-c${i}-orgs-en`, label: 'Organisations, in English', hint: i === 0 ? 'The same order as the Estonian.' : '', control: input(`f-c${i}-orgs-en`, `c${i}_orgs_en`, c.orgs_en) })}
+          ${field({ id: `f-c${k}-orgs-et`, label: 'Organisatsioonid', hint: i === 0 ? 'Semikooloniga eraldatud, sest nimes võib olla koma.' : '', control: input(`f-c${k}-orgs-et`, `c${k}_orgs_et`, c.orgs_et) })}
+          ${field({ id: `f-c${k}-orgs-en`, label: 'Organisations, in English', hint: i === 0 ? 'The same order as the Estonian.' : '', control: input(`f-c${k}-orgs-en`, `c${k}_orgs_en`, c.orgs_en) })}
         </div>
       </div>`;
   const links = ['et', 'en'].filter((l) => texts[l]).map((l) => html`<a href="${eventPath(l, texts[l].slug)}" hreflang="${l}">${l.toUpperCase()}</a>`);
@@ -80,42 +88,63 @@ export const editorForm = ({ v, errors = [], roles, media, saved, texts = {} }) 
   <form class="form form-wide" method="post" action="${action}">
     <input type="hidden" name="rev" value="${v.rev}">
     <input type="hidden" name="credit_count" value="${v.credits.length}">
+    <h2>Pealkiri</h2>
+    <div class="langs">
+      ${langBlock('et', 'Eesti keeles', 'Pealkiri', 'Slug', 'Kirjeldus', 'head')}
+      ${langBlock('en', 'Inglise keeles', 'Title', 'Slug', 'Description', 'head')}
+    </div>
+
+    <h2>Pilt</h2>
+    ${pic ? html`<figure class="edit-pic"><img src="/${pic.key}" width="${pic.width}" height="${pic.height}" alt="${pic.alt_et}"><figcaption>${pic.alt_et}</figcaption></figure>` : ''}
+    <div class="fields">
+      ${field({ id: 'f-image', label: 'Pilt', err: err('image_key'), hint: 'Faili nimi. Üleslaadimine tuleb hiljem.', control: input('f-image', 'image_key', imageKey) })}
+    </div>
+
     <h2>Millal ja kus</h2>
-    <div class="field-row">
+    <div class="fields">
       ${field({ id: 'f-start', label: 'Algus', err: err('starts_at'), control: input('f-start', 'starts_at', v.starts_at, ' type="datetime-local" required') })}
       ${field({ id: 'f-end', label: 'Lõpp', err: err('ends_at'), hint: 'Tühi, kui üks õhtu.', control: input('f-end', 'ends_at', v.ends_at, ' type="datetime-local"') })}
-      ${field({ id: 'f-duration', label: 'Kestus minutites', err: err('duration_min'), control: input('f-duration', 'duration_min', v.duration_min, ' type="number" min="1" max="1440" inputmode="numeric"') })}
-    </div>
-    <div class="field-row">
+      ${field({ cls: 'solo', id: 'f-duration', label: 'Kestus minutites', err: err('duration_min'), control: input('f-duration', 'duration_min', v.duration_min, ' type="number" min="1" max="1440" inputmode="numeric"') })}
       ${field({ id: 'f-venue', label: 'Koht', control: input('f-venue', 'venue', v.venue) })}
       ${field({ id: 'f-address', label: 'Aadress', control: input('f-address', 'address', v.address) })}
-    </div>
-    <div class="field-row">
       ${field({ id: 'f-tickets', label: 'Piletid', err: err('ticket_url'), control: input('f-tickets', 'ticket_url', v.ticket_url, ' type="url" inputmode="url"') })}
       ${field({ id: 'f-website', label: 'Veebileht', err: err('website_url'), control: input('f-website', 'website_url', v.website_url, ' type="url" inputmode="url"') })}
-    </div>
-    <div class="field-row">
       ${field({ id: 'f-category', label: 'Sari', err: err('category'), control: html`<select id="f-category" name="category">${opts(CATEGORIES, v.category)}</select>` })}
-      ${field({ id: 'f-image', label: 'Pilt', err: err('image_id'), hint: 'Olemasolevate piltide hulgast. Üleslaadimine tuleb hiljem.', control: html`<select id="f-image" name="image_id">${opts(mediaOpts, v.image_id)}</select>` })}
     </div>
-    ${pic ? html`<figure class="edit-pic"><img src="/${pic.key}" width="${pic.width}" height="${pic.height}" alt="${pic.alt_et}"><figcaption>${pic.alt_et}</figcaption></figure>` : ''}
 
+    <h2>Avaldamine</h2>
+    <div class="fields">
+      ${field({ id: 'f-status', label: 'Olek', hint: 'Mustandit avalikul lehel ei näe.', control: html`<select id="f-status" name="status">${opts(STATUSES, v.status)}</select>` })}
+      ${field({ id: 'f-publish', label: 'Avalda alates', err: err('publish_at'), hint: 'Tühi = kohe.', control: input('f-publish', 'publish_at', v.publish_at, ' type="datetime-local"') })}
+    </div>
     <h2>Tekst</h2>
     <div class="langs">
-      ${langBlock('et', 'Eesti keeles', 'Pealkiri', 'Slug', 'Kirjeldus')}
-      ${langBlock('en', 'Inglise keeles', 'Title', 'Slug', 'Description')}
+      ${langBlock('et', 'Eesti keeles', 'Pealkiri', 'Slug', 'Kirjeldus', 'body')}
+      ${langBlock('en', 'Inglise keeles', 'Title', 'Slug', 'Description', 'body')}
     </div>
 
     <h2>Tegijad</h2>
     <div class="credits-edit">
-      ${v.credits.map(credit)}
+      ${v.credits.map((c, i) => credit(c, i))}
     </div>
+    <p class="add-credit"><button class="btn" type="submit" name="do" value="add-credit" formnovalidate>Lisa tegija</button></p>
+    <template id="credit-tpl">${credit(BLANK_CREDIT(), v.credits.length, '__i__')}</template>
+    <script type="module">
+      // the two descriptions keep one height: a drag on either resizes the other (asked 2026-09-28: "when resizing textarea in one col, other height should change too")
+      const tas = [...document.querySelectorAll('.langs textarea')];
+      const ro = new ResizeObserver((entries) => { for (const en of entries) { const h = en.target.offsetHeight; for (const t of tas) if (t !== en.target && t.offsetHeight !== h) t.style.height = h + 'px'; } });
+      tas.forEach((t) => ro.observe(t));
+      // with script the block is added in place; without, the same button posts the form and the server adds it
+      const btn = document.querySelector('[name="do"][value="add-credit"]'), tpl = document.getElementById('credit-tpl'), list = document.querySelector('.credits-edit'), count = document.querySelector('[name="credit_count"]');
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const i = Number(count.value);
+        list.insertAdjacentHTML('beforeend', tpl.innerHTML.replaceAll('__i__', String(i)).replace(/Tegija \d+, roll/, 'Tegija ' + (i + 1) + ', roll'));
+        count.value = String(i + 1);
+        list.lastElementChild.querySelector('select, input').focus();
+      });
+    </script>
 
-    <h2>Avaldamine</h2>
-    <div class="field-row">
-      ${field({ id: 'f-status', label: 'Olek', hint: 'Mustandit avalikul lehel ei näe.', control: html`<select id="f-status" name="status">${opts(STATUSES, v.status)}</select>` })}
-      ${field({ id: 'f-publish', label: 'Avalda alates', err: err('publish_at'), hint: 'Tühi = kohe.', control: input('f-publish', 'publish_at', v.publish_at, ' type="datetime-local"') })}
-    </div>
     <div class="actions">
       <button class="btn btn-pri" type="submit" name="do" value="save">Salvesta</button>
       <button class="btn" type="submit" name="do" value="preview-et">Eelvaade ET</button>
