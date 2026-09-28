@@ -18,6 +18,7 @@ building on one.
 | https://eccm.positron.studio/et/eccm | the five text pages from D1, ECCM, Tallinn 1965, NAN, Ulysses, Konkursid, at `/et/{slug}` and `/en/{slug}`, a fallback where a language has no text |
 | https://eccm.positron.studio/edit | the HTML-only edit form, saves nothing |
 | https://eccm.positron.studio/edit/events | the editor from D1 behind the gate: the list, `/edit/events/{id}`, `/edit/events/new`; `/login?token=...` opens it on staging |
+| https://eccm.positron.studio/edit/pages | the same for the five text pages: the list, `/edit/pages/{id}`, `/edit/pages/new`; every public page carries a Muuda/Edit button |
 | https://eccm.positron.studio/derive | design from a picture, four sets of six pictures (`?set=1` to `4`) |
 | https://eccm.positron.studio/ds | the design system, with the wordmark studies at its foot: type specimens, serif specimens, bios, colour, space, buttons with a disabled state, the logos, the square marks, the icon sizes, the stave element |
 | https://eccm.positron.studio/type | seventeen faces for body and titles, then the six sans and the ten serifs in the derived page's three uses |
@@ -38,7 +39,10 @@ polarities, `favicon.ico` and `favicon-neg.ico`, and `stave.svg`.
 D1, and since 2026-09-28 the editor: `/edit/events` (the list), `/edit/events/{id}`
 (one form for both languages, the facts, the credits, the status and the
 publish time), `/edit/events/new`, `/login` and `/logout`, all in
-`src/editor.mjs` with `src/render/editor.mjs` and the gate in `src/gate.mjs`.
+`src/editor.mjs` with `src/render/editor.mjs` and the gate in `src/gate.mjs`;
+and the same afternoon the five text pages of `/et/{slug}` and `/en/{slug}`
+became editable at `/edit/pages`, `/edit/pages/{id}` and `/edit/pages/new`,
+with `sundmused` and `events` refused as page slugs.
 The gate takes a Cloudflare Access JWT when `ACCESS_TEAM` (and `ACCESS_AUD`)
 is set, and on staging a cookie set by `/login?token=` against the
 `EDITOR_TOKEN` secret, which is a stand-in until the Access application on
@@ -47,13 +51,15 @@ reply is `no-store` and `noindex`. A save is one D1 batch guarded by `rev`, a
 stale form answers 409, preview renders the real template without writing.
 Everything else 404s; assets under `public/` are served first, so `/edit`
 with no path is still the static form. The remote database is `eccm-staging`
-(id in `wrangler.jsonc`), migrated with `migrations/0001_step1.sql` and
-`0002_editing.sql` and seeded with `data/seed-step1.sql` and `seed-step2.sql`.
+(id in `wrangler.jsonc`), migrated with `migrations/0001_step1.sql`,
+`0002_editing.sql` and `0003_page_editing.sql` and seeded with
+`data/seed-step1.sql`, `seed-step2.sql` and `seed-step3.sql` (the five pages).
 Sessions 1, 2 and 6 of `plans/plan-eccm-cms-step-1.md` are done, 3 to 5 are
 not, and the editing the plan left out of step 1 is in. The dev server for
 local work is `npx wrangler dev --env staging`; one was running on port 8797
-when this was written, and the editor agent's on 8798 against
-`.wrangler/state-editor`.
+when this was written, the editor agent's on 8798 against
+`.wrangler/state-editor`, and the page editing agent's on 8800 against
+`.wrangler/state-pages-edit`.
 
 ## The plans, twelve
 

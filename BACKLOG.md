@@ -7,6 +7,11 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "page from d1 and with edit?"
+
+Asked verbatim after the five top-level pages went live. They come from D1 already; the editing did not exist, the editor covered events only. A background agent adds it in the events editor's shape: a list, one form per page for both languages behind the same gate, the rev guard, the validation, a preview per language, a new-page form, and an edit button on every public page. The agent reports and does not commit; the session migrates the remote database, commits and deploys.
+✅ Built by the agent, shipped by the session as `daae988`: `/edit/pages` (the list), `/edit/pages/{id}`, `/edit/pages/new`, the same gate and the same 409 on a stale save, slugs unique across the page texts and `sundmused` and `events` refused as page slugs, a preview per language that writes nothing, and a Muuda/Edit button under every page title (the event header without its picture). `migrations/0003_page_editing.sql` adds `rev` and `updated_by` to `page`, applied to the remote database before the deploy. MEASURED by the agent locally: gate 401 and 401 without the cookie, 303 from the login link, save 303 and rev 1 to 2, stale save 409 with the typed values kept, bad slug, empty titles and a reserved slug 422 each, previews 200 with rev unchanged, a new page 303 to `/edit/pages/6` and 200 at its slug; shots at 375 and 1280 clean. Re-checked by the session on the edge: 401, 401, 303 to `/edit/pages/1`, the list 200 with 5 rows, the form 200 at rev 1, `/edit/pages/new` 200, `/edit/pages/99` 404, `/et/eccm` 200 with its Muuda button, the events list 200 with its Lehed link.
+
 ### Done 2026-09-28: "align text and image to top" (a crop of a bio on the design system page)
 
 Asked with a picture. The bio's grid aligns its items to the start and the name's line box is its own height, so the name's top sits on the picture's top.
