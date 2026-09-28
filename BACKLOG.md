@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "rm 11 rem labels. Black on white, white on black"
+
+Asked verbatim. The wordmark lockups' captions on the design system page read Black on white and White on black, the size no longer named.
+
 ### Done 2026-09-28: "logo: shorte texts, rm ec cm (keep it in icons)"
 
 Asked verbatim. The design system page's Logo section is one sentence and the square mark positive and negative; the stacked EC over CM marks and their paragraph leave it and stay in the icon sizes at the page's foot. The glass icons draw the mark's letters alone, from the page's own symbol, since the square files carried their grounds into the glass.

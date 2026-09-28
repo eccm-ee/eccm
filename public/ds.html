@@ -502,9 +502,9 @@ const cellOf = (id, capText, opts, sets, { frames = true } = {}) => {
   const fig = (svg, text) => { const f = document.createElement('figure'); const fc = document.createElement('figcaption'); fc.textContent = text; f.append(svg, fc); locks.append(f); };
   for (const set of sets) for (const rem of [11]) {
     const svg = lockup(Array.isArray(set) ? set : set.texts, { ...opts, ...(Array.isArray(set) ? {} : set.opts), rem });
-    fig(framed(svg, { square, plain: true }), rem + 'rem');
+    fig(framed(svg, { square, plain: true }), 'Black on white');
     if (!frames) continue;
-    fig(framed(svg, { square, inv: true }), `${rem}rem, white on black`);
+    fig(framed(svg, { square, inv: true }), 'White on black');
   }
   cell.append(p, locks); return cell;
 };
