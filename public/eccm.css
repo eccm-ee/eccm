@@ -158,18 +158,18 @@
   .nav { display: flex; flex-wrap: wrap; column-gap: var(--eccm-s-8); row-gap: var(--eccm-s-2); }
   .lang { display: flex; column-gap: var(--eccm-s-3); }
   .lang-in { display: none; }
-  /* the button's tap area is the padding, 24 px into the header's air and 24 px at the right, of which the gutter's 16 px
-     lie past the frame, so the lines stand 8 px in from the frame's edge (asked 2026-09-28: "add more padding to right of
-     hamburger menu"); no tap highlight, since the button paints nothing ("rm blue bg flash on tap"); the lines are drawn
-     exactly as the mark draws its stave */
-  .menu-btn { display: none; padding: var(--eccm-s-3) var(--eccm-s-6); margin: calc(-1 * var(--eccm-s-3)) calc(-1 * var(--eccm-s-4)) calc(-1 * var(--eccm-s-3)) calc(-1 * var(--eccm-s-6)); border: 0; background: none; color: var(--eccm-ink); cursor: pointer; -webkit-tap-highlight-color: transparent; }
-  .menu-btn svg { display: block; fill: currentColor; inline-size: calc(var(--eccm-mark-w) * 12 / 310); block-size: calc(var(--eccm-mark-w) * 183 / 310); }
+  /* the phone menu button: a 3rem square in the site's 1px rule with three
+     1px lines inside (asked 2026-09-28: "Do hamburger menu 3 lines in square",
+     in place of the five stave lines); the square is its own tap area, 48 px,
+     and it paints nothing on press, so no tap highlight */
+  .menu-btn { display: none; inline-size: 3rem; block-size: 3rem; padding: 0; margin: 0; border: 1px solid currentColor; background: none; color: var(--eccm-ink); cursor: pointer; -webkit-tap-highlight-color: transparent; place-items: center; }
+  .menu-btn svg { display: block; fill: currentColor; inline-size: 1.25rem; block-size: calc(1.25rem * 15 / 20); }
   @media (max-width: 48rem) {
     .site-head .mark svg.beside { display: none; }
     .site-head .mark svg.under { display: block; }
     .site-head .sw { margin-inline-start: auto; align-self: flex-start; }
     .site-head .sw .lang { display: none; }
-    .menu-btn { display: block; align-self: flex-start; }
+    .menu-btn { display: grid; align-self: flex-start; }
     .site-head .nav { display: none; }
     .site-head[data-open] .nav { display: grid; order: 3; flex-basis: 100%; margin-block-start: 1lh; justify-content: start; }
     .site-head[data-open] .nav a { display: inline-block; padding-block: var(--eccm-s-2); }

@@ -7,6 +7,11 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "Do hamburger menu 3 lines in square"
+
+Asked verbatim. The phone menu button becomes a square with a 1px ink border and three 1px lines inside, in place of the five stave lines. Files: `public/eccm.css` (`.menu-btn`), the button markup in `src/render/mark.mjs` and in every static page's header (`index.html` after the front page agent hands it back).
+✅ A 3rem square in the 1px rule with three 1px lines, 1.25rem wide, centred; the square is its own 48 px tap area with no negative margins. On the Worker header (both languages) and seven static pages; `index.html` follows when the front page agent hands it back. Shot at 375.
+
 ### Done 2026-09-28: "wat" (a picture of https://eccm.positron.studio/en/ answering There is no such page)
 
 The English front page did not exist: `/` is the static Estonian front page and `/en/` fell to the 404. `/en/` becomes the English home, the events list from D1 under the front page's heading, and the English chrome's mark and Home lead to it; `/et/` goes to `/`. Files: `src/index.mjs`, `src/render/events.mjs`, `src/render/chrome.mjs`, `src/render/mark.mjs`, the static pages' EN switch.
