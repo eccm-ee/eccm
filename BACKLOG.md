@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "put literata to derive as well as alternative"
+
+Asked verbatim. `derive.html` draws its serif samples in Roboto Serif by default and in Literata with `?serif=literata`, a line under the intro switching between the two on the same picture set; Literata is declared in `eccm.css` beside Roboto Serif again.
+
 ### Done 2026-09-28: "replace literate with roboto serif"
 
 Asked verbatim. The serif a derived page takes is Roboto Serif in place of Literata: `derive.html`, `ds.html`, the declaration in `eccm.css` and the skill's dated line, the same four places as the Literata swap of 2026-09-27.
