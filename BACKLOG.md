@@ -7,6 +7,14 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "\"/sans\" page"
+
+The clarification of "bring other /sans versions back": a page of its own, https://eccm.positron.studio/sans, the sans faces in the derived page's three uses the way /serif shows the serifs: A Schibsted Grotesk, B Instrument Sans, C Bricolage Grotesque, D Sofia Sans Condensed, E Familjen Grotesk, F Anybody, each at its normal width, the declarations from type.html.
+
+### Open 2026-09-28: "in bg install lightpanda+mcp via brew and see if we get blokced"
+
+Asked verbatim. A background agent installs Lightpanda, the headless browser, and its MCP server through Homebrew from the project's own instructions, then runs the binary and the server once each and reports whether this laptop's endpoint security lets them run or kills them, the way it kills the workerd that wrangler 4.141 ships (exit 137, `CLAUDE.md`). Nothing is changed in this repository.
+
 ### Done 2026-09-28: "take H-B. One line, with the wordmark - vertically center, biiiit larger logo and menu etext (make 3 versions incl current). move these to top of examples"
 
 Asked verbatim, `public/layout.html`. The one-line header with the wordmark becomes three versions at the top of the examples: the current one as it is (the mark at 8rem, the menu at 14 px, on the mark's baseline), then two centred on the mark's middle with the mark at 10rem and the menu at 16 px, and the mark at 12rem and the menu at 18 px. The other three headers follow, re-lettered, and each of the six stands on its own derived page, two more captured from the sets.
