@@ -90,7 +90,9 @@
     .w20 { inline-size: 20rem; } .w11 { inline-size: 11rem; }
     .locks svg[data-w] { inline-size: calc(var(--rem) * var(--k)); }
     /* a lockup in a frame: the border is a CSS pixel whatever the scale, and the inverted one is the ink's own box with no line round it */
-    .locks svg.frame { border: 1px solid var(--eccm-ink); }
+    /* the plain lockup carries a transparent border that turns ink on hover, so a hover moves nothing (asked 2026-09-28: "rm white bg black border examples. show border on hover. no hover: transparent but present border to avoid jump") */
+    .locks svg.plain { border: 1px solid transparent; }
+    .locks svg.plain:hover { border-color: var(--eccm-ink); }
     .locks svg.inv { background: var(--eccm-ink); color: var(--eccm-ground); }
     .locks figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
   }
@@ -494,7 +496,6 @@ const cellOf = (id, capText, opts, sets, { frames = true } = {}) => {
     const svg = lockup(texts, { ...opts, rem });
     fig(framed(svg, { square, plain: true }), rem + 'rem');
     if (!frames) continue;
-    fig(framed(svg, { square }), `${rem}rem, in a ${shape}`);
     fig(framed(svg, { square, inv: true }), `${rem}rem, white on black`);
   }
   cell.append(p, locks); return cell;
@@ -517,11 +518,11 @@ const draw = async () => {
   const boxes = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="11"]:not(.frame):not(.inv)')].map((v) => v.dataset.box)]));
   // in each bilingual square at 20rem, the air over the top language and under the bottom one, in units
   const margins = Object.fromEntries([...cells.querySelectorAll('.cell')].filter((c) => c.querySelector('svg[data-above="1"]')).map((c) => {
-    const f = c.querySelector('svg[data-w="11"].frame'); const [, fy, , fh] = f.dataset.box.split(' ').map(Number); const size = +f.dataset.size;
+    const f = c.querySelector('svg[data-w="11"].plain'); const [, fy, , fh] = f.dataset.box.split(' ').map(Number); const size = +f.dataset.size;
     const ys = [...f.querySelectorAll('text')].map((t) => +t.getAttribute('y'));
     return [c.id, [+(Math.min(...ys) - CAP * size - fy).toFixed(1), +(fy + fh - Math.max(...ys) - 0.25 * size).toFixed(1)]];
   }));
-  const frames = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="11"].frame')].map((v) => v.dataset.box)]));
+  const frames = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="11"].plain')].map((v) => v.dataset.box)]));
   window.__wordmark = { count: cells.querySelectorAll('.cell').length, under: UNDER, beside: BESIDE, gap: BESIDE_GAP, enFit: +enFit.toFixed(1), etFit: +etFit.toFixed(1), enUnder: +blockWidth(split2(EN), UNDER).toFixed(1), etUnder: +blockWidth(split2(ET), UNDER).toFixed(1), enBeside: +blockWidth(split2(EN), BESIDE).toFixed(1), etBeside: +blockWidth(split2(ET), BESIDE).toFixed(1), boxes, frames, margins, instrument: document.fonts.check('500 100px "Instrument Sans"') };
 };
 draw();
