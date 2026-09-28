@@ -1,24 +1,26 @@
 // chrome.mjs: the head, the site header with the mark and the language
 // switch, the menu, the footer, and the 404 page, lifted from public/event.html
-// as it stands (plans/plan-eccm-cms-step-1.md section 4). The menu still
-// points at eccm.ee for the pages this site does not render yet; each link
-// moves here when its page does.
+// as it stands (plans/plan-eccm-cms-step-1.md section 4). Since 2026-09-28
+// the five text pages the menu names point here, /et/{slug} and /en/{slug}
+// (src/render/page.mjs); Sündmused still points at eccm.ee and moves here
+// when the list does. The same hrefs sit in mark.mjs's strings and in every
+// static page under public/, changed together.
 import { html, raw } from './html.mjs';
 import { SYMBOL, HEADER, FOOTER } from './mark.mjs';
 
 export const T = {
   et: {
     menu: 'Menüü', markAlt: 'Eesti nüüdismuusika keskus', upcoming: 'Tulevased üritused',
-    nav: [['/', 'Avaleht'], ['https://eccm.ee/index.php/et/eccm', 'ECCM'], ['https://eccm.ee/index.php/et/tallinn-1965', 'Tallinn 1965'], ['https://eccm.ee/nan/', 'NAN'], ['https://eccm.ee/index.php/et/ulysses', 'Ulysses'], ['https://eccm.ee/index.php/et/konkursid', 'Konkursid'], ['https://eccm.ee/index.php/et/syndmusest', 'Sündmused']],
+    nav: [['/', 'Avaleht'], ['/et/eccm', 'ECCM'], ['/et/tallinn-1965', 'Tallinn 1965'], ['/et/nan', 'NAN'], ['/et/ulysses', 'Ulysses'], ['/et/konkursid', 'Konkursid'], ['https://eccm.ee/index.php/et/syndmusest', 'Sündmused']],
     foot: 'Eesti Nüüdismuusika Keskus, Pühavaimu 9, Tallinn',
     notFound: 'Sellist lehte ei ole.', notFoundLead: 'Aadress võib olla vananenud või valesti kirjutatud.',
     when: 'Millal', where: 'Kus', series: 'Sari', calendar: 'Kalendrisse', ask: 'Küsi', at: 'kell', min: 'min',
     ticket: 'Osta pilet', edit: 'Muuda', credits: 'Tegijad', next: 'Järgmised üritused',
-    fallback: null,
+    fallback: 'Sellel lehel ei ole veel eestikeelset versiooni. Järgneb ingliskeelne tekst.',
   },
   en: {
     menu: 'Menu', markAlt: 'Estonian Centre of Contemporary Music', upcoming: 'Upcoming events',
-    nav: [['/', 'Home'], ['https://eccm.ee/index.php/en/eccm-new-eng', 'ECCM'], ['https://eccm.ee/index.php/en/tallinn-1965-eng', 'Tallinn 1965'], ['https://eccm.ee/nan/', 'NAN'], ['https://eccm.ee/index.php/en/ulysses-eng', 'Ulysses'], ['https://eccm.ee/index.php/en/open-calls', 'Open calls'], ['https://eccm.ee/index.php/en/eventseng', 'Events']],
+    nav: [['/', 'Home'], ['/en/eccm', 'ECCM'], ['/en/tallinn-1965', 'Tallinn 1965'], ['/en/nan', 'NAN'], ['/en/ulysses', 'Ulysses'], ['/en/open-calls', 'Open calls'], ['https://eccm.ee/index.php/en/eventseng', 'Events']],
     foot: 'Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinn',
     notFound: 'There is no such page.', notFoundLead: 'The address may be out of date or mistyped.',
     when: 'When', where: 'Where', series: 'Series', calendar: 'Add to calendar', ask: 'Ask', at: 'at', min: 'min',
@@ -52,7 +54,7 @@ ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflan
 </head>
 <body>
 ${raw(SYMBOL)}
-${raw(alternate ? HEADER[lang].replace(/<a href="[^"]*" lang="(?:en|et)">/, `<a href="${alternate.href}" hreflang="${alternate.lang}" lang="${alternate.lang}">`) : HEADER[lang])}
+${raw(alternate ? HEADER[lang].replace(/<a href="[^"]*" lang="(?:en|et)">/g, `<a href="${alternate.href}" hreflang="${alternate.lang}" lang="${alternate.lang}">`) : HEADER[lang])}
 
 ${notice ? html`<div class="notice"><p class="frame">${notice}</p></div>` : ''}
 <main class="frame">

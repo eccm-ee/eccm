@@ -15,6 +15,7 @@ building on one.
 | https://eccm.positron.studio/et/sundmused/gestuurid-situatsioonid-ilma-partituurita-kuulamine | the same event **from D1**, Estonian |
 | https://eccm.positron.studio/en/events/gestures-situations-listening-without-a-score | its English twin from D1, hreflang pairs both ways |
 | https://eccm.positron.studio/en/events/gestuurid-situatsioonid-ilma-partituurita-kuulamine | the fallback: Estonian text under English chrome with one line saying so |
+| https://eccm.positron.studio/et/eccm | the five text pages from D1, ECCM, Tallinn 1965, NAN, Ulysses, Konkursid, at `/et/{slug}` and `/en/{slug}`, a fallback where a language has no text |
 | https://eccm.positron.studio/edit | the HTML-only edit form, saves nothing |
 | https://eccm.positron.studio/edit/events | the editor from D1 behind the gate: the list, `/edit/events/{id}`, `/edit/events/new`; `/login?token=...` opens it on staging |
 | https://eccm.positron.studio/derive | design from a picture, four sets of six pictures (`?set=1` to `4`) |

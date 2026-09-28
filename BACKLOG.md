@@ -7,9 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
-### Open 2026-09-28: "implement sompe simpler top level pages now"
+### Done 2026-09-28: "implement sompe simpler top level pages now"
 
 Asked verbatim. A background agent takes the step plan's session 5 and widens it: a `page` and `page_text` schema as the CMS plan has it, the top-level pages the menu names (ECCM, Tallinn 1965, NAN, Ulysses, Konkursid) rendered from D1 in both languages at `/et/{slug}` and `/en/{slug}`, their texts read once off eccm.ee's own pages and seeded, the menu on rendered and static pages pointing at them, with the same chrome. The agent reports and does not commit; the session migrates, seeds and deploys.
+✅ Built by the agent, shipped by the session: five pages from D1 at /et/eccm, /et/tallinn-1965, /et/nan, /et/ulysses, /et/konkursid and their English twins /en/eccm, /en/tallinn-1965, /en/nan, /en/ulysses, /en/open-calls, a fallback in the other language where eccm.ee has none (Tallinn 1965 has no English page, NAN and Ulysses no Estonian one), the menu on every static page and the Worker's chrome pointing at them, 110 hrefs rewritten. No migration: the page tables were in 0001. The texts, nine fetches one per page: ECCM 162 and 295 words (two different texts on eccm.ee), Tallinn 1965 199, NAN 2000, Ulysses 129, Konkursid 59 and 84 with the full call left as a link. A mobile number on the about page was left out; info@eccm.ee kept as eccm.ee publishes it. MEASURED locally by the agent: ten routes 200, an unknown slug 404, shots at 375 and 1280 clean.
 
 ### Done 2026-09-28: "why this accent?" then "none. keep it black inc outliens."
 
