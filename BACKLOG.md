@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "replace literate with roboto serif"
+
+Asked verbatim. The serif a derived page takes is Roboto Serif in place of Literata: `derive.html`, `ds.html`, the declaration in `eccm.css` and the skill's dated line, the same four places as the Literata swap of 2026-09-27.
+
 ### Done 2026-09-28: "bring back serf's in \"/serif\". i am sorry, confused with sans"
 
 Asked verbatim. `public/serif.html` shows the ten modern serifs again, A to J as at 475e4bb, in the derived page's three uses; the two sans that shared the page since 59c4ca3 stay on /sans, and Source Serif 4 stays out as before.

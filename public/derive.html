@@ -25,7 +25,7 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="./eccm.css">
 <style>
-  /* Literata, the serif, is declared in eccm.css beside Schibsted */
+  /* Roboto Serif, the serif, is declared in eccm.css beside Schibsted */
   @layer page {
     .intro { max-inline-size: var(--eccm-measure); }
     .intro + .intro { margin-block-start: 1lh; }
@@ -92,7 +92,7 @@
 
 <main class="frame">
   <h1>Kujundus pildist</h1>
-  <p class="intro">Each picture is read as the page opens: its colour at 64 pixels gives a light or a dark scheme, a ground and an accent for underlines and focus, and its type at up to 600 pixels gives serif, sans, no type found, or type too small to read for serifs. Beside it a short event page is drawn in what it gave, with the title and the facts in Literata when the graphic's type reads as a serif, and the body in it only on a ground near white.</p>
+  <p class="intro">Each picture is read as the page opens: its colour at 64 pixels gives a light or a dark scheme, a ground and an accent for underlines and focus, and its type at up to 600 pixels gives serif, sans, no type found, or type too small to read for serifs. Beside it a short event page is drawn in what it gave, with the title and the facts in Roboto Serif when the graphic's type reads as a serif, and the body in it only on a ground near white.</p>
   <p class="tally" id="tally">Reading the pictures.</p>
   <div id="cards"></div>
 
@@ -408,9 +408,9 @@
     return el;
   };
 
-  // the serif is Literata since 2026-09-27 ("use literata now on the derived page not the prev serif one");
-  // Source Serif 4 before it, chosen earlier the same day ("Pick sorce serif rm others")
-  const SERIF = { family: "'Literata', Georgia, serif", weight: 400 };
+  // the serif is Roboto Serif since 2026-09-28 ("replace literata with roboto serif");
+  // Literata for a day before it, Source Serif 4 before that
+  const SERIF = { family: "'Roboto Serif', Georgia, serif", weight: 400 };
 
   // ── the pictures, four sets off eccm.ee ─────────────────────────────────
   // the newest set is the default and the earlier ones answer ?set=1, ?set=2

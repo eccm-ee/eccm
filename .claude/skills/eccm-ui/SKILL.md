@@ -658,5 +658,7 @@ STIX Two and Noto Serif, Times-like or generic; Playfair, overused and covered
 by Bodoni Moda with an axis. Asked the same evening: *"for serif page leave
 Schibsted Grotesk, Instrument Sans, Literata,"*, so the page keeps those three
 and the other nine serifs are in git at 475e4bb. Then: *"use literata now on the
-derived page not the prev serif one"*, so Literata is the serif a derived page
-takes, set in `derive.html`, shown on `ds.html` and declared in `eccm.css`.
+derived page not the prev serif one"*, so Literata was the serif a derived page
+took for a day; since 2026-09-28 (*"replace literata with roboto serif"*) it
+is Roboto Serif, set in `derive.html`, shown on `ds.html` and declared in
+`eccm.css`, the ten serifs back on `serif.html` and the sans on `sans.html`.
