@@ -68,12 +68,20 @@
     .hd .sw { display: flex; align-items: center; column-gap: var(--eccm-s-6); }
     /* the phone menu: five hairlines one pixel each, the stave's own count, as a button; in a narrow box the menu hides behind it and
        opens under the mark's line one item a line (asked 2026-09-28: "do mobile menu solution, elegant one (thin 1px lines, 5 of them)") */
-    .menu-btn { display: none; padding: var(--eccm-s-1) 0; border: 0; background: none; color: var(--eccm-ink); cursor: pointer; }
+    /* the button's tap area is a finger, 48 by 45 px, padded out and pulled back by the same step so the icon stays where the
+       switch's text ended (asked 2026-09-28: "more touch area than just element") */
+    .menu-btn { display: none; padding: var(--eccm-s-3); margin: calc(-1 * var(--eccm-s-3)); border: 0; background: none; color: var(--eccm-ink); cursor: pointer; }
+    /* in a narrow box the switch leaves the mark's line and closes the opened menu as its last row (asked 2026-09-28: "move et en to mobile menu") */
+    .hd .lang-in { display: none; }
     .menu-btn svg { display: block; fill: currentColor; shape-rendering: crispEdges; }
     @container (max-width: 48rem) {
       .menu-btn { display: block; }
+      .hd .sw .lang { display: none; }
       .hd .nav { display: none; }
-      .hd[data-open] .nav { display: grid; flex-basis: 100%; row-gap: var(--eccm-s-2); margin-block-start: 1lh; }
+      .hd[data-open] .nav { display: grid; flex-basis: 100%; margin-block-start: 1lh; }
+      .hd[data-open] .nav a { display: inline-block; padding-block: var(--eccm-s-2); }
+      .hd[data-open] .lang-in { display: block; margin-block-start: var(--eccm-s-4); }
+      .hd[data-open] .lang-in .lang { display: flex; }
     }
     /* H-B carries the wordmark: beside the mark at the desk, under it in a narrow box, the mark itself at one width in both
        (asked 2026-09-28: "logo variant with side wordmark on desktop, below in mobile") */
@@ -288,7 +296,7 @@ const L = {
     partner: 'tallinn-cityofmusic-blue_RGB.svg', partnerBlack: 'tallinn-cityofmusic-black_RGB.svg', partnerAlt: 'Tallinn, UNESCO City of Music', partnerHref: 'https://muusikalinntallinn.ee/eng/',
     sw: '<span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span>' },
 };
-const menu = (p, cls) => `<ul class="${cls}">${p.menu.map(([t, h]) => `<li><a href="${h}">${t}</a></li>`).join('')}</ul>`;
+const menu = (p, cls) => `<ul class="${cls}">${p.menu.map(([t, h]) => `<li><a href="${h}">${t}</a></li>`).join('')}${cls === 'nav' ? `<li class="lang-in">${p.sw}</li>` : ''}</ul>`;
 const mark = (p, w, wordmark = false) => `<a class="mk" href="./" style="--w: ${w}rem"${wordmark ? ` data-wordmark="${p.lang}"` : ''} aria-label="${p.name}"></a>`;
 // the phone menu's button: five hairlines on the stave's pitch, in the ink
 const menuBtn = (p, open = false) => `<button class="menu-btn" type="button" aria-expanded="${open}" aria-label="${p.menuLabel}"><svg width="24" height="21" viewBox="0 0 24 21" aria-hidden="true">${[0, 5, 10, 15, 20].map((y) => `<rect y="${y}" width="24" height="1"/>`).join('')}</svg></button>`;

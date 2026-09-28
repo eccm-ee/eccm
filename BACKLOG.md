@@ -7,9 +7,15 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "move et en to mobile menu. use same element as in right side of logo. more touch area than just element"
+
+Asked verbatim, the headers on `public/layout.html`. In a narrow box the language switch leaves the mark's line and becomes the last row of the opened menu; the five-hairline button stands alone at the mark's right; its tap area is padded to a finger's size, 48 by 45 px, with the icon where it was, and the opened menu's rows get the same air to tap.
+✅ Done. MEASURED at 1280: at the desk the in-menu switch hidden and the line switch shown; in the 375 box the line switch hidden, the button 48 by 45 px with the icon's right edge 0 px off the frame's edge; in the open figure eight rows, the switch last, each link 36 px tall. One shot at 1280.
+
 ### Open 2026-09-28: "bring other /sans versions back"
 
 Asked verbatim. The five sans faces of 2026-09-27 ("give me some fresher stuff": Bricolage Grotesque, Instrument Sans, Sofia Sans Condensed, Familjen Grotesk, Anybody) were on `public/wordmark.html` as settings L to P at 50c3226 and were cut to Instrument Sans at cf2fdb5; their files and licences stayed under `public/vendor`. A background agent brings the other four back on the wordmark page as a section of their own, the under lockup at 40 units in each face at the two widths, both languages, with the face's own width and weight as the earlier settings had them, so the faces compare against the Instrument Sans lockups above. The agent reports and does not commit.
+⚠️ Asked again, verbatim, before the agent reported, so the second place the five faces lived is covered too: `public/type.html` had them as body and title specimens H to L at 1357720 and was pruned at cf2fdb5; the four others return there after Instrument Sans and before the ten serifs, re-lettered.
 
 ### Done 2026-09-28: "perhaps header typo should be bit smaller? do mobile menu solution, elegant one (thin 1px lines, 5 of them). H-B. One line - logo variant with side workmark on desktop, below in mobile"
 
