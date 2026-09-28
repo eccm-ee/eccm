@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "bring back serf's in \"/serif\". i am sorry, confused with sans"
+
+Asked verbatim. `public/serif.html` shows the ten modern serifs again, A to J as at 475e4bb, in the derived page's three uses; the two sans that shared the page since 59c4ca3 stay on /sans, and Source Serif 4 stays out as before.
+
 ### Done 2026-09-28: "clean up layout page. leave H-B. One line, centred, a step larger / A. Three columns and a partner / several content pages in between. for mobile use stnd 3 lines 1px black"
 
 Asked verbatim. `public/layout.html` is one header over six derived pages with one footer under each, at the desk and in a 375 px box, and one figure of the phone menu open; the other five headers, the three other footers, the inventory table and their rules are out (in git at eee60c1). The phone menu's button is three hairlines one pixel each, the usual three, in the ink.
