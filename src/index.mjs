@@ -15,7 +15,9 @@
 // path has one segment after the language and an event path has two. The
 // events list, /et/sundmused and /en/events, is answered before the page
 // route since 2026-09-28 (src/render/events.mjs), the last menu item that
-// led to eccm.ee.
+// led to eccm.ee. /en/ is the English front page since the same evening,
+// the events to come from D1 under the front page's heading, because / is
+// the static Estonian front page and /en/ answered the 404; /et/ goes to /.
 import { renderEvent } from './render/event.mjs';
 import { renderPage } from './render/page.mjs';
 import { renderEvents, LIST } from './render/events.mjs';
@@ -54,14 +56,14 @@ async function event(env, lang, slug, url) {
 // the events list: every published event with a text in this language, or
 // its Estonian text when it has none, the picture joined; the ones still to
 // come in date order, the ones that have been newest first
-async function eventsList(env, lang, url) {
+async function eventsList(env, lang, url, home = false) {
   const rows = (await env.DB.prepare(`SELECT e.id, e.starts_at, e.venue, e.category, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang, COALESCE(t1.body, t0.body) AS body, m.key AS pic, m.width, m.height
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et' LEFT JOIN media m ON m.id = e.image_id
     WHERE e.status = 'published' AND COALESCE(t1.title, t0.title) IS NOT NULL ORDER BY e.starts_at`).bind(lang).all()).results;
   const today = tallinnToday();
   const upcoming = rows.filter((r) => r.starts_at.slice(0, 10) >= today);
   const past = rows.filter((r) => r.starts_at.slice(0, 10) < today).reverse();
-  return renderEvents({ lang, upcoming, past, origin: url.origin, path: url.pathname });
+  return renderEvents({ lang, upcoming, past, origin: url.origin, path: url.pathname, home });
 }
 
 // a text page by (lang, slug), the same query shape as an event's: the text
@@ -86,6 +88,8 @@ export default {
       const m = EVENT[lang].exec(p);
       if (m) { const out = await event(env, lang, m[1], url); if (out) return reply(out); break; }
     }
+    if (p === '/en' || p === '/en/') return reply(await eventsList(env, 'en', url, true));
+    if (p === '/et' || p === '/et/') return new Response(null, { status: 301, headers: { location: '/' } });
     if (LIST_LANG[p]) return reply(await eventsList(env, LIST_LANG[p], url));
     const pm = PAGE.exec(p);
     if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }

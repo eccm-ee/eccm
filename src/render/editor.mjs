@@ -1,8 +1,12 @@
 // editor.mjs: the editor's pages, in Estonian, on the site's own chrome and
-// stylesheet: the list of events, the form for one event, the form for one text
-// page (since 2026-09-28, asked as "page from d1 and with edit?"; its list
+// stylesheet: the form for one event, the form for one text page (since
+// 2026-09-28, asked as "page from d1 and with edit?"; its list
 // went the same day, asked as "rm edit/pages page", since the menu's pages
-// are a fixed set reached from their own Muuda buttons), the login page and the closed door. The event form is
+// are a fixed set reached from their own Muuda buttons; the events list went
+// the same evening, asked as "rm https://eccm.positron.studio/edit/events page.
+// only events themselves are access ppoint to edit", so an event is reached
+// from its own Muuda button and a new one from the public list's Add button),
+// the login page and the closed door. The event form is
 // public/edit.html's form grown to the schema (plans/plan-eccm-cms-step-1.md
 // section 2): the shared facts first, then the two languages side by side
 // where the frame allows it, then the credits as one line per role, then
@@ -59,21 +63,12 @@ const SAME_HEIGHT = `      const tas = [...document.querySelectorAll('.langs tex
       const ro = new ResizeObserver((entries) => { for (const en of entries) { const h = en.target.offsetHeight; for (const t of tas) if (t !== en.target && t.offsetHeight !== h) t.style.height = h + 'px'; } });
       tas.forEach((t) => ro.observe(t));`;
 
-export const editorList = ({ events }) => page({
-  lang: 'et', title: 'Sündmused.', alternate: ALT,
-  body: html`  <p class="crumb">Toimeta</p>
-  <h1>Sündmused</h1>
-  <p class="actions"><a class="btn btn-pri" href="/edit/events/new">Uus sündmus</a> <a class="btn" href="/logout">Logi välja</a></p>
-  ${events.length ? html`<ol class="edit-list">
-    ${events.map((e) => html`<li><time datetime="${e.starts_at}">${dateShort(e.starts_at, 'et')} ${clock(e.starts_at, 'et')}</time><span><a href="/edit/events/${e.id}">${e.title_et || e.title_en || '(pealkirjata)'}</a><small>${e.status === 'published' ? 'Avaldatud' : 'Mustand'}, ${e.title_en ? 'ET ja EN' : 'ainult ET'}, muudetud ${tallinnStamp(e.updated_at)}</small></span></li>`)}
-  </ol>` : html`<p class="note">Ühtegi sündmust ei ole.</p>`}`,
-});
-
 // v: the form's values (src/editor.mjs, fromRows or parse); errors: [{ field,
 // msg }]; roles: the role table; media: the media table; saved: the row's
 // updated_at when the page follows a save; texts: the saved text rows, for
 // the public links
-export const editorForm = ({ v, errors = [], roles, media }) => {
+// cancel: where Loobu goes, the event itself or the public list (src/editor.mjs)
+export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmused' }) => {
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
   const isNew = !v.id;
   const action = isNew ? '/edit/events/new' : `/edit/events/${v.id}`;
@@ -96,8 +91,7 @@ export const editorForm = ({ v, errors = [], roles, media }) => {
           ${field({ id: `f-c${k}-orgs-en`, label: 'Organisations, in English', hint: i === 0 ? 'The same order as the Estonian.' : '', control: input(`f-c${k}-orgs-en`, `c${k}_orgs_en`, c.orgs_en) })}
         </div>
       </div>`;
-  const body = html`  <p class="crumb"><a href="/edit/events">Sündmused</a></p>
-  <h1>${title}</h1>
+  const body = html`  <h1>${title}</h1>
   ${errors.length ? html`<div class="errors" role="alert"><p>Ei salvestatud. Paranda:</p><ul>${errors.map((e) => html`<li>${e.msg}</li>`)}</ul></div>` : ''}
 
   <form class="form form-wide" method="post" action="${action}">
@@ -161,9 +155,10 @@ ${raw(SAME_HEIGHT)}
       <button class="btn btn-pri" type="submit" name="do" value="save">Salvesta</button>
       <button class="btn" type="submit" name="do" value="preview-et">Eelvaade ET</button>
       <button class="btn" type="submit" name="do" value="preview-en">Eelvaade EN</button>
-      <a class="btn btn-end" href="/edit/events">Loobu</a>
+      <a class="btn btn-end" href="${cancel}">Loobu</a>
     </div>
-  </form>`;
+  </form>
+  <p class="hint"><a href="/logout">Logi välja</a></p>`;
   return page({ lang: 'et', title: `${title}.`, alternate: ALT, body });
 };
 
@@ -207,7 +202,8 @@ ${raw(SAME_HEIGHT)}
       <button class="btn" type="submit" name="do" value="preview-en">Eelvaade EN</button>
       <a class="btn btn-end" href="${cancel}">Loobu</a>
     </div>
-  </form>`;
+  </form>
+  <p class="hint"><a href="/logout">Logi välja</a></p>`;
   return page({ lang: 'et', title: `${title}.`, alternate: ALT, body });
 };
 
@@ -229,7 +225,7 @@ export const gatePage = ({ status, reason }) => {
     : status === 404
       ? (reason === 'page'
         ? ['Sellist lehte ei ole.', html`Lehed on menüüs ja igal lehel on Muuda nupp.`]
-        : ['Sellist sündmust ei ole.', html`Nimekiri on <a href="/edit/events">sündmuste all</a>.`])
+        : ['Sellist sündmust ei ole.', html`Sündmused on <a href="/et/sundmused">nimekirjas</a>.`])
       : status === 403
         ? ['Päring tuli mujalt.', 'Vorm saadeti teiselt saidilt ja seda ei võetud vastu. Ava toimetaja uuesti ja saada sealt.']
         : status === 500

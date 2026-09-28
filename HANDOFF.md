@@ -16,8 +16,8 @@ building on one.
 | https://eccm.positron.studio/en/events/gestures-situations-listening-without-a-score | its English twin from D1, hreflang pairs both ways |
 | https://eccm.positron.studio/en/events/gestuurid-situatsioonid-ilma-partituurita-kuulamine | the fallback: Estonian text under English chrome with one line saying so |
 | https://eccm.positron.studio/et/eccm | the five text pages from D1, ECCM, Tallinn 1965, NAN, Ulysses, Konkursid, at `/et/{slug}` and `/en/{slug}`, a fallback where a language has no text |
-| https://eccm.positron.studio/edit | the editor, behind the gate: it goes to the events list (the HTML-only demo form that stood here went 2026-09-28) |
-| https://eccm.positron.studio/edit/events | the editor from D1 behind the gate: the list, `/edit/events/{id}`, `/edit/events/new`; `/login?token=...` opens it on staging |
+| https://eccm.positron.studio/en/ | the English front page from D1, the events to come (the Estonian front page is still the static `index.html`) |
+| https://eccm.positron.studio/edit/events/1 | one event's form behind the gate, reached from the Muuda button on the event; `/edit/events/new` from the Add button on the public list; `/login?token=...&next=` opens it on staging; there is no editor list any more, asked away 2026-09-28 |
 | https://eccm.positron.studio/edit/pages/1 | one text page's form, reached from the Muuda/Edit button every public page carries (the list at `/edit/pages` went the same day, asked as "rm edit/pages page") |
 | https://eccm.positron.studio/et/sundmused | the events list from D1, and `/en/events`, the last menu item that led to eccm.ee, with a Muuda button to the events editor |
 | https://eccm.positron.studio/derive | design from a picture, four sets of six pictures (`?set=1` to `4`) |
@@ -37,7 +37,8 @@ polarities, `favicon.ico` and `favicon-neg.ico`, and `stave.svg`.
 ## What the Worker does today
 
 `src/index.mjs` answers `/et/sundmused/{slug}` and `/en/events/{slug}` from
-D1, and since 2026-09-28 the editor: `/edit/events` (the list), `/edit/events/{id}`
+D1, since 2026-09-28 the events list at `/et/sundmused` and `/en/events` and
+the English front page at `/en/`, and the editor: `/edit/events/{id}`
 (one form for both languages, the facts, the credits, the status and the
 publish time), `/edit/events/new`, `/login` and `/logout`, all in
 `src/editor.mjs` with `src/render/editor.mjs` and the gate in `src/gate.mjs`;

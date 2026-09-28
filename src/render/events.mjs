@@ -9,7 +9,9 @@
 // with no text in this language shows its Estonian title and links to the
 // fallback page, the way an event page's next-events list does. The Muuda
 // button under the title leads to the events editor, which is where this
-// list is edited.
+// list is edited. With home set it is the English front page at /en/ (asked
+// 2026-09-28 with a picture of /en/ answering the 404): the front page's
+// heading, the events to come, no button and no past.
 import { html, raw } from './html.mjs';
 import { T, OTHER, page } from './chrome.mjs';
 import { dateLong, dateShort, clock, mapsUrl } from './dates.mjs';
@@ -43,25 +45,28 @@ const row = (e, lang) => {
     </li>`;
 };
 
-export const renderEvents = ({ lang, upcoming, past, origin, path }) => {
+export const HOME = { et: '/', en: '/en/' };
+
+export const renderEvents = ({ lang, upcoming, past, origin, path, home = false }) => {
   const t = T[lang];
-  const alternate = { lang: OTHER[lang], href: LIST[OTHER[lang]] };
+  const where = home ? HOME : LIST;
+  const alternate = { lang: OTHER[lang], href: where[OTHER[lang]] };
   const alternates = [
-    { hreflang: 'et', href: origin + LIST.et },
-    { hreflang: 'en', href: origin + LIST.en },
-    { hreflang: 'x-default', href: origin + LIST.et },
+    { hreflang: 'et', href: origin + where.et },
+    { hreflang: 'en', href: origin + where.en },
+    { hreflang: 'x-default', href: origin + where.et },
   ];
   const body = html`  <article class="event">
-    <header class="event-top">
+    ${home ? html`<h1 class="list-label">${t.upcoming}</h1>` : html`<header class="event-top">
       <div class="event-lead">
         <h1>${t.events}</h1>
-        <p class="event-actions"><a class="btn" href="/edit/events">${t.edit}</a></p>
+        <p class="event-actions"><a class="btn" href="/edit/events/new">${t.add}</a></p>
       </div>
-    </header>
+    </header>`}
     ${upcoming.length ? html`<ol class="events">
     ${upcoming.map((e) => row(e, lang))}
     </ol>` : html`<p class="note">${t.noEvents}</p>`}
-    ${past.length ? html`
+    ${past.length && !home ? html`
     <section class="next">
       <h2>${t.past}</h2>
       <ol class="events">
@@ -69,5 +74,5 @@ export const renderEvents = ({ lang, upcoming, past, origin, path }) => {
       </ol>
     </section>` : ''}
   </article>`;
-  return page({ lang, title: t.events, alternate, canonical: origin + path, alternates, body });
+  return page({ lang, title: home ? t.upcoming : t.events, alternate, canonical: origin + path, alternates, body });
 };

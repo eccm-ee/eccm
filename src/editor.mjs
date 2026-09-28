@@ -2,8 +2,7 @@
 // step. Editing?". Routes under /edit and the two gate routes:
 //
 //   GET  /login, POST /login, GET /logout      the staging stand-in (gate.mjs)
-//   GET  /edit                                 to the events list
-//   GET  /edit/events                          every event, any status
+//   GET  /edit                                 to the front page; an event is edited from its own Muuda button
 //   GET  /edit/events/new, POST                a blank form, then an insert
 //   GET  /edit/events/{id}, POST               the form from D1, then a save
 //   GET  /edit/pages/new, POST                 a blank form, then an insert
@@ -23,7 +22,7 @@
 import { renderEvent } from './render/event.mjs';
 import { renderPage, pagePath } from './render/page.mjs';
 import { OTHER } from './render/chrome.mjs';
-import { editorList, editorForm, pageForm, loginPage, gatePage, CATEGORIES, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
+import { editorForm, pageForm, loginPage, gatePage, CATEGORIES, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
 import { identify, tokenMatches, setCookie, clearCookie } from './gate.mjs';
 
 const HEAD = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' };
@@ -293,8 +292,8 @@ async function pageRoute(request, env, url, id, who) {
 // a cross-site form post cannot carry the cookie (SameSite=Lax), and a
 // browser that says where the post came from is believed
 const crossSite = (request) => { const site = request.headers.get('sec-fetch-site'); return !!site && site !== 'same-origin' && site !== 'none'; };
-// where /login sends a person after the cookie is set: anything under /edit/, the events' list or a page's form
-const safeNext = (n) => (typeof n === 'string' && /^\/edit\/[a-z0-9/_-]*$/i.test(n) ? n : '/edit/events');
+// where /login sends a person after the cookie is set: a form under /edit/, else the front page
+const safeNext = (n) => (typeof n === 'string' && /^\/edit\/[a-z0-9/_-]*$/i.test(n) ? n : '/');
 
 async function login(request, env, url) {
   if (!env.EDITOR_TOKEN) return reply(gatePage({ status: 503 }), 503);
@@ -339,18 +338,21 @@ async function form(request, env, url, id, who) {
   const before = id === 'new' ? { ev: null, texts: [], creditRows: [], values: fromRows(null, [], []) } : await load(db, +id);
   if (!before) return reply(gatePage({ status: 404 }), 404);
   const { roles, media } = await lookups(db);
-  if (request.method !== 'POST') return reply(editorForm({ v: padded(before.values), roles, media }));
+  // where Loobu goes: the event itself, Estonian first, or the public list for a new one
+  const home = before.texts.find((x) => x.lang === 'et') || before.texts.find((x) => x.lang === 'en');
+  const cancel = home ? eventPath(home.lang, home.slug) : '/et/sundmused';
+  if (request.method !== 'POST') return reply(editorForm({ v: padded(before.values), roles, media, cancel }));
   if (crossSite(request)) return reply(gatePage({ status: 403, reason: 'origin' }), 403);
   const fd = await request.formData();
   const v = parse(fd, before.values);
   const action = s(fd, 'do');
   // one more blank credit block, the typed values kept, nothing validated and nothing saved
-  if (action === 'add-credit') return reply(editorForm({ v: { ...v, credits: v.credits.concat([BLANK_CREDIT()]) }, roles, media }));
+  if (action === 'add-credit') return reply(editorForm({ v: { ...v, credits: v.credits.concat([BLANK_CREDIT()]) }, roles, media, cancel }));
   const errors = await validate(v, db, roles, media);
-  if (errors.length) return reply(editorForm({ v: padded(v), errors, roles, media }), 422);
+  if (errors.length) return reply(editorForm({ v: padded(v), errors, roles, media, cancel }), 422);
   if (action.startsWith('preview')) return preview(db, v, action.endsWith('en') ? 'en' : 'et', before, roles, media, url);
   const out = await save(db, v, before, who);
-  if (out.stale) return reply(editorForm({ v: padded(v), errors: [{ field: 'rev', msg: 'Keegi teine salvestas selle sündmuse vahepeal. Ava leht uues vahekaardis, võrdle ja tee muudatus uuesti.' }], roles, media }), 409);
+  if (out.stale) return reply(editorForm({ v: padded(v), errors: [{ field: 'rev', msg: 'Keegi teine salvestas selle sündmuse vahepeal. Ava leht uues vahekaardis, võrdle ja tee muudatus uuesti.' }], roles, media, cancel }), 409);
   // the event page when it is published, else the form again, as a page save lands
   return redirect(landing(v, eventPath) || `/edit/events/${out.id}`);
 }
@@ -362,13 +364,7 @@ export async function editor(request, env, url) {
     if (p === '/logout') return redirect('/login', { 'set-cookie': clearCookie() });
     const id = await identify(request, env);
     if (id.status) return reply(gatePage(id), id.status);
-    if (p === '/edit') return redirect('/edit/events');
-    if (p === '/edit/events') {
-      const events = (await env.DB.prepare(`SELECT e.id, e.starts_at, e.status, e.updated_at, t0.title AS title_et, t1.title AS title_en
-        FROM event e LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et' LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = 'en'
-        ORDER BY e.starts_at DESC`).bind().all()).results;
-      return reply(editorList({ events }));
-    }
+    if (p === '/edit') return redirect('/');
     const m = /^\/edit\/events\/(new|\d+)$/.exec(p);
     if (m) return form(request, env, url, m[1], id.who);
     const pm = /^\/edit\/pages\/(new|\d+)$/.exec(p);

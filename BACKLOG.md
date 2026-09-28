@@ -7,6 +7,16 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "wat" (a picture of https://eccm.positron.studio/en/ answering There is no such page)
+
+The English front page did not exist: `/` is the static Estonian front page and `/en/` fell to the 404. `/en/` becomes the English home, the events list from D1 under the front page's heading, and the English chrome's mark and Home lead to it; `/et/` goes to `/`. Files: `src/index.mjs`, `src/render/events.mjs`, `src/render/chrome.mjs`, `src/render/mark.mjs`, the static pages' EN switch.
+✅ `/en/` is the English front page: the events to come from D1 under the heading Upcoming events, no button, no past; the English chrome's mark and Home lead to it, the switch on it leads to `/`, `/et/` answers 301 to `/`, and the static Estonian pages' EN switch leads to `/en/` (index.html follows when the front page agent hands it back). MEASURED on 8800: `/en/` 200 with 1 row, `/en` 200, `/et/` 301. Shot at 1280.
+
+### Done 2026-09-28: "rm https://eccm.positron.studio/edit/events page. only events themselves are access ppoint to edit"
+
+Asked verbatim, after `/edit` was pointed at that list. The editor's events list goes the way the pages list went: an event is edited from its own Muuda button and nothing else lists them for editing. A new event, which has no button yet, is reached from an Add button on the public events list; `/edit` and a login without a destination land on the front page; the crumb over the event form goes and Loobu leads to the event itself; a Logi välja link sits under each form since the list carried it. Files: `src/editor.mjs`, `src/render/editor.mjs`, `src/render/events.mjs`, `src/render/chrome.mjs`.
+✅ `editorList` and its route are gone; `/edit/events` answers the 404 door. An event is edited from its own Muuda button, a new one from the Lisa sündmus / Add an event button on the public list at /et/sundmused and /en/events, `/edit` and a login with no destination land on the front page, the crumb over the event form is gone, Loobu leads to the event itself (the list for a new one), a Logi välja link sits under both forms. MEASURED on 8800: `/edit/events` 404 with the cookie, `/edit` 303 to `/`, the login with no next 303 to `/`, the event form 200 with 0 crumbs and Loobu at the event's URL, the list with its Add button.
+
 ### Done 2026-09-28: "rm https://eccm.positron.studio/edit, make real edit stff"
 
 Asked verbatim. The static `public/edit.html`, the HTML-only form that saved nothing, goes, and `/edit` answers with the real editor: a redirect to the events list behind the gate. Files: `public/edit.html` (deleted), `src/index.mjs`, `src/editor.mjs`, whatever linked to the demo form.
