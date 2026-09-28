@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "rm logo-square.svg / ECCM mark, white on ink / logo-square-neg.svg labels"
+
+Asked verbatim. The two square marks in the design system page's Logo section carry no caption and an empty alt, the sentence above them saying what they are.
+
 ### Done 2026-09-28: "rm 11 rem labels. Black on white, white on black"
 
 Asked verbatim. The wordmark lockups' captions on the design system page read Black on white and White on black, the size no longer named.
