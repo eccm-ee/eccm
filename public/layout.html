@@ -4,21 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>ECCM: headers and footers</title>
-<!-- public/layout.html: six headers on whole pages and four footers for the site, tried side by side
-     (asked 2026-09-27: "create new page layout where you tray first several
-     footers. eccm logo, with and without workmark, main links, credits etc.
-     use Schibsted and Instrument", "i mean page /layout", "look aroind other
-     footers too"). Each footer carries the mark alone, letters and stave
-     (the wordmark under it left on 2026-09-28: "rm wordmarks on logos in
-     footers"), and some of the main links, the contact with the Instagram and Facebook links, the credits, a newsletter field and
-     the funders' slots; each is drawn in Schibsted Grotesk (the Instrument
-     Sans twins left on 2026-09-28: "rm instrument sans examples from layout
-     page"), at the desk and in a 375 px box, and the footer decides its own
-     arrangement from its container, not from the window. What a footer
-     carries was read off seven comparable sites on 2026-09-27, one fetch
-     each, and the table below is that reading. The mark symbol is the one
-     wordmark.html draws, boxed to its ink. -->
+<title>ECCM: the page</title>
+<!-- public/layout.html: one header and one footer over six derived event
+     pages, the page as it would be. Kept from the header and footer studies
+     of 2026-09-27 and 28 (in git at eee60c1) on "clean up layout page.
+     leave H-B. One line, centred, a step larger / A. Three columns and a
+     partner / several content pages in between. for mobile use stnd 3 lines
+     1px black": the one-line header with the mark and its wordmark, centred,
+     the mark at 10rem and the menu at 16 px, the phone menu behind three
+     hairlines; the three-column footer with the contact, the social links
+     and the City of Music mark as the city publishes it. Each page is drawn
+     at the desk, spanning the window with the site's frame inside, and in a
+     375 px box; one figure shows the phone menu open. The derived examples
+     are copies of what derive.html drew on 2026-09-28 with the schemes it
+     measured. -->
 <link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
@@ -91,10 +90,6 @@
        (asked 2026-09-28: "logo variant with side wordmark on desktop, below in mobile") */
     .hd .mk svg.under { display: none; }
     @container (max-width: 48rem) { .hd .mk svg.beside { display: none; } .hd .mk svg.under { display: block; } }
-    /* H-A, two lines: the mark and the switch as two ends, the menu on its own line a leading under the mark; 2lh above and below */
-    .hd.two > .frame { padding-block: 2lh; }
-    .hd.two .top { display: flex; justify-content: space-between; align-items: baseline; column-gap: var(--eccm-s-8); }
-    .hd.two .nav { margin-block-start: 1lh; }
     figure.open { margin: 0; }
     figure.open .box { inline-size: min(375px, 100%); }
     figure.open figcaption { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-start: var(--eccm-s-3); }
@@ -103,14 +98,6 @@
     .hd.one .nav { order: 1; flex: 1; }
     .hd.one .sw { order: 2; }
     @container (max-width: 48rem) { .hd.one .nav { order: 3; flex-basis: 100%; } .hd.one .sw { margin-inline-start: auto; } }
-    /* H-C, the mark large: 3lh above it, the menu and the switch on one line 2lh under its baseline, 3lh below */
-    .hd.big > .frame { padding-block: 3lh; }
-    .hd.big .foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; column-gap: var(--eccm-s-12); row-gap: 1lh; margin-block-start: 2lh; }
-    /* H-D, running: the mark small on one line with the menu and the switch, 1lh above and below, the least that still has air */
-    .hd.run > .frame { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--eccm-s-12); row-gap: 1lh; padding-block: 1lh; }
-    .hd.run .nav { order: 1; flex: 1; }
-    .hd.run .sw { order: 2; }
-    @container (max-width: 48rem) { .hd.run .nav { order: 3; flex-basis: 100%; } .hd.run .sw { margin-inline-start: auto; } }
     /* the derived page between: the scheme's ground edge to edge, the sample's own rules as derive.html has them, its padding and outline left to the page */
     .pg-main { background: var(--ev-ground); color: var(--ev-ink); padding-block: 2lh 4lh; }
     .pg .sample { padding: 0; background: none; outline: none; }
@@ -135,10 +122,7 @@
     .ft .mk svg { display: block; inline-size: var(--w, 11rem); max-inline-size: 100%; }
     .ft .label { color: var(--eccm-ink); margin-block-end: var(--eccm-s-2); }
     /* a row with two ends, wrapping into a stack when the container is narrow */
-    .ft .row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--eccm-s-6) var(--eccm-s-8); }
     .ft .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: var(--eccm-s-8); }
-    .ft .menu { display: flex; flex-wrap: wrap; column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-1); }
-    .ft .stack li + li { margin-block-start: var(--eccm-s-1); }
     /* the menu in two columns: seven items fall four and three; the columns sit 3rem apart and the rows a half step (asked 2026-09-27: "add more space between links in fooer (C)", then 2026-09-28 with a crop: "add more space between", from the footer's 2rem) */
     .ft .two { display: grid; grid-template-columns: repeat(2, max-content); column-gap: var(--eccm-s-12); row-gap: var(--eccm-s-2); grid-auto-flow: row; }
     /* a partner's mark at the end of the columns: three columns that share the width and a fourth that takes only its own, and the mark 4rem wide
@@ -226,25 +210,11 @@
 </nav>
 
 <main class="frame lay">
-  <h1 class="list-label">Headers and footers</h1>
+  <h1 class="list-label">The page</h1>
   <div class="prose flow intro">
-    <p>Six headers, each on a whole page with a derived event page between it and footer A, each in a scheme the derive page read off a different picture: the Huddersfield mauve, the JOY! pink, the Up to Three navy, Sound Plasma with its Literata verdict, the Varssavi plum and the Scrapyard navy. The first three are one header in three sizes, the current one on the mark's baseline and two centred on the mark's middle, a step and two steps larger. Every vertical distance in the headers is a whole number of the body's leading, the mark's size is a step on a scale of its own, the menu is body size with 2rem between items, and no header draws a rule, which is what eight comparable sites' headers do. Then four footers for the site, each with the mark alone and some of the main links, the contact with the Instagram and Facebook links, the credits, a newsletter field, the funders' slots and the Tallinn UNESCO City of Music mark as the city publishes it. Each is drawn in Schibsted Grotesk, at the desk and in a 375 px box, and decides its own arrangement from its container; the first in both languages. Left out on purpose: an email, because eccm.ee publishes none, and a privacy line, because no such page exists yet.</p>
-    <p>What a footer carries, read off seven comparable sites on 2026-09-27, one fetch each. Every one gives the organisation's name and address; five repeat the menu; four give an email and four a phone; four carry a privacy or legal line; three a copyright line, three social links and three a newsletter field; two the funders and two a registry number. eccm.ee's own footer today is Joomla's login form.</p>
+    <p>One header and one footer over six event pages, each in the scheme the derive page read off its picture: the header with the mark and its wordmark on one line, centred, the menu at 16 px; the footer in three columns with the City of Music mark at the end. At the desk each page spans the window; beside it the same page in a 375 px box, where the menu sits behind three hairlines.</p>
   </div>
-  <table>
-    <thead><tr><th>site</th><th>what its footer carries</th></tr></thead>
-    <tbody>
-      <tr><td>eestikontsert.ee</td><td>four columns of links (about, news, visitor, services), name, address, phone, email, registry code</td></tr>
-      <tr><td>erso.ee</td><td>name, address, phone, email, registry and VAT numbers, a newsletter field with its consent line, tickets, six social links</td></tr>
-      <tr><td>helilooja.ee</td><td>name, address, phone, email, the menu again, Facebook, a copyright line with the years 1924 to 2026</td></tr>
-      <tr><td>gaudeamus.nl</td><td>funders under "Gefinancierd door", four social links, about and festival columns, a quick-links column, the language, address, privacy</td></tr>
-      <tr><td>hcmf.co.uk</td><td>about, privacy, code of conduct, account, archive, email, two phones, address, copyright, charity number</td></tr>
-      <tr><td>ircam.fr</td><td>teams, partners, support, jobs, a contact form, the newsletter, Centre Pompidou, copyright, cookies, privacy, legal, terms</td></tr>
-      <tr><td>saal.ee</td><td>name, address, the association, a newsletter field</td></tr>
-    </tbody>
-  </table>
-  <div id="heads"></div>
-  <div id="tries"></div>
+  <div id="pages"></div>
 </main>
 
 <footer class="frame site-foot">
@@ -302,8 +272,8 @@ const L = {
 };
 const menu = (p, cls) => `<ul class="${cls}">${p.menu.map(([t, h]) => `<li><a href="${h}">${t}</a></li>`).join('')}${cls === 'nav' ? `<li class="lang-in">${p.sw}</li>` : ''}</ul>`;
 const mark = (p, w, wordmark = false) => `<a class="mk" href="./" style="--w: ${w}rem"${wordmark ? ` data-wordmark="${p.lang}"` : ''} aria-label="${p.name}"></a>`;
-// the phone menu's button: five hairlines on the stave's pitch, in the ink
-const menuBtn = (p, open = false) => `<button class="menu-btn" type="button" aria-expanded="${open}" aria-label="${p.menuLabel}"><svg width="24" height="21" viewBox="0 0 24 21" aria-hidden="true">${[0, 5, 10, 15, 20].map((y) => `<rect y="${y}" width="24" height="1"/>`).join('')}</svg></button>`;
+// the phone menu's button: the usual three hairlines, one pixel each, in the ink (asked 2026-09-28: "for mobile use stnd 3 lines 1px black")
+const menuBtn = (p, open = false) => `<button class="menu-btn" type="button" aria-expanded="${open}" aria-label="${p.menuLabel}"><svg width="24" height="17" viewBox="0 0 24 17" aria-hidden="true">${[0, 8, 16].map((y) => `<rect y="${y}" width="24" height="1"/>`).join('')}</svg></button>`;
 const sw = (p, o = {}) => `<span class="sw">${p.sw}${menuBtn(p, !!o.open)}</span>`;
 // the City of Music mark; black where the footer carries no colour, which the city's rule allows (asked 2026-09-27: "tallinn muusikalinn -> make it black")
 const partner = (p, black) => `<a class="partner" href="${p.partnerHref}"><img src="./partners/${black ? p.partnerBlack : p.partner}" alt="${p.partnerAlt}"></a>`;
@@ -319,19 +289,6 @@ const TRIES = [
       <div><p>${p.hall}<br>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">${p.post}<br>${POST}</p><p style="margin-block-start: var(--eccm-s-3)">${p.phone}<br><a href="tel:+3725162103">${PHONE}</a></p><p style="margin-block-start: var(--eccm-s-3)"><a href="${FORM}">${p.write}</a></p>${social()}</div>
       <div class="end">${partner(p, true)}</div>
     </div>` },
-  { title: 'One row', what: 'the mark alone at the start; the name, the venue and the language switch at the end', html: (p) => `
-    <div class="row">${mark(p, 6)}<div class="line" style="margin:0"><span>${p.name}, ${VENUE}</span>${p.sw}</div></div>` },
-  { title: 'The mark and the menu', what: 'the mark at the start and the menu at the end, on one row; under them the name, the venue and the copyright line', html: (p) => `
-    <div class="row">${mark(p, 8)}${menu(p, 'menu')}</div>
-    <div class="line"><span>${p.name}, ${VENUE}</span><span>${p.copy}</span>${p.sw}</div>` },
-  { title: 'Four columns and a newsletter', what: 'the mark alone, 6rem; the menu in two columns; the contact with the Instagram and Facebook links; a newsletter field with its name as the placeholder and its button; under everything a line with the copyright and the switch at the start and the City of Music mark in black at the end (asked 2026-09-27: "E-post as placeholder in field, rm label. rm toetajad. find place to muusikalinn", "try 2 col links in D")', html: (p) => `
-    <div class="cols">
-      <div>${mark(p, 6)}</div>
-      <div><p class="label">${p.menuLabel}</p>${menu(p, 'two')}</div>
-      <div><p class="label">${p.contact}</p><p>${p.name}</p><p>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">${p.post}<br>${POST}</p><p style="margin-block-start: var(--eccm-s-3)">${p.phone}<br><a href="tel:+3725162103">${PHONE}</a></p><p style="margin-block-start: var(--eccm-s-3)"><a href="${FORM}">${p.write}</a></p>${social()}</div>
-      <div><p class="label">${p.news}</p><form class="news" onsubmit="return false"><input type="email" name="email" autocomplete="email" placeholder="${p.email}" aria-label="${p.email}"><button class="btn" type="submit">${p.join}</button></form></div>
-    </div>
-    <div class="line" style="justify-content: space-between; align-items: center"><span class="line" style="margin: 0"><span>${p.copy}</span>${p.sw}</span>${partner(p, true)}</div>` },
 ];
 const LANG_NAME = { et: 'Estonian', en: 'English' };
 const footer = (html, lang) => `<footer class="ft" lang="${lang}"><div class="frame">${html}</div></footer>`;
@@ -347,51 +304,23 @@ const DERIVED = {
   scrapyard: { from: 'the Scrapyard picture, set 1: a dark scheme on its navy', style: "--ev-ground: #192846; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-accent: #6983b6; --ev-btn-fill: #ffffff; --ev-on-btn: #1a1a1a; --ev-title-face: inherit; --ev-body-face: inherit;", html: "<div class=\"sample\" style=\"--ev-ground: #192846; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-accent: #6983b6; --ev-btn-fill: #ffffff; --ev-on-btn: #1a1a1a; --ev-title-face: inherit; --ev-body-face: inherit;\">\n      <p class=\"kicker\">10.10.2026 19.30 Kanuti Gildi SAAL</p>\n      <p class=\"title\">Scrapyard</p>\n      <dl class=\"facts\"><div><dt>Millal</dt><dd>30.09.2026 kell 19.00</dd></div><div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9</dd></div></dl>\n      <p class=\"actions\"><a class=\"btn btn-pri\" href=\"./event.html\">Osta pilet</a><a class=\"btn\" href=\"./event.html\">Lisa kalendrisse</a></p>\n      <div class=\"body flow\"><p>Avalik žest ei ole valmis teose esitlus ega klassikaline kontsert. See on kümnepäevase protsessi viimane hetk, võimalus olla tunnistajaks olukorrale, mis on tekkinud kolme osaleja koosmõjus ja mida ei saa korrata täpselt samal kujul.</p><p>Kõigile, keda huvitab <strong>heli, mis ei ole komponeeritud</strong>, ja kes on valmis <em>kuulama ilma partituurita</em>. Vaata ka <a href=\"./event.html\">sarja eelmisi aktsioone</a>.</p></div>\n      <dl class=\"credits\"><div><dt>Kunstnikud</dt><dd>Marianna Liik, Artjom Astrov, Maryn-Liis Rüütelmaa</dd></div><div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div></dl>\n      </div>" },
 };
 // the four headers, each shown on a whole page over one derived example and footer A
-const oneLine = (cls, w, navSize) => (p, o = {}) => `
-    <header class="hd one${cls}"${o.open ? ' data-open' : ''}${navSize ? ` style="--nav-size: ${navSize}"` : ''}><div class="frame">${mark(p, w, true)}${sw(p, o)}${menu(p, 'nav')}</div></header>`;
-const HEADS = [
-  { title: 'One line, with the wordmark', ex: 'huddersfield', what: 'the mark at 8rem with its wordmark beside it at the desk and under it in a narrow box, the menu and the switch on the mark\'s baseline at 14 px, 3rem after the mark and 2rem between items; a leading and a half of air above and below', html: oneLine('', 8, '') },
-  { title: 'One line, centred, a step larger', ex: 'joy', what: 'the same line with the mark at 10rem and the menu at 16 px, everything centred on the mark\'s middle', html: oneLine(' centre', 10, '1rem') },
-  { title: 'One line, centred, two steps larger', ex: 'uptothree', what: 'the same line with the mark at 12rem and the menu at 18 px, the body size, centred on the mark\'s middle', html: oneLine(' centre', 12, 'var(--eccm-t-m)') },
-  { title: 'Two lines', ex: 'soundplasma', what: 'the mark at 12rem and the switch as two ends of the first line, the menu on a line of its own one leading under the mark; two leadings of air above and below, no rule', html: (p, o = {}) => `
-    <header class="hd two"${o.open ? ' data-open' : ''}><div class="frame"><div class="top">${mark(p, 12)}${sw(p, o)}</div>${menu(p, 'nav')}</div></header>` },
-  { title: 'The mark large', ex: 'varssavi', what: 'the mark at 20rem alone on its line, three leadings of air above it; the menu and the switch as two ends of a line two leadings under its baseline, three leadings below that', html: (p, o = {}) => `
-    <header class="hd big"${o.open ? ' data-open' : ''}><div class="frame">${mark(p, 20)}<div class="foot">${menu(p, 'nav')}${sw(p, o)}</div></div></header>` },
-  { title: 'Running', ex: 'scrapyard', what: 'the mark at 6rem on one line with the menu and the switch, one leading of air above and below, the least header that still breathes, for every page after the first', html: (p, o = {}) => `
-    <header class="hd run"${o.open ? ' data-open' : ''}><div class="frame">${mark(p, 6)}${sw(p, o)}${menu(p, 'nav')}</div></header>` },
-];
+// the header: the mark with its wordmark on one line, centred on the mark's middle, the mark at 10rem and the menu at 16 px
+const header = (p, o = {}) => `
+    <header class="hd one centre"${o.open ? ' data-open' : ''} style="--nav-size: 1rem"><div class="frame">${mark(p, 10, true)}${sw(p, o)}${menu(p, 'nav')}</div></header>`;
 const page = (head, ex, foot) => `<div class="pg">${head}<div class="pg-main" style="${ex.style}"><div class="frame">${ex.html}</div></div>${foot}</div>`;
-const heads = document.getElementById('heads');
+const pagesEl = document.getElementById('pages');
 let pages = 0;
-HEADS.forEach((h, i) => {
-  const p = L.et, ex = DERIVED[h.ex], foot = footer(TRIES[0].html(p), 'et');
-  const h2 = document.createElement('h2'); h2.id = 'head-' + 'abcdef'[i]; h2.textContent = `H-${'ABCDEF'[i]}. ${h.title}`; heads.append(h2);
-  const cap = document.createElement('p'); cap.className = 'cap'; cap.textContent = `${h.what}; the page between it and footer A is ${ex.from}`; heads.append(cap);
+const P = L.et, foot = footer(TRIES[0].html(P), 'et');
+Object.entries(DERIVED).forEach(([key, ex], i) => {
+  const h2 = document.createElement('h2'); h2.id = 'page-' + key; h2.textContent = `${i + 1}. ${ex.html.match(/class="title">([^<]*)</)[1]}`; pagesEl.append(h2);
+  const cap = document.createElement('p'); cap.className = 'cap'; cap.textContent = ex.from; pagesEl.append(cap);
   const f = document.createElement('figure'); f.className = 'desk';
-  f.innerHTML = `<div class="box">${page(h.html(p), ex, foot)}</div><figcaption>the desk</figcaption>`; heads.append(f); pages++;
+  f.innerHTML = `<div class="box">${page(header(P), ex, foot)}</div><figcaption>the desk</figcaption>`; pagesEl.append(f); pages++;
   const phones = document.createElement('div'); phones.className = 'phones';
   const ph = document.createElement('figure');
-  ph.innerHTML = `<div class="box">${page(h.html(p), ex, foot)}</div><figcaption>375 px</figcaption>`; phones.append(ph); pages++;
-  const op = document.createElement('figure'); op.className = 'open';
-  op.innerHTML = `<div class="box">${h.html(p, { open: true })}</div><figcaption>375 px, the menu open</figcaption>`; phones.append(op);
-  heads.append(phones);
-});
-const tries = document.getElementById('tries');
-let n = 0;
-const fh = document.createElement('h2'); fh.id = 'footers'; fh.textContent = 'Footers'; tries.append(fh);
-TRIES.forEach((t, i) => {
-  const h2 = document.createElement('h2'); h2.id = 'try-' + 'abcd'[i]; h2.textContent = `${'ABCD'[i]}. ${t.title}`; tries.append(h2);
-  const cap = document.createElement('p'); cap.className = 'cap'; cap.textContent = t.what; tries.append(cap);
-  const langs = t.langs || ['et'];
-  for (const lang of langs) {
-    const p = L[lang], html = t.html(p), tag = langs.length > 1 ? `, ${LANG_NAME[lang]}` : '';
-    const f = document.createElement('figure'); f.className = 'desk';
-    f.innerHTML = `<div class="box">${footer(html, lang)}</div><figcaption>the desk${tag}</figcaption>`; tries.append(f); n++;
-    const phones = document.createElement('div'); phones.className = 'phones';
-    const ph = document.createElement('figure');
-    ph.innerHTML = `<div class="box">${footer(html, lang)}</div><figcaption>375 px${tag}</figcaption>`; phones.append(ph); n++;
-    tries.append(phones);
-  }
+  ph.innerHTML = `<div class="box">${page(header(P), ex, foot)}</div><figcaption>375 px</figcaption>`; phones.append(ph); pages++;
+  if (i === 0) { const op = document.createElement('figure'); op.className = 'open'; op.innerHTML = `<div class="box">${header(P, { open: true })}</div><figcaption>375 px, the menu open</figcaption>`; phones.append(op); }
+  pagesEl.append(phones);
 });
 await document.fonts.load('500 100px "Instrument Sans"');
 for (const a of document.querySelectorAll('.mk')) a.replaceChildren(...(a.dataset.wordmark ? [lockup(a.dataset.wordmark, 'beside'), lockup(a.dataset.wordmark, 'under')] : [markSvg()]));
@@ -399,7 +328,7 @@ for (const a of document.querySelectorAll('.mk')) a.replaceChildren(...(a.datase
 document.addEventListener('click', (e) => { const b = e.target.closest('.menu-btn'); if (!b) return; const hd = b.closest('.hd'); const open = hd.toggleAttribute('data-open'); b.setAttribute('aria-expanded', String(open)); });
 // the scrollbar's width, so a full-bleed box is the viewport and not the viewport plus a scrollbar
 document.documentElement.style.setProperty('--sbw', (innerWidth - document.documentElement.clientWidth) + 'px');
-window.__layout = { pages, heads: HEADS.length, footers: n, tries: TRIES.length, marks: document.querySelectorAll('.mk svg').length, partners: document.querySelectorAll('.partner img').length };
+window.__layout = { pages, examples: Object.keys(DERIVED).length, marks: document.querySelectorAll('.mk svg').length, partners: document.querySelectorAll('.partner img').length, btnLines: document.querySelector('.menu-btn rect') ? document.querySelectorAll('figure.open .menu-btn rect').length : 0 };
 </script>
 </body>
 </html>

@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "clean up layout page. leave H-B. One line, centred, a step larger / A. Three columns and a partner / several content pages in between. for mobile use stnd 3 lines 1px black"
+
+Asked verbatim. `public/layout.html` is one header over six derived pages with one footer under each, at the desk and in a 375 px box, and one figure of the phone menu open; the other five headers, the three other footers, the inventory table and their rules are out (in git at eee60c1). The phone menu's button is three hairlines one pixel each, the usual three, in the ink.
+
 ### Done 2026-09-28: "\"/sans\" page"
 
 The clarification of "bring other /sans versions back": a page of its own, https://eccm.positron.studio/sans, the sans faces in the derived page's three uses the way /serif shows the serifs: A Schibsted Grotesk, B Instrument Sans, C Bricolage Grotesque, D Sofia Sans Condensed, E Familjen Grotesk, F Anybody, each at its normal width, the declarations from type.html.
