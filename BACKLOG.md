@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "put them to 2x3 grid" (a crop of the beside lockups)
+
+Asked with a picture. The beside lockups on the design system page are one cell in a grid of two columns, plain and white on black, and three rows, English, Estonian and both side by side, in place of two cells in a wrapping row.
+
 ### Done 2026-09-28: "rm whie bg black border examples. show border on hover. no over: transparent but prenset border to avoid jump"
 
 Asked verbatim. The bordered lockup leaves each set of the wordmark studies on the design system page; the plain one carries a transparent one pixel border that turns ink on hover, so nothing moves; the inverted one stays. Two lockups a set, twelve in all.

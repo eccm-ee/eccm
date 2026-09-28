@@ -85,6 +85,8 @@
     .cell { display: grid; row-gap: var(--eccm-s-6); margin-block-end: var(--eccm-s-16); }
     .cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin: 0; }
     .locks { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--eccm-s-12); }
+    /* the beside lockups as a grid of two columns, plain and white on black, and three rows, English, Estonian and both (asked 2026-09-28 with a crop: "put them to 2x3 grid") */
+    #beside .locks { display: grid; grid-template-columns: repeat(2, max-content); align-items: start; }
     .locks figure { margin: 0; }
     .locks svg { display: block; overflow: visible; }
     .w20 { inline-size: 20rem; } .w11 { inline-size: 11rem; }
@@ -512,8 +514,7 @@ const draw = async () => {
   cells.append(cellOf('under', `${px(UNDER)}, line height ${LH}, one language`, { layout: 'under', size: UNDER }, ONE));
   cells.append(cellOf('under-both-en', `${px(UNDER)}, both languages, the English above the mark and the Estonian under it, the same air`, { layout: 'under', size: UNDER, above: true }, [[EN, ET]]));
   section('Beside the mark');
-  cells.append(cellOf('beside', `${px(BESIDE)}, line height ${LH}, one language, ${BESIDE_GAP} units after the stave, centred on the E's middle bar`, { layout: 'beside', size: BESIDE }, ONE));
-  cells.append(cellOf('beside-columns', `${px(BESIDE)}, both languages side by side, each centred on the E's middle bar, ${BESIDE_GAP} units between them`, { layout: 'beside', size: BESIDE, columns: true }, BOTH));
+  cells.append(cellOf('beside', `${px(BESIDE)}, line height ${LH}, 28 units after the stave, centred on the E's middle bar: one language, then both side by side 28 units apart`, { layout: 'beside', size: BESIDE, columns: true }, [[EN], [ET], [EN, ET]]));
   // every 20rem lockup's box, in units, and the widest line of each language at each size against the letters' 298
   const boxes = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="11"]:not(.frame):not(.inv)')].map((v) => v.dataset.box)]));
   // in each bilingual square at 20rem, the air over the top language and under the bottom one, in units
