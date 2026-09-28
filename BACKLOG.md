@@ -7,9 +7,20 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
-### Open 2026-09-28: "in bg: footer logo should be smaller and tallinn-muusikalinn too a bit. add instagram and facebook to footer,"
+### Open 2026-09-28: "bring other /sans versions back"
+
+Asked verbatim. The five sans faces of 2026-09-27 ("give me some fresher stuff": Bricolage Grotesque, Instrument Sans, Sofia Sans Condensed, Familjen Grotesk, Anybody) were on `public/wordmark.html` as settings L to P at 50c3226 and were cut to Instrument Sans at cf2fdb5; their files and licences stayed under `public/vendor`. A background agent brings the other four back on the wordmark page as a section of their own, the under lockup at 40 units in each face at the two widths, both languages, with the face's own width and weight as the earlier settings had them, so the faces compare against the Instrument Sans lockups above. The agent reports and does not commit.
+
+### Done 2026-09-28: "perhaps header typo should be bit smaller? do mobile menu solution, elegant one (thin 1px lines, 5 of them). H-B. One line - logo variant with side workmark on desktop, below in mobile"
+
+Asked verbatim, the headers on `public/layout.html`. The menu and the switch in every header go to the small size, 14 px, the size four of the eight measured sites use. In a narrow box the menu hides behind a button of five hairlines one pixel each, the stave's own count, and opens under the mark's line one item a line; the phone mocks show it closed, and a short figure beside each shows the header open. H-B draws the mark with its wordmark, the beside lockup from the wordmark page at the desk and the under lockup in a narrow box, the mark itself at one width in both.
+⚠️ Added mid-task: *"make layoyt desktop examples full page w"*: the desk mocks span the viewport, header, ground and footer edge to edge, with the site's frame inside them, so a mock is the page and not a picture of it.
+✅ All four done. MEASURED at 1280: the menu and the switch 14 px; the desk box 1280 wide with the site's frame 1152 inside, the footer on the frame too; the button hidden at the desk and shown in the 375 box with the menu hidden behind it, five rectangles one pixel tall, the open figure listing seven items one a line; H-B's beside lockup 222 px wide at the desk and its under lockup 128 px in the box, the mark 128 in both; the switch group's right edge on the frame's edge in all four headers after a first cut left it before the menu; the headers 213, 126, 335 and 89 px tall. Shot at 1280 and 375.
+
+### Done 2026-09-28: "in bg: footer logo should be smaller and tallinn-muusikalinn too a bit. add instagram and facebook to footer,"
 
 Asked verbatim. A background agent on `public/layout.html`: every footer's mark a step down its scale (8rem to 6, 11 to 8), the City of Music mark from 5rem to 4 with its ink still on the mark's top and the footer's edge, and Instagram and Facebook as text links in the contact columns of A and D, the handles from `plans/plan-eccm-presence.md` (instagram.com/eccm.ee, facebook.com/eestinyydismuusikakeskus). The agent reports and does not commit.
+✅ Done by the agent, shipped by the session as 8bafd6d. MEASURED at 1280: the ECCM mark 96 px wide in A, B and D and 128 in C, the City of Music mark 64 px, its ink's top 0.00 px off the mark's top and its outer edge 0.01 px off the footer's edge; Instagram and Facebook once in each drawing of A and D, 14 pairs on the page; the header marks unchanged. One shot at 1280.
 
 ### Done 2026-09-28: "credtist: create comojent that shows first but allows add more items" and "move image to top"
 

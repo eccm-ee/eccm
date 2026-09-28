@@ -25,7 +25,10 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="./eccm.css">
 <style>
+  @font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
   @layer page {
+    .tag-is { font-family: 'Instrument Sans', Helvetica, Arial, sans-serif; font-stretch: 75%; font-variation-settings: 'wdth' 75; font-weight: 500; }
     .intro { max-inline-size: var(--eccm-measure); }
     .lay h2 { margin-block: var(--eccm-s-24) var(--eccm-s-4); font-size: var(--eccm-t-l); }
     .lay h2:first-of-type { margin-block-start: var(--eccm-s-12); }
@@ -34,7 +37,12 @@
     .lay th, .lay td { text-align: start; vertical-align: top; padding: var(--eccm-s-2) var(--eccm-s-4) var(--eccm-s-2) 0; border-block-end: 1px solid var(--eccm-rule); }
     .lay th { color: var(--eccm-ink-2); font-weight: 400; }
     /* one rendering: a box that is the footer's container, so the footer inside decides by the box and not by the window */
-    .box { border: 1px solid var(--eccm-rule); container-type: inline-size; margin-block-end: var(--eccm-s-8); }
+    .box { border: 1px solid var(--eccm-rule); container-type: inline-size; margin-block-end: var(--eccm-s-8); --g: var(--eccm-s-8); }
+    @container (max-width: 48rem) { .box { --g: var(--eccm-s-4); } }
+    .box .frame { inline-size: min(100% - 2 * var(--g), 72rem); }
+    /* a desk mock is the page: the box spans the viewport (less the scrollbar the script measures) and the site's frame sits inside it
+       (asked 2026-09-28: "make layout desktop examples full page width") */
+    figure.desk .box { inline-size: calc(100vw - var(--sbw, 0px)); margin-inline-start: calc(50% - (100vw - var(--sbw, 0px)) / 2); border-inline: 0; }
     .phones { display: flex; flex-wrap: wrap; gap: var(--eccm-s-8); align-items: flex-start; }
     /* the phone box is sized on the figure, not on the box: a flex item's percentage has nothing to resolve against, and the box went 163 px wide the first time (MEASURED 2026-09-27) */
     .phones figure { margin: 0; flex: none; inline-size: min(375px, 100%); }
@@ -45,9 +53,6 @@
     figure.desk .box { margin-block-end: 0; }
 
     /* a whole page in a box: a header, a derived event page in its scheme, footer A; the frames inside read the box's gutter */
-    .pg { --g: var(--eccm-s-8); }
-    .pg .frame { inline-size: min(100% - 2 * var(--g), 72rem); }
-    @container (max-width: 48rem) { .pg { --g: var(--eccm-s-4); } }
     /* the headers, redrawn 2026-09-28 after "all headers are bad. cramped, no proper typo approach, not leaving nice detected area
        stand out": every vertical distance is a whole number of the body's leading (1lh is 27 px at 18 px on 1.5), the mark's
        size is a step on a scale of its own (6, 8, 12, 20rem), the menu is body size with 2rem between items, and no header draws
@@ -55,26 +60,45 @@
        saal, arvopart, one visit each): their marks sit in 25 to 31 px of air at heights of 71 to 117 px and the menu shares the
        mark's line at 14 to 21 px. The derived block below starts on a clean edge after the header's own air, and pads itself 2lh */
     .hd .mk { display: block; color: var(--eccm-ink); }
-    .hd .mk svg { display: block; inline-size: var(--w, 11rem); max-inline-size: 100%; }
+    .hd .mk svg { display: block; inline-size: calc(var(--w, 11rem) * var(--k, 1)); max-inline-size: 100%; }
+    /* the menu and the switch at the small size, 14 px, which four of the eight measured sites use (asked 2026-09-28: "perhaps header typo should be bit smaller?") */
+    .hd .nav, .hd .lang { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
     .hd .nav { column-gap: var(--eccm-s-8); row-gap: var(--eccm-s-2); }
     .hd .nav a, .hd .lang a { text-decoration: none; }
+    .hd .sw { display: flex; align-items: center; column-gap: var(--eccm-s-6); }
+    /* the phone menu: five hairlines one pixel each, the stave's own count, as a button; in a narrow box the menu hides behind it and
+       opens under the mark's line one item a line (asked 2026-09-28: "do mobile menu solution, elegant one (thin 1px lines, 5 of them)") */
+    .menu-btn { display: none; padding: var(--eccm-s-1) 0; border: 0; background: none; color: var(--eccm-ink); cursor: pointer; }
+    .menu-btn svg { display: block; fill: currentColor; shape-rendering: crispEdges; }
+    @container (max-width: 48rem) {
+      .menu-btn { display: block; }
+      .hd .nav { display: none; }
+      .hd[data-open] .nav { display: grid; flex-basis: 100%; row-gap: var(--eccm-s-2); margin-block-start: 1lh; }
+    }
+    /* H-B carries the wordmark: beside the mark at the desk, under it in a narrow box, the mark itself at one width in both
+       (asked 2026-09-28: "logo variant with side wordmark on desktop, below in mobile") */
+    .hd .mk svg.under { display: none; }
+    @container (max-width: 48rem) { .hd .mk svg.beside { display: none; } .hd .mk svg.under { display: block; } }
     /* H-A, two lines: the mark and the switch as two ends, the menu on its own line a leading under the mark; 2lh above and below */
     .hd.two > .frame { padding-block: 2lh; }
     .hd.two .top { display: flex; justify-content: space-between; align-items: baseline; column-gap: var(--eccm-s-8); }
     .hd.two .nav { margin-block-start: 1lh; }
+    figure.open { margin: 0; }
+    figure.open .box { inline-size: min(375px, 100%); }
+    figure.open figcaption { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-start: var(--eccm-s-3); }
     /* H-B, one line: the mark, the menu and the switch on the mark's baseline, 1.5lh of air above and below; in a narrow box the menu drops under, a leading down */
     .hd.one > .frame { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--eccm-s-12); row-gap: 1lh; padding-block: 1.5lh; }
     .hd.one .nav { order: 1; flex: 1; }
-    .hd.one .lang { order: 2; }
-    @container (max-width: 48rem) { .hd.one .nav { order: 3; flex-basis: 100%; } .hd.one .lang { margin-inline-start: auto; } }
+    .hd.one .sw { order: 2; }
+    @container (max-width: 48rem) { .hd.one .nav { order: 3; flex-basis: 100%; } .hd.one .sw { margin-inline-start: auto; } }
     /* H-C, the mark large: 3lh above it, the menu and the switch on one line 2lh under its baseline, 3lh below */
     .hd.big > .frame { padding-block: 3lh; }
     .hd.big .foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; column-gap: var(--eccm-s-12); row-gap: 1lh; margin-block-start: 2lh; }
     /* H-D, running: the mark small on one line with the menu and the switch, 1lh above and below, the least that still has air */
     .hd.run > .frame { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--eccm-s-12); row-gap: 1lh; padding-block: 1lh; }
     .hd.run .nav { order: 1; flex: 1; }
-    .hd.run .lang { order: 2; }
-    @container (max-width: 48rem) { .hd.run .nav { order: 3; flex-basis: 100%; } .hd.run .lang { margin-inline-start: auto; } }
+    .hd.run .sw { order: 2; }
+    @container (max-width: 48rem) { .hd.run .nav { order: 3; flex-basis: 100%; } .hd.run .sw { margin-inline-start: auto; } }
     /* the derived page between: the scheme's ground edge to edge, the sample's own rules as derive.html has them, its padding and outline left to the page */
     .pg-main { background: var(--ev-ground); color: var(--ev-ink); padding-block: 2lh 4lh; }
     .pg .sample { padding: 0; background: none; outline: none; }
@@ -90,8 +114,7 @@
     .sample .credits dt { color: var(--ev-ink2); font-family: 'Schibsted Grotesk', Helvetica, Arial, sans-serif; }
 
     /* the footer itself: the site's footer rule, set at the small size in the second ink, s-8 above and s-12 below, and a gutter that follows the container */
-    .ft { --g: var(--eccm-s-8); padding: var(--eccm-s-8) var(--g) var(--eccm-s-12); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-    @container (max-width: 48rem) { .ft { --g: var(--eccm-s-4); } }
+    .ft { padding-block: var(--eccm-s-8) var(--eccm-s-12); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
     .ft a { text-decoration: none; }
     .ft a:hover { text-decoration-line: underline; text-decoration-color: var(--eccm-accent); }
     .ft ul { list-style: none; margin: 0; padding: 0; }
@@ -218,6 +241,30 @@
 <script type="module">
 // the mark alone, letters and stave, boxed to its ink, as an svg that draws in the current colour (asked 2026-09-28: "rm wordmarks on logos in footers")
 const NS = 'http://www.w3.org/2000/svg';
+// the wordmark page's lockups for H-B: Instrument Sans medium at width 75, two lines starting on the E; under the mark at 40 units
+// 12 under it, beside the mark at 37 units 28 past the stave with the block centred on the E's middle bar
+const TAG = { et: 'eesti nüüdismuusika keskus', en: 'estonian centre of contemporary music' };
+const LEFT = 35, BOTTOM = 122, GAP = 12, CAP = 0.7, XH = 0.53, LH = 0.95, UNDER = 40, BESIDE = 37, BESIDE_GAP = 28, STAVE_END = 345, EBAR = 73.5;
+const meter = document.createElementNS(NS, 'svg'); meter.setAttribute('width', '0'); meter.setAttribute('height', '0'); meter.style.position = 'absolute'; document.body.append(meter);
+const mt = document.createElementNS(NS, 'text'); mt.setAttribute('class', 'tag-is'); mt.setAttribute('font-size', '100'); meter.append(mt);
+const widthOf = (t) => { mt.textContent = t; return mt.getComputedTextLength(); };
+const split2 = (t) => { const et = t.match(/^(.*nüüdis)(muusika keskus)$/i); if (et) return [et[1] + '-', et[2]]; const w = t.split(' '); let best = null; for (let i = 1; i < w.length; i++) { const a = w.slice(0, i).join(' '), b = w.slice(i).join(' '); const m = Math.max(a.length, b.length); if (!best || m < best.m) best = { a, b, m }; } return [best.a, best.b]; };
+const lockup = (lang, layout) => {
+  const lines = split2(TAG[lang]), size = layout === 'under' ? UNDER : BESIDE, pitch = LH * size;
+  const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('class', layout);
+  const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '27'); use.setAttribute('width', '310'); use.setAttribute('height', '96.5'); svg.append(use);
+  let x, y1, vb;
+  if (layout === 'under') { x = LEFT; y1 = BOTTOM + GAP + CAP * size; vb = [35, 27, 310, y1 + pitch + 0.25 * size - 27]; }
+  else { x = STAVE_END + BESIDE_GAP; y1 = EBAR - (CAP * size + pitch) / 2 + CAP * size; vb = [35, 27, x + Math.max(...lines.map(widthOf)) * size / 100 - 35, 96.5]; }
+  svg.setAttribute('viewBox', vb.map((v) => +v.toFixed(1)).join(' ')); svg.style.setProperty('--k', (vb[2] / 310).toFixed(3));
+  document.body.append(svg);
+  lines.forEach((l, i) => {
+    const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'tag-is'); t.setAttribute('font-size', size); t.setAttribute('fill', 'currentColor'); t.setAttribute('x', x.toFixed(1)); t.setAttribute('y', (y1 + i * pitch).toFixed(1)); svg.append(t);
+    const hy = /-$/.test(l); t.textContent = hy ? l.slice(0, -1) : l;
+    if (hy) { const w = t.getComputedTextLength(), mid = y1 + i * pitch - XH * 0.5 * size; const d = document.createElementNS(NS, 'rect'); d.setAttribute('x', (x + w + size * 0.08).toFixed(1)); d.setAttribute('y', (mid - 0.75).toFixed(2)); d.setAttribute('width', (size * 0.3).toFixed(1)); d.setAttribute('height', '1.5'); d.setAttribute('fill', 'currentColor'); svg.append(d); }
+  });
+  svg.remove(); return svg;
+};
 const markSvg = () => {
   const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('viewBox', '35 27 310 96.5');
   const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '27'); use.setAttribute('width', '310'); use.setAttribute('height', '96.5'); svg.append(use);
@@ -242,7 +289,10 @@ const L = {
     sw: '<span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span>' },
 };
 const menu = (p, cls) => `<ul class="${cls}">${p.menu.map(([t, h]) => `<li><a href="${h}">${t}</a></li>`).join('')}</ul>`;
-const mark = (p, w) => `<a class="mk" href="./" style="--w: ${w}rem" aria-label="${p.name}"></a>`;
+const mark = (p, w, wordmark = false) => `<a class="mk" href="./" style="--w: ${w}rem"${wordmark ? ` data-wordmark="${p.lang}"` : ''} aria-label="${p.name}"></a>`;
+// the phone menu's button: five hairlines on the stave's pitch, in the ink
+const menuBtn = (p, open = false) => `<button class="menu-btn" type="button" aria-expanded="${open}" aria-label="${p.menuLabel}"><svg width="24" height="21" viewBox="0 0 24 21" aria-hidden="true">${[0, 5, 10, 15, 20].map((y) => `<rect y="${y}" width="24" height="1"/>`).join('')}</svg></button>`;
+const sw = (p, o = {}) => `<span class="sw">${p.sw}${menuBtn(p, !!o.open)}</span>`;
 // the City of Music mark; black where the footer carries no colour, which the city's rule allows (asked 2026-09-27: "tallinn muusikalinn -> make it black")
 const partner = (p, black) => `<a class="partner" href="${p.partnerHref}"><img src="./partners/${black ? p.partnerBlack : p.partner}" alt="${p.partnerAlt}"></a>`;
 // Instagram and Facebook as text links, each on its own line under the contact form
@@ -272,7 +322,7 @@ const TRIES = [
     <div class="line" style="justify-content: space-between; align-items: center"><span class="line" style="margin: 0"><span>${p.copy}</span>${p.sw}</span>${partner(p, true)}</div>` },
 ];
 const LANG_NAME = { et: 'Estonian', en: 'English' };
-const footer = (html, lang) => `<footer class="ft" lang="${lang}">${html}</footer>`;
+const footer = (html, lang) => `<footer class="ft" lang="${lang}"><div class="frame">${html}</div></footer>`;
 
 // two derived event pages, copied from derive.html as it drew them on 2026-09-28 with the schemes it measured
 // (asked 2026-09-28: "make also header variants. in between put some derived example(s)")
@@ -284,14 +334,14 @@ const DERIVED = {
 };
 // the four headers, each shown on a whole page over one derived example and footer A
 const HEADS = [
-  { title: 'Two lines', ex: 'soundplasma', what: 'the mark at 12rem and the switch as two ends of the first line, the menu on a line of its own one leading under the mark; two leadings of air above and below, no rule', html: (p) => `
-    <header class="hd two"><div class="frame"><div class="top">${mark(p, 12)}${p.sw}</div>${menu(p, 'nav')}</div></header>` },
-  { title: 'One line', ex: 'huddersfield', what: 'the mark at 8rem with the menu and the switch on its baseline, 3rem after the mark and 2rem between items; a leading and a half of air above and below; in a narrow box the menu drops a leading under the mark and the switch', html: (p) => `
-    <header class="hd one"><div class="frame">${mark(p, 8)}${p.sw}${menu(p, 'nav')}</div></header>` },
-  { title: 'The mark large', ex: 'varssavi', what: 'the mark at 20rem alone on its line, three leadings of air above it; the menu and the switch as two ends of a line two leadings under its baseline, three leadings below that', html: (p) => `
-    <header class="hd big"><div class="frame">${mark(p, 20)}<div class="foot">${menu(p, 'nav')}${p.sw}</div></div></header>` },
-  { title: 'Running', ex: 'scrapyard', what: 'the mark at 6rem on one line with the menu and the switch, one leading of air above and below, the least header that still breathes, for every page after the first', html: (p) => `
-    <header class="hd run"><div class="frame">${mark(p, 6)}${p.sw}${menu(p, 'nav')}</div></header>` },
+  { title: 'Two lines', ex: 'soundplasma', what: 'the mark at 12rem and the switch as two ends of the first line, the menu on a line of its own one leading under the mark; two leadings of air above and below, no rule', html: (p, o = {}) => `
+    <header class="hd two"${o.open ? ' data-open' : ''}><div class="frame"><div class="top">${mark(p, 12)}${sw(p, o)}</div>${menu(p, 'nav')}</div></header>` },
+  { title: 'One line, with the wordmark', ex: 'huddersfield', what: 'the mark at 8rem with its wordmark beside it at the desk and under it in a narrow box, the menu and the switch on the mark\'s baseline, 3rem after the mark and 2rem between items; a leading and a half of air above and below', html: (p, o = {}) => `
+    <header class="hd one"${o.open ? ' data-open' : ''}><div class="frame">${mark(p, 8, true)}${sw(p, o)}${menu(p, 'nav')}</div></header>` },
+  { title: 'The mark large', ex: 'varssavi', what: 'the mark at 20rem alone on its line, three leadings of air above it; the menu and the switch as two ends of a line two leadings under its baseline, three leadings below that', html: (p, o = {}) => `
+    <header class="hd big"${o.open ? ' data-open' : ''}><div class="frame">${mark(p, 20)}<div class="foot">${menu(p, 'nav')}${sw(p, o)}</div></div></header>` },
+  { title: 'Running', ex: 'scrapyard', what: 'the mark at 6rem on one line with the menu and the switch, one leading of air above and below, the least header that still breathes, for every page after the first', html: (p, o = {}) => `
+    <header class="hd run"${o.open ? ' data-open' : ''}><div class="frame">${mark(p, 6)}${sw(p, o)}${menu(p, 'nav')}</div></header>` },
 ];
 const page = (head, ex, foot) => `<div class="pg">${head}<div class="pg-main" style="${ex.style}"><div class="frame">${ex.html}</div></div>${foot}</div>`;
 const heads = document.getElementById('heads');
@@ -305,6 +355,8 @@ HEADS.forEach((h, i) => {
   const phones = document.createElement('div'); phones.className = 'phones';
   const ph = document.createElement('figure');
   ph.innerHTML = `<div class="box">${page(h.html(p), ex, foot)}</div><figcaption>375 px</figcaption>`; phones.append(ph); pages++;
+  const op = document.createElement('figure'); op.className = 'open';
+  op.innerHTML = `<div class="box">${h.html(p, { open: true })}</div><figcaption>375 px, the menu open</figcaption>`; phones.append(op);
   heads.append(phones);
 });
 const tries = document.getElementById('tries');
@@ -324,7 +376,12 @@ TRIES.forEach((t, i) => {
     tries.append(phones);
   }
 });
-for (const a of document.querySelectorAll('.mk')) a.replaceChildren(markSvg());
+await document.fonts.load('500 100px "Instrument Sans"');
+for (const a of document.querySelectorAll('.mk')) a.replaceChildren(...(a.dataset.wordmark ? [lockup(a.dataset.wordmark, 'beside'), lockup(a.dataset.wordmark, 'under')] : [markSvg()]));
+// the phone menu opens and closes on its button, in whichever mock it sits
+document.addEventListener('click', (e) => { const b = e.target.closest('.menu-btn'); if (!b) return; const hd = b.closest('.hd'); const open = hd.toggleAttribute('data-open'); b.setAttribute('aria-expanded', String(open)); });
+// the scrollbar's width, so a full-bleed box is the viewport and not the viewport plus a scrollbar
+document.documentElement.style.setProperty('--sbw', (innerWidth - document.documentElement.clientWidth) + 'px');
 window.__layout = { pages, heads: HEADS.length, footers: n, tries: TRIES.length, marks: document.querySelectorAll('.mk svg').length, partners: document.querySelectorAll('.partner img').length };
 </script>
 </body>
