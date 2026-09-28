@@ -13,8 +13,12 @@
      under ./vendor/ with their OFL files, subset latin and latin-ext (Š and Ž
      live in latin-ext), fetched once from Google's static host and served
      from here. Instrument Serif was tried and dropped: no latin-ext subset.
-     The first specimen is the machine's Helvetica, which the live page used
-     until E, Schibsted Grotesk, was chosen the same evening. Not graded. -->
+     The first specimen is A, Schibsted Grotesk, the default; the machine's
+     Helvetica that once opened the page left at cf2fdb5. Not graded.
+     The four other sans faces of 2026-09-27, Bricolage Grotesque, Sofia Sans
+     Condensed, Familjen Grotesk and Anybody, are back as D to G since
+     2026-09-28 ("bring other /sans versions back"), set as they were at
+     1357720, and the ten serifs are H to Q. -->
 <link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
@@ -49,6 +53,14 @@
   /* the five fresh sans faces, asked 2026-09-27 as "give me five more alternative sans, give me some fresher stuff", first set as taglines on wordmark.html and here for the body and the titles */
   @font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
   @font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Bricolage Grotesque'; font-weight: 200 800; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/bricolage-grotesque-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Bricolage Grotesque'; font-weight: 200 800; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/bricolage-grotesque-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Sofia Sans Condensed'; font-weight: 1 1000; font-display: swap; src: url('./vendor/sofia-sans-condensed-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Sofia Sans Condensed'; font-weight: 1 1000; font-display: swap; src: url('./vendor/sofia-sans-condensed-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Familjen Grotesk'; font-weight: 400 700; font-display: swap; src: url('./vendor/familjen-grotesk-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Familjen Grotesk'; font-weight: 400 700; font-display: swap; src: url('./vendor/familjen-grotesk-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Anybody'; font-weight: 100 900; font-stretch: 50% 150%; font-display: swap; src: url('./vendor/anybody-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Anybody'; font-weight: 100 900; font-stretch: 50% 150%; font-display: swap; src: url('./vendor/anybody-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
   @layer page {
     /* each specimen sets two families and a width, and everything inside it
        reads them; the sizes, weights and spaces are the live page's own */
@@ -82,7 +94,7 @@
 
 <main class="frame">
   <h1>Kirjatüübi proovid</h1>
-  <p class="intro">The same row, two facts, a title and a paragraph, at the live page's sizes, weights and spaces, in each candidate: the default, the serif the derived pages use, Instrument Sans, and ten modern serifs to replace that serif (asked 2026-09-27). The first is the machine's Helvetica, which the live page used until E was chosen. Every other face is self hosted, subset to latin and latin-ext so Š and Ž are in the same face as the rest, and licensed under the SIL Open Font License.</p>
+  <p class="intro">The same row, two facts, a title and a paragraph, at the live page's sizes, weights and spaces, in each candidate: the default, the serif the derived pages use, Instrument Sans, and ten modern serifs to replace that serif (asked 2026-09-27). The first is Schibsted Grotesk, the default. Every other face is self hosted, subset to latin and latin-ext so Š and Ž are in the same face as the rest, and licensed under the SIL Open Font License. The four other sans faces of 2026-09-27, Bricolage Grotesque, Sofia Sans Condensed, Familjen Grotesk and Anybody, are back as D to G since 2026-09-28, set as they were then, and the ten serifs follow as H to Q.</p>
   <p class="intro">What to look for: whether the large title at text weight holds its own against the mark; whether the small muted line stays legible at 14 px; whether the paragraph reads calmly at 66 characters; and whether Š, Ž, Õ, Ä, Ö and Ü sit in the words rather than beside them.</p>
 
   <section class="spec" style="--body: 'Schibsted Grotesk', Helvetica, Arial, sans-serif; --head: 'Schibsted Grotesk', Helvetica, Arial, sans-serif;">
@@ -139,8 +151,80 @@
     <p class="prose">Avalik žest ei ole valmis teose esitlus ega klassikaline kontsert. See on kümnepäevase protsessi viimane hetk, võimalus olla tunnistajaks olukorrale, mis on tekkinud kolme osaleja koosmõjus ja mida ei saa korrata täpselt samal kujul. Kõikides aktsioonides on osalistele toeks dramaturg Alissa Šnaider.</p>
   </section>
 
+  <section class="spec" style="--body: 'Bricolage Grotesque', Helvetica, Arial, sans-serif; --head: 'Bricolage Grotesque', Helvetica, Arial, sans-serif; --head-stretch: 90%;">
+    <p class="spec-name">D. Bricolage Grotesque. A grotesk of 2022 with an optical size axis, so its small sizes are drawn open, and a width axis; titles at width 90, the body at 100. The most character of the five, which may argue with the mark.</p>
+    <div class="ev">
+      <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
+      <div class="ev-body">
+        <p class="ev-kicker"><time datetime="2026-09-30T19:00+03:00">30.09.2026</time><time>19.00</time><span>ECCM</span><span>Ulysses</span></p>
+        <h2 class="ev-title"><a href="./event.html">Gestuurid/situatsioonid: ilma partituurita kuulamine. Marianna Liik, Artjom Astrov, Maryn-Liis Rüütelmaa</a></h2>
+        <p class="ev-summary prose">Tööprotsessi viimane hetk, võimalus olla tunnistajaks kolme osaleja koosmõjus tekkinud olukorrale.</p>
+      </div>
+    </div>
+    <dl class="facts">
+      <div><dt>Millal</dt><dd><time>30.09.2026 kell 19.00</time>, 60 min</dd></div>
+      <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+    </dl>
+    <p class="spec-h">Žest, šokk, Õnne, Äkki, Öö, Üksi. Morton Feldman 100: For Philip Guston</p>
+    <p class="prose">Avalik žest ei ole valmis teose esitlus ega klassikaline kontsert. See on kümnepäevase protsessi viimane hetk, võimalus olla tunnistajaks olukorrale, mis on tekkinud kolme osaleja koosmõjus ja mida ei saa korrata täpselt samal kujul. Kõikides aktsioonides on osalistele toeks dramaturg Alissa Šnaider.</p>
+  </section>
+
+  <section class="spec" style="--body: 'Sofia Sans Condensed', Helvetica, Arial, sans-serif; --head: 'Sofia Sans Condensed', Helvetica, Arial, sans-serif;">
+    <p class="spec-name">E. Sofia Sans Condensed. A condensed family drawn for small sizes with its counters kept open on purpose; condensed in the body too, which is a lot of words a line, so read the paragraph twice.</p>
+    <div class="ev">
+      <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
+      <div class="ev-body">
+        <p class="ev-kicker"><time datetime="2026-09-30T19:00+03:00">30.09.2026</time><time>19.00</time><span>ECCM</span><span>Ulysses</span></p>
+        <h2 class="ev-title"><a href="./event.html">Gestuurid/situatsioonid: ilma partituurita kuulamine. Marianna Liik, Artjom Astrov, Maryn-Liis Rüütelmaa</a></h2>
+        <p class="ev-summary prose">Tööprotsessi viimane hetk, võimalus olla tunnistajaks kolme osaleja koosmõjus tekkinud olukorrale.</p>
+      </div>
+    </div>
+    <dl class="facts">
+      <div><dt>Millal</dt><dd><time>30.09.2026 kell 19.00</time>, 60 min</dd></div>
+      <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+    </dl>
+    <p class="spec-h">Žest, šokk, Õnne, Äkki, Öö, Üksi. Morton Feldman 100: For Philip Guston</p>
+    <p class="prose">Avalik žest ei ole valmis teose esitlus ega klassikaline kontsert. See on kümnepäevase protsessi viimane hetk, võimalus olla tunnistajaks olukorrale, mis on tekkinud kolme osaleja koosmõjus ja mida ei saa korrata täpselt samal kujul. Kõikides aktsioonides on osalistele toeks dramaturg Alissa Šnaider.</p>
+  </section>
+
+  <section class="spec" style="--body: 'Familjen Grotesk', Helvetica, Arial, sans-serif; --head: 'Familjen Grotesk', Helvetica, Arial, sans-serif;">
+    <p class="spec-name">F. Familjen Grotesk. A Stockholm grotesk of 2021 with large apertures and a warm a and e; the warmest of the five and a normal width, so the least like the mark.</p>
+    <div class="ev">
+      <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
+      <div class="ev-body">
+        <p class="ev-kicker"><time datetime="2026-09-30T19:00+03:00">30.09.2026</time><time>19.00</time><span>ECCM</span><span>Ulysses</span></p>
+        <h2 class="ev-title"><a href="./event.html">Gestuurid/situatsioonid: ilma partituurita kuulamine. Marianna Liik, Artjom Astrov, Maryn-Liis Rüütelmaa</a></h2>
+        <p class="ev-summary prose">Tööprotsessi viimane hetk, võimalus olla tunnistajaks kolme osaleja koosmõjus tekkinud olukorrale.</p>
+      </div>
+    </div>
+    <dl class="facts">
+      <div><dt>Millal</dt><dd><time>30.09.2026 kell 19.00</time>, 60 min</dd></div>
+      <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+    </dl>
+    <p class="spec-h">Žest, šokk, Õnne, Äkki, Öö, Üksi. Morton Feldman 100: For Philip Guston</p>
+    <p class="prose">Avalik žest ei ole valmis teose esitlus ega klassikaline kontsert. See on kümnepäevase protsessi viimane hetk, võimalus olla tunnistajaks olukorrale, mis on tekkinud kolme osaleja koosmõjus ja mida ei saa korrata täpselt samal kujul. Kõikides aktsioonides on osalistele toeks dramaturg Alissa Šnaider.</p>
+  </section>
+
+  <section class="spec" style="--body: 'Anybody', Helvetica, Arial, sans-serif; --head: 'Anybody', Helvetica, Arial, sans-serif; --head-stretch: 85%;">
+    <p class="spec-name">G. Anybody. A width axis from 50 to 150; the body at 100 and titles at 85. At its narrow end its forms turn display, so the titles stay near normal here.</p>
+    <div class="ev">
+      <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
+      <div class="ev-body">
+        <p class="ev-kicker"><time datetime="2026-09-30T19:00+03:00">30.09.2026</time><time>19.00</time><span>ECCM</span><span>Ulysses</span></p>
+        <h2 class="ev-title"><a href="./event.html">Gestuurid/situatsioonid: ilma partituurita kuulamine. Marianna Liik, Artjom Astrov, Maryn-Liis Rüütelmaa</a></h2>
+        <p class="ev-summary prose">Tööprotsessi viimane hetk, võimalus olla tunnistajaks kolme osaleja koosmõjus tekkinud olukorrale.</p>
+      </div>
+    </div>
+    <dl class="facts">
+      <div><dt>Millal</dt><dd><time>30.09.2026 kell 19.00</time>, 60 min</dd></div>
+      <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
+    </dl>
+    <p class="spec-h">Žest, šokk, Õnne, Äkki, Öö, Üksi. Morton Feldman 100: For Philip Guston</p>
+    <p class="prose">Avalik žest ei ole valmis teose esitlus ega klassikaline kontsert. See on kümnepäevase protsessi viimane hetk, võimalus olla tunnistajaks olukorrale, mis on tekkinud kolme osaleja koosmõjus ja mida ei saa korrata täpselt samal kujul. Kõikides aktsioonides on osalistele toeks dramaturg Alissa Šnaider.</p>
+  </section>
+
   <section class="spec" style="--body: 'Newsreader', Georgia, serif; --head: 'Newsreader', Georgia, serif;">
-    <p class="spec-name">D. Newsreader, weights 200 to 800, optical sizes 6 to 72. An editorial serif of 2020 drawn for screens, with a text cut that reads at 18 px and a display cut with tighter fit and higher contrast; the calmest of the ten.</p>
+    <p class="spec-name">H. Newsreader, weights 200 to 800, optical sizes 6 to 72. An editorial serif of 2020 drawn for screens, with a text cut that reads at 18 px and a display cut with tighter fit and higher contrast; the calmest of the ten.</p>
     <div class="ev">
       <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
       <div class="ev-body">
@@ -158,7 +242,7 @@
   </section>
 
   <section class="spec" style="--body: 'Fraunces', Georgia, serif; --head: 'Fraunces', Georgia, serif;">
-    <p class="spec-name">E. Fraunces, weights 100 to 900, optical sizes 9 to 144. A soft, old-style-flavoured serif of 2020 with an optical size axis that goes wonky at display sizes and quiet at text sizes; the most character of the ten.</p>
+    <p class="spec-name">I. Fraunces, weights 100 to 900, optical sizes 9 to 144. A soft, old-style-flavoured serif of 2020 with an optical size axis that goes wonky at display sizes and quiet at text sizes; the most character of the ten.</p>
     <div class="ev">
       <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
       <div class="ev-body">
@@ -176,7 +260,7 @@
   </section>
 
   <section class="spec" style="--body: 'Piazzolla', Georgia, serif; --head: 'Piazzolla', Georgia, serif;">
-    <p class="spec-name">F. Piazzolla, weights 100 to 900, optical sizes 8 to 30. A text serif of 2020 with an optical size axis for text sizes only, a warm, slightly narrow hand; lively without shouting.</p>
+    <p class="spec-name">J. Piazzolla, weights 100 to 900, optical sizes 8 to 30. A text serif of 2020 with an optical size axis for text sizes only, a warm, slightly narrow hand; lively without shouting.</p>
     <div class="ev">
       <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
       <div class="ev-body">
@@ -194,7 +278,7 @@
   </section>
 
   <section class="spec" style="--body: 'Literata', Georgia, serif; --head: 'Literata', Georgia, serif;">
-    <p class="spec-name">G. Literata, weights 200 to 900, optical sizes 7 to 72. The reading serif of Google Play Books, 2016 onward, tuned for long text on screens; sturdy, even, a little dark.</p>
+    <p class="spec-name">K. Literata, weights 200 to 900, optical sizes 7 to 72. The reading serif of Google Play Books, 2016 onward, tuned for long text on screens; sturdy, even, a little dark.</p>
     <div class="ev">
       <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
       <div class="ev-body">
@@ -212,7 +296,7 @@
   </section>
 
   <section class="spec" style="--body: 'Bodoni Moda', Georgia, serif; --head: 'Bodoni Moda', Georgia, serif;">
-    <p class="spec-name">H. Bodoni Moda, weights 400 to 900, optical sizes 6 to 96. A modern Didone of 2019 with an optical size axis, so its hairlines hold at text size and open at display size; the most formal voice here.</p>
+    <p class="spec-name">L. Bodoni Moda, weights 400 to 900, optical sizes 6 to 96. A modern Didone of 2019 with an optical size axis, so its hairlines hold at text size and open at display size; the most formal voice here.</p>
     <div class="ev">
       <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
       <div class="ev-body">
@@ -230,7 +314,7 @@
   </section>
 
   <section class="spec" style="--body: 'Brygada 1918', Georgia, serif; --head: 'Brygada 1918', Georgia, serif;">
-    <p class="spec-name">I. Brygada 1918, weights 400 to 700. A Polish text serif revived in 2020 for the centenary of independence, drawn with the full central European set first; sober and even, no optical size axis.</p>
+    <p class="spec-name">M. Brygada 1918, weights 400 to 700. A Polish text serif revived in 2020 for the centenary of independence, drawn with the full central European set first; sober and even, no optical size axis.</p>
     <div class="ev">
       <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
       <div class="ev-body">
@@ -248,7 +332,7 @@
   </section>
 
   <section class="spec" style="--body: 'Petrona', Georgia, serif; --head: 'Petrona', Georgia, serif;">
-    <p class="spec-name">J. Petrona, weights 100 to 900. A text serif of 2019 with a low contrast and a wide stance, drawn for screens; distinctive a and g, no optical size axis.</p>
+    <p class="spec-name">N. Petrona, weights 100 to 900. A text serif of 2019 with a low contrast and a wide stance, drawn for screens; distinctive a and g, no optical size axis.</p>
     <div class="ev">
       <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
       <div class="ev-body">
@@ -266,7 +350,7 @@
   </section>
 
   <section class="spec" style="--body: 'Besley', Georgia, serif; --head: 'Besley', Georgia, serif;">
-    <p class="spec-name">K. Besley, weights 400 to 900. A Clarendon of 2019, slab serifs and a firm stance; the least bookish of the ten and the closest to a grotesk in colour.</p>
+    <p class="spec-name">O. Besley, weights 400 to 900. A Clarendon of 2019, slab serifs and a firm stance; the least bookish of the ten and the closest to a grotesk in colour.</p>
     <div class="ev">
       <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
       <div class="ev-body">
@@ -284,7 +368,7 @@
   </section>
 
   <section class="spec" style="--body: 'Roboto Serif', Georgia, serif; --head: 'Roboto Serif', Georgia, serif;">
-    <p class="spec-name">L. Roboto Serif, weights 100 to 900, optical sizes 8 to 144, widths 50 to 150. A serif made to sit beside a grotesk, 2022, with a width axis a condensed mark could use; its file is the heaviest here, 379 KB of latin, because of that axis.</p>
+    <p class="spec-name">P. Roboto Serif, weights 100 to 900, optical sizes 8 to 144, widths 50 to 150. A serif made to sit beside a grotesk, 2022, with a width axis a condensed mark could use; its file is the heaviest here, 379 KB of latin, because of that axis.</p>
     <div class="ev">
       <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
       <div class="ev-body">
@@ -302,7 +386,7 @@
   </section>
 
   <section class="spec" style="--body: 'Schibsted Grotesk', Helvetica, Arial, sans-serif; --head: 'Instrument Serif', Georgia, serif;">
-    <p class="spec-name">M. Instrument Serif, weight 400 only. A condensed display serif of 2022 with a Didone tone, drawn for headlines; one weight and no text cut, so the body stays in the sans under it. Titles only here, over the default body.</p>
+    <p class="spec-name">Q. Instrument Serif, weight 400 only. A condensed display serif of 2022 with a Didone tone, drawn for headlines; one weight and no text cut, so the body stays in the sans under it. Titles only here, over the default body.</p>
     <div class="ev">
       <a class="ev-pic" href="./event.html" tabindex="-1" aria-hidden="true"><img src="./ic_medium_w300h300q100_gestures-situations-small.jpg" width="300" height="199" alt=""></a>
       <div class="ev-body">
