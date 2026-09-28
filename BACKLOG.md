@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "rm Liquid glass, simulated part"
+
+Asked verbatim. The simulated glass icon and its rules leave the design system page; the icon sizes end the page.
+
 ### Done 2026-09-28: "rm logo-square.svg / ECCM mark, white on ink / logo-square-neg.svg labels"
 
 Asked verbatim. The two square marks in the design system page's Logo section carry no caption and an empty alt, the sentence above them saying what they are.
