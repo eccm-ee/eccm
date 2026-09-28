@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Open 2026-09-28: "in bg: footer logo should be smaller and tallinn-muusikalinn too a bit. add instagram and facebook to footer,"
+
+Asked verbatim. A background agent on `public/layout.html`: every footer's mark a step down its scale (8rem to 6, 11 to 8), the City of Music mark from 5rem to 4 with its ink still on the mark's top and the footer's edge, and Instagram and Facebook as text links in the contact columns of A and D, the handles from `plans/plan-eccm-presence.md` (instagram.com/eccm.ee, facebook.com/eestinyydismuusikakeskus). The agent reports and does not commit.
+
 ### Done 2026-09-28: "credtist: create comojent that shows first but allows add more items" and "move image to top"
 
 Asked verbatim, mid-task, the editor form. The credits section shows the credits that exist and no blank blocks, with a button that adds one; the button works with no script through the server, which re-renders the form with one more block and saves nothing, and a few lines of script add the block in place when they can. The picture moves to the top of the form, shown with its select under it, its own section before Millal ja kus.

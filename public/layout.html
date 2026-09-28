@@ -11,7 +11,7 @@
      use Schibsted and Instrument", "i mean page /layout", "look aroind other
      footers too"). Each footer carries the mark alone, letters and stave
      (the wordmark under it left on 2026-09-28: "rm wordmarks on logos in
-     footers"), and some of the main links, the contact, the credits, a newsletter field and
+     footers"), and some of the main links, the contact with the Instagram and Facebook links, the credits, a newsletter field and
      the funders' slots; each is drawn in Schibsted Grotesk (the Instrument
      Sans twins left on 2026-09-28: "rm instrument sans examples from layout
      page"), at the desk and in a 375 px box, and the footer decides its own
@@ -106,14 +106,14 @@
     .ft .stack li + li { margin-block-start: var(--eccm-s-1); }
     /* the menu in two columns: seven items fall four and three; the columns sit 3rem apart and the rows a half step (asked 2026-09-27: "add more space between links in fooer (C)", then 2026-09-28 with a crop: "add more space between", from the footer's 2rem) */
     .ft .two { display: grid; grid-template-columns: repeat(2, max-content); column-gap: var(--eccm-s-12); row-gap: var(--eccm-s-2); grid-auto-flow: row; }
-    /* a partner's mark at the end of the columns: three columns that share the width and a fourth that takes only its own, and the mark 6rem wide
+    /* a partner's mark at the end of the columns: three columns that share the width and a fourth that takes only its own, and the mark 4rem wide
        (an auto track beside an auto-fit repeat is not a valid track list, and Chrome fell back to the plain repeat, which only read right because the frame caps at four columns) */
     .ft .cols.four { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; }
     .ft .end { justify-self: end; }
     /* the city's file carries 60.5 units of air above its ink and about 60.8 beside it in a 446.46 unit box (MEASURED with getBBox, both
        languages), so the img is pulled up and outward by those fractions of its width: the ink's top sits on the ECCM mark's top and
        its outer edge on the footer's edge (asked 2026-09-27: "bit smaller and align top with eccm") */
-    .ft .partner { --pw: 5rem; display: block; inline-size: var(--pw); margin-inline-end: calc(var(--pw) * -0.136); }
+    .ft .partner { --pw: 4rem; display: block; inline-size: var(--pw); margin-inline-end: calc(var(--pw) * -0.136); }
     .ft .end .partner { margin-block-start: calc(var(--pw) * -0.1355); }
     .ft .partner img { display: block; inline-size: 100%; block-size: auto; }
     @container (max-width: 48rem) { .ft .cols.four { grid-template-columns: minmax(0, 1fr); } .ft .end { justify-self: start; } .ft .partner { margin-inline: calc(var(--pw) * -0.136) 0; } }
@@ -193,7 +193,7 @@
 <main class="frame lay">
   <h1 class="list-label">Headers and footers</h1>
   <div class="prose flow intro">
-    <p>Four headers, each on a whole page with a derived event page between it and footer A, each in a scheme the derive page read off a different picture: Sound Plasma with its Literata verdict, the Huddersfield mauve, the Varssavi plum and the Scrapyard navy. Every vertical distance in the headers is a whole number of the body's leading, the mark's size is a step on a scale of its own, the menu is body size with 2rem between items, and no header draws a rule, which is what eight comparable sites' headers do. Then four footers for the site, each with the mark alone and some of the main links, the contact, the credits, a newsletter field, the funders' slots and the Tallinn UNESCO City of Music mark as the city publishes it. Each is drawn in Schibsted Grotesk, at the desk and in a 375 px box, and decides its own arrangement from its container; the first in both languages. Left out on purpose: a phone, an email and social links, because none of ECCM's is on record here, and a privacy line, because no such page exists yet.</p>
+    <p>Four headers, each on a whole page with a derived event page between it and footer A, each in a scheme the derive page read off a different picture: Sound Plasma with its Literata verdict, the Huddersfield mauve, the Varssavi plum and the Scrapyard navy. Every vertical distance in the headers is a whole number of the body's leading, the mark's size is a step on a scale of its own, the menu is body size with 2rem between items, and no header draws a rule, which is what eight comparable sites' headers do. Then four footers for the site, each with the mark alone and some of the main links, the contact with the Instagram and Facebook links, the credits, a newsletter field, the funders' slots and the Tallinn UNESCO City of Music mark as the city publishes it. Each is drawn in Schibsted Grotesk, at the desk and in a 375 px box, and decides its own arrangement from its container; the first in both languages. Left out on purpose: an email, because eccm.ee publishes none, and a privacy line, because no such page exists yet.</p>
     <p>What a footer carries, read off seven comparable sites on 2026-09-27, one fetch each. Every one gives the organisation's name and address; five repeat the menu; four give an email and four a phone; four carry a privacy or legal line; three a copyright line, three social links and three a newsletter field; two the funders and two a registry number. eccm.ee's own footer today is Joomla's login form.</p>
   </div>
   <table>
@@ -229,6 +229,8 @@ const VENUE = 'Pühavaimu 9, Tallinn', POST = 'Herne 11A, 10135 Tallinn';
 // what eccm.ee's contact page publishes (READ 2026-09-28): the postal address, one mobile number as the organisation's contact, and a
 // form in place of an email address, so the form is what a footer can link to (asked 2026-09-28: "wheer is contact info in footer? email? smth else?")
 const PHONE = '+372 516 2103', FORM = 'https://eccm.ee/index.php/et/eccm/kontakt';
+// the two social accounts ECCM keeps (plans/plan-eccm-presence.md), as text links under the contact form in A and D
+const INSTAGRAM = 'https://www.instagram.com/eccm.ee/', FACEBOOK = 'https://www.facebook.com/eestinyydismuusikakeskus';
 const L = {
   et: { lang: 'et', name: 'Eesti Nüüdismuusika Keskus', hall: 'Saal', post: 'Postiaadress', copy: '© 2026 Eesti Nüüdismuusika Keskus', city: 'Tallinn, UNESCO muusikalinn', menuLabel: 'Menüü', contact: 'Kontakt', phone: 'Telefon', write: 'Kirjuta meile', news: 'Uudiskiri', email: 'E-post', join: 'Liitu', funders: 'Toetajad', funder: 'toetaja',
     menu: [['Avaleht', './'], ['ECCM', 'https://eccm.ee/index.php/et/eccm'], ['Tallinn 1965', 'https://eccm.ee/index.php/et/tallinn-1965'], ['NAN', 'https://eccm.ee/nan/'], ['Ulysses', 'https://eccm.ee/index.php/et/ulysses'], ['Konkursid', 'https://eccm.ee/index.php/et/konkursid'], ['Sündmused', 'https://eccm.ee/index.php/et/syndmusest']],
@@ -243,26 +245,28 @@ const menu = (p, cls) => `<ul class="${cls}">${p.menu.map(([t, h]) => `<li><a hr
 const mark = (p, w) => `<a class="mk" href="./" style="--w: ${w}rem" aria-label="${p.name}"></a>`;
 // the City of Music mark; black where the footer carries no colour, which the city's rule allows (asked 2026-09-27: "tallinn muusikalinn -> make it black")
 const partner = (p, black) => `<a class="partner" href="${p.partnerHref}"><img src="./partners/${black ? p.partnerBlack : p.partner}" alt="${p.partnerAlt}"></a>`;
+// Instagram and Facebook as text links, each on its own line under the contact form
+const social = () => `<p style="margin-block-start: var(--eccm-s-3)"><a href="${INSTAGRAM}">Instagram</a></p><p style="margin-block-start: var(--eccm-s-3)"><a href="${FACEBOOK}">Facebook</a></p>`;
 
 // the four footers, lettered in this order (a white-on-black fifth left on 2026-09-28: "rm E"); the first is drawn in both languages (asked 2026-09-27: "move var c to the top as a and make english ver")
 const TRIES = [
-  { title: 'Three columns and a partner', langs: ['et', 'en'], what: 'the mark, 8rem, and the copyright under it; the menu in two columns with no label; the contact as label over value, the venue, the postal address, the phone and a link to the contact form, no name; the City of Music mark in black at the end, 5rem, its ink\'s top on the mark\'s top', html: (p) => `
+  { title: 'Three columns and a partner', langs: ['et', 'en'], what: 'the mark, 6rem, and the copyright under it; the menu in two columns with no label; the contact as label over value, the venue, the postal address, the phone, a link to the contact form and the Instagram and Facebook links, no name; the City of Music mark in black at the end, 4rem, its ink\'s top on the mark\'s top', html: (p) => `
     <div class="cols four">
-      <div>${mark(p, 8)}<p style="margin-block-start: var(--eccm-s-6)">${p.copy}</p></div>
+      <div>${mark(p, 6)}<p style="margin-block-start: var(--eccm-s-6)">${p.copy}</p></div>
       <div>${menu(p, 'two')}</div>
-      <div><p>${p.hall}<br>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">${p.post}<br>${POST}</p><p style="margin-block-start: var(--eccm-s-3)">${p.phone}<br><a href="tel:+3725162103">${PHONE}</a></p><p style="margin-block-start: var(--eccm-s-3)"><a href="${FORM}">${p.write}</a></p></div>
+      <div><p>${p.hall}<br>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">${p.post}<br>${POST}</p><p style="margin-block-start: var(--eccm-s-3)">${p.phone}<br><a href="tel:+3725162103">${PHONE}</a></p><p style="margin-block-start: var(--eccm-s-3)"><a href="${FORM}">${p.write}</a></p>${social()}</div>
       <div class="end">${partner(p, true)}</div>
     </div>` },
   { title: 'One row', what: 'the mark alone at the start; the name, the venue and the language switch at the end', html: (p) => `
-    <div class="row">${mark(p, 8)}<div class="line" style="margin:0"><span>${p.name}, ${VENUE}</span>${p.sw}</div></div>` },
+    <div class="row">${mark(p, 6)}<div class="line" style="margin:0"><span>${p.name}, ${VENUE}</span>${p.sw}</div></div>` },
   { title: 'The mark and the menu', what: 'the mark at the start and the menu at the end, on one row; under them the name, the venue and the copyright line', html: (p) => `
-    <div class="row">${mark(p, 11)}${menu(p, 'menu')}</div>
+    <div class="row">${mark(p, 8)}${menu(p, 'menu')}</div>
     <div class="line"><span>${p.name}, ${VENUE}</span><span>${p.copy}</span>${p.sw}</div>` },
-  { title: 'Four columns and a newsletter', what: 'the mark alone; the menu in two columns; the contact; a newsletter field with its name as the placeholder and its button; under everything a line with the copyright and the switch at the start and the City of Music mark in black at the end (asked 2026-09-27: "E-post as placeholder in field, rm label. rm toetajad. find place to muusikalinn", "try 2 col links in D")', html: (p) => `
+  { title: 'Four columns and a newsletter', what: 'the mark alone, 6rem; the menu in two columns; the contact with the Instagram and Facebook links; a newsletter field with its name as the placeholder and its button; under everything a line with the copyright and the switch at the start and the City of Music mark in black at the end (asked 2026-09-27: "E-post as placeholder in field, rm label. rm toetajad. find place to muusikalinn", "try 2 col links in D")', html: (p) => `
     <div class="cols">
-      <div>${mark(p, 8)}</div>
+      <div>${mark(p, 6)}</div>
       <div><p class="label">${p.menuLabel}</p>${menu(p, 'two')}</div>
-      <div><p class="label">${p.contact}</p><p>${p.name}</p><p>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">${p.post}<br>${POST}</p><p style="margin-block-start: var(--eccm-s-3)">${p.phone}<br><a href="tel:+3725162103">${PHONE}</a></p><p style="margin-block-start: var(--eccm-s-3)"><a href="${FORM}">${p.write}</a></p></div>
+      <div><p class="label">${p.contact}</p><p>${p.name}</p><p>${VENUE}</p><p style="margin-block-start: var(--eccm-s-3)">${p.post}<br>${POST}</p><p style="margin-block-start: var(--eccm-s-3)">${p.phone}<br><a href="tel:+3725162103">${PHONE}</a></p><p style="margin-block-start: var(--eccm-s-3)"><a href="${FORM}">${p.write}</a></p>${social()}</div>
       <div><p class="label">${p.news}</p><form class="news" onsubmit="return false"><input type="email" name="email" autocomplete="email" placeholder="${p.email}" aria-label="${p.email}"><button class="btn" type="submit">${p.join}</button></form></div>
     </div>
     <div class="line" style="justify-content: space-between; align-items: center"><span class="line" style="margin: 0"><span>${p.copy}</span>${p.sw}</span>${partner(p, true)}</div>` },
