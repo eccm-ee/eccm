@@ -15,9 +15,10 @@ Asked verbatim. `public/layout.html` is one header over six derived pages with o
 
 The clarification of "bring other /sans versions back": a page of its own, https://eccm.positron.studio/sans, the sans faces in the derived page's three uses the way /serif shows the serifs: A Schibsted Grotesk, B Instrument Sans, C Bricolage Grotesque, D Sofia Sans Condensed, E Familjen Grotesk, F Anybody, each at its normal width, the declarations from type.html.
 
-### Open 2026-09-28: "in bg install lightpanda+mcp via brew and see if we get blokced"
+### Done 2026-09-28: "in bg install lightpanda+mcp via brew and see if we get blokced"
 
 Asked verbatim. A background agent installs Lightpanda, the headless browser, and its MCP server through Homebrew from the project's own instructions, then runs the binary and the server once each and reports whether this laptop's endpoint security lets them run or kills them, the way it kills the workerd that wrangler 4.141 ships (exit 137, `CLAUDE.md`). Nothing is changed in this repository.
+✅ Answered by the agent, MEASURED with one binary at the same sha256: killed with exit 137 in the scratchpad, in ~/.cache and through a symlink to it, and ThreatLocker's own log names each block with the path and the hash under the policy "Default - Developers"; it runs under /opt/homebrew/bin, /opt/homebrew/var and a Cellar-shaped path, version 1.0.0-nightly.9842, the CDP server answering on 9333 and the built-in MCP server answering initialize over stdio and HTTP. `brew install lightpanda-io/browser/lightpanda` itself failed because Homebrew 7 wants Xcode 27.0 and this machine has 26.0, so the working copy at /opt/homebrew/bin/lightpanda is hand placed and not brew managed. That is the workerd rule too: a binary under node_modules in the home directory dies, one under /opt/homebrew runs. Nothing registered in any Claude configuration; the removal commands are in the session's report.
 
 ### Done 2026-09-28: "take H-B. One line, with the wordmark - vertically center, biiiit larger logo and menu etext (make 3 versions incl current). move these to top of examples"
 
