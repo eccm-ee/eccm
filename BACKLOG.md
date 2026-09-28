@@ -7,6 +7,14 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "rm 256 icon exmaples"
+
+Asked verbatim. The 256 px icon figures leave the design system page's icon sizes; the file stays under icons/ and the sizes sentence still names it.
+
+### Done 2026-09-28: "2x3 grid" (a crop of the under lockups)
+
+Asked with a picture. The under lockups on the design system page are one cell in the same grid as the beside ones: plain and white on black across, English, Estonian and the English over the mark with the Estonian under it down.
+
 ### Done 2026-09-28: "put them to 2x3 grid" (a crop of the beside lockups)
 
 Asked with a picture. The beside lockups on the design system page are one cell in a grid of two columns, plain and white on black, and three rows, English, Estonian and both side by side, in place of two cells in a wrapping row.

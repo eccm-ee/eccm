@@ -86,7 +86,7 @@
     .cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin: 0; }
     .locks { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--eccm-s-12); }
     /* the beside lockups as a grid of two columns, plain and white on black, and three rows, English, Estonian and both (asked 2026-09-28 with a crop: "put them to 2x3 grid") */
-    #beside .locks { display: grid; grid-template-columns: repeat(2, max-content); align-items: start; }
+    #beside .locks, #under .locks { display: grid; grid-template-columns: repeat(2, max-content); align-items: start; }
     .locks figure { margin: 0; }
     .locks svg { display: block; overflow: visible; }
     .w20 { inline-size: 20rem; } .w11 { inline-size: 11rem; }
@@ -328,7 +328,7 @@
     <figure><img src="./icons/logo-stack-neg.svg" width="270" height="270" alt="ECCM stacked mark, white on ink"><figcaption>logo-stack-neg.svg</figcaption></figure>
   </div>
   <div class="prose flow">
-    <p>The icon sizes: 16, 32, 48, 64, 128, 180, 192, 256 and 512, and a favicon.ico holding 16, 32 and 48. From 128 up each size is its own drawing with the hairlines snapped to whole pixels on an integer pitch, which is what keeps five stave lines one shade; at 48 and 64 the hairlines are dropped and the M is 12 units wider with its arms a stem wide, so its counters open; at 16 and 32 the letters are the bold set, stems of 20 units, the way eccm.ee's own favicon fills its square. At 16 a stem is 0.6 px and the letters are still four blobs; a true 16 px mark with whole-pixel strokes is a decision not taken here.</p>
+    <p>The icon sizes: 16, 32, 48, 64, 128, 180, 192, 256 and 512 (the 256 not shown here), and a favicon.ico holding 16, 32 and 48. From 128 up each size is its own drawing with the hairlines snapped to whole pixels on an integer pitch, which is what keeps five stave lines one shade; at 48 and 64 the hairlines are dropped and the M is 12 units wider with its arms a stem wide, so its counters open; at 16 and 32 the letters are the bold set, stems of 20 units, the way eccm.ee's own favicon fills its square. At 16 a stem is 0.6 px and the letters are still four blobs; a true 16 px mark with whole-pixel strokes is a decision not taken here.</p>
   </div>
   <div class="ds-sizes">
     <figure><img src="./icons/icon-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
@@ -337,7 +337,6 @@
     <figure><img src="./icons/icon-64.png" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
     <figure><img src="./icons/icon-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
     <figure><img src="./icons/icon-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
-    <figure><img src="./icons/icon-256.png" width="256" height="256" alt=""><figcaption>256</figcaption></figure>
   </div>
   <div class="ds-sizes ds-neg">
     <figure><img src="./icons/icon-neg-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
@@ -494,8 +493,8 @@ const cellOf = (id, capText, opts, sets, { frames = true } = {}) => {
   const locks = document.createElement('div'); locks.className = 'locks';
   const square = opts.layout === 'under', shape = square ? 'square' : 'rectangle';
   const fig = (svg, text) => { const f = document.createElement('figure'); const fc = document.createElement('figcaption'); fc.textContent = text; f.append(svg, fc); locks.append(f); };
-  for (const texts of sets) for (const rem of [11]) {
-    const svg = lockup(texts, { ...opts, rem });
+  for (const set of sets) for (const rem of [11]) {
+    const svg = lockup(Array.isArray(set) ? set : set.texts, { ...opts, ...(Array.isArray(set) ? {} : set.opts), rem });
     fig(framed(svg, { square, plain: true }), rem + 'rem');
     if (!frames) continue;
     fig(framed(svg, { square, inv: true }), `${rem}rem, white on black`);
@@ -511,8 +510,7 @@ const draw = async () => {
   const section = (title) => { const h2 = document.createElement('h3'); h2.textContent = title; cells.append(h2); };
   const ONE = [[EN], [ET]], BOTH = [[EN, ET]];
   section('Under the mark');
-  cells.append(cellOf('under', `${px(UNDER)}, line height ${LH}, one language`, { layout: 'under', size: UNDER }, ONE));
-  cells.append(cellOf('under-both-en', `${px(UNDER)}, both languages, the English above the mark and the Estonian under it, the same air`, { layout: 'under', size: UNDER, above: true }, [[EN, ET]]));
+  cells.append(cellOf('under', `${px(UNDER)}, line height ${LH}: one language under the mark, then the English over the mark and the Estonian under it with the same air`, { layout: 'under', size: UNDER }, [[EN], [ET], { texts: [EN, ET], opts: { above: true } }]));
   section('Beside the mark');
   cells.append(cellOf('beside', `${px(BESIDE)}, line height ${LH}, 28 units after the stave, centred on the E's middle bar: one language, then both side by side 28 units apart`, { layout: 'beside', size: BESIDE, columns: true }, [[EN], [ET], [EN, ET]]));
   // every 20rem lockup's box, in units, and the widest line of each language at each size against the letters' 298
