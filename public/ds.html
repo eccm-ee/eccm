@@ -64,7 +64,7 @@
     .bio:has(.bio-photo) { grid-template-columns: 5.5rem minmax(0, 1fr); column-gap: var(--eccm-s-6); }
     .bio:has(.bio-photo) > :not(.bio-photo) { grid-column: 2; }
     .bio-photo { inline-size: 5.5rem; block-size: 5.5rem; object-fit: cover; grid-row: 1 / span 3; }
-    .bio h2 { font-size: var(--eccm-t-l); margin: 0; line-height: 1; }
+    .bio h2 { font-size: var(--eccm-t-l); margin: 0; margin-block-start: 0; line-height: 1; }   /* the flow rhythm sets the logical margin, which a physical shorthand does not reach */
     .bio-link { margin: 0; }   /* the paragraphs keep the flow rhythm */
     /* under 40rem the token table stacks, since two max-content columns
        beside a third do not fit a phone (MEASURED: 90 px of sideways
