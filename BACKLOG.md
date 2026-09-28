@@ -7,6 +7,11 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "take H-B. One line, with the wordmark - vertically center, biiiit larger logo and menu etext (make 3 versions incl current). move these to top of examples"
+
+Asked verbatim, `public/layout.html`. The one-line header with the wordmark becomes three versions at the top of the examples: the current one as it is (the mark at 8rem, the menu at 14 px, on the mark's baseline), then two centred on the mark's middle with the mark at 10rem and the menu at 16 px, and the mark at 12rem and the menu at 18 px. The other three headers follow, re-lettered, and each of the six stands on its own derived page, two more captured from the sets.
+✅ Done: H-A the current one, H-B centred at 10rem and 16 px on the JOY! pink, H-C centred at 12rem and 18 px on the Up to Three navy, then H-D two lines, H-E the mark large, H-F running. MEASURED at 1280: the marks with wordmark 222, 277 and 333 px wide, the menu's middle 0.2 and 0.1 px off the mark's middle in the centred two; H-C's last item wrapped at first because the menu needed 680 px and had 663, so the gap after the mark is 2rem in the centred versions. Twelve pages and six headers on the page now. Shot at 1280.
+
 ### Done 2026-09-28: "move et en to mobile menu. use same element as in right side of logo. more touch area than just element"
 
 Asked verbatim, the headers on `public/layout.html`. In a narrow box the language switch leaves the mark's line and becomes the last row of the opened menu; the five-hairline button stands alone at the mark's right; its tap area is padded to a finger's size, 48 by 45 px, with the icon where it was, and the opened menu's rows get the same air to tap.
