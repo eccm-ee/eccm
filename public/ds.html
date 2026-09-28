@@ -54,9 +54,6 @@
     .ds-neg img { background: #1a1a1a; }
     .ds-sizes img { display: block; }
     /* the icon's square shows on hover, since a positive mark on white has no edge (asked 2026-09-27) */
-    .ds-stave-demo { position: relative; min-block-size: 10rem; padding: var(--eccm-s-8); }
-    .ds-stave-demo img { position: absolute; top: var(--eccm-s-6); right: 0; inline-size: 120px; block-size: 58px; }
-    .ds-stave-demo .ds-cap { margin: 0; }
     .ds-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--eccm-s-2); max-inline-size: var(--eccm-measure); }
     /* artist bios, plans/plan-eccm-bios.md section 3: no box, no tint, no
        rule, the name an h2 in the prose register, s-12 between bios against
@@ -313,15 +310,11 @@
 
   <h2>Logo</h2>
   <div class="prose flow">
-    <p>The square mark, no tagline, for icons and avatars: positive and negative, each with and without a one pixel outline that stays one pixel at any size, and a plain one without the hairlines for the small sizes. The letters, E's left edge to M's right edge, are the block that is aligned: two stems of margin each side, and the E's middle bar on the square's centre line, which lifts the block two units above the geometric centre, the way a wide mark asks. The stave is ornament at its own width, as in the logo, hanging into the right margin.</p>
+    <p>The square mark, no tagline, for icons and avatars, positive and negative. Its outlined, plain (48 and 64 px) and bold (16 and 32 px) variants are files under icons/, one each, drawn for the sizes where hairlines or thin stems stop working.</p>
   </div>
   <div class="ds-squares">
     <figure><img src="./icons/logo-square.svg" width="354" height="354" alt="ECCM mark, ink on white"><figcaption>logo-square.svg</figcaption></figure>
     <figure><img src="./icons/logo-square-neg.svg" width="354" height="354" alt="ECCM mark, white on ink"><figcaption>logo-square-neg.svg</figcaption></figure>
-    <figure><img src="./icons/logo-square-outline.svg" width="354" height="354" alt="ECCM mark, ink on white, outlined"><figcaption>logo-square-outline.svg</figcaption></figure>
-    <figure><img src="./icons/logo-square-neg-outline.svg" width="354" height="354" alt="ECCM mark, white on ink, outlined"><figcaption>logo-square-neg-outline.svg</figcaption></figure>
-    <figure><img src="./icons/logo-square-plain.svg" width="354" height="354" alt="ECCM mark, ink on white, no hairlines"><figcaption>logo-square-plain.svg, 48 and 64 px, the wider M</figcaption></figure>
-    <figure><img src="./icons/logo-square-bold.svg" width="354" height="354" alt="ECCM mark, heavy letters"><figcaption>logo-square-bold.svg, 16 and 32 px and the favicon</figcaption></figure>
   </div>
   <div class="prose flow">
     <p>The stacked alternative, EC over CM: the rows share one left edge, two stems apart, the first row spread to the block's edges, the E over the C and the C over the M with the join drawn across the gap, the block centred in the square, the stave at its own width, and the join that crossed from the first C to the second dropped, since the rows part it.</p>
@@ -329,21 +322,6 @@
   <div class="ds-squares">
     <figure><img src="./icons/logo-stack.svg" width="270" height="270" alt="ECCM stacked mark, ink on white"><figcaption>logo-stack.svg</figcaption></figure>
     <figure><img src="./icons/logo-stack-neg.svg" width="270" height="270" alt="ECCM stacked mark, white on ink"><figcaption>logo-stack-neg.svg</figcaption></figure>
-    <figure><img src="./icons/logo-stack-outline.svg" width="270" height="270" alt="ECCM stacked mark, ink on white, outlined"><figcaption>logo-stack-outline.svg</figcaption></figure>
-    <figure><img src="./icons/logo-stack-neg-outline.svg" width="270" height="270" alt="ECCM stacked mark, white on ink, outlined"><figcaption>logo-stack-neg-outline.svg</figcaption></figure>
-    <figure><img src="./icons/logo-stack-plain.svg" width="270" height="270" alt="ECCM stacked mark, no hairlines"><figcaption>logo-stack-plain.svg, 48 and 64 px</figcaption></figure>
-    <figure><img src="./icons/logo-stack-bold.svg" width="270" height="270" alt="ECCM stacked mark, heavy letters"><figcaption>logo-stack-bold.svg, 16 and 32 px</figcaption></figure>
-  </div>
-  <div class="prose flow">
-    <p>The stave on its own, an element for graphics: five one pixel lines on a seven pixel pitch, used at its size or a whole multiple. It sits in the top right corner, flush to the right edge, with the padding from the top only, in the ink of the ground it is on.</p>
-  </div>
-  <div class="ds-ground ds-stave-demo">
-    <img src="./icons/stave.svg" width="60" height="29" alt="the five stave lines">
-    <p class="ds-cap">stave.svg at twice its size, in the corner of a white ground, flush right, padded from the top</p>
-  </div>
-  <div class="ds-ground ds-stave-demo" style="--ev-ground: #1b2746; --ev-ink: #ffffff">
-    <img src="./icons/stave.svg" width="60" height="29" alt="" style="filter: invert(1)">
-    <p class="ds-cap">the same on a dark ground</p>
   </div>
   <div class="prose flow">
     <p>The icon sizes: 16, 32, 48, 64, 128, 180, 192, 256 and 512, and a favicon.ico holding 16, 32 and 48. From 128 up each size is its own drawing with the hairlines snapped to whole pixels on an integer pitch, which is what keeps five stave lines one shade; at 48 and 64 the hairlines are dropped and the M is 12 units wider with its arms a stem wide, so its counters open; at 16 and 32 the letters are the bold set, stems of 20 units, the way eccm.ee's own favicon fills its square. At 16 a stem is 0.6 px and the letters are still four blobs; a true 16 px mark with whole-pixel strokes is a decision not taken here.</p>
@@ -386,7 +364,7 @@
   </div>
   <h2>Wordmark</h2>
   <div class="wm">
-    <p class="ds-cap">Instrument Sans medium at width 75, lowercase, two lines a language, starting on the E, both languages at one size: under the mark at 40 units, one language or both, and beside the mark at 37 units after 28 units of air, one language or both side by side; each lockup plain, in a bordered frame and white on black, at 20rem and 11rem of mark width.</p>
+    <p class="ds-cap">Instrument Sans medium at width 75, lowercase, two lines a language, starting on the E, both languages at one size: under the mark at 40 units, one language or both, and beside the mark at 37 units after 28 units of air, one language or both side by side; each lockup plain, in a bordered frame and white on black, at 11rem of mark width.</p>
     <div id="wm-cells"></div>
   </div>
 </main>
@@ -511,7 +489,7 @@ const cellOf = (id, capText, opts, sets, { frames = true } = {}) => {
   const locks = document.createElement('div'); locks.className = 'locks';
   const square = opts.layout === 'under', shape = square ? 'square' : 'rectangle';
   const fig = (svg, text) => { const f = document.createElement('figure'); const fc = document.createElement('figcaption'); fc.textContent = text; f.append(svg, fc); locks.append(f); };
-  for (const texts of sets) for (const rem of [20, 11]) {
+  for (const texts of sets) for (const rem of [11]) {
     const svg = lockup(texts, { ...opts, rem });
     fig(svg, rem + 'rem');
     if (!frames) continue;
@@ -537,14 +515,14 @@ const draw = async () => {
   cells.append(cellOf('beside', `${px(BESIDE)}, line height ${LH}, one language, ${BESIDE_GAP} units after the stave, centred on the E's middle bar`, { layout: 'beside', size: BESIDE }, ONE));
   cells.append(cellOf('beside-columns', `${px(BESIDE)}, both languages side by side, each centred on the E's middle bar, ${BESIDE_GAP} units between them`, { layout: 'beside', size: BESIDE, columns: true }, BOTH));
   // every 20rem lockup's box, in units, and the widest line of each language at each size against the letters' 298
-  const boxes = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="20"]:not(.frame):not(.inv)')].map((v) => v.dataset.box)]));
+  const boxes = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="11"]:not(.frame):not(.inv)')].map((v) => v.dataset.box)]));
   // in each bilingual square at 20rem, the air over the top language and under the bottom one, in units
   const margins = Object.fromEntries([...cells.querySelectorAll('.cell')].filter((c) => c.querySelector('svg[data-above="1"]')).map((c) => {
-    const f = c.querySelector('svg[data-w="20"].frame'); const [, fy, , fh] = f.dataset.box.split(' ').map(Number); const size = +f.dataset.size;
+    const f = c.querySelector('svg[data-w="11"].frame'); const [, fy, , fh] = f.dataset.box.split(' ').map(Number); const size = +f.dataset.size;
     const ys = [...f.querySelectorAll('text')].map((t) => +t.getAttribute('y'));
     return [c.id, [+(Math.min(...ys) - CAP * size - fy).toFixed(1), +(fy + fh - Math.max(...ys) - 0.25 * size).toFixed(1)]];
   }));
-  const frames = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="20"].frame')].map((v) => v.dataset.box)]));
+  const frames = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="11"].frame')].map((v) => v.dataset.box)]));
   window.__wordmark = { count: cells.querySelectorAll('.cell').length, under: UNDER, beside: BESIDE, gap: BESIDE_GAP, enFit: +enFit.toFixed(1), etFit: +etFit.toFixed(1), enUnder: +blockWidth(split2(EN), UNDER).toFixed(1), etUnder: +blockWidth(split2(ET), UNDER).toFixed(1), enBeside: +blockWidth(split2(EN), BESIDE).toFixed(1), etBeside: +blockWidth(split2(ET), BESIDE).toFixed(1), boxes, frames, margins, instrument: document.fonts.check('500 100px "Instrument Sans"') };
 };
 draw();

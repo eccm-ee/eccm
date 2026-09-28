@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "rm it" (a crop of the stave element), "consildiate square logi samples, too many atm", "rm all 20rem sizes on logos"
+
+Asked verbatim, the design system page. The stave element block with its two grounds and its rules is out; the square and the stacked marks show positive and negative only, four figures instead of twelve, the outlined, plain and bold variants named as files; the wordmark studies at the foot draw each lockup at 11rem only, 21 lockups instead of 42.
+
 ### Done 2026-09-28: "frontpage index titles too big"
 
 Asked verbatim. The list's titles step down the scale: `--eccm-t-xl` at the desk in place of `--eccm-t-2xl`, and `--eccm-t-l` in the compact row in place of `--eccm-t-xl`, on the static front page and the Worker's list alike since both draw `.ev-title`.
