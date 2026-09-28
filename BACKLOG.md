@@ -7,6 +7,14 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "logo: shorte texts, rm ec cm (keep it in icons)"
+
+Asked verbatim. The design system page's Logo section is one sentence and the square mark positive and negative; the stacked EC over CM marks and their paragraph leave it and stay in the icon sizes at the page's foot. The glass icons draw the mark's letters alone, from the page's own symbol, since the square files carried their grounds into the glass.
+
+### Done 2026-09-28: "mv icons to bottom of page" and "simulate liquied glass squirle, add to bottom of icons samples"
+
+Asked verbatim. The icon sizes are the design system page's last section, after the wordmark, under an Icons heading, without the 256 px figures; under them a simulated liquid glass icon in CSS, a fifth-power superellipse clipping a translucent glass over a picture with the picture blurred through it, a specular light, an edge hairline and the mark on it, light and dark; an approximation, said so on the page.
+
 ### Done 2026-09-28: "rm 256 icon exmaples"
 
 Asked verbatim. The 256 px icon figures leave the design system page's icon sizes; the file stays under icons/ and the sizes sentence still names it.
