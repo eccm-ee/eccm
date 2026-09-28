@@ -73,7 +73,8 @@
        opens under the mark's line one item a line (asked 2026-09-28: "do mobile menu solution, elegant one (thin 1px lines, 5 of them)") */
     /* the button's tap area is a finger, 48 by 45 px, padded out and pulled back by the same step so the icon stays where the
        switch's text ended (asked 2026-09-28: "more touch area than just element") */
-    .menu-btn { display: none; padding: var(--eccm-s-3) var(--eccm-s-6); margin: calc(-1 * var(--eccm-s-3)) calc(-1 * var(--eccm-s-6)); border: 0; background: none; color: var(--eccm-ink); cursor: pointer; }
+    /* the tap padding reaches 24 px into the header's air on the left and only the narrow gutter's 16 px past the frame on the right, so nothing drags the page sideways */
+    .menu-btn { display: none; padding: var(--eccm-s-3) var(--eccm-s-4) var(--eccm-s-3) var(--eccm-s-6); margin: calc(-1 * var(--eccm-s-3)) calc(-1 * var(--eccm-s-4)) calc(-1 * var(--eccm-s-3)) calc(-1 * var(--eccm-s-6)); border: 0; background: none; color: var(--eccm-ink); cursor: pointer; }
     /* in a narrow box the switch leaves the mark's line and closes the opened menu as its last row (asked 2026-09-28: "move et en to mobile menu") */
     .hd .lang-in { display: none; }
     /* the lines are drawn exactly as the mark draws its stave, the same width, thickness and rendering, so they blur no more than it does
@@ -88,7 +89,8 @@
       .menu-btn { display: block; }
       .hd .sw .lang { display: none; }
       .hd .nav { display: none; }
-      .hd[data-open] .nav { display: grid; flex-basis: 100%; margin-block-start: 1lh; justify-content: start; }
+      /* the opened menu's rows start at the frame's edge: this outweighs the centring rule below, which ties it on specificity and comes later */
+      .hd.one[data-open] .nav { display: grid; flex-basis: 100%; margin-block-start: 1lh; justify-content: start; }
       .hd[data-open] .nav a { display: inline-block; padding-block: var(--eccm-s-2); }
       .hd[data-open] .lang-in { display: block; margin-block-start: var(--eccm-s-4); }
       .hd[data-open] .lang-in .lang { display: flex; }

@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "not same w of 5-line as in logo. messed up menu items intendt" (a crop of the phone header with the menu open)
+
+Asked with a picture. The indent was a cascade tie: the rule starting the opened menu's rows and the rule centring the menu share a specificity and the centring one came later, so it won; the opening rule carries the header's class now and the rows start at the frame's edge. The wider tap padding of the button had also reached 24 px past the frame, 8 px beyond the narrow gutter, and dragged the phone page sideways; its right padding is the gutter's 16 px now. MEASURED: the button's lines 6.19 px wide and 0.77 tall, the same as the stave's twelve units at the mark's scale, and on the stave's rows to 0.0 px; the tap box 46 by 118, the lines at the frame's edge, nothing sideways at 375.
+
 ### Done 2026-09-28: "images should be some w as content in desktop wiew in derive"
 
 Asked verbatim. From 40rem the derive sample's two columns are equal, the picture filling its column, so it is as wide as the text's column; the text keeps its measure inside its half.
