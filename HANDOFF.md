@@ -1,145 +1,190 @@
-# Handoff, 2026-09-27, the first day of the eccm repository
+# Handoff, 2026-09-28, the second day of the eccm repository
 
-The prototype of a new eccm.ee moved out of positron this morning and grew all
-day. Everything below is live at **https://eccm.positron.studio/** and pushed
-to **https://github.com/kristjanjansen/eccm**, private, branch `main`. Numbers
-here were counted with a command when this was written; count again before
-building on one.
+The prototype of a new eccm.ee moved out of positron on 2026-09-27 and has
+grown for two days. Everything below is live at
+**https://eccm.positron.studio/** and committed on `main` of
+**https://github.com/kristjanjansen/eccm**, private; the day's commits are NOT
+pushed (pushing is done when asked, with the personal account, see CLAUDE.md).
+Numbers here were counted with a command when this was written; count again
+before building on one.
 
 ## What is live, page by page
 
 | URL | what |
 | --- | --- |
-| https://eccm.positron.studio/ | the list, static, ten rows with kicker, title and summary, dates with the month named |
-| https://eccm.positron.studio/event | the event page, static, event 134 |
-| https://eccm.positron.studio/et/sundmused/gestuurid-situatsioonid-ilma-partituurita-kuulamine | the same event **from D1**, Estonian |
-| https://eccm.positron.studio/en/events/gestures-situations-listening-without-a-score | its English twin from D1, hreflang pairs both ways |
-| https://eccm.positron.studio/en/events/gestuurid-situatsioonid-ilma-partituurita-kuulamine | the fallback: Estonian text under English chrome with one line saying so |
-| https://eccm.positron.studio/et/eccm | the five text pages from D1, ECCM, Tallinn 1965, NAN, Ulysses, Konkursid, at `/et/{slug}` and `/en/{slug}`, a fallback where a language has no text |
-| https://eccm.positron.studio/en/ | the English front page from D1, the events to come (the Estonian front page is still the static `index.html`) |
-| https://eccm.positron.studio/edit/events/1 | one event's form behind the gate, reached from the Muuda button on the event; `/edit/events/new` from the Add button on the public list; `/login?token=...&next=` opens it on staging; there is no editor list any more, asked away 2026-09-28 |
-| https://eccm.positron.studio/edit/pages/1 | one text page's form, reached from the Muuda/Edit button every public page carries (the list at `/edit/pages` went the same day, asked as "rm edit/pages page") |
-| https://eccm.positron.studio/et/sundmused | the events list from D1, and `/en/events`, the last menu item that led to eccm.ee, with a Muuda button to the events editor |
-| https://eccm.positron.studio/derive | design from a picture, four sets of six pictures (`?set=1` to `4`) |
-| https://eccm.positron.studio/ds | the design system, with the wordmark studies at its foot: type specimens, serif specimens, bios, colour, space, buttons with a disabled state, the logos, the square marks, the icon sizes, the stave element |
+| https://eccm.positron.studio/ | the Estonian front page, static, ten rows with kicker, title and summary; since 2026-09-28 every row links to the event's own page from D1 |
+| https://eccm.positron.studio/en/ | the English front page **from D1**, the events to come under Upcoming events, no button, no past |
+| https://eccm.positron.studio/et/sundmused | the events list from D1, and `/en/events`: the events to come, then Toimunud when there are any, an Add button to `/edit/events/new` |
+| https://eccm.positron.studio/et/sundmused/surm | an event page from D1, one of ten (`data/seed-step1.sql` to `seed-step4.sql`); `/en/events/{slug}` is its twin where an English row exists (two of ten) and the Estonian text under English chrome with one line saying so where none does |
+| https://eccm.positron.studio/et/eccm | the five text pages from D1, ECCM, Tallinn 1965, NAN, Ulysses, Konkursid, at `/et/{slug}` and `/en/{slug}`, a fallback either way where a language has no text, one centred column of the measure |
+| https://eccm.positron.studio/event | the event page as static HTML, the design page for event 134; its Muuda button leads to `/edit/events/1` |
+| https://eccm.positron.studio/edit/events/1 | one event's form behind the gate, reached only from the Muuda button on the event; `/edit/events/new` from the Add button on the public list; `/login?token=...&next=` opens it on staging. **There is no editor list**, neither for events nor for pages, both asked away 2026-09-28 |
+| https://eccm.positron.studio/edit/pages/1 | one text page's form, reached from the Muuda/Edit button every text page carries |
+| https://eccm.positron.studio/derive | design from a picture, four sets of six pictures (`?set=1` to `4`), Newsreader as the serif with Literata and Roboto Serif on `?serif=literata` and `?serif=roboto` |
+| https://eccm.positron.studio/ds | the design system, with the wordmark studies at its foot: type specimens, bios, colour (the ink only, no accent since 2026-09-28), space, buttons with a disabled state, the logos, the square marks, the icons |
 | https://eccm.positron.studio/type | seventeen faces for body and titles, then the six sans and the ten serifs in the derived page's three uses |
 | https://eccm.positron.studio/tagline | the tagline in DIN Condensed, 48 settings by casing, tracking, wrap and alignment |
 | https://eccm.positron.studio/tagline-47 | setting 47 taken apart: four DIN files and the same four in Instrument Sans |
 | https://eccm.positron.studio/logo | the mark measured off eccm.ee's JPEG |
 
+Gone since 2026-09-27: `/wordmark` (folded into the foot of `/ds`), `/serif`
+and `/sans` (merged into `/type`), `/layout` (its winning header and footer
+became the chrome of every page; footer D lives on in
+`plans/plan-eccm-footer-newsletter.md`), `/edit` as a static form (the address
+now goes through the gate to the front page).
+
 Also under the root: `logo.svg` (two languages), `logo-et.svg`, `logo-en.svg`,
-`wordmark-en-left.svg`, `wordmark-en-centred.svg`, `wordmark-et-left.svg`,
-`wordmark-et-centred.svg`, `manifest.webmanifest`, and `icons/` with 51 files:
-the square marks (positive, negative, outlined, plain for 48 and 64, bold for
-16 and 32), the stacked EC over CM marks, nine sizes of each in both
-polarities, `favicon.ico` and `favicon-neg.ico`, and `stave.svg`.
+the four `wordmark-*.svg`, `manifest.webmanifest`, `_headers` (noindex on
+everything, a year's immutable cache on `/vendor/*`), `partners/` with the six
+City of Music marks, `icons/` with the square marks and favicons, and the
+event pictures as eccm.ee names them (`ic_medium_*` at 300 px for the front
+page rows, `ic_large_*` at 900 px for the event pages).
+
+## The chrome, on every page
+
+The header is the mark with the wordmark beside it in Instrument Sans (the
+`beside` lockup, 37 units, the `under` lockup at 40 units on a phone), the
+menu of seven items centred, and the ET/EN switch; on a phone the menu sits
+behind a 3rem square with three 1px lines, opens under the header, and the
+switch comes last in it. The footer is three columns and the City of Music
+mark: the mark and the copyright, the menu in two columns, the venue, the
+postal address, the phone, Kirjuta meile, Instagram and Facebook. The Worker's
+pages take it from `src/render/mark.mjs` (HEADER and FOOTER strings, the
+switch href replaced per page); the static pages carry it inline, so a change
+to the chrome is one edit in `mark.mjs` and one in each static page.
+
+Every language switch stays on this site: the D1 pages and events go to their
+twin, the two lists to each other, the Estonian static pages to `/en/`, the
+English ones to `/`, and `/et/` answers 301 to `/`.
 
 ## What the Worker does today
 
-`src/index.mjs` answers `/et/sundmused/{slug}` and `/en/events/{slug}` from
-D1, since 2026-09-28 the events list at `/et/sundmused` and `/en/events` and
-the English front page at `/en/`, and the editor: `/edit/events/{id}`
-(one form for both languages, the facts, the credits, the status and the
-publish time), `/edit/events/new`, `/login` and `/logout`, all in
-`src/editor.mjs` with `src/render/editor.mjs` and the gate in `src/gate.mjs`;
-and the same afternoon the five text pages of `/et/{slug}` and `/en/{slug}`
-became editable at `/edit/pages/{id}` and `/edit/pages/new`, with `sundmused`
-and `events` refused as page slugs, and the events list came from D1 at
-`/et/sundmused` and `/en/events` (`src/render/events.mjs`). A save lands on the
-public page when it is published, else on the form again; the form carries
-no saved line and no public links since 2026-09-28.
-The gate takes a Cloudflare Access JWT when `ACCESS_TEAM` (and `ACCESS_AUD`)
-is set, and on staging a cookie set by `/login?token=` against the
-`EDITOR_TOKEN` secret, which is a stand-in until the Access application on
-`eccm.positron.studio/edit*` exists (setup plan section 2); every editor
+`src/index.mjs` answers from D1: `/en/` (the English front page), `/et/sundmused`
+and `/en/events` (the lists, `src/render/events.mjs`), `/et/sundmused/{slug}`
+and `/en/events/{slug}` (`src/render/event.mjs`), `/et/{slug}` and
+`/en/{slug}` (`src/render/page.mjs`, the five text pages; `sundmused` and
+`events` are refused as page slugs). The editor in `src/editor.mjs` with
+`src/render/editor.mjs` answers `/edit/events/{id}`, `/edit/events/new`,
+`/edit/pages/{id}` and `/edit/pages/new`, one form for both languages each;
+`/edit` goes to the front page; `/login` and `/logout` are the gate's own.
+The gate (`src/gate.mjs`) takes a Cloudflare Access JWT when `ACCESS_TEAM`
+(and `ACCESS_AUD`) is set, and on staging a cookie set by `/login?token=`
+against the `EDITOR_TOKEN` secret, a stand-in until the Access application
+on `eccm.positron.studio/edit*` exists (setup plan section 2); every editor
 reply is `no-store` and `noindex`. A save is one D1 batch guarded by `rev`, a
-stale form answers 409, preview renders the real template without writing.
-Everything else 404s; assets under `public/` are served first, and `/edit`
-with no path goes to the events list behind the gate. The remote database is `eccm-staging`
-(id in `wrangler.jsonc`), migrated with `migrations/0001_step1.sql`,
-`0002_editing.sql` and `0003_page_editing.sql` and seeded with
-`data/seed-step1.sql`, `seed-step2.sql` and `seed-step3.sql` (the five pages).
-Sessions 1, 2 and 6 of `plans/plan-eccm-cms-step-1.md` are done, 3 to 5 are
-not, and the editing the plan left out of step 1 is in. The dev server for
-local work is `npx wrangler dev --env staging`; one was running on port 8797
-when this was written, the editor agent's on 8798 against
-`.wrangler/state-editor`, and the page editing agent's on 8800 against
-`.wrangler/state-pages-edit`.
+stale form answers 409 with the typed values kept, a preview renders the
+real template without writing, and a save lands on the public page when the
+row is published, else on the form again. The status is two native radio
+buttons; Loobu sits at the row's end and leads to the page or event itself;
+a phone stacks the buttons full width. Everything else 404s; assets under
+`public/` are served first.
 
-## The plans, twelve
+The remote database is `eccm-staging` (id in `wrangler.jsonc`), migrated with
+`migrations/0001_step1.sql`, `0002_editing.sql` and `0003_page_editing.sql`
+and seeded with `data/seed-step1.sql` to `seed-step4.sql`: 10 events, 12
+event texts, 19 credits, 9 pictures, 5 pages, 7 page texts, when counted at
+the last seed. Sessions 1, 2, 5 and 6 of `plans/plan-eccm-cms-step-1.md` are
+done, 3 and 4 are not, and the editing the plan left out of step 1 is in.
 
-`plan-eccm-presence.md` (2026-09-28: where ECCM is on the web, what Instagram does better, a priced plan of twelve items and a posting rhythm), `plan-eccm-cms-step-1.md` (seven tables, six sessions, section 10 reconciles
-the scheme JSON with the social plan, section 11 takes the URL scheme),
-`plan-eccm-social-images.md` (trip's resvg pipeline and how the scheme feeds
-it), `plan-eccm-images.md` (how trip rents renditions, three ladders for
-eccm), `plan-eccm-event-markup.md` (MusicEvent as JSON-LD, the head for two
-languages, event 134 worked), `plan-eccm-urls-sitemap-rss.md` (228 old URLs
-inventoried, `/et/sundmused/` and `/en/events/`, three redirect layers,
-sitemap, RSS and an iCalendar feed), `plan-eccm-bios.md` (13 pages surveyed,
-an event_bio row per event), `plan-eccm-icons.md`, and the four that came
-with the move. Every one was relayed in full in the session that made it.
+The dev server for local work is `npx wrangler dev --env staging`; when this
+was written four were still up from the day's agents, on 8797, 8798
+(`.wrangler/state-editor`), 8799 (`.wrangler/state-pages`) and 8800
+(`.wrangler/state-pages-edit`, the one with every migration and seed). Kill
+what you do not need; a fresh state takes the three migrations and the four
+seeds.
 
-## Decisions taken today, in the owner's words where there were words
+## The plans
 
-- Credits are role lines: a role key from a translated dictionary, names typed
-  once, organisation names per language, a free role for one-offs. Not a
-  per-language JSON. (*"We are just names, or is it about the labels which
-  are different?"*)
-- The router is plain JavaScript, no Astro, with trip's build measured (179 KB
-  of runtime gzipped, 824 KB of server JS, 111 chunks).
-- The scheme JSON on the media row is the flat shape, with an integer version
-  column beside it.
-- Dates carry the month's name, long where there is room, short in a narrow
-  column; places link to Google Maps with a lighter line; bold in the body is
-  600. All three in the skill.
-- The venue is Pühavaimu 9, Tallinn. Herne 11A is the association's postal
-  address on eccm.ee's contact page and was wrongly used as the venue for a
-  day.
-- The letters E to M are the mark; the stave is ornament at its own 12 units,
-  and a layer that comes and goes: every mark file holds a `letters` and a
-  `lines` group. In the small-size marks the M is 12 units wider; under 128 px
-  the hairlines are dropped; at 16 and 32 the letters are a bold set with
-  stems of 20, which the SVG favicon is.
-- The stave is an element of its own for graphics: top right corner, flush to
-  the right edge, padded from the top only.
-- Both lines of a tagline pair are centred on one axis or both start on the E.
-  Never mixed. The Estonian breaks inside its long word, `nüüdis-` over
-  `muusika keskus`, the hyphen a hairline of the mark's weight placed from
-  the drawn line.
-- The negative icons carry their own black; the design page's rows sit on the
-  page.
-- On /serif, the four the owner named first were Newsreader, Literata,
-  Piazzolla and Petrona; all thirteen are shown again on request.
+`ls plans/*.md | wc -l`, counted and never remembered. Named here:
+`plan-eccm-presence.md` (where ECCM is on the web, a priced plan of twelve
+items), `plan-eccm-footer-newsletter.md` (footer D, for when a newsletter
+comes), `plan-eccm-cms-step-1.md` (seven tables, six sessions),
+`plan-eccm-social-images.md`, `plan-eccm-images.md`,
+`plan-eccm-event-markup.md`, `plan-eccm-urls-sitemap-rss.md`,
+`plan-eccm-bios.md`, `plan-eccm-icons.md`, and the four that came with the
+move. Every one was relayed in full in the session that made it.
+`~/plans/lightpanda.md` is outside the repository: Lightpanda runs under
+`/opt/homebrew` only, does DOM and script but no layout, and is not useful
+here.
+
+## Decisions taken 2026-09-28, in the owner's words where there were words
+
+- **Editing happens from the thing itself.** *"only events themselves are
+  access ppoint to edit"*, and before that *"rm edit/pages page"*. No editor
+  lists; a Muuda button on every event and text page; an Add button on the
+  public events list for events that do not exist yet.
+- **The form says less.** *"rm Avalik leht: ET EN / Salvestatud kell 13.30."*,
+  *"rm Lehed breadcrumb"*: no saved line, no public links, no crumb; landing
+  on the page is the feedback. *"make classic horiz radions (o) () instead of
+  radiobuttons"* after a segmented pair lasted an hour.
+- **A text page is one centred column.** *"page content is too left, not great
+  to read, center the paragraph or figure ou right column (images?)"*.
+  Centred, since a page has no picture; a picture column would need a
+  column on `page`, a field and five pictures.
+- **No accent colour.** *"none. keep it black inc outliens."* The token
+  `--eccm-accent` is the ink.
+- **Newsreader is the serif** on the derived page and the design system, with
+  Literata and Roboto Serif as alternatives.
+- **The chrome is H-B and footer A** from the layout study: *"implement this
+  layout on all pages now, rm layout"*, after *"all headers are bad. cramped,
+  no proper typo approach"* sent the study back to eight measured sites.
+- **The phone menu button is a square with three lines**, after five stave
+  lines aligned to the mark's rows were tried and asked away.
+- **Fonts are cached a year and preloaded.** The wordmark is SVG text in
+  Instrument Sans; with `max-age=0, must-revalidate` on every asset it drew
+  in the fallback face on every page switch until the 304 came back.
+- **One check per change**, on the owner's word: *"speed up yr process"*,
+  *"this is not sustainable"* about a re-measure. Measure once, look once,
+  deploy, do not re-measure after.
+
+Earlier decisions still standing: credits are role lines; the router is plain
+JavaScript; the scheme JSON on the media row is flat with a version beside
+it; dates carry the month's name; the venue is Pühavaimu 9 and Herne 11A is
+the postal address; the letters E to M are the mark and the stave is
+ornament; both lines of a tagline pair are centred or both start on the E.
 
 ## Open, for the owner
 
-- The tagline's face and shape: DIN Condensed setting 47 (uppercase, 0.08em,
-  two lines) has four files; Instrument Sans at width 75 has two settings on
-  /wordmark. Either needs the letters as outlines to become a file that works
-  off this machine, since DIN Condensed is a macOS face and Instrument Sans
-  is a webfont.
-- The serif to replace Source Serif 4: the agent's ranking puts Newsreader,
-  Fraunces and Piazzolla forward; the owner's first short list was
-  Newsreader, Literata, Piazzolla, Petrona.
-- Whether the header takes the new lockup and which; today it carries
-  `logo-et.svg` and `logo-en.svg` by language, the interim lowercase DIN.
-- A true 16 px mark beyond the bold set; a maskable Android icon.
+- **The Estonian front page is still static** while the English one comes
+  from D1. Making `/` the list from D1 means removing `public/index.html`
+  (the Worker sees only paths no file answers) and giving the Estonian home
+  the front page's heading; `renderEvents` with `home: true` already does the
+  English one.
+- **TUMA has no category key**, so Scrapyard and Sound Plasma print
+  "Sari: Koostöö". A `tuma` key is a migration (the CHECK constraint) plus
+  `CATEGORY` in `src/render/event.mjs` and `CATEGORIES` in
+  `src/render/editor.mjs`.
+- **The event template stores `website_url` and does not print it**, so the
+  Koduleht link sits as the last body line on every seeded event that has
+  one. A small change in `src/render/event.mjs`.
+- **Two seeded rows want the editor's hand**: the Üle Heli festival carries
+  eccm.ee's own 15:51 to 23:51; the second Gestures event's slug ends in
+  "-liisa" at the 60-character cut.
+- **The language is not remembered** between visits; the switch is per page.
+- The tagline's face and shape, the outlines for whichever wins; a true 16 px
+  mark; a maskable Android icon; the bios migration when that plan is read.
+- **Konkursid** holds the intro and a link to the full call on eccm.ee.
+- Sessions 3 and 4 of the CMS plan: the scheme on the media row, uploads.
 
 ## The machine
 
-This laptop kills binaries it does not know. `wrangler` is pinned to exactly
-4.107.0 and `workerd` to 1.20260701.1 with an override, because the workerd
-of wrangler 4.141 exits 137 and wrangler reports it as `write EPIPE`;
-`compatibility_date` is 2026-07-08, the newest that runtime supports. Every
-local D1 and dev command depends on this. Safari and Chrome measure a
-variable font's width axis differently unless it is set with
-`font-variation-settings`; the tagline pages carry both.
+This laptop kills binaries it does not know (ThreatLocker): a binary runs
+under `/opt/homebrew` and dies with exit 137 in `$HOME`. `wrangler` is pinned
+to exactly 4.107.0 and `workerd` to 1.20260701.1 with an override, because
+the workerd of wrangler 4.141 exits 137 and wrangler reports it as
+`write EPIPE`; `compatibility_date` is 2026-07-08, the newest that runtime
+supports. Every local D1 and dev command depends on this. Deploy with
+`env -u CF_API_TOKEN -u CLOUDFLARE_API_TOKEN npx wrangler deploy --env staging`
+and migrate the remote database before deploying code that needs a column.
+Safari and Chrome measure a variable font's width axis differently unless it
+is set with `font-variation-settings`; the tagline pages carry both.
 
 ## How to go on
 
-Session 3 of the CMS plan: `tools/scheme.mjs` reading the two seeded
-pictures through derive.html's own functions in headless Chrome and writing
-the flat JSON to `media.scheme`, then the style attribute on the article.
-Then sessions 4 and 5. The bios migration when the plan is approved. The
-outlines for whichever tagline wins. `BACKLOG.md` here has every ask of the
-day verbatim with what was measured; positron's has the ones before the move.
+`BACKLOG.md` has every ask of both days verbatim with what was measured, the
+open ones at the top. The first candidates: the Estonian front page from D1,
+the `tuma` key, the website field on the event page. Then session 3 of the
+CMS plan, `tools/scheme.mjs` reading the pictures through derive.html's own
+functions and writing `media.scheme`. Agents report and do not commit; the
+session commits by path and deploys, and a deploy ships the working tree, so
+`git status` before every deploy.
