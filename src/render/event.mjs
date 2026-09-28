@@ -41,7 +41,9 @@ const creditValue = (c, lang) => {
 };
 const creditLabel = (c, lang) => c[`role_${lang}`] || c[`label_${lang}`] || c.role_et || c.label_et || '';
 
-export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, next, origin, path }) => {
+// editHref: where the edit button goes, the row's own editor page unless the
+// caller says otherwise (a preview of an unsaved event); notice: chrome.mjs
+export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, next, origin, path, notice, editHref }) => {
   const t = T[lang];
   const textLang = fallback ? 'et' : lang;             // the language the text row is in
   const off = offsetFor(ev.starts_at);
@@ -77,7 +79,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
         </dl>
         <p class="event-actions">
           ${ev.ticket_url ? html`<a class="btn btn-pri" href="${ev.ticket_url}">${t.ticket}</a>` : ''}
-          <a class="btn" href="/edit.html">${t.edit}</a>
+          <a class="btn" href="${editHref || `/edit/events/${ev.id}`}">${t.edit}</a>
         </p>
       </div>
       ${media ? html`<figure class="event-pic">
@@ -102,5 +104,5 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
       </ol>
     </section>` : ''}
   </article>`;
-  return page({ lang, title, alternate, canonical, alternates, body });
+  return page({ lang, title, alternate, canonical, alternates, body, notice });
 };

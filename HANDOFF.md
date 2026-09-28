@@ -16,6 +16,7 @@ building on one.
 | https://eccm.positron.studio/en/events/gestures-situations-listening-without-a-score | its English twin from D1, hreflang pairs both ways |
 | https://eccm.positron.studio/en/events/gestuurid-situatsioonid-ilma-partituurita-kuulamine | the fallback: Estonian text under English chrome with one line saying so |
 | https://eccm.positron.studio/edit | the HTML-only edit form, saves nothing |
+| https://eccm.positron.studio/edit/events | the editor from D1 behind the gate: the list, `/edit/events/{id}`, `/edit/events/new`; `/login?token=...` opens it on staging |
 | https://eccm.positron.studio/derive | design from a picture, four sets of six pictures (`?set=1` to `4`) |
 | https://eccm.positron.studio/ds | the design system: type specimens, serif specimens, bios, colour, space, buttons with a disabled state, the logos, the square marks, the icon sizes, the stave element |
 | https://eccm.positron.studio/type | thirteen faces for body and titles: A Schibsted Grotesk (the default), B Source Serif 4, C Instrument Sans, D to M ten modern serifs |
@@ -36,14 +37,25 @@ polarities, `favicon.ico` and `favicon-neg.ico`, and `stave.svg`.
 ## What the Worker does today
 
 `src/index.mjs` answers `/et/sundmused/{slug}` and `/en/events/{slug}` from
-D1 and 404s everything else; assets under `public/` are served first. The
-remote database is `eccm-staging` (id in `wrangler.jsonc`), migrated with
-`migrations/0001_step1.sql` and seeded with `data/seed-step1.sql` and
-`seed-step2.sql`. MEASURED remotely: 1 event, 2 texts, 7 credits, 1 media
-row. Sessions 1 and 2 of `plans/plan-eccm-cms-step-1.md` are done, session 6's
-database and deploy were pulled forward; **session 3, the scheme column, is
-next.** The dev server for local work is `npx wrangler dev --env staging`;
-one was running on port 8797 when this was written.
+D1, and since 2026-09-28 the editor: `/edit/events` (the list), `/edit/events/{id}`
+(one form for both languages, the facts, the credits, the status and the
+publish time), `/edit/events/new`, `/login` and `/logout`, all in
+`src/editor.mjs` with `src/render/editor.mjs` and the gate in `src/gate.mjs`.
+The gate takes a Cloudflare Access JWT when `ACCESS_TEAM` (and `ACCESS_AUD`)
+is set, and on staging a cookie set by `/login?token=` against the
+`EDITOR_TOKEN` secret, which is a stand-in until the Access application on
+`eccm.positron.studio/edit*` exists (setup plan section 2); every editor
+reply is `no-store` and `noindex`. A save is one D1 batch guarded by `rev`, a
+stale form answers 409, preview renders the real template without writing.
+Everything else 404s; assets under `public/` are served first, so `/edit`
+with no path is still the static form. The remote database is `eccm-staging`
+(id in `wrangler.jsonc`), migrated with `migrations/0001_step1.sql` and
+`0002_editing.sql` and seeded with `data/seed-step1.sql` and `seed-step2.sql`.
+Sessions 1, 2 and 6 of `plans/plan-eccm-cms-step-1.md` are done, 3 to 5 are
+not, and the editing the plan left out of step 1 is in. The dev server for
+local work is `npx wrangler dev --env staging`; one was running on port 8797
+when this was written, and the editor agent's on 8798 against
+`.wrangler/state-editor`.
 
 ## The plans, twelve
 

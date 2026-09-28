@@ -30,7 +30,9 @@ export const LABEL = { et: 'ET', en: 'EN' };
 
 // alternate: { lang, href } for the other language; alternates: the hreflang
 // pairs when both texts exist (plans/plan-eccm-event-markup.md section 4)
-export const page = ({ lang, title, alternate, canonical, alternates, body }) => {
+// notice: one line above main, ruled under, which the editor's preview uses
+// to say nothing is saved (src/editor.mjs); absent on every public page
+export const page = ({ lang, title, alternate, canonical, alternates, body, notice }) => {
   const t = T[lang];
   return html`<!doctype html>
 <html lang="${lang}">
@@ -62,6 +64,7 @@ ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflan
   </div>
 </nav>
 
+${notice ? html`<div class="notice"><p class="frame">${notice}</p></div>` : ''}
 <main class="frame">
 ${body}
 </main>

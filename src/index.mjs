@@ -4,8 +4,12 @@
 // (plans/plan-eccm-cms-step-1.md section 4). Session 1 and 2: the event page
 // in both languages, with the fallback of section 2 when the English text row
 // is missing. The URL words are plans/plan-eccm-urls-sitemap-rss.md section 2.
+// The editor (src/editor.mjs) answers /edit/events* behind its gate, and
+// /login and /logout are the gate's own; /edit itself is still the static
+// public/edit.html, served before this runs.
 import { renderEvent } from './render/event.mjs';
 import { notFound, OTHER } from './render/chrome.mjs';
+import { editor } from './editor.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
 const EVENT = { et: /^\/et\/sundmused\/([a-z0-9-]+)$/, en: /^\/en\/events\/([a-z0-9-]+)$/ };
@@ -40,6 +44,7 @@ export default {
       const m = EVENT[lang].exec(p);
       if (m) { const out = await event(env, lang, m[1], url); if (out) return reply(out); break; }
     }
+    if (p === '/login' || p === '/logout' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
   },

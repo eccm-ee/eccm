@@ -7,9 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
-### Open 2026-09-28: "So next cms step. Editing?" and "In bg"
+### Done 2026-09-28: "So next cms step. Editing?" and "In bg"
 
 Asked verbatim. A background agent takes the next sessions of `plans/plan-eccm-cms-step-1.md` up to and including the editor: the scheme column the handoff names as next, then the editing route and the form saving to D1 behind a gate, on its own local database and port so the session's dev server is untouched. It reports and does not commit; the session commits, migrates the remote database and deploys.
+✅ Built and proved locally by the agent, then shipped by the session: `/edit/events` (the list), `/edit/events/{id}` (one form for both languages, the facts, the credits, the status and the publish time), `/edit/events/new`, `/login`, `/logout`, behind a gate that takes a Cloudflare Access JWT when `ACCESS_TEAM` is set and, on staging, a cookie set by `/login?token=` against the `EDITOR_TOKEN` secret, a stand-in until the Access application exists. A save is one D1 batch guarded by `rev`, so a stale form answers 409 with its values kept; preview renders the real template without writing. `migrations/0002_editing.sql` adds `rev` and `updated_by`. Step 1's sessions 3 to 5 untouched, since the editor needs none; no upload, no draft table, no redirect on a changed slug. MEASURED locally by the agent: 401, 401, 303, 200 on the gate, 35 fields plus 9 credit blocks, 303 on save and rev 2, 409 on a stale save, 422 with four sentences on bad input; re-checked by the session on the agent's server: 401, 401, 303, 200 with no-store and noindex, 73 fields, the page parses.
 
 ### Done 2026-09-28: "all headers are bad. cramped, no proper typo approach, not leaving nice detected area stand out... not good at all. all you typo whitespace reaerch? looks what others do"
 
