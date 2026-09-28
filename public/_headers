@@ -1,2 +1,11 @@
 /*
   X-Robots-Tag: noindex
+
+# the fonts never change under their names, so a browser keeps them for a year
+# and a page switch never waits on a revalidation: without this every asset
+# left the edge as max-age=0, must-revalidate, and the wordmark, which is SVG
+# text in Instrument Sans, drew in the fallback face on every page until the
+# 304 came back (asked 2026-09-28: "i see logo wordmark jumping on page
+# swithes"). A changed font gets a new file name.
+/vendor/*
+  Cache-Control: public, max-age=31536000, immutable

@@ -7,7 +7,7 @@ import { md } from './md.mjs';
 import { T, OTHER, page } from './chrome.mjs';
 import { dateLong, dayMonth, clock, mapsUrl } from './dates.mjs';
 
-const CATEGORY = {
+export const CATEGORY = {
   eccm: { et: 'ECCM', en: 'ECCM' }, koostoo: { et: 'Koostöö', en: 'Collaboration' }, improtest: { et: 'Improtest', en: 'Improtest' },
   schoenberg: { et: 'Schönbergi sari', en: 'Schönberg series' }, ulysses: { et: 'Ulysses', en: 'Ulysses' }, u: { et: 'U:', en: 'U:' },
 };

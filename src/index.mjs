@@ -10,15 +10,22 @@
 // text pages the menu names, /et/{slug} and /en/{slug}, come from page_text
 // through src/render/page.mjs, with the fallback running both ways (its
 // header says why); the event and page routes cannot collide, since a page
-// path has one segment after the language and an event path has two.
+// path has one segment after the language and an event path has two. The
+// events list, /et/sundmused and /en/events, is answered before the page
+// route since 2026-09-28 (src/render/events.mjs), the last menu item that
+// led to eccm.ee.
 import { renderEvent } from './render/event.mjs';
 import { renderPage } from './render/page.mjs';
+import { renderEvents, LIST } from './render/events.mjs';
 import { notFound, OTHER } from './render/chrome.mjs';
 import { editor } from './editor.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
 const EVENT = { et: /^\/et\/sundmused\/([a-z0-9-]+)$/, en: /^\/en\/events\/([a-z0-9-]+)$/ };
 const PAGE = /^\/(et|en)\/([a-z0-9-]+)$/;
+const LIST_LANG = Object.fromEntries(Object.entries(LIST).map(([l, p]) => [p, l]));
+// today in Tallinn as YYYY-MM-DD, so an event is still to come for the whole of its day
+const tallinnToday = () => new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn' }).format(new Date());
 
 const reply = (body, status = 200) => new Response(String(body), { status, headers: HTML });
 
@@ -40,6 +47,19 @@ async function event(env, lang, slug, url) {
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et'
     WHERE e.status = 'published' AND e.starts_at > ? AND e.id != ? ORDER BY e.starts_at LIMIT 3`).bind(lang, ev.starts_at, ev.id).all()).results;
   return renderEvent({ lang, text, fallback, ev, media, credits, twin, next, origin: url.origin, path: url.pathname });
+}
+
+// the events list: every published event with a text in this language, or
+// its Estonian text when it has none, the picture joined; the ones still to
+// come in date order, the ones that have been newest first
+async function eventsList(env, lang, url) {
+  const rows = (await env.DB.prepare(`SELECT e.id, e.starts_at, e.venue, e.category, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang, COALESCE(t1.body, t0.body) AS body, m.key AS pic, m.width, m.height
+    FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et' LEFT JOIN media m ON m.id = e.image_id
+    WHERE e.status = 'published' AND COALESCE(t1.title, t0.title) IS NOT NULL ORDER BY e.starts_at`).bind(lang).all()).results;
+  const today = tallinnToday();
+  const upcoming = rows.filter((r) => r.starts_at.slice(0, 10) >= today);
+  const past = rows.filter((r) => r.starts_at.slice(0, 10) < today).reverse();
+  return renderEvents({ lang, upcoming, past, origin: url.origin, path: url.pathname });
 }
 
 // a text page by (lang, slug), the same query shape as an event's: the text
@@ -64,6 +84,7 @@ export default {
       const m = EVENT[lang].exec(p);
       if (m) { const out = await event(env, lang, m[1], url); if (out) return reply(out); break; }
     }
+    if (LIST_LANG[p]) return reply(await eventsList(env, LIST_LANG[p], url));
     const pm = PAGE.exec(p);
     if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }
     if (p === '/login' || p === '/logout' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }

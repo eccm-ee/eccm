@@ -24,6 +24,8 @@
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="./eccm.css">
+<link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/vendor/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Newsreader, the serif, and its two alternatives are declared in eccm.css beside Schibsted */
   @layer page {
@@ -134,8 +136,8 @@
 <header class="site-head">
   <div class="frame">
     <a class="mark" href="./" aria-label="Eesti Nüüdismuusika Keskus"><svg class="beside" aria-hidden="true" viewBox="35 27 537.5 96.5" style="--k: 1.734;"><use href="#mark" x="35" y="27" width="310" height="96.5"></use><text class="tag-is" font-size="37.00" fill="currentColor" x="373.0" y="68.9" text-anchor="start">eesti nüüdis</text><rect x="529.3" y="58.32" width="11.1" height="1.5" fill="currentColor"></rect><text class="tag-is" font-size="37.00" fill="currentColor" x="373.0" y="104.0" text-anchor="start">muusika keskus</text></svg><svg class="under" aria-hidden="true" viewBox="35 27 310 183" style="--k: 1.000;"><use href="#mark" x="35" y="27" width="310" height="96.5"></use><text class="tag-is" font-size="40.00" fill="currentColor" x="35.0" y="162.0" text-anchor="start">eesti nüüdis</text><rect x="204.0" y="150.65" width="12.0" height="1.5" fill="currentColor"></rect><text class="tag-is" font-size="40.00" fill="currentColor" x="35.0" y="200.0" text-anchor="start">muusika keskus</text></svg></a>
-    <span class="sw"><span class="lang"><span aria-current="page" lang="et">ET</span><a href="https://eccm.ee/index.php/en/" lang="en">EN</a></span><button class="menu-btn" type="button" aria-expanded="false" aria-label="Menüü"><svg viewBox="0 27 12 183" aria-hidden="true"><rect y="58.500" width="12" height="1.5"/><rect y="65.875" width="12" height="1.5"/><rect y="73.250" width="12" height="1.5"/><rect y="80.625" width="12" height="1.5"/><rect y="88.000" width="12" height="1.5"/></svg></button></span>
-    <ul class="nav"><li><a href="./">Avaleht</a></li><li><a href="/et/eccm">ECCM</a></li><li><a href="/et/tallinn-1965">Tallinn 1965</a></li><li><a href="/et/nan">NAN</a></li><li><a href="/et/ulysses">Ulysses</a></li><li><a href="/et/konkursid">Konkursid</a></li><li><a href="https://eccm.ee/index.php/et/syndmusest">Sündmused</a></li><li class="lang-in"><span class="lang"><span aria-current="page" lang="et">ET</span><a href="https://eccm.ee/index.php/en/" lang="en">EN</a></span></li></ul>
+    <span class="sw"><span class="lang"><span aria-current="page" lang="et">ET</span><a href="/en/events" hreflang="en" lang="en">EN</a></span><button class="menu-btn" type="button" aria-expanded="false" aria-label="Menüü"><svg viewBox="0 27 12 183" aria-hidden="true"><rect y="58.500" width="12" height="1.5"/><rect y="65.875" width="12" height="1.5"/><rect y="73.250" width="12" height="1.5"/><rect y="80.625" width="12" height="1.5"/><rect y="88.000" width="12" height="1.5"/></svg></button></span>
+    <ul class="nav"><li><a href="./">Avaleht</a></li><li><a href="/et/eccm">ECCM</a></li><li><a href="/et/tallinn-1965">Tallinn 1965</a></li><li><a href="/et/nan">NAN</a></li><li><a href="/et/ulysses">Ulysses</a></li><li><a href="/et/konkursid">Konkursid</a></li><li><a href="/et/sundmused">Sündmused</a></li><li class="lang-in"><span class="lang"><span aria-current="page" lang="et">ET</span><a href="/en/events" hreflang="en" lang="en">EN</a></span></li></ul>
   </div>
 </header>
 
@@ -151,7 +153,7 @@
 <footer class="site-foot" lang="et">
   <div class="frame"><div class="cols">
     <div><a class="mk" href="./" aria-label="Eesti Nüüdismuusika Keskus"><svg viewBox="35 27 310 96.5" aria-hidden="true"><use href="#mark" x="35" y="27" width="310" height="96.5"/></svg></a><p class="copy">© 2026 Eesti Nüüdismuusika Keskus</p></div>
-    <div><ul class="two"><li><a href="./">Avaleht</a></li><li><a href="/et/eccm">ECCM</a></li><li><a href="/et/tallinn-1965">Tallinn 1965</a></li><li><a href="/et/nan">NAN</a></li><li><a href="/et/ulysses">Ulysses</a></li><li><a href="/et/konkursid">Konkursid</a></li><li><a href="https://eccm.ee/index.php/et/syndmusest">Sündmused</a></li></ul></div>
+    <div><ul class="two"><li><a href="./">Avaleht</a></li><li><a href="/et/eccm">ECCM</a></li><li><a href="/et/tallinn-1965">Tallinn 1965</a></li><li><a href="/et/nan">NAN</a></li><li><a href="/et/ulysses">Ulysses</a></li><li><a href="/et/konkursid">Konkursid</a></li><li><a href="/et/sundmused">Sündmused</a></li></ul></div>
     <div class="contact"><p>Saal<br>Pühavaimu 9, Tallinn</p><p>Postiaadress<br>Herne 11A, 10135 Tallinn</p><p>Telefon<br><a href="tel:+3725162103">+372 516 2103</a></p><p><a href="https://eccm.ee/index.php/et/eccm/kontakt">Kirjuta meile</a></p><p><a href="https://www.instagram.com/eccm.ee/">Instagram</a></p><p><a href="https://www.facebook.com/eestinyydismuusikakeskus">Facebook</a></p></div>
     <div class="end"><a class="partner" href="https://muusikalinntallinn.ee/"><img src="./partners/tallinn-muusikalinn-must_RGB.svg" alt="Tallinn, UNESCO muusikalinn"></a></div>
   </div></div>

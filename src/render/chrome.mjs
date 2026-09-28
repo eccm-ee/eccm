@@ -10,8 +10,8 @@ import { SYMBOL, HEADER, FOOTER } from './mark.mjs';
 
 export const T = {
   et: {
-    menu: 'Menüü', markAlt: 'Eesti nüüdismuusika keskus', upcoming: 'Tulevased üritused',
-    nav: [['/', 'Avaleht'], ['/et/eccm', 'ECCM'], ['/et/tallinn-1965', 'Tallinn 1965'], ['/et/nan', 'NAN'], ['/et/ulysses', 'Ulysses'], ['/et/konkursid', 'Konkursid'], ['https://eccm.ee/index.php/et/syndmusest', 'Sündmused']],
+    menu: 'Menüü', markAlt: 'Eesti nüüdismuusika keskus', upcoming: 'Tulevased üritused', events: 'Sündmused', past: 'Toimunud', noEvents: 'Ühtegi tulevast sündmust ei ole.',
+    nav: [['/', 'Avaleht'], ['/et/eccm', 'ECCM'], ['/et/tallinn-1965', 'Tallinn 1965'], ['/et/nan', 'NAN'], ['/et/ulysses', 'Ulysses'], ['/et/konkursid', 'Konkursid'], ['/et/sundmused', 'Sündmused']],
     foot: 'Eesti Nüüdismuusika Keskus, Pühavaimu 9, Tallinn',
     notFound: 'Sellist lehte ei ole.', notFoundLead: 'Aadress võib olla vananenud või valesti kirjutatud.',
     when: 'Millal', where: 'Kus', series: 'Sari', calendar: 'Kalendrisse', ask: 'Küsi', at: 'kell', min: 'min',
@@ -19,8 +19,8 @@ export const T = {
     fallback: 'Sellel lehel ei ole veel eestikeelset versiooni. Järgneb ingliskeelne tekst.',
   },
   en: {
-    menu: 'Menu', markAlt: 'Estonian Centre of Contemporary Music', upcoming: 'Upcoming events',
-    nav: [['/', 'Home'], ['/en/eccm', 'ECCM'], ['/en/tallinn-1965', 'Tallinn 1965'], ['/en/nan', 'NAN'], ['/en/ulysses', 'Ulysses'], ['/en/open-calls', 'Open calls'], ['https://eccm.ee/index.php/en/eventseng', 'Events']],
+    menu: 'Menu', markAlt: 'Estonian Centre of Contemporary Music', upcoming: 'Upcoming events', events: 'Events', past: 'Past events', noEvents: 'No upcoming events.',
+    nav: [['/', 'Home'], ['/en/eccm', 'ECCM'], ['/en/tallinn-1965', 'Tallinn 1965'], ['/en/nan', 'NAN'], ['/en/ulysses', 'Ulysses'], ['/en/open-calls', 'Open calls'], ['/en/events', 'Events']],
     foot: 'Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinn',
     notFound: 'There is no such page.', notFoundLead: 'The address may be out of date or mistyped.',
     when: 'When', where: 'Where', series: 'Series', calendar: 'Add to calendar', ask: 'Ask', at: 'at', min: 'min',
@@ -51,6 +51,8 @@ ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflan
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/eccm.css">
+<link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/vendor/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
 ${raw(SYMBOL)}

@@ -11,7 +11,10 @@
 // lead is the event page's header without the picture, so the Muuda button
 // sits under the title the way event.mjs shows it and the prose follows at
 // the same distance; the editor (src/editor.mjs) renders this same function
-// for a preview, with a notice and an editHref of its own.
+// for a preview, with a notice and an editHref of its own. page-text is the
+// stylesheet's one centred column of the measure, since a page has no
+// picture for the event page's second column (asked 2026-09-28: "page
+// content is too left, not great to read").
 import { html, raw } from './html.mjs';
 import { md } from './md.mjs';
 import { T, OTHER, page } from './chrome.mjs';
@@ -34,7 +37,7 @@ export const renderPage = ({ lang, text, fallback, twin, origin, path, notice, e
   ] : [];
   const canonical = origin + (fallback ? pagePath(text.lang, text.slug) : path);
 
-  const body = html`  <article class="event">
+  const body = html`  <article class="event page-text">
     <header class="event-top">
       <div class="event-lead">
         ${fallback ? html`<p class="small">${t.fallback}</p>` : ''}

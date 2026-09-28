@@ -5,7 +5,6 @@
 //   GET  /edit/events                          every event, any status
 //   GET  /edit/events/new, POST                a blank form, then an insert
 //   GET  /edit/events/{id}, POST               the form from D1, then a save
-//   GET  /edit/pages                           every text page, any status
 //   GET  /edit/pages/new, POST                 a blank form, then an insert
 //   GET  /edit/pages/{id}, POST                the form from D1, then a save
 //
@@ -23,7 +22,7 @@
 import { renderEvent } from './render/event.mjs';
 import { renderPage, pagePath } from './render/page.mjs';
 import { OTHER } from './render/chrome.mjs';
-import { editorList, editorForm, pageList, pageForm, loginPage, gatePage, CATEGORIES, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
+import { editorList, editorForm, pageForm, loginPage, gatePage, CATEGORIES, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
 import { identify, tokenMatches, setCookie, clearCookie } from './gate.mjs';
 
 const HEAD = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' };
@@ -263,32 +262,37 @@ async function loadPage(db, id) {
   return { pg, texts, values: pageFromRows(pg, texts) };
 }
 
+// where a page's Loobu goes: the page itself, Estonian first; and where a
+// save lands: the page when it is published, else the form again, since a
+// draft has no public page. The saved line and the public links left the
+// form 2026-09-28 (asked as "rm Avalik leht: ET EN / Salvestatud kell 13.30."
+// and "rm Lehed breadcrumb"), so landing on the page is the feedback.
+const pageHome = (texts) => { const t = texts.find((x) => x.lang === 'et') || texts.find((x) => x.lang === 'en'); return t ? pagePath(t.lang, t.slug) : null; };
+const landing = (v, path) => (v.status === 'published' && (v.et.title || v.en.title) ? path(v.et.title ? 'et' : 'en', v.et.title ? v.et.slug : v.en.slug) : null);
+
 async function pageRoute(request, env, url, id, who) {
   const db = env.DB;
   const before = id === 'new' ? { pg: null, texts: [], values: pageFromRows(null, []) } : await loadPage(db, +id);
   if (!before) return reply(gatePage({ status: 404, reason: 'page' }), 404);
-  const texts = Object.fromEntries(before.texts.map((t) => [t.lang, t]));
-  if (request.method !== 'POST') {
-    const saved = url.searchParams.get('saved') && before.pg ? before.pg.updated_at : null;
-    return reply(pageForm({ v: before.values, saved, texts }));
-  }
+  const cancel = pageHome(before.texts) || '/';
+  if (request.method !== 'POST') return reply(pageForm({ v: before.values, cancel }));
   if (crossSite(request)) return reply(gatePage({ status: 403, reason: 'origin' }), 403);
   const fd = await request.formData();
   const v = parsePage(fd, before.values);
   const action = s(fd, 'do');
   const errors = await validatePage(v, db);
-  if (errors.length) return reply(pageForm({ v, errors, texts }), 422);
+  if (errors.length) return reply(pageForm({ v, errors, cancel }), 422);
   if (action.startsWith('preview')) return previewPage(v, action.endsWith('en') ? 'en' : 'et', url);
   const out = await savePage(db, v, who);
-  if (out.stale) return reply(pageForm({ v, errors: [{ field: 'rev', msg: 'Keegi teine salvestas selle lehe vahepeal. Ava leht uues vahekaardis, võrdle ja tee muudatus uuesti.' }], texts }), 409);
-  return redirect(`/edit/pages/${out.id}?saved=1`);
+  if (out.stale) return reply(pageForm({ v, errors: [{ field: 'rev', msg: 'Keegi teine salvestas selle lehe vahepeal. Ava leht uues vahekaardis, võrdle ja tee muudatus uuesti.' }], cancel }), 409);
+  return redirect(landing(v, pagePath) || `/edit/pages/${out.id}`);
 }
 
 // ── the routes ──────────────────────────────────────────────────────────────
 // a cross-site form post cannot carry the cookie (SameSite=Lax), and a
 // browser that says where the post came from is believed
 const crossSite = (request) => { const site = request.headers.get('sec-fetch-site'); return !!site && site !== 'same-origin' && site !== 'none'; };
-// where /login sends a person after the cookie is set: anything under /edit/, the events' list or the pages'
+// where /login sends a person after the cookie is set: anything under /edit/, the events' list or a page's form
 const safeNext = (n) => (typeof n === 'string' && /^\/edit\/[a-z0-9/_-]*$/i.test(n) ? n : '/edit/events');
 
 async function login(request, env, url) {
@@ -334,23 +338,20 @@ async function form(request, env, url, id, who) {
   const before = id === 'new' ? { ev: null, texts: [], creditRows: [], values: fromRows(null, [], []) } : await load(db, +id);
   if (!before) return reply(gatePage({ status: 404 }), 404);
   const { roles, media } = await lookups(db);
-  const texts = Object.fromEntries(before.texts.map((t) => [t.lang, t]));
-  if (request.method !== 'POST') {
-    const saved = url.searchParams.get('saved') && before.ev ? before.ev.updated_at : null;
-    return reply(editorForm({ v: padded(before.values), roles, media, saved, texts }));
-  }
+  if (request.method !== 'POST') return reply(editorForm({ v: padded(before.values), roles, media }));
   if (crossSite(request)) return reply(gatePage({ status: 403, reason: 'origin' }), 403);
   const fd = await request.formData();
   const v = parse(fd, before.values);
   const action = s(fd, 'do');
   // one more blank credit block, the typed values kept, nothing validated and nothing saved
-  if (action === 'add-credit') return reply(editorForm({ v: { ...v, credits: v.credits.concat([BLANK_CREDIT()]) }, roles, media, texts }));
+  if (action === 'add-credit') return reply(editorForm({ v: { ...v, credits: v.credits.concat([BLANK_CREDIT()]) }, roles, media }));
   const errors = await validate(v, db, roles, media);
-  if (errors.length) return reply(editorForm({ v: padded(v), errors, roles, media, texts }), 422);
+  if (errors.length) return reply(editorForm({ v: padded(v), errors, roles, media }), 422);
   if (action.startsWith('preview')) return preview(db, v, action.endsWith('en') ? 'en' : 'et', before, roles, media, url);
   const out = await save(db, v, before, who);
-  if (out.stale) return reply(editorForm({ v: padded(v), errors: [{ field: 'rev', msg: 'Keegi teine salvestas selle sündmuse vahepeal. Ava leht uues vahekaardis, võrdle ja tee muudatus uuesti.' }], roles, media, texts }), 409);
-  return redirect(`/edit/events/${out.id}?saved=1`);
+  if (out.stale) return reply(editorForm({ v: padded(v), errors: [{ field: 'rev', msg: 'Keegi teine salvestas selle sündmuse vahepeal. Ava leht uues vahekaardis, võrdle ja tee muudatus uuesti.' }], roles, media }), 409);
+  // the event page when it is published, else the form again, as a page save lands
+  return redirect(landing(v, eventPath) || `/edit/events/${out.id}`);
 }
 
 export async function editor(request, env, url) {
@@ -368,12 +369,6 @@ export async function editor(request, env, url) {
     }
     const m = /^\/edit\/events\/(new|\d+)$/.exec(p);
     if (m) return form(request, env, url, m[1], id.who);
-    if (p === '/edit/pages') {
-      const pages = (await env.DB.prepare(`SELECT p.id, p.key, p.status, p.updated_at, t0.title AS title_et, t1.title AS title_en
-        FROM page p LEFT JOIN page_text t0 ON t0.page_id = p.id AND t0.lang = 'et' LEFT JOIN page_text t1 ON t1.page_id = p.id AND t1.lang = 'en'
-        ORDER BY p.menu_order, p.id`).bind().all()).results;
-      return reply(pageList({ pages }));
-    }
     const pm = /^\/edit\/pages\/(new|\d+)$/.exec(p);
     if (pm) return pageRoute(request, env, url, pm[1], id.who);
     return null;

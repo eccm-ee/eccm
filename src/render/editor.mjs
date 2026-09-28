@@ -1,7 +1,8 @@
 // editor.mjs: the editor's pages, in Estonian, on the site's own chrome and
-// stylesheet: the list of events, the form for one event, the list of text
-// pages and the form for one (since 2026-09-28, asked as "page from d1 and
-// with edit?"), the login page and the closed door. The event form is
+// stylesheet: the list of events, the form for one event, the form for one text
+// page (since 2026-09-28, asked as "page from d1 and with edit?"; its list
+// went the same day, asked as "rm edit/pages page", since the menu's pages
+// are a fixed set reached from their own Muuda buttons), the login page and the closed door. The event form is
 // public/edit.html's form grown to the schema (plans/plan-eccm-cms-step-1.md
 // section 2): the shared facts first, then the two languages side by side
 // where the frame allows it, then the credits as one line per role, then
@@ -13,7 +14,6 @@
 import { html, raw } from './html.mjs';
 import { page } from './chrome.mjs';
 import { dateShort, clock } from './dates.mjs';
-import { pagePath } from './page.mjs';
 
 // a blank credit block, the one the form shows when an event has none and the one Lisa tegija adds
 export const BLANK_CREDIT = () => ({ role_key: '', label_et: '', label_en: '', people: '', orgs_et: '', orgs_en: '' });
@@ -36,6 +36,14 @@ const field = ({ id, label, hint, err, control, cls = '' }) => html`<div class="
         ${err ? html`<p class="hint err">${err}</p>` : hint ? html`<p class="hint">${hint}</p>` : ''}
       </div>`;
 const input = (id, name, value, attrs = '') => html`<input id="${id}" name="${name}" value="${value ?? ''}"${raw(attrs)}>`;
+// a choice of a few as radio buttons set side by side in one box, the chosen one inverted (asked 2026-09-28:
+// "make it radiobutton [ Mustand | Avaldatud ]"); a fieldset with the field's look, its legend where the label sits
+const segment = (name, options, value) => html`<div class="seg">${options.map(([v, label]) => html`<label class="seg-opt"><input type="radio" name="${name}" value="${v}"${String(v) === String(value ?? '') ? raw(' checked') : ''}><span>${label}</span></label>`)}</div>`;
+const group = ({ label, hint, err, control }) => html`<fieldset class="field">
+        <legend>${label}</legend>
+        ${control}
+        ${err ? html`<p class="hint err">${err}</p>` : hint ? html`<p class="hint">${hint}</p>` : ''}
+      </fieldset>`;
 // one language's fields, in two parts: the title and the slug open the form, the text sits under Tekst
 // (asked 2026-09-28: "move pealkiri and slug to their own section, first"); the event form and the page
 // form share it, v being either form's values and err its error lookup
@@ -54,7 +62,7 @@ export const editorList = ({ events }) => page({
   lang: 'et', title: 'Sündmused.', alternate: ALT,
   body: html`  <p class="crumb">Toimeta</p>
   <h1>Sündmused</h1>
-  <p class="actions"><a class="btn btn-pri" href="/edit/events/new">Uus sündmus</a> <a class="btn" href="/edit/pages">Lehed</a> <a class="btn" href="/logout">Logi välja</a></p>
+  <p class="actions"><a class="btn btn-pri" href="/edit/events/new">Uus sündmus</a> <a class="btn" href="/logout">Logi välja</a></p>
   ${events.length ? html`<ol class="edit-list">
     ${events.map((e) => html`<li><time datetime="${e.starts_at}">${dateShort(e.starts_at, 'et')} ${clock(e.starts_at, 'et')}</time><span><a href="/edit/events/${e.id}">${e.title_et || e.title_en || '(pealkirjata)'}</a><small>${e.status === 'published' ? 'Avaldatud' : 'Mustand'}, ${e.title_en ? 'ET ja EN' : 'ainult ET'}, muudetud ${tallinnStamp(e.updated_at)}</small></span></li>`)}
   </ol>` : html`<p class="note">Ühtegi sündmust ei ole.</p>`}`,
@@ -64,7 +72,7 @@ export const editorList = ({ events }) => page({
 // msg }]; roles: the role table; media: the media table; saved: the row's
 // updated_at when the page follows a save; texts: the saved text rows, for
 // the public links
-export const editorForm = ({ v, errors = [], roles, media, saved, texts = {} }) => {
+export const editorForm = ({ v, errors = [], roles, media }) => {
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
   const isNew = !v.id;
   const action = isNew ? '/edit/events/new' : `/edit/events/${v.id}`;
@@ -87,11 +95,8 @@ export const editorForm = ({ v, errors = [], roles, media, saved, texts = {} }) 
           ${field({ id: `f-c${k}-orgs-en`, label: 'Organisations, in English', hint: i === 0 ? 'The same order as the Estonian.' : '', control: input(`f-c${k}-orgs-en`, `c${k}_orgs_en`, c.orgs_en) })}
         </div>
       </div>`;
-  const links = ['et', 'en'].filter((l) => texts[l]).map((l) => html`<a href="${eventPath(l, texts[l].slug)}" hreflang="${l}">${l.toUpperCase()}</a>`);
   const body = html`  <p class="crumb"><a href="/edit/events">Sündmused</a></p>
   <h1>${title}</h1>
-  ${links.length ? html`<p class="note">Avalik leht: ${raw(links.map(String).join(" "))}${v.status !== 'published' ? html` <span class="small">(mustand, avalikult ei näe)</span>` : ''}</p>` : ''}
-  ${saved ? html`<p class="note">Salvestatud kell ${tallinnClock(saved)}.</p>` : ''}
   ${errors.length ? html`<div class="errors" role="alert"><p>Ei salvestatud. Paranda:</p><ul>${errors.map((e) => html`<li>${e.msg}</li>`)}</ul></div>` : ''}
 
   <form class="form form-wide" method="post" action="${action}">
@@ -123,7 +128,7 @@ export const editorForm = ({ v, errors = [], roles, media, saved, texts = {} }) 
 
     <h2>Avaldamine</h2>
     <div class="fields">
-      ${field({ id: 'f-status', label: 'Olek', hint: 'Mustandit avalikul lehel ei näe.', control: html`<select id="f-status" name="status">${opts(STATUSES, v.status)}</select>` })}
+      ${group({ label: 'Olek', hint: 'Mustandit avalikul lehel ei näe.', err: err('status'), control: segment('status', STATUSES, v.status) })}
       ${field({ id: 'f-publish', label: 'Avalda alates', err: err('publish_at'), hint: 'Tühi = kohe.', control: input('f-publish', 'publish_at', v.publish_at, ' type="datetime-local"') })}
     </div>
     <h2>Tekst</h2>
@@ -155,36 +160,21 @@ ${raw(SAME_HEIGHT)}
       <button class="btn btn-pri" type="submit" name="do" value="save">Salvesta</button>
       <button class="btn" type="submit" name="do" value="preview-et">Eelvaade ET</button>
       <button class="btn" type="submit" name="do" value="preview-en">Eelvaade EN</button>
-      <a class="btn" href="/edit/events">Loobu</a>
+      <a class="btn btn-end" href="/edit/events">Loobu</a>
     </div>
   </form>`;
   return page({ lang: 'et', title: `${title}.`, alternate: ALT, body });
 };
 
-// ── the text pages: the same two views with nothing a page lacks ────────────
-// the key in the first column is the row's name in the page table, which the form does not change
-export const pageList = ({ pages }) => page({
-  lang: 'et', title: 'Lehed.', alternate: ALT,
-  body: html`  <p class="crumb">Toimeta</p>
-  <h1>Lehed</h1>
-  <p class="actions"><a class="btn btn-pri" href="/edit/pages/new">Uus leht</a> <a class="btn" href="/edit/events">Sündmused</a> <a class="btn" href="/logout">Logi välja</a></p>
-  ${pages.length ? html`<ol class="edit-list">
-    ${pages.map((p) => html`<li><small>${p.key}</small><span><a href="/edit/pages/${p.id}">${p.title_et || p.title_en || '(pealkirjata)'}</a><small>${p.title_et && p.title_en ? html`EN: ${p.title_en}` : p.title_et ? 'ainult ET' : 'ainult EN'}</small><small>${p.status === 'published' ? 'Avaldatud' : 'Mustand'}, muudetud ${tallinnStamp(p.updated_at)}</small></span></li>`)}
-  </ol>` : html`<p class="note">Ühtegi lehte ei ole.</p>`}`,
-});
-
-// v: the form's values (src/editor.mjs, pageFromRows or parsePage); errors,
-// saved and texts as editorForm takes them
-export const pageForm = ({ v, errors = [], saved, texts = {} }) => {
+// ── the text pages: the same form with nothing a page lacks ─────────────────
+// v: the form's values (src/editor.mjs, pageFromRows or parsePage); errors as editorForm takes them;
+// cancel: where Loobu goes, the page itself (src/editor.mjs)
+export const pageForm = ({ v, errors = [], cancel = '/' }) => {
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
   const isNew = !v.id;
   const action = isNew ? '/edit/pages/new' : `/edit/pages/${v.id}`;
   const title = isNew ? 'Uus leht' : (v.et.title || v.en.title || 'Leht');
-  const links = ['et', 'en'].filter((l) => texts[l]).map((l) => html`<a href="${pagePath(l, texts[l].slug)}" hreflang="${l}">${l.toUpperCase()}</a>`);
-  const body = html`  <p class="crumb"><a href="/edit/pages">Lehed</a></p>
-  <h1>${title}</h1>
-  ${links.length ? html`<p class="note">Avalik leht: ${raw(links.map(String).join(" "))}${v.status !== 'published' ? html` <span class="small">(mustand, avalikult ei näe)</span>` : ''}</p>` : ''}
-  ${saved ? html`<p class="note">Salvestatud kell ${tallinnClock(saved)}.</p>` : ''}
+  const body = html`  <h1>${title}</h1>
   ${errors.length ? html`<div class="errors" role="alert"><p>Ei salvestatud. Paranda:</p><ul>${errors.map((e) => html`<li>${e.msg}</li>`)}</ul></div>` : ''}
 
   <form class="form form-wide" method="post" action="${action}">
@@ -197,7 +187,7 @@ export const pageForm = ({ v, errors = [], saved, texts = {} }) => {
 
     <h2>Avaldamine</h2>
     <div class="fields">
-      ${field({ id: 'f-status', label: 'Olek', hint: 'Mustandit avalikul lehel ei näe.', control: html`<select id="f-status" name="status">${opts(STATUSES, v.status)}</select>` })}
+      ${group({ label: 'Olek', hint: 'Mustandit avalikul lehel ei näe.', err: err('status'), control: segment('status', STATUSES, v.status) })}
       ${field({ id: 'f-publish', label: 'Avalda alates', err: err('publish_at'), hint: 'Tühi = kohe.', control: input('f-publish', 'publish_at', v.publish_at, ' type="datetime-local"') })}
     </div>
 
@@ -214,7 +204,7 @@ ${raw(SAME_HEIGHT)}
       <button class="btn btn-pri" type="submit" name="do" value="save">Salvesta</button>
       <button class="btn" type="submit" name="do" value="preview-et">Eelvaade ET</button>
       <button class="btn" type="submit" name="do" value="preview-en">Eelvaade EN</button>
-      <a class="btn" href="/edit/pages">Loobu</a>
+      <a class="btn btn-end" href="${cancel}">Loobu</a>
     </div>
   </form>`;
   return page({ lang: 'et', title: `${title}.`, alternate: ALT, body });
@@ -237,7 +227,7 @@ export const gatePage = ({ status, reason }) => {
     ? ['Toimetaja ei ole seadistatud.', 'Sellel serveril ei ole sisselogimise viisi seatud, nii et toimetada ei saa keegi.']
     : status === 404
       ? (reason === 'page'
-        ? ['Sellist lehte ei ole.', html`Nimekiri on <a href="/edit/pages">lehtede all</a>.`]
+        ? ['Sellist lehte ei ole.', html`Lehed on menüüs ja igal lehel on Muuda nupp.`]
         : ['Sellist sündmust ei ole.', html`Nimekiri on <a href="/edit/events">sündmuste all</a>.`])
       : status === 403
         ? ['Päring tuli mujalt.', 'Vorm saadeti teiselt saidilt ja seda ei võetud vastu. Ava toimetaja uuesti ja saada sealt.']

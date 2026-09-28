@@ -18,7 +18,8 @@ building on one.
 | https://eccm.positron.studio/et/eccm | the five text pages from D1, ECCM, Tallinn 1965, NAN, Ulysses, Konkursid, at `/et/{slug}` and `/en/{slug}`, a fallback where a language has no text |
 | https://eccm.positron.studio/edit | the HTML-only edit form, saves nothing |
 | https://eccm.positron.studio/edit/events | the editor from D1 behind the gate: the list, `/edit/events/{id}`, `/edit/events/new`; `/login?token=...` opens it on staging |
-| https://eccm.positron.studio/edit/pages | the same for the five text pages: the list, `/edit/pages/{id}`, `/edit/pages/new`; every public page carries a Muuda/Edit button |
+| https://eccm.positron.studio/edit/pages/1 | one text page's form, reached from the Muuda/Edit button every public page carries (the list at `/edit/pages` went the same day, asked as "rm edit/pages page") |
+| https://eccm.positron.studio/et/sundmused | the events list from D1, and `/en/events`, the last menu item that led to eccm.ee, with a Muuda button to the events editor |
 | https://eccm.positron.studio/derive | design from a picture, four sets of six pictures (`?set=1` to `4`) |
 | https://eccm.positron.studio/ds | the design system, with the wordmark studies at its foot: type specimens, serif specimens, bios, colour, space, buttons with a disabled state, the logos, the square marks, the icon sizes, the stave element |
 | https://eccm.positron.studio/type | seventeen faces for body and titles, then the six sans and the ten serifs in the derived page's three uses |
@@ -41,8 +42,11 @@ D1, and since 2026-09-28 the editor: `/edit/events` (the list), `/edit/events/{i
 publish time), `/edit/events/new`, `/login` and `/logout`, all in
 `src/editor.mjs` with `src/render/editor.mjs` and the gate in `src/gate.mjs`;
 and the same afternoon the five text pages of `/et/{slug}` and `/en/{slug}`
-became editable at `/edit/pages`, `/edit/pages/{id}` and `/edit/pages/new`,
-with `sundmused` and `events` refused as page slugs.
+became editable at `/edit/pages/{id}` and `/edit/pages/new`, with `sundmused`
+and `events` refused as page slugs, and the events list came from D1 at
+`/et/sundmused` and `/en/events` (`src/render/events.mjs`). A save lands on the
+public page when it is published, else on the form again; the form carries
+no saved line and no public links since 2026-09-28.
 The gate takes a Cloudflare Access JWT when `ACCESS_TEAM` (and `ACCESS_AUD`)
 is set, and on staging a cookie set by `/login?token=` against the
 `EDITOR_TOKEN` secret, which is a stand-in until the Access application on

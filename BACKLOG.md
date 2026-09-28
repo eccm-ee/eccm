@@ -7,6 +7,56 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "add more padding to right of hamburger menu. rm blue bg flash on tap"
+
+Asked verbatim: the five-line menu button on a phone gets more room at its right, and the tap highlight a phone browser paints on it goes. File: `public/eccm.css` (`.menu-btn`).
+✅ The button's right padding is 24 px against the same 16 px of negative margin, so the lines stand 8 px in from the frame's edge and the tap area reaches the screen's; `-webkit-tap-highlight-color: transparent` on the button.
+
+### Done 2026-09-28: "do proper language switching"
+
+Asked verbatim. The ET/EN switch leads to this site's own page in the other language everywhere: the D1 pages and events already go to their twin, the events list goes to the other list, and the static pages still point EN at eccm.ee, which is the leak. Files: `src/render/chrome.mjs`, `src/render/mark.mjs`, `public/*.html`.
+✅ Every switch stays on this site: the static Estonian pages' EN link and the header strings' default lead to /en/events instead of eccm.ee, the D1 pages and events go to their twin as before, the two lists go to each other. Not done: an English front page, since `/` has none and EN on it lands on the events list; a remembered language.
+
+### Done 2026-09-28: "i see logo wordmark jumping on page swithes. figure out caching / font preload optimizations"
+
+Asked verbatim. The wordmark beside the mark in the header is SVG text set in Instrument Sans, so it renders in the fallback face until the font file arrives and then reflows, and on every page switch the header is a fresh document. To measure: what the wordmark is (SVG text or outlines), which font files the header waits on, their cache headers on the edge, whether a preload exists. Files: `src/render/mark.mjs`, `src/render/chrome.mjs`, `public/eccm.css`, `public/_headers` or the Worker's asset config.
+✅ MEASURED on the edge before the change: `cache-control: public, max-age=0, must-revalidate` on `/eccm.css` and on every `/vendor/*.woff2`, so each page switch revalidated the font with the origin, and the wordmark, SVG text in Instrument Sans with `font-display: swap`, drew in the fallback face until the 304 came back. `public/_headers` sends `max-age=31536000, immutable` for `/vendor/*` now (a changed font gets a new file name), and every page's head preloads the two latin files the header needs, Instrument Sans and Schibsted Grotesk. The stylesheet keeps revalidating, since it changes daily.
+
+### Done 2026-09-28: "in mobile make buttons full w"
+
+Asked verbatim: the form's action buttons take the full width on a phone, one under the other. File: `public/eccm.css`.
+✅ `.actions .btn` at 100 per cent under 48rem, the four buttons one under the other. Shot at 375.
+
+### Done 2026-09-28: "make it radiobutton [ Mustand | Avaldatud ]" (a crop of the form's Olek select)
+
+Asked with a picture: the status select becomes a pair of radio buttons set side by side, Mustand and Avaldatud, on both forms since they share the control. Files: `src/render/editor.mjs`, `public/eccm.css`.
+✅ `segment()` and `group()` in `src/render/editor.mjs`, the `.seg` rules in the stylesheet, on both forms: two cells in one box, the chosen one ink on white turned white on ink. MEASURED: 2 cells on each form, Avaldatud checked on page 1.
+
+### Done 2026-09-28: "move loobu to justified right"
+
+Asked verbatim: the Loobu button at the right edge of the form's action row, the three submit buttons staying at the left. Files: `src/render/editor.mjs`, `public/eccm.css`.
+✅ `.btn-end` with `margin-inline-start: auto` on both forms. Shot at 1280.
+
+### Done 2026-09-28: "rm Avalik leht: ET EN / Salvestatud kell 13.30."
+
+Asked verbatim, mid-task, looking at the page form: the line of public links under the title and the saved-at note go. File: `src/render/editor.mjs` (`pageForm`; the event form carries the same two lines).
+✅ Both lines gone from both forms. A save lands on the public page when it is published, else on the form again. MEASURED: a save of page 1 answered 303 to /et/eccm.
+
+### Done 2026-09-28: "rm Lehed breadcrumb"
+
+Asked verbatim, right after: the crumb over the page form that led to the list, which is going anyway. File: `src/render/editor.mjs`.
+✅ Gone.
+
+### Done 2026-09-28: "rm edit/pages page. do main menu pages and make them editable."
+
+Asked verbatim, right after the page editing shipped. The list at `/edit/pages` goes: the main menu's pages are a fixed set, not a collection to browse, and each is reached for editing from its own Muuda button. The menu's one item still pointing at eccm.ee is Sündmused/Events, so that page is built from D1 at `/et/sundmused` and `/en/events` with the events editor behind its button. Files: `src/editor.mjs`, `src/render/editor.mjs`, `src/render/chrome.mjs` (the nav), `src/index.mjs`, a new `src/render/events.mjs`.
+✅ The list route answers 404 now, `pageList` is gone with its Lehed button, and `/edit/pages/{id}` stays behind each page's Muuda button (`/edit/pages/new` still answers at its address, unlinked). The events list is built from D1 at /et/sundmused and /en/events in `src/render/events.mjs`: published events with the picture, the kicker, the title and the first paragraph on the front page's list rules, the ones to come first, the ones that have been under Toimunud, a Muuda button to the events editor; the menu and the footer on every page point at it and no menu item leads to eccm.ee any more. MEASURED on 8800: the list route 404, both lists 200 with 1 row each, the nav on five pages pointing at them.
+
+### Done 2026-09-28: "page content is too left, not great to read, center the paragraph or figure ou right column (images?)"
+
+Asked verbatim, mid-task, about the text pages at `/et/{slug}`. The prose sits in the event page's left column with nothing at the right, since a page has no picture. Either the measure is centred, or the page gets a right column the way the event and derive pages have one. Files: `public/eccm.css`, `src/render/page.mjs`, and the page editor if a picture joins the page.
+✅ Centred: `.page-text` is one column of the measure with `margin-inline: auto`, the title and its button over the prose. Shot at 1280 and 375. A right column of pictures would need a picture column on `page`, a field in the form and a picture for each of the five pages, none of which exist; not done.
+
 ### Done 2026-09-28: "page from d1 and with edit?"
 
 Asked verbatim after the five top-level pages went live. They come from D1 already; the editing did not exist, the editor covered events only. A background agent adds it in the events editor's shape: a list, one form per page for both languages behind the same gate, the rev guard, the validation, a preview per language, a new-page form, and an edit button on every public page. The agent reports and does not commit; the session migrates the remote database, commits and deploys.
