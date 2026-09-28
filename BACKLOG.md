@@ -7,6 +7,12 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "put images onto derive blocks and also make mobile views"
+
+Asked verbatim. `derive.html`: each sample event page carries its own picture, at the measure's width after the facts and the buttons as the event page has it; and beside each desk sample the same sample at a phone's width, drawn by the page itself in a 375 px iframe so the phone rules really apply, sized by a message from the child.
+⚠️ Added mid-task: *"rm background borders and make bg go horiz edge to edge in derive"*: the sample's outline goes and its ground spans the window at every width, the text staying on the frame's line, the way the layout page's derived block does.
+✅ All three done. MEASURED locally on set 2 at 1280: the sample spans 0 to 1280 with its title at the frame's 64 px, no outline, six pictures in six samples, six phone iframes of which the first, loaded, took its height from the child at 1397 px and the lazy others wait for a scroll. One shot at 1280.
+
 ### Done 2026-09-28: "put literata to derive as well as alternative"
 
 Asked verbatim. `derive.html` draws its serif samples in Roboto Serif by default and in Literata with `?serif=literata`, a line under the intro switching between the two on the same picture set; Literata is declared in `eccm.css` beside Roboto Serif again.

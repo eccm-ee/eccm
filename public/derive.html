@@ -45,7 +45,19 @@
     /* the sample: a whole event page in the derived scheme. Every colour is a
        token the script set; the faces are two more tokens, the title's and
        the body's, and the buttons read neither */
-    .sample { padding: var(--eccm-s-8); background: var(--ev-ground); color: var(--ev-ink); outline: 1px solid var(--eccm-rule); }
+    /* the sample's ground spans the window at every width and its text stays on the frame's line, no outline (asked 2026-09-28:
+       "rm background borders and make bg go horiz edge to edge in derive"); the escape is the frame's own offset, less the
+       scrollbar the script measures, so the text does not move */
+    .sample { --bleed: calc((100vw - var(--sbw, 0px) - 100%) / 2); margin-inline: calc(-1 * var(--bleed)); padding: 2lh var(--bleed); background: var(--ev-ground); color: var(--ev-ink); }
+    /* the event's own picture after the buttons, at the measure's width, as the event page has it (asked 2026-09-28: "put images onto derive blocks") */
+    .sample .pic { margin: 2lh 0 0; max-inline-size: var(--eccm-measure); }
+    .sample .pic img { display: block; inline-size: 100%; block-size: auto; }
+    /* the same sample at a phone's width, drawn by this page itself in an iframe so the phone rules apply, sized by the child's message */
+    .phone-view { margin-block-start: var(--eccm-s-6); }
+    .phone-view iframe { display: block; inline-size: 375px; max-inline-size: 100%; border: 1px solid var(--eccm-rule); }
+    .phone-view figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+    body.embed > :not(main), body.embed main > :not(#cards) { display: none; }
+    body.embed main { padding: 0; }
     .sample .kicker { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--ev-ink2); margin-block-end: var(--eccm-s-3); }
     .sample .title { font-size: var(--eccm-t-2xl); line-height: var(--eccm-lh-head); text-wrap: balance; font-family: var(--ev-title-face); font-weight: var(--ev-title-weight, 400); max-inline-size: var(--eccm-measure); }
     .sample .facts { margin-block-start: var(--eccm-s-8); font-family: var(--ev-title-face); }
@@ -67,7 +79,6 @@
      "Bg colors edge to edge hzomtally on mobile"; positron-compose §1, an
      escape is owned by the component and derived from the token it escapes) */
   @media (max-width: 40rem) {
-    .sample { margin-inline: calc(-1 * var(--eccm-gutter)); padding-inline: var(--eccm-gutter); outline: none; }
     h2.sec { font-size: var(--eccm-t-l); margin-block-end: var(--eccm-s-4); }
   }
 </style>
@@ -92,7 +103,7 @@
 
 <main class="frame">
   <h1>Kujundus pildist</h1>
-  <p class="intro">Each picture is read as the page opens: its colour at 64 pixels gives a light or a dark scheme, a ground and an accent for underlines and focus, and its type at up to 600 pixels gives serif, sans, no type found, or type too small to read for serifs. Beside it a short event page is drawn in what it gave, with the title and the facts in the serif when the graphic's type reads as a serif, and the body in it only on a ground near white.</p>
+  <p class="intro">Each picture is read as the page opens: its colour at 64 pixels gives a light or a dark scheme, a ground and an accent for underlines and focus, and its type at up to 600 pixels gives serif, sans, no type found, or type too small to read for serifs. Under it a short event page is drawn in what it gave, its picture after the buttons, with the title and the facts in the serif when the graphic's type reads as a serif, and the body in it only on a ground near white; the same page again at a phone's width beside it.</p>
   <p class="intro small" id="serif-switch"></p>
   <p class="tally" id="tally">Reading the pictures.</p>
   <div id="cards"></div>
@@ -401,6 +412,7 @@
       <p class="title"></p>
       <dl class="facts"><div><dt>Millal</dt><dd>30.09.2026 kell 19.00</dd></div><div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9</dd></div></dl>
       <p class="actions"><a class="btn btn-pri" href="./event.html">Osta pilet</a><a class="btn" href="./event.html">Lisa kalendrisse</a></p>
+      <figure class="pic"><img src="./${p.file}" alt=""></figure>
       <div class="body flow"><p>${BODY[0]}</p><p>Kõigile, keda huvitab <strong>heli, mis ei ole komponeeritud</strong>, ja kes on valmis <em>kuulama ilma partituurita</em>. Vaata ka <a href="./event.html">sarja eelmisi aktsioone</a>.</p></div>
       <dl class="credits"><div><dt>Kunstnikud</dt><dd>Marianna Liik, Artjom Astrov, Maryn-Liis Rüütelmaa</dd></div><div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div></dl>
       `;
@@ -480,8 +492,14 @@
   const TIMES = (window.__times = []);
   const cards = document.getElementById('cards');
   const tally = { light: 0, dark: 0, accent: 0, serif: 0 };
+  // ?view=sample&pick=N draws one picture's sample alone, which is what the phone view iframes ask for; the child reports its height
+  const EMBED = FLAGS.get('view') === 'sample' ? Number(FLAGS.get('pick')) : null;
+  if (EMBED !== null) document.body.classList.add('embed');
+  document.documentElement.style.setProperty('--sbw', (innerWidth - document.documentElement.clientWidth) + 'px');
+  window.addEventListener('message', (e) => { const f = [...document.querySelectorAll('.phone-view iframe')].find((i) => i.contentWindow === e.source); if (f && e.data && e.data.derive) f.style.blockSize = e.data.height + 'px'; });
   for (const p of PICS) {
     if (FLAGS.get('first') && PICS.indexOf(p) >= Number(FLAGS.get('first'))) break;
+    if (EMBED !== null && PICS.indexOf(p) !== EMBED) continue;
     const img = new Image(); img.src = `./${p.file}`;
     const t0 = performance.now();
     await img.decode();
@@ -516,9 +534,14 @@
     row('type', `${t.verdict}: ${t.found} text-like shapes at ${t.W} px, ${t.n} of them 14 px tall with a 3 px stem, which a serif needs${t.n ? `, ${t.polarity}, ${pc(t.share)} serif-like, median stroke contrast ${f2(t.contrast)}, median foot ${f2(t.foot)}` : ''}`);
     row('serif', s.serif ? `in the title and facts${s.mode === 'light' && lum(s.ground) >= 0.8 ? ' and the body' : ', the body stays in the sans on a ground this dark'} (${s.serifHow})` : 'none');
     top.append(left, dl);
-    card.append(top, sample(p, s));
+    if (EMBED !== null) { card.append(sample(p, s)); cards.append(card); continue; }
+    const pv = document.createElement('figure'); pv.className = 'phone-view';
+    const u = new URL(location.href); u.searchParams.set('view', 'sample'); u.searchParams.set('pick', PICS.indexOf(p));
+    pv.innerHTML = `<iframe loading="lazy" src="${u.pathname}${u.search}" title="${p.title}, 375 px" height="900"></iframe><figcaption>375 px</figcaption>`;
+    card.append(top, sample(p, s), pv);
     cards.append(card);
   }
+  if (EMBED !== null) { await new Promise((r) => setTimeout(r, 300)); parent.postMessage({ derive: true, pick: EMBED, height: document.documentElement.scrollHeight }, '*'); }
   document.getElementById('tally').textContent = `${PICS.length} pictures read: ${tally.light} light schemes and ${tally.dark} dark, ${tally.accent} with an accent, ${tally.serif} read as serif-typed.`;
 
   // ?first=N reads only the first N pictures and ?type=0 skips the type
