@@ -235,7 +235,8 @@
      unprofessiona (yea type size scale but...)" */
   .ev-kicker { display: flex; flex-wrap: wrap; gap: var(--eccm-s-1) var(--eccm-s-4); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); font-variant-numeric: tabular-nums; margin-block-end: var(--eccm-s-3); }
   .ev-kicker time + time { margin-inline-start: calc(-1 * var(--eccm-s-2)); }
-  .ev-title { font-size: var(--eccm-t-2xl); overflow-wrap: anywhere; }
+  /* a step down the scale, 2xl to xl at the desk and xl to l in the compact row (asked 2026-09-28: "frontpage index titles too big") */
+  .ev-title { font-size: var(--eccm-t-xl); overflow-wrap: anywhere; }
   .ev-title a { text-decoration-line: none; }
   .ev-title a:hover, .ev-title a:focus-visible { text-decoration-line: underline; }
   /* a step more between the three registers than the first cut had (asked
@@ -449,6 +450,6 @@
     .events { row-gap: var(--eccm-s-6); }
     .ev { column-gap: var(--eccm-s-4); grid-template-columns: 5.5rem minmax(0, 1fr); }
     .ev-pic { aspect-ratio: 1; }
-    .ev-title { font-size: var(--eccm-t-xl); }
+    .ev-title { font-size: var(--eccm-t-l); }
   }
 }

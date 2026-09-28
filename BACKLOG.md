@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "frontpage index titles too big"
+
+Asked verbatim. The list's titles step down the scale: `--eccm-t-xl` at the desk in place of `--eccm-t-2xl`, and `--eccm-t-l` in the compact row in place of `--eccm-t-xl`, on the static front page and the Worker's list alike since both draw `.ev-title`.
+
 ### Done 2026-09-28: "rm old logo stuff from ds" then "i mean workmark stuff" and "i mean rm these" (a crop of the four logo files)
 
 Asked with a picture. The design system page's Logo section loses the three tagline-bearing logo files and the phone-width one with their paragraph and rules (the DIN Condensed wordmark of the interim redraw); the square marks, the stacked marks and the stave stay, and the wordmark studies at the foot are the current wordmark.
