@@ -7,6 +7,11 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "make classic horiz radions (o) () instead of radiobuttons"
+
+Asked verbatim, after the segmented pair went live: the status is two native radio buttons in a row with their labels, no box. Files: `src/render/editor.mjs`, `public/eccm.css`.
+✅ `segment()` renders `.radios`, a row of two labels each with a native radio, the ink as the accent colour; the `.seg` rules are gone.
+
 ### Done 2026-09-28: "add more padding to right of hamburger menu. rm blue bg flash on tap"
 
 Asked verbatim: the five-line menu button on a phone gets more room at its right, and the tap highlight a phone browser paints on it goes. File: `public/eccm.css` (`.menu-btn`).

@@ -364,17 +364,14 @@
   .form input[type="datetime-local"]::-webkit-date-and-time-value { text-align: start; min-block-size: 1.5em; }
   .form textarea { line-height: var(--eccm-lh-body); resize: vertical; }
   .hint { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-  /* a choice of a few as radio buttons set side by side in one box, the chosen
-     one inverted (asked 2026-09-28: "make it radiobutton [ Mustand | Avaldatud ]");
-     the inputs are real and cover their cells, the fieldset wears the field's look */
+  /* a choice of a few as native radio buttons in a row, each with its label,
+     the ink as their colour (asked 2026-09-28: "make classic horiz radions
+     (o) () instead of radiobuttons"); the fieldset wears the field's look */
   .form fieldset { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
   .field legend { padding: 0; margin-block-end: var(--eccm-s-1); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); block-size: 3rem; border: 1px solid var(--eccm-rule-strong); }
-  .seg-opt { position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-  .seg-opt + .seg-opt { border-inline-start: 1px solid var(--eccm-rule-strong); }
-  .form .seg-opt input[type="radio"] { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; margin: 0; padding: 0; opacity: 0; cursor: pointer; }
-  .seg-opt:has(input:checked) { background: var(--eccm-ink); color: var(--eccm-ground); }
-  .seg-opt:has(input:focus-visible) { outline: 2px solid var(--eccm-ink); outline-offset: 2px; }
+  .radios { display: flex; flex-wrap: wrap; align-items: center; gap: var(--eccm-s-2) var(--eccm-s-8); min-block-size: 3rem; }
+  .radios label { display: inline-flex; align-items: center; gap: var(--eccm-s-2); cursor: pointer; }
+  .form .radios input[type="radio"] { inline-size: 1.125rem; block-size: 1.125rem; margin: 0; padding: 0; border: 0; accent-color: var(--eccm-ink); cursor: pointer; }
   /* the picture field: the current picture and a drop field side by side,
      each at least 14rem, one under the other when the measure cannot hold
      both. The native input covers the whole field at zero opacity, so a drop

@@ -36,9 +36,10 @@ const field = ({ id, label, hint, err, control, cls = '' }) => html`<div class="
         ${err ? html`<p class="hint err">${err}</p>` : hint ? html`<p class="hint">${hint}</p>` : ''}
       </div>`;
 const input = (id, name, value, attrs = '') => html`<input id="${id}" name="${name}" value="${value ?? ''}"${raw(attrs)}>`;
-// a choice of a few as radio buttons set side by side in one box, the chosen one inverted (asked 2026-09-28:
-// "make it radiobutton [ Mustand | Avaldatud ]"); a fieldset with the field's look, its legend where the label sits
-const segment = (name, options, value) => html`<div class="seg">${options.map(([v, label]) => html`<label class="seg-opt"><input type="radio" name="${name}" value="${v}"${String(v) === String(value ?? '') ? raw(' checked') : ''}><span>${label}</span></label>`)}</div>`;
+// a choice of a few as native radio buttons in a row, each with its label (asked 2026-09-28: "make it radiobutton
+// [ Mustand | Avaldatud ]", then "make classic horiz radions (o) () instead of radiobuttons"); a fieldset with the
+// field's look, its legend where the label sits
+const segment = (name, options, value) => html`<div class="radios">${options.map(([v, label]) => html`<label><input type="radio" name="${name}" value="${v}"${String(v) === String(value ?? '') ? raw(' checked') : ''}> ${label}</label>`)}</div>`;
 const group = ({ label, hint, err, control }) => html`<fieldset class="field">
         <legend>${label}</legend>
         ${control}
