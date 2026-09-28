@@ -7,10 +7,15 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
-### Open 2026-09-28: "all headers are bad. cramped, no proper typo approach, not leaving nice detected area stand out... not good at all. all you typo whitespace reaerch? looks what others do"
+### Open 2026-09-28: "So next cms step. Editing?" and "In bg"
+
+Asked verbatim. A background agent takes the next sessions of `plans/plan-eccm-cms-step-1.md` up to and including the editor: the scheme column the handoff names as next, then the editing route and the form saving to D1 behind a gate, on its own local database and port so the session's dev server is untouched. It reports and does not commit; the session commits, migrates the remote database and deploys.
+
+### Done 2026-09-28: "all headers are bad. cramped, no proper typo approach, not leaving nice detected area stand out... not good at all. all you typo whitespace reaerch? looks what others do"
 
 Asked verbatim, the four headers on `public/layout.html`. Before redrawing: the whitespace and scale rules in `.claude/skills/eccm-ui/SKILL.md` and `positron-compose` §1 and §4 are read and applied, and seven comparable sites' headers are measured in a browser once each (the header's height, the mark's drawn size, the menu's size and gaps, the air between the header and the first content, rules or none), so the redraw stands on numbers and not on taste.
 ⚠️ Added mid-task: *"replace posthord with smth else"* and *"bring more detected ones"*: the Improtest example leaves the pages and each header gets its own derived example, taken from the derive page's four sets, more of them and different ones, the serif one among them.
+✅ Redrawn. MEASURED first, eight sites in a browser once each (arvopart, eestikontsert, erso, gaudeamus, hcmf, ircam, saal, kumu): the designed headers are 71 to 117 px tall with the mark in 25 to 31 px of air, the menu at 14 to 21 px on the mark's line, and none draws a rule; arvopart gives its mark a 900 px screen with the menu on it. The rule applied from `eccm-ui` §1: vertical space is counted in leadings. The four now, every distance a whole number of the 27 px leading and no rule anywhere: H-A two lines, the mark at 12rem, 2lh above and below, the menu 1lh under; H-B one line, the mark at 8rem with the menu and the switch on its baseline, 1.5lh above and below; H-C the mark large at 20rem, 3lh above, the menu 2lh under, 3lh below; H-D running, 6rem, 1lh above and below. The menu is body size with 2rem between items. The derived block pads itself 2lh at the top and 4lh at the bottom. The examples are four, one a header: Sound Plasma (set 2, light green, Literata by its serif verdict), Huddersfield (set 2, mauve mid tone), Varssavi (set 3, plum), Scrapyard (set 1, navy); the Improtest and Open Space ones are out. MEASURED at 1280: header heights 229, 128, 343 and 91 px. Shot at 1280 and 375.
 
 ### Done 2026-09-28: "in bg analyze and write plan of eccm social media presence and web presence in general - in fienta pages etc"
 
