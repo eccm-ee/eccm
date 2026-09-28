@@ -508,8 +508,6 @@ const draw = async () => {
   const ONE = [[EN], [ET]], BOTH = [[EN, ET]];
   section('Under the mark');
   cells.append(cellOf('under', `${px(UNDER)}, line height ${LH}, one language`, { layout: 'under', size: UNDER }, ONE));
-  const over = (GAP + (CAP - XH) * UNDER).toFixed(1);
-  cells.append(cellOf('under-both', `${px(UNDER)}, both languages, the Estonian above the mark and the English under it, ${GAP} units of air to the cap line under the mark and ${over} to the baseline over it`, { layout: 'under', size: UNDER, above: true }, [[ET, EN]]));
   cells.append(cellOf('under-both-en', `${px(UNDER)}, both languages, the English above the mark and the Estonian under it, the same air`, { layout: 'under', size: UNDER, above: true }, [[EN, ET]]));
   section('Beside the mark');
   cells.append(cellOf('beside', `${px(BESIDE)}, line height ${LH}, one language, ${BESIDE_GAP} units after the stave, centred on the E's middle bar`, { layout: 'beside', size: BESIDE }, ONE));

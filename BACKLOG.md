@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "rm estonian top / english below logo examples"
+
+Asked verbatim. The wordmark studies on the design system page lose the lockup with the Estonian over the mark and the English under it; the English-over-Estonian one stays, with the one-language and the beside lockups.
+
 ### Done 2026-09-28: "rm it" (a crop of the stave element), "consildiate square logi samples, too many atm", "rm all 20rem sizes on logos"
 
 Asked verbatim, the design system page. The stave element block with its two grounds and its rules is out; the square and the stacked marks show positive and negative only, four figures instead of twelve, the outlined, plain and bold variants named as files; the wordmark studies at the foot draw each lockup at 11rem only, 21 lockups instead of 42.
