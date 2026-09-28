@@ -7,6 +7,18 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-28: "images should be some w as content in desktop wiew in derive"
+
+Asked verbatim. From 40rem the derive sample's two columns are equal, the picture filling its column, so it is as wide as the text's column; the text keeps its measure inside its half.
+
+### Done 2026-09-28: "you messed up placement of lines" and "some blurry. make them narrower as in logo but keep invisb touch area" (a crop of the phone header)
+
+Asked with a picture. The button's lines were 46 units wide with crisp-edge rendering, so at the mark's scale they snapped to whole pixels while the stave's rows did not, and read as misplaced and blurred beside it. They are the stave's own 12 units wide now, drawn exactly as the mark draws its rows, and the tap area is the button's padding, 54 px wide, pulled back by the same step so the lines stay at the frame's edge.
+
+### Done 2026-09-28: "center menu between logo and lang" (a crop of the header at the desk)
+
+Asked with a picture. The menu's items centre in the space the menu has between the mark and the switch; the opened phone menu keeps its rows at the start.
+
 ### Done 2026-09-28: "no accent colors in menus, just black" (a crop of the footer's Facebook link hovered orange)
 
 Asked with a picture. A hovered link in the site's menu, the language switch and the footers underlines in the ink, not the accent: the rule in `eccm.css` and the footer rule on the layout page; the accent stays on a hovered prose link and the focus ring.

@@ -73,10 +73,12 @@
        opens under the mark's line one item a line (asked 2026-09-28: "do mobile menu solution, elegant one (thin 1px lines, 5 of them)") */
     /* the button's tap area is a finger, 48 by 45 px, padded out and pulled back by the same step so the icon stays where the
        switch's text ended (asked 2026-09-28: "more touch area than just element") */
-    .menu-btn { display: none; padding: var(--eccm-s-3); margin: calc(-1 * var(--eccm-s-3)); border: 0; background: none; color: var(--eccm-ink); cursor: pointer; }
+    .menu-btn { display: none; padding: var(--eccm-s-3) var(--eccm-s-6); margin: calc(-1 * var(--eccm-s-3)) calc(-1 * var(--eccm-s-6)); border: 0; background: none; color: var(--eccm-ink); cursor: pointer; }
     /* in a narrow box the switch leaves the mark's line and closes the opened menu as its last row (asked 2026-09-28: "move et en to mobile menu") */
     .hd .lang-in { display: none; }
-    .menu-btn svg { display: block; fill: currentColor; shape-rendering: crispEdges; }
+    /* the lines are drawn exactly as the mark draws its stave, the same width, thickness and rendering, so they blur no more than it does
+       (asked 2026-09-28: "some blurry. make them narrower as in logo but keep invisible touch area"); the tap area is the padding, 54 px wide */
+    .menu-btn svg { display: block; fill: currentColor; }
     /* the switch and the button start at the mark's top in a narrow box, so the button's rows meet the stave's */
     @container (max-width: 48rem) { .hd .sw { align-self: flex-start; } .hd .sw .menu-btn { align-self: flex-start; } }
     /* in the opened menu the current language and the link share one baseline and one row of air (asked 2026-09-28: "fix lang links") */
@@ -86,7 +88,7 @@
       .menu-btn { display: block; }
       .hd .sw .lang { display: none; }
       .hd .nav { display: none; }
-      .hd[data-open] .nav { display: grid; flex-basis: 100%; margin-block-start: 1lh; }
+      .hd[data-open] .nav { display: grid; flex-basis: 100%; margin-block-start: 1lh; justify-content: start; }
       .hd[data-open] .nav a { display: inline-block; padding-block: var(--eccm-s-2); }
       .hd[data-open] .lang-in { display: block; margin-block-start: var(--eccm-s-4); }
       .hd[data-open] .lang-in .lang { display: flex; }
@@ -100,7 +102,8 @@
     figure.open figcaption { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-start: var(--eccm-s-3); }
     /* H-B, one line: the mark, the menu and the switch on the mark's baseline, 1.5lh of air above and below; in a narrow box the menu drops under, a leading down */
     .hd.one > .frame { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--eccm-s-12); row-gap: 1lh; padding-block: 1.5lh; }
-    .hd.one .nav { order: 1; flex: 1; }
+    /* the menu centred between the mark and the switch (asked 2026-09-28 with a crop: "center menu between logo and lang") */
+    .hd.one .nav { order: 1; flex: 1; justify-content: center; }
     .hd.one .sw { order: 2; }
     @container (max-width: 48rem) { .hd.one .nav { order: 3; flex-basis: 100%; } .hd.one .sw { margin-inline-start: auto; } }
     /* the derived page between: the scheme's ground edge to edge, the sample's own rules as derive.html has them, its padding and outline left to the page */
@@ -281,7 +284,7 @@ const mark = (p, w, wordmark = false) => `<a class="mk" href="./" style="--w: ${
 // the phone menu's button: the stave's own five hairlines, drawn in the mark's units at the stave's rows (y 58.5 to 88 on a 7.375
 // pitch, 1.5 tall) in an svg as tall as the mark's lockup, so at the frame's edge they sit on the rows the stave has past the M
 // (asked 2026-09-28 with a crop: "make hamburger 5 rows and align with logo ones vertically"); w is the mark's width in rem
-const menuBtn = (p, open = false, w = 10) => `<button class="menu-btn" type="button" aria-expanded="${open}" aria-label="${p.menuLabel}"><svg viewBox="0 27 46 183" style="inline-size: calc(${w}rem * 46 / 310); block-size: calc(${w}rem * 183 / 310)" aria-hidden="true">${[0, 1, 2, 3, 4].map((i) => `<rect y="${(58.5 + i * 7.375).toFixed(3)}" width="46" height="1.5"/>`).join('')}</svg></button>`;
+const menuBtn = (p, open = false, w = 10) => `<button class="menu-btn" type="button" aria-expanded="${open}" aria-label="${p.menuLabel}"><svg viewBox="0 27 12 183" style="inline-size: calc(${w}rem * 12 / 310); block-size: calc(${w}rem * 183 / 310)" aria-hidden="true">${[0, 1, 2, 3, 4].map((i) => `<rect y="${(58.5 + i * 7.375).toFixed(3)}" width="12" height="1.5"/>`).join('')}</svg></button>`;
 const sw = (p, o = {}, w = 10) => `<span class="sw">${p.sw}${menuBtn(p, !!o.open, w)}</span>`;
 // the City of Music mark; black where the footer carries no colour, which the city's rule allows (asked 2026-09-27: "tallinn muusikalinn -> make it black")
 const partner = (p, black) => `<a class="partner" href="${p.partnerHref}"><img src="./partners/${black ? p.partnerBlack : p.partner}" alt="${p.partnerAlt}"></a>`;

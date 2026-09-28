@@ -55,9 +55,10 @@
     /* from 40rem the picture sits at the top right of the sample at its own width, the text keeping its measure on the left
        (asked 2026-09-28: "move image to the right in desktop"); under 40rem it stays in the flow after the buttons */
     @media (min-width: 40rem) {
-      .sample { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--eccm-s-12); align-items: start; }
+      .sample { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--eccm-s-12); align-items: start; }
       .sample > * { grid-column: 1; }
-      .sample .pic { grid-column: 2; grid-row: 1 / span 6; margin: 0; inline-size: min(24rem, 40vw); }
+      /* the picture as wide as the text's column, two equal columns (asked 2026-09-28: "images should be same width as content in desktop view in derive") */
+      .sample .pic { grid-column: 2; grid-row: 1 / span 6; margin: 0; max-inline-size: none; }
     }
     /* the same sample at a phone's width, drawn by this page itself in an iframe so the phone rules apply, sized by the child's message */
     .phone-view { margin-block-start: var(--eccm-s-6); }
