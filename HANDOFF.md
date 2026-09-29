@@ -17,21 +17,21 @@ before building on one.
 | https://eccm.positron.studio/et/sundmused | the events list from D1, and `/en/events`: the events to come, then Toimunud when there are any, an Add button to `/edit/events/new` |
 | https://eccm.positron.studio/et/sundmused/surm | an event page from D1, one of ten (`data/seed-step1.sql` to `seed-step4.sql`); `/en/events/{slug}` is its twin where an English row exists (two of ten) and the Estonian text under English chrome with one line saying so where none does |
 | https://eccm.positron.studio/et/eccm | the five text pages from D1, ECCM, Tallinn 1965, NAN, Ulysses, Konkursid, at `/et/{slug}` and `/en/{slug}`, a fallback either way where a language has no text, one centred column of the measure |
-| https://eccm.positron.studio/event | the event page as static HTML, the design page for event 134; its Muuda button leads to `/edit/events/1` |
-| https://eccm.positron.studio/edit/events/1 | one event's form behind the gate, reached only from the Muuda button on the event; `/edit/events/new` from the Add button on the public list; `/login?token=...&next=` opens it on staging. **There is no editor list**, neither for events nor for pages, both asked away 2026-09-28 |
+| https://eccm.positron.studio/edit/events/1 | one event's form, open to anyone who opens it, reached from the Muuda button on the event and from nowhere else. **There is no editor list and no new-event form**, `/edit/events/new` and the Add button on the public list asked away 2026-09-29 |
 | https://eccm.positron.studio/edit/pages/1 | one text page's form, reached from the Muuda/Edit button every text page carries |
 | https://eccm.positron.studio/derive | design from a picture, four sets of six pictures (`?set=1` to `4`), Newsreader as the serif with Literata and Roboto Serif on `?serif=literata` and `?serif=roboto` |
 | https://eccm.positron.studio/ds | the design system, with the wordmark studies at its foot: type specimens, bios, colour (the ink only, no accent since 2026-09-28), space, buttons with a disabled state, the logos, the square marks, the icons |
 | https://eccm.positron.studio/type | seventeen faces for body and titles, then the six sans and the ten serifs in the derived page's three uses |
-| https://eccm.positron.studio/tagline | the tagline in DIN Condensed, 48 settings by casing, tracking, wrap and alignment |
-| https://eccm.positron.studio/tagline-47 | setting 47 taken apart: four DIN files and the same four in Instrument Sans |
-| https://eccm.positron.studio/logo | the mark measured off eccm.ee's JPEG |
 
 Gone since 2026-09-27: `/wordmark` (folded into the foot of `/ds`), `/serif`
 and `/sans` (merged into `/type`), `/layout` (its winning header and footer
 became the chrome of every page; footer D lives on in
 `plans/plan-eccm-footer-newsletter.md`), `/edit` as a static form (the address
-now goes through the gate to the front page).
+now goes to the front page). Gone 2026-09-29, asked as *"rm old event page,
+taglines, logo, edit/event/new, logo"*: `/event` (the static event page, the
+design page for event 134, which the D1 event pages have replaced), `/tagline`,
+`/tagline-47` and `/logo`. The event card on `/derive`, `/ds` and `/type` links
+to the D1 event it always showed, `/et/sundmused/gestuurid-situatsioonid-ilma-partituurita-kuulamine`.
 
 Also under the root: `logo.svg` (two languages), `logo-et.svg`, `logo-en.svg`,
 the four `wordmark-*.svg`, `manifest.webmanifest`, `_headers` (noindex on
@@ -66,12 +66,12 @@ and `/en/events/{slug}` (`src/render/event.mjs`), `/et/{slug}` and
 `events` are refused as page slugs). The editor in `src/editor.mjs` with
 `src/render/editor.mjs` answers `/edit/events/{id}`, `/edit/events/new`,
 `/edit/pages/{id}` and `/edit/pages/new`, one form for both languages each;
-`/edit` goes to the front page; `/login` and `/logout` are the gate's own.
-The gate (`src/gate.mjs`) takes a Cloudflare Access JWT when `ACCESS_TEAM`
-(and `ACCESS_AUD`) is set, and on staging a cookie set by `/login?token=`
-against the `EDITOR_TOKEN` secret, a stand-in until the Access application
-on `eccm.positron.studio/edit*` exists (setup plan section 2); every editor
-reply is `no-store` and `noindex`. A save is one D1 batch guarded by `rev`, a
+`/edit` goes to the front page. Nothing asks who is editing: `src/gate.mjs`,
+`/login`, `/logout` and the editor cookie went 2026-09-29, asked as *"rm
+login/session stuff. all is free for editing"*, so anyone who reaches a form
+may save from it and `updated_by` stays empty. Putting a door back means an
+Access application on `eccm.positron.studio/edit*` (setup plan section 2) and
+nothing in the Worker. Every editor reply is still `no-store` and `noindex`. A save is one D1 batch guarded by `rev`, a
 stale form answers 409 with the typed values kept, a preview renders the
 real template without writing, and a save lands on the public page when the
 row is published, else on the form again. The status is two native radio
@@ -107,8 +107,17 @@ move. Every one was relayed in full in the session that made it.
 `/opt/homebrew` only, does DOM and script but no layout, and is not useful
 here.
 
-## Decisions taken 2026-09-28, in the owner's words where there were words
+## Decisions taken 2026-09-28 and 2026-09-29, in the owner's words where there were words
 
+- **A new event cannot be made from the site.** *"rm ... edit/event/new"*
+  (2026-09-29). `/edit/events/new` and the Add button on the public events
+  list are gone; an event is edited from its own Muuda button and made in the
+  database. `/edit/pages/new` stays, which was not asked away.
+- **Anyone may edit.** *"rm login/session stuff. all is free for editing"*
+  (2026-09-29). The gate, the login page, the logout route, the
+  `EDITOR_TOKEN` cookie and the cross-site check are gone, and `updated_by`
+  is written empty, since there is no longer anybody to name. The site is
+  noindex on this hostname and the editor's own replies are noindex too.
 - **Editing happens from the thing itself.** *"only events themselves are
   access ppoint to edit"*, and before that *"rm edit/pages page"*. No editor
   lists; a Muuda button on every event and text page; an Add button on the

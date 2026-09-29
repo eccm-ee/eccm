@@ -5,8 +5,9 @@
 // are a fixed set reached from their own Muuda buttons; the events list went
 // the same evening, asked as "rm https://eccm.positron.studio/edit/events page.
 // only events themselves are access ppoint to edit", so an event is reached
-// from its own Muuda button and a new one from the public list's Add button),
-// the login page and the closed door. The event form is
+// from its own Muuda button, and since 2026-09-29 only from there, the Add
+// button and /edit/events/new asked away with it) and the page that says a
+// thing is not there. The event form is
 // public/edit.html's form grown to the schema (plans/plan-eccm-cms-step-1.md
 // section 2): the shared facts first, then the two languages side by side
 // where the frame allows it, then the credits as one line per role, then
@@ -70,20 +71,22 @@ const SAME_HEIGHT = `      const tas = [...document.querySelectorAll('.langs tex
 // cancel: where Loobu goes, the event itself or the public list (src/editor.mjs)
 export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmused' }) => {
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
-  const isNew = !v.id;
-  const action = isNew ? '/edit/events/new' : `/edit/events/${v.id}`;
+  const action = `/edit/events/${v.id}`;
   const roleOpts = [['', 'vaba roll, nimetus kõrval']].concat(roles.map((r) => [r.key, r.label_et]));
   // the picture as a text field for now, the file name under public/ (asked 2026-09-28: "put pilt textfield for now");
   // the name is resolved against the media rows on save, and the figure shows the row the event has
   const pic = media.find((m) => String(m.id) === String(v.image_id));
   const imageKey = v.image_key ?? (pic ? pic.key : '');
-  const title = isNew ? 'Uus sündmus' : (v.et.title || v.en.title || 'Sündmus');
-  // one credit block; k is the index in the names and ids, a string so the template below can carry a placeholder
+  const title = v.et.title || v.en.title || 'Sündmus';
+  // one credit block under its own subheader (asked 2026-09-29: "tegijad. add Tegija 1 etc subheaders"),
+  // so the role field is labelled Roll and the number is said once; k is the index in the names and ids,
+  // a string so the template below can carry a placeholder
   const credit = (c, i, k = String(i)) => html`<div class="credit">
+        <h3 class="field-name">Tegija ${i + 1}</h3>
         <div class="field-row">
-          ${field({ id: `f-c${k}-role`, label: `Tegija ${i + 1}, roll`, err: err(`c${k}_role`), control: html`<select id="f-c${k}-role" name="c${k}_role">${opts(roleOpts, c.role_key)}</select>` })}
-          ${field({ id: `f-c${k}-label-et`, label: 'Vaba rolli nimetus', control: input(`f-c${k}-label-et`, `c${k}_label_et`, c.label_et) })}
-          ${field({ id: `f-c${k}-label-en`, label: 'Free role, in English', control: input(`f-c${k}-label-en`, `c${k}_label_en`, c.label_en) })}
+          ${field({ id: `f-c${k}-role`, label: 'Roll', err: err(`c${k}_role`), control: html`<select id="f-c${k}-role" name="c${k}_role">${opts(roleOpts, c.role_key)}</select>` })}
+          ${field({ cls: 'free', id: `f-c${k}-label-et`, label: 'Vaba rolli nimetus', control: input(`f-c${k}-label-et`, `c${k}_label_et`, c.label_et) })}
+          ${field({ cls: 'free', id: `f-c${k}-label-en`, label: 'Free role, in English', control: input(`f-c${k}-label-en`, `c${k}_label_en`, c.label_en) })}
         </div>
         ${field({ id: `f-c${k}-people`, label: 'Nimed', hint: i === 0 ? 'Komaga eraldatud, ühes keeles. Tühjenda nimed ja organisatsioonid, et rida kustutada.' : '', control: input(`f-c${k}-people`, `c${k}_people`, c.people) })}
         <div class="field-row">
@@ -111,9 +114,12 @@ export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmus
 
     <h2>Millal ja kus</h2>
     <div class="fields">
-      ${field({ id: 'f-start', label: 'Algus', err: err('starts_at'), control: input('f-start', 'starts_at', v.starts_at, ' type="datetime-local" required') })}
-      ${field({ id: 'f-end', label: 'Lõpp', err: err('ends_at'), hint: 'Tühi, kui üks õhtu.', control: input('f-end', 'ends_at', v.ends_at, ' type="datetime-local"') })}
-      ${field({ cls: 'solo', id: 'f-duration', label: 'Kestus minutites', err: err('duration_min'), control: input('f-duration', 'duration_min', v.duration_min, ' type="number" min="1" max="1440" inputmode="numeric"') })}
+      <!-- the three that say when, on one row (asked 2026-09-29 with a crop: "move to single row") -->
+      <div class="field-row">
+        ${field({ id: 'f-start', label: 'Algus', err: err('starts_at'), control: input('f-start', 'starts_at', v.starts_at, ' type="datetime-local" required') })}
+        ${field({ id: 'f-end', label: 'Lõpp', err: err('ends_at'), hint: 'Tühi, kui üks õhtu.', control: input('f-end', 'ends_at', v.ends_at, ' type="datetime-local"') })}
+        ${field({ id: 'f-duration', label: 'Kestus minutites', err: err('duration_min'), control: input('f-duration', 'duration_min', v.duration_min, ' type="number" min="1" max="1440" inputmode="numeric"') })}
+      </div>
       ${field({ id: 'f-venue', label: 'Koht', control: input('f-venue', 'venue', v.venue) })}
       ${field({ id: 'f-address', label: 'Aadress', control: input('f-address', 'address', v.address) })}
       ${field({ id: 'f-tickets', label: 'Piletid', err: err('ticket_url'), control: input('f-tickets', 'ticket_url', v.ticket_url, ' type="url" inputmode="url"') })}
@@ -145,7 +151,7 @@ ${raw(SAME_HEIGHT)}
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const i = Number(count.value);
-        list.insertAdjacentHTML('beforeend', tpl.innerHTML.replaceAll('__i__', String(i)).replace(/Tegija \d+, roll/, 'Tegija ' + (i + 1) + ', roll'));
+        list.insertAdjacentHTML('beforeend', tpl.innerHTML.replaceAll('__i__', String(i)).replace(/Tegija \\d+/, 'Tegija ' + (i + 1)));
         count.value = String(i + 1);
         list.lastElementChild.querySelector('select, input').focus();
       });
@@ -157,8 +163,7 @@ ${raw(SAME_HEIGHT)}
       <button class="btn" type="submit" name="do" value="preview-en">Eelvaade EN</button>
       <a class="btn btn-end" href="${cancel}">Loobu</a>
     </div>
-  </form>
-  <p class="hint"><a href="/logout">Logi välja</a></p>`;
+  </form>`;
   return page({ lang: 'et', title: `${title}.`, alternate: ALT, body });
 };
 
@@ -202,37 +207,18 @@ ${raw(SAME_HEIGHT)}
       <button class="btn" type="submit" name="do" value="preview-en">Eelvaade EN</button>
       <a class="btn btn-end" href="${cancel}">Loobu</a>
     </div>
-  </form>
-  <p class="hint"><a href="/logout">Logi välja</a></p>`;
+  </form>`;
   return page({ lang: 'et', title: `${title}.`, alternate: ALT, body });
 };
 
-export const loginPage = ({ next, wrong }) => page({
-  lang: 'et', title: 'Sisselogimine.', alternate: ALT,
-  body: html`  <p class="crumb">Toimeta</p>
-  <h1>Sisselogimine</h1>
-  <p class="note">Toimetamine on lukus. Sisse saab võtmega, mille said lingina.</p>
-  <form class="form" method="post" action="/login">
-    <input type="hidden" name="next" value="${next}">
-    ${field({ id: 'f-token', label: 'Võti', err: wrong ? 'Vale võti.' : '', control: input('f-token', 'token', '', ' type="password" autocomplete="off" required') })}
-    <div class="actions"><button class="btn btn-pri" type="submit">Sisene</button></div>
-  </form>`,
-});
-
-export const gatePage = ({ status, reason }) => {
-  const what = status === 503
-    ? ['Toimetaja ei ole seadistatud.', 'Sellel serveril ei ole sisselogimise viisi seatud, nii et toimetada ei saa keegi.']
-    : status === 404
-      ? (reason === 'page'
-        ? ['Sellist lehte ei ole.', html`Lehed on menüüs ja igal lehel on Muuda nupp.`]
-        : ['Sellist sündmust ei ole.', html`Sündmused on <a href="/et/sundmused">nimekirjas</a>.`])
-      : status === 403
-        ? ['Päring tuli mujalt.', 'Vorm saadeti teiselt saidilt ja seda ei võetud vastu. Ava toimetaja uuesti ja saada sealt.']
-        : status === 500
-          ? ['Toimetaja ei vasta.', 'Andmebaas vastas veaga. Värskel paigaldusel on põhjus enamasti rakendamata migratsioon, migrations/0002_editing.sql või 0003_page_editing.sql.']
-          : reason === 'access'
-            ? ['Sisselogimine ei kehti.', 'Access ei kinnitanud seda päringut. Ava leht uuesti ja logi sisse.']
-            : ['Toimetamine on lukus.', html`Sisse saab võtmega: <a href="/login">logi sisse</a>.`];
+// the two things that can go wrong now that nothing is locked: the row is not
+// there, or D1 answered with an error
+export const errorPage = ({ status, reason }) => {
+  const what = status === 404
+    ? (reason === 'page'
+      ? ['Sellist lehte ei ole.', html`Lehed on menüüs ja igal lehel on Muuda nupp.`]
+      : ['Sellist sündmust ei ole.', html`Sündmused on <a href="/et/sundmused">nimekirjas</a>.`])
+    : ['Toimetaja ei vasta.', 'Andmebaas vastas veaga. Värskel paigaldusel on põhjus enamasti rakendamata migratsioon, migrations/0002_editing.sql või 0003_page_editing.sql.'];
   return page({ lang: 'et', title: `${what[0]}`, alternate: ALT, body: html`  <p class="crumb">Toimeta</p>
   <h1>${what[0]}</h1>
   <p class="note">${what[1]}</p>` });

@@ -9,7 +9,8 @@
 // with no text in this language shows its Estonian title and links to the
 // fallback page, the way an event page's next-events list does. The Muuda
 // button under the title leads to the events editor, which is where this
-// list is edited. With home set it is the English front page at /en/ (asked
+// list is edited; the Add button that led to /edit/events/new went 2026-09-29
+// with that route. With home set it is the English front page at /en/ (asked
 // 2026-09-28 with a picture of /en/ answering the 404): the front page's
 // heading, the events to come, no button and no past.
 import { html, raw } from './html.mjs';
@@ -57,12 +58,7 @@ export const renderEvents = ({ lang, upcoming, past, origin, path, home = false 
     { hreflang: 'x-default', href: origin + where.et },
   ];
   const body = html`  <article class="event">
-    ${home ? html`<h1 class="list-label">${t.upcoming}</h1>` : html`<header class="event-top">
-      <div class="event-lead">
-        <h1>${t.events}</h1>
-        <p class="event-actions"><a class="btn" href="/edit/events/new">${t.add}</a></p>
-      </div>
-    </header>`}
+    ${home ? html`<h1 class="list-label">${t.upcoming}</h1>` : html`<h1>${t.events}</h1>`}
     ${upcoming.length ? html`<ol class="events">
     ${upcoming.map((e) => row(e, lang))}
     </ol>` : html`<p class="note">${t.noEvents}</p>`}

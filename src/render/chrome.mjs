@@ -10,7 +10,7 @@ import { SYMBOL, HEADER, FOOTER } from './mark.mjs';
 
 export const T = {
   et: {
-    menu: 'Menüü', markAlt: 'Eesti nüüdismuusika keskus', upcoming: 'Tulevased üritused', events: 'Sündmused', add: 'Lisa sündmus', past: 'Toimunud', noEvents: 'Ühtegi tulevast sündmust ei ole.',
+    menu: 'Menüü', markAlt: 'Eesti nüüdismuusika keskus', upcoming: 'Tulevased üritused', events: 'Sündmused', past: 'Toimunud', noEvents: 'Ühtegi tulevast sündmust ei ole.',
     nav: [['/', 'Avaleht'], ['/et/eccm', 'ECCM'], ['/et/tallinn-1965', 'Tallinn 1965'], ['/et/nan', 'NAN'], ['/et/ulysses', 'Ulysses'], ['/et/konkursid', 'Konkursid'], ['/et/sundmused', 'Sündmused']],
     foot: 'Eesti Nüüdismuusika Keskus, Pühavaimu 9, Tallinn',
     notFound: 'Sellist lehte ei ole.', notFoundLead: 'Aadress võib olla vananenud või valesti kirjutatud.',
@@ -19,7 +19,7 @@ export const T = {
     fallback: 'Sellel lehel ei ole veel eestikeelset versiooni. Järgneb ingliskeelne tekst.',
   },
   en: {
-    menu: 'Menu', markAlt: 'Estonian Centre of Contemporary Music', upcoming: 'Upcoming events', events: 'Events', add: 'Add an event', past: 'Past events', noEvents: 'No upcoming events.',
+    menu: 'Menu', markAlt: 'Estonian Centre of Contemporary Music', upcoming: 'Upcoming events', events: 'Events', past: 'Past events', noEvents: 'No upcoming events.',
     nav: [['/en/', 'Home'], ['/en/eccm', 'ECCM'], ['/en/tallinn-1965', 'Tallinn 1965'], ['/en/nan', 'NAN'], ['/en/ulysses', 'Ulysses'], ['/en/open-calls', 'Open calls'], ['/en/events', 'Events']],
     foot: 'Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinn',
     notFound: 'There is no such page.', notFoundLead: 'The address may be out of date or mistyped.',

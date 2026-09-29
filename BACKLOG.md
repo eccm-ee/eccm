@@ -7,6 +7,51 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-29: "rm old event page, taglines, logo, edit/event/new, logo"
+
+Asked verbatim. Four static pages go, `public/event.html` (the design page for event 134, which the D1 event pages replaced), `public/tagline.html`, `public/tagline-47.html` and `public/logo.html`, and with them the `/edit/events/new` route and the Add button on the public events list that was its only door. Files: the four pages (deleted), `public/derive.html`, `public/ds.html`, `public/type.html` (the 38 links to `./event.html`), `src/editor.mjs`, `src/render/editor.mjs`, `src/render/events.mjs`, `src/render/chrome.mjs`.
+✅ `/event`, `/tagline`, `/tagline-47` and `/logo` answer 404. The event card on the three design pages links to the D1 event it always showed, `/et/sundmused/gestuurid-situatsioonid-ilma-partituurita-kuulamine` (3 links on `/derive`, 1 on `/ds`, 34 on `/type`). `/edit/events/new` 404s, the `add` word is gone from both languages, and the list's heading is a plain `h1`. An event is now edited from its own Muuda button and made in the database; `/edit/pages/new` stays, which was not asked away. MEASURED on 8790: the four 404, `/et/sundmused` 200 with 0 links to the new-event form, `/edit/events/1` 200, `check-html` clean on the four pages left.
+
+### Done 2026-09-29: "move to single row" (a crop of Millal ja kus with Kestus alone on its own row)
+
+Asked verbatim. Algus, Lõpp and Kestus minutites go on one row: they are the three that say when, and the `solo` span that pushed Kestus to a row of its own goes with them. Files: `src/render/editor.mjs`, `public/eccm.css`.
+✅ The three sit in a `.field-row` that spans the section and inherits the section's own two gaps, so it keeps the column rhythm at both ends and wraps to one column on a phone with the same leading between the fields. The `.fields .field.solo` rule is gone, nothing else used it. MEASURED: the row is 1152 by 95.2 at 1280, one line, and 343 by 292.4 at 375, three lines.
+
+### Done 2026-09-29: "make same text size as textfiels, make radios bigger to match"
+
+Asked verbatim with a crop of Mustand / Avaldatud. The radio labels were caught by `.field label` and drew at 14 px in the second ink, so a choice read as a label rather than as a value. Files: `public/eccm.css`.
+✅ `.radios label` is the body size in the ink, the same as the text a field holds, and the button grows one scale step from 1.125rem to `--eccm-s-6`. MEASURED with `which-rule-won`: `.radios label` wins over `.field label` on source order at equal weight, computed 18px.
+
+### Done 2026-09-29: "tegijad. add Tegija 1 etc subheaders"
+
+Asked verbatim. Every credit block gets its own subheader, so the number is said once at the top instead of inside the role field's label. Files: `src/render/editor.mjs`, `public/eccm.css`.
+✅ `<h3 class="field-name">Tegija N</h3>` opens each block and the role field is labelled Roll. `.field-name` is the body size in the ink now, a step under the section's h2 and a step over a field's label, so it reads as a heading here and over the two language columns. Found and fixed in the same line: the in-place add-credit script carried `/Tegija \d+, roll/`, whose `\d` the template literal ate, so it shipped as `/Tegija d+, roll/` and had never renumbered a block added in the browser; it is `\\d` in the source and `\d` on the wire now.
+
+### Done 2026-09-29: "move Telefon / +372 516 2103 / Kirjuta meile / Instagram / Facebook to separate col, like page links in footer"
+
+Asked verbatim. The footer's third column carried both the two addresses and the phone with the three links; the phone and the links become a column of their own. Files: `src/render/mark.mjs` (both languages), `public/index.html`, `public/ds.html`, `public/derive.html`, `public/type.html`, `public/eccm.css`.
+✅ Four content columns and the partner mark: the mark and the copyright, the menu in two, the two addresses, the phone with Kirjuta meile, Instagram and Facebook. One column under 48rem as before. MEASURED: 2 `.contact` blocks on every page, shot at 1280.
+
+### Done 2026-09-29: "show vaba roll fields only when i select 'Vaba roll' from dropdown"
+
+Asked verbatim. Vaba rolli nimetus and Free role, in English are only for the free option, and they sat open on every credit. Files: `src/render/editor.mjs`, `public/eccm.css`.
+✅ The two fields carry `free` and are away unless the select is on the empty option, which `option[value=""]:checked` inside `:has()` says, so it costs no script and is right on the first paint. A credit's rows take three fixed columns on a desk, so the role select keeps its own column when the two are away instead of stretching across the form. The server already nulls a free-role name when a role is chosen, so a hidden value cannot be saved.
+
+### Done 2026-09-29: "add more spacing to right of dropdown caret and make it bigger (keep 1px)"
+
+Asked verbatim with a crop of the role select. The platform drew a small caret hard against the field's edge. Files: `public/eccm.css`.
+✅ `.form select` turns the platform's appearance off and draws the caret itself, 14 px wide on a 14 unit box so the stroke is 1 px, set in from the edge by `--eccm-s-4`, the field's own inset, so it lines up with the text on the left. The padding at that end clears it. The ink is written out in the data URI, since neither `var()` nor `currentColor` reaches into one, with a comment naming the token it copies.
+
+### Done 2026-09-29: "make form labels more darker"
+
+Asked verbatim. Files: `public/eccm.css`.
+✅ A field's label, a fieldset's legend and a section's subheader take `--eccm-ink`; the hints under them stay `--eccm-ink-2`, so the pair reads as a name over its control with a note under it.
+
+### Done 2026-09-29: "rm login/session stuff. all is free for editing"
+
+Asked verbatim. The editor loses its door: `src/gate.mjs` (the Access JWT check and the `EDITOR_TOKEN` cookie), the `/login` and `/logout` routes, the login page, the Logi välja link under both forms, the cross-site check that only made sense while a cookie carried the session, and the closed-door replies 401 and 503. `updated_by` named whoever the gate identified, so with nobody to name a save writes it empty. Files: `src/gate.mjs` (deleted), `src/index.mjs`, `src/editor.mjs`, `src/render/editor.mjs`, `.dev.vars` (deleted).
+✅ Anyone who opens a form may save from it. `gatePage` is `errorPage` with the two cases left: the row is not there, or D1 answered with an error. MEASURED on 8790 with no cookie: `/edit` 303 to `/`, the event form and both new forms 200, `/edit/events/1` 67 fields and 0 logout links, a save 303 to the event with rev 1 to 2, the same form again 409, a cross-site POST 303 and rev 2 to 3 where it was 403, an empty Algus 422, a preview 200 with rev unchanged, a new event and a new page 303 to their own pages, `updated_by` null on all four, `/login` and `/logout` 404. `check-html` clean, shots at 375 and 1280 of both forms. The remote `EDITOR_TOKEN` secret is unread now and can be deleted with `wrangler secret delete`.
+
 ### Done 2026-09-28: "Do hamburger menu 3 lines in square"
 
 Asked verbatim. The phone menu button becomes a square with a 1px ink border and three 1px lines inside, in place of the five stave lines. Files: `public/eccm.css` (`.menu-btn`), the button markup in `src/render/mark.mjs` and in every static page's header (`index.html` after the front page agent hands it back).

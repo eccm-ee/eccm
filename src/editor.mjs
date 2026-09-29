@@ -1,12 +1,15 @@
 // editor.mjs: the editing step of the CMS, asked 2026-09-28 as "So next cms
-// step. Editing?". Routes under /edit and the two gate routes:
+// step. Editing?". Routes under /edit, every one of them open:
 //
-//   GET  /login, POST /login, GET /logout      the staging stand-in (gate.mjs)
 //   GET  /edit                                 to the front page; an event is edited from its own Muuda button
-//   GET  /edit/events/new, POST                a blank form, then an insert
 //   GET  /edit/events/{id}, POST               the form from D1, then a save
 //   GET  /edit/pages/new, POST                 a blank form, then an insert
 //   GET  /edit/pages/{id}, POST                the form from D1, then a save
+//
+// There is no /edit/events/new since 2026-09-29, asked as "rm ... edit/event/new",
+// and with it went the Add button on the public events list: an event is
+// edited from its own Muuda button and nothing here makes one. A text page
+// still has /edit/pages/new, which was not asked away.
 //
 // A save is one D1 batch, which is one transaction: every statement is
 // guarded by the event's rev as the form saw it, and the event UPDATE that
@@ -17,18 +20,23 @@
 // The text pages (page and page_text, the five of data/seed-step3.sql) have
 // the same three routes, the same guard and the same preview since 2026-09-28
 // ("page from d1 and with edit?"), with nothing an event has: no facts, no
-// picture, no credits. Every reply here is no-store and noindex; nothing
-// under /edit is a page for a visitor or a crawler.
+// picture, no credits. Nobody logs in: the gate, /login, /logout and the
+// editor cookie went 2026-09-29, asked as "rm login/session stuff. all is
+// free for editing", so anyone who reaches a form may save from it. Every
+// reply here is still no-store and noindex; nothing under /edit is a page for
+// a visitor or a crawler.
 import { renderEvent } from './render/event.mjs';
 import { renderPage, pagePath } from './render/page.mjs';
 import { OTHER } from './render/chrome.mjs';
-import { editorForm, pageForm, loginPage, gatePage, CATEGORIES, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
-import { identify, tokenMatches, setCookie, clearCookie } from './gate.mjs';
+import { editorForm, pageForm, errorPage, CATEGORIES, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
 
 const HEAD = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' };
 const reply = (body, status = 200, extra = {}) => new Response(String(body), { status, headers: { ...HEAD, ...extra } });
 const redirect = (to, extra = {}) => new Response(null, { status: 303, headers: { ...HEAD, location: to, ...extra } });
 const NOW = "strftime('%Y-%m-%dT%H:%M:%SZ','now')";
+// updated_by named whoever the gate identified (migrations/0002_editing.sql).
+// With no login there is nobody to name, so an insert leaves it and a save
+// clears whatever an earlier one wrote.
 
 // ── the form's values, from rows and from a POST ────────────────────────────
 const LOCAL = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
@@ -155,11 +163,11 @@ const creditRows = (v, before) => {
 const eventValues = (v) => [v.starts_at, v.ends_at || null, v.duration_min === '' ? null : +v.duration_min, v.venue, v.address, v.ticket_url, v.website_url, v.category, v.image_id ? +v.image_id : null, v.status, v.publish_at || null];
 const EVENT_COLS = 'starts_at, ends_at, duration_min, venue, address, ticket_url, website_url, category, image_id, status, publish_at';
 
-async function save(db, v, before, who) {
+async function save(db, v, before) {
   const credits = creditRows(v, before.creditRows);
   const texts = ['et', 'en'].filter((l) => v[l].title);
   if (!v.id) {
-    const ins = await db.prepare(`INSERT INTO event (${EVENT_COLS}, updated_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`).bind(...eventValues(v), who).run();
+    const ins = await db.prepare(`INSERT INTO event (${EVENT_COLS}) VALUES (?,?,?,?,?,?,?,?,?,?,?)`).bind(...eventValues(v)).run();
     const id = ins.meta.last_row_id;
     const stmts = texts.map((l) => db.prepare('INSERT INTO event_text (event_id, lang, slug, title, body) VALUES (?,?,?,?,?)').bind(id, l, v[l].slug, v[l].title, v[l].body))
       .concat(credits.map((c) => db.prepare('INSERT INTO event_credit (event_id, position, role_key, label_et, label_en, people, orgs) VALUES (?,?,?,?,?,?,?)').bind(id, c.position, c.role_key, c.label_et, c.label_en, c.people, c.orgs)));
@@ -173,7 +181,7 @@ async function save(db, v, before, who) {
   const stmts = texts.map((l) => db.prepare(`INSERT INTO event_text (event_id, lang, slug, title, body) SELECT ?,?,?,?,? WHERE ${guard} ON CONFLICT (event_id, lang) DO UPDATE SET slug = excluded.slug, title = excluded.title, body = excluded.body`).bind(v.id, l, v[l].slug, v[l].title, v[l].body, ...g))
     .concat([db.prepare(`DELETE FROM event_credit WHERE event_id = ? AND ${guard}`).bind(v.id, ...g)])
     .concat(credits.map((c) => db.prepare(`INSERT INTO event_credit (event_id, position, role_key, label_et, label_en, people, orgs) SELECT ?,?,?,?,?,?,? WHERE ${guard}`).bind(v.id, c.position, c.role_key, c.label_et, c.label_en, c.people, c.orgs, ...g)))
-    .concat([db.prepare(`UPDATE event SET starts_at = ?, ends_at = ?, duration_min = ?, venue = ?, address = ?, ticket_url = ?, website_url = ?, category = ?, image_id = ?, status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = ?, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(...eventValues(v), who, ...g)]);
+    .concat([db.prepare(`UPDATE event SET starts_at = ?, ends_at = ?, duration_min = ?, venue = ?, address = ?, ticket_url = ?, website_url = ?, category = ?, image_id = ?, status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = NULL, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(...eventValues(v), ...g)]);
   const results = await db.batch(stmts);
   return { id: v.id, stale: results[results.length - 1].meta.changes !== 1 };
 }
@@ -228,10 +236,10 @@ export async function validatePage(v, db) {
   return errors;
 }
 
-async function savePage(db, v, who) {
+async function savePage(db, v) {
   const texts = ['et', 'en'].filter((l) => v[l].title);
   if (!v.id) {
-    const ins = await db.prepare('INSERT INTO page (key, status, publish_at, updated_by) VALUES (?,?,?,?)').bind(v.key, v.status, v.publish_at || null, who).run();
+    const ins = await db.prepare('INSERT INTO page (key, status, publish_at) VALUES (?,?,?)').bind(v.key, v.status, v.publish_at || null).run();
     const id = ins.meta.last_row_id;
     await db.batch(texts.map((l) => db.prepare('INSERT INTO page_text (page_id, lang, slug, title, body) VALUES (?,?,?,?,?)').bind(id, l, v[l].slug, v[l].title, v[l].body)));
     return { id };
@@ -241,7 +249,7 @@ async function savePage(db, v, who) {
   const guard = 'EXISTS (SELECT 1 FROM page WHERE id = ? AND rev = ?)';
   const g = [v.id, v.rev];
   const stmts = texts.map((l) => db.prepare(`INSERT INTO page_text (page_id, lang, slug, title, body) SELECT ?,?,?,?,? WHERE ${guard} ON CONFLICT (page_id, lang) DO UPDATE SET slug = excluded.slug, title = excluded.title, body = excluded.body`).bind(v.id, l, v[l].slug, v[l].title, v[l].body, ...g))
-    .concat([db.prepare(`UPDATE page SET status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = ?, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(v.status, v.publish_at || null, who, ...g)]);
+    .concat([db.prepare(`UPDATE page SET status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = NULL, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(v.status, v.publish_at || null, ...g)]);
   const results = await db.batch(stmts);
   return { id: v.id, stale: results[results.length - 1].meta.changes !== 1 };
 }
@@ -270,42 +278,24 @@ async function loadPage(db, id) {
 const pageHome = (texts) => { const t = texts.find((x) => x.lang === 'et') || texts.find((x) => x.lang === 'en'); return t ? pagePath(t.lang, t.slug) : null; };
 const landing = (v, path) => (v.status === 'published' && (v.et.title || v.en.title) ? path(v.et.title ? 'et' : 'en', v.et.title ? v.et.slug : v.en.slug) : null);
 
-async function pageRoute(request, env, url, id, who) {
+async function pageRoute(request, env, url, id) {
   const db = env.DB;
   const before = id === 'new' ? { pg: null, texts: [], values: pageFromRows(null, []) } : await loadPage(db, +id);
-  if (!before) return reply(gatePage({ status: 404, reason: 'page' }), 404);
+  if (!before) return reply(errorPage({ status: 404, reason: 'page' }), 404);
   const cancel = pageHome(before.texts) || '/';
   if (request.method !== 'POST') return reply(pageForm({ v: before.values, cancel }));
-  if (crossSite(request)) return reply(gatePage({ status: 403, reason: 'origin' }), 403);
   const fd = await request.formData();
   const v = parsePage(fd, before.values);
   const action = s(fd, 'do');
   const errors = await validatePage(v, db);
   if (errors.length) return reply(pageForm({ v, errors, cancel }), 422);
   if (action.startsWith('preview')) return previewPage(v, action.endsWith('en') ? 'en' : 'et', url);
-  const out = await savePage(db, v, who);
+  const out = await savePage(db, v);
   if (out.stale) return reply(pageForm({ v, errors: [{ field: 'rev', msg: 'Keegi teine salvestas selle lehe vahepeal. Ava leht uues vahekaardis, võrdle ja tee muudatus uuesti.' }], cancel }), 409);
   return redirect(landing(v, pagePath) || `/edit/pages/${out.id}`);
 }
 
 // ── the routes ──────────────────────────────────────────────────────────────
-// a cross-site form post cannot carry the cookie (SameSite=Lax), and a
-// browser that says where the post came from is believed
-const crossSite = (request) => { const site = request.headers.get('sec-fetch-site'); return !!site && site !== 'same-origin' && site !== 'none'; };
-// where /login sends a person after the cookie is set: a form under /edit/, else the front page
-const safeNext = (n) => (typeof n === 'string' && /^\/edit\/[a-z0-9/_-]*$/i.test(n) ? n : '/');
-
-async function login(request, env, url) {
-  if (!env.EDITOR_TOKEN) return reply(gatePage({ status: 503 }), 503);
-  let token = url.searchParams.get('token');
-  let next = url.searchParams.get('next');
-  if (request.method === 'POST') { const fd = await request.formData(); token = fd.get('token'); next = fd.get('next'); }
-  next = safeNext(next);
-  if (token == null || token === '') return reply(loginPage({ next }));
-  if (!tokenMatches(token, env)) return reply(loginPage({ next, wrong: true }), 401);
-  return redirect(next, { 'set-cookie': await setCookie(env.EDITOR_TOKEN, url) });
-}
-
 async function load(db, id) {
   const ev = await db.prepare('SELECT * FROM event WHERE id = ?').bind(id).first();
   if (!ev) return null;
@@ -333,16 +323,15 @@ async function preview(db, v, lang, before, roles, media, url) {
   return reply(renderEvent({ lang, text, fallback: false, ev, media: pic, credits, twin, next, origin: url.origin, path: eventPath(lang, text.slug), notice, editHref: v.id ? `/edit/events/${v.id}` : '/edit/events/new' }));
 }
 
-async function form(request, env, url, id, who) {
+async function form(request, env, url, id) {
   const db = env.DB;
-  const before = id === 'new' ? { ev: null, texts: [], creditRows: [], values: fromRows(null, [], []) } : await load(db, +id);
-  if (!before) return reply(gatePage({ status: 404 }), 404);
+  const before = await load(db, +id);
+  if (!before) return reply(errorPage({ status: 404 }), 404);
   const { roles, media } = await lookups(db);
-  // where Loobu goes: the event itself, Estonian first, or the public list for a new one
+  // where Loobu goes: the event itself, Estonian first
   const home = before.texts.find((x) => x.lang === 'et') || before.texts.find((x) => x.lang === 'en');
   const cancel = home ? eventPath(home.lang, home.slug) : '/et/sundmused';
   if (request.method !== 'POST') return reply(editorForm({ v: padded(before.values), roles, media, cancel }));
-  if (crossSite(request)) return reply(gatePage({ status: 403, reason: 'origin' }), 403);
   const fd = await request.formData();
   const v = parse(fd, before.values);
   const action = s(fd, 'do');
@@ -351,7 +340,7 @@ async function form(request, env, url, id, who) {
   const errors = await validate(v, db, roles, media);
   if (errors.length) return reply(editorForm({ v: padded(v), errors, roles, media, cancel }), 422);
   if (action.startsWith('preview')) return preview(db, v, action.endsWith('en') ? 'en' : 'et', before, roles, media, url);
-  const out = await save(db, v, before, who);
+  const out = await save(db, v, before);
   if (out.stale) return reply(editorForm({ v: padded(v), errors: [{ field: 'rev', msg: 'Keegi teine salvestas selle sündmuse vahepeal. Ava leht uues vahekaardis, võrdle ja tee muudatus uuesti.' }], roles, media, cancel }), 409);
   // the event page when it is published, else the form again, as a page save lands
   return redirect(landing(v, eventPath) || `/edit/events/${out.id}`);
@@ -360,21 +349,17 @@ async function form(request, env, url, id, who) {
 export async function editor(request, env, url) {
   const p = url.pathname;
   try {
-    if (p === '/login') return login(request, env, url);
-    if (p === '/logout') return redirect('/login', { 'set-cookie': clearCookie() });
-    const id = await identify(request, env);
-    if (id.status) return reply(gatePage(id), id.status);
     if (p === '/edit') return redirect('/');
-    const m = /^\/edit\/events\/(new|\d+)$/.exec(p);
-    if (m) return form(request, env, url, m[1], id.who);
+    const m = /^\/edit\/events\/(\d+)$/.exec(p);
+    if (m) return form(request, env, url, m[1]);
     const pm = /^\/edit\/pages\/(new|\d+)$/.exec(p);
-    if (pm) return pageRoute(request, env, url, pm[1], id.who);
+    if (pm) return pageRoute(request, env, url, pm[1]);
     return null;
   } catch (e) {
     // a plain sentence, never a stack: the likeliest cause on a fresh deploy
     // is migrations/0002_editing.sql or 0003_page_editing.sql not yet applied
     // to the remote database
     console.error('editor', e && e.message);
-    return reply(gatePage({ status: 500 }), 500);
+    return reply(errorPage({ status: 500 }), 500);
   }
 }

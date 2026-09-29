@@ -4,12 +4,14 @@
 // (plans/plan-eccm-cms-step-1.md section 4). Session 1 and 2: the event page
 // in both languages, with the fallback of section 2 when the English text row
 // is missing. The URL words are plans/plan-eccm-urls-sitemap-rss.md section 2.
-// The editor (src/editor.mjs) answers /edit/events* and /edit/pages* behind
-// its gate, and /login and /logout are the gate's own; /edit itself goes to
-// the events list behind the same gate since 2026-09-28, when the static
-// public/edit.html, the form that saved nothing, was removed (asked as "rm
-// https://eccm.positron.studio/edit, make real edit stff"). Since 2026-09-28 the
-// text pages the menu names, /et/{slug} and /en/{slug}, come from page_text
+// The editor (src/editor.mjs) answers /edit/events* and /edit/pages*, and
+// /edit itself goes to the front page. Nothing in front of it asks who is
+// there: the gate, /login and /logout went 2026-09-29, asked as "rm
+// login/session stuff. all is free for editing". Before that /edit was the
+// static public/edit.html, the form that saved nothing, removed 2026-09-28
+// (asked as "rm https://eccm.positron.studio/edit, make real edit stff").
+// Since 2026-09-28 the text pages the menu names, /et/{slug} and /en/{slug},
+// come from page_text
 // through src/render/page.mjs, with the fallback running both ways (its
 // header says why); the event and page routes cannot collide, since a page
 // path has one segment after the language and an event path has two. The
@@ -93,7 +95,7 @@ export default {
     if (LIST_LANG[p]) return reply(await eventsList(env, LIST_LANG[p], url));
     const pm = PAGE.exec(p);
     if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }
-    if (p === '/login' || p === '/logout' || p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
+    if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
   },
