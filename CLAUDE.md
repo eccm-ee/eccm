@@ -13,8 +13,8 @@ It left the positron repository on 2026-09-27 with its history
 | `BACKLOG.md` | what has been asked for and not yet done, every ask verbatim |
 | `public/` | the site, served as static assets: `index.html` (the list), `derive.html` (design from a picture), `ds.html` (the design system, the wordmark at its foot), `type.html` (the faces, and the sans and serifs in the derived page's three uses), `site.mjs` (the phone menu), `eccm.css`, `vendor/` (the fonts, each with its licence), `icons/` (the square marks and every icon size), the pictures, the logo and wordmark SVGs, `manifest.webmanifest`, `_headers` (`X-Robots-Tag: noindex` while the site is on this hostname) |
 | `src/` | the Worker: `index.mjs` the router, `editor.mjs` the editing routes, open to anyone since 2026-09-29, `render/` the templates (`html.mjs`, `md.mjs`, `chrome.mjs`, `mark.mjs` the shared chrome markup, `event.mjs`, `editor.mjs`, `dates.mjs`) |
-| `migrations/`, `data/` | the D1 schema (`0001_step1.sql`, `0002_editing.sql`) and the seed files |
-| `plans/` | every plan, eleven today (`ls plans/*.md \| wc -l`, counted and never remembered): the four that came with the move and the seven of 2026-09-27, each relayed in full when written |
+| `migrations/`, `data/` | the D1 schema (`0001_step1.sql`, `0002_editing.sql`, `0003_page_editing.sql`) and the seed files |
+| `plans/` | every plan, thirteen today (`ls plans/*.md \| wc -l`, counted and never remembered): the four that came with the move and the nine since, each relayed in full when written |
 | `.claude/skills/eccm-ui` | the type half of the design system, with every rule's measurement and the owner's words. Load before any change under `public/` |
 | `.claude/skills/positron-compose` | the composition half, copied from positron. Load beside `eccm-ui` |
 | `tools/` | `shot.mjs`, `which-rule-won.mjs`, `ancestry.mjs`, `check-html.mjs`, copied from positron with a header saying so (`shot.mjs` gained `--from px` here on 2026-09-27, owed to positron's copy by hand), and `mark.mjs` with `icons.mjs`, which draw the mark per icon size and write the ICOs |
