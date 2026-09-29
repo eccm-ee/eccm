@@ -158,11 +158,12 @@
   .nav { display: flex; flex-wrap: wrap; column-gap: var(--eccm-s-8); row-gap: var(--eccm-s-2); }
   .lang { display: flex; column-gap: var(--eccm-s-3); }
   .lang-in { display: none; }
-  /* the phone menu button: a 3rem square in the site's 1px rule with three
-     1px lines inside (asked 2026-09-28: "Do hamburger menu 3 lines in square",
-     in place of the five stave lines); the square is its own tap area, 48 px,
-     and it paints nothing on press, so no tap highlight */
-  .menu-btn { display: none; inline-size: 3rem; block-size: 3rem; padding: 0; margin: 0; border: 1px solid currentColor; background: none; color: var(--eccm-ink); cursor: pointer; -webkit-tap-highlight-color: transparent; place-items: center; }
+  /* the phone menu button: three 1px lines in a 3rem box (asked 2026-09-28:
+     "Do hamburger menu 3 lines in square", in place of the five stave lines).
+     The box's own 1px rule went 2026-09-29 ("rm border around hamburger
+     menu"), so nothing is drawn but the lines and the box is the tap area
+     alone, 48 px; it paints nothing on press, so no tap highlight */
+  .menu-btn { display: none; inline-size: 3rem; block-size: 3rem; padding: 0; margin: 0; border: 0; background: none; color: var(--eccm-ink); cursor: pointer; -webkit-tap-highlight-color: transparent; place-items: center; }
   .menu-btn svg { display: block; fill: currentColor; inline-size: 1.25rem; block-size: calc(1.25rem * 15 / 20); }
   @media (max-width: 48rem) {
     .site-head .mark svg.beside { display: none; }
@@ -176,6 +177,16 @@
     .site-head[data-open] .lang-in { display: block; margin-block-start: var(--eccm-s-4); }
     .site-head[data-open] .lang-in .lang { display: flex; align-items: baseline; }
     .site-head[data-open] .lang-in .lang > * { display: inline-block; padding-block: var(--eccm-s-2); }
+  }
+  /* between the phone and the desk the menu takes a row of its own, under the mark with the switch at the
+     row's far end, and starts at the frame's left where the mark's E is (asked 2026-09-29: "when between
+     mobile and destop, put header menu links to new row"). The band's top is where the seven items stop
+     fitting beside the mark and the switch: MEASURED 2026-09-29 on /et/sundmused, the nav is two lines at
+     1080 px and one at 1090, and on /en/events two at 1070 and one at 1080, so 70rem clears the wider of
+     the two menus by 30 px and a new item is the thing to measure again */
+  @media (min-width: 48rem) and (max-width: 70rem) {
+    .site-head .nav { order: 3; flex-basis: 100%; justify-content: start; }
+    .site-head .sw { margin-inline-start: auto; }
   }
   /* the site's footer, footer A of the same study: the mark alone at 6rem with the copyright under it, the menu in two columns, the
      contact as label over value with the form link and the social links, and the Tallinn UNESCO City of Music mark as the city

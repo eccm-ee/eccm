@@ -7,6 +7,16 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-29: "when between mobile and destop, put header menu links to new row"
+
+Asked verbatim. Between the phone's button and the width that holds the menu beside the mark, the seven items wrapped into two lines inside their own box; they take a row of their own instead. Files: `public/eccm.css`.
+✅ From 48rem to 70rem the menu is `order: 3` on a 100 per cent basis, starting at the frame's left where the mark's E is, with the switch at the first row's far end, which is the phone's open-menu shape at a desk width. MEASURED before choosing the top of the band: the nav is two lines at 1080 px and one at 1090 on `/et/sundmused`, two at 1070 and one at 1080 on `/en/events`, so 70rem clears the wider menu by 30 px; an eighth item is the thing to measure again. MEASURED after: the nav is 736 by 22.4 at x 32 at 800, the same at 1000 and 1119, and back beside the mark at 1121.
+
+### Done 2026-09-29: "rm border around hamburger menu"
+
+Asked verbatim. Files: `public/eccm.css`.
+✅ `.menu-btn` is `border: 0`, so nothing is drawn but the three lines and the 3rem box is the tap area alone, 48 px. MEASURED with `which-rule-won`: computed `border-top-width` 0px, via the `border: 0` shorthand.
+
 ### Done 2026-09-29: "rm old event page, taglines, logo, edit/event/new, logo"
 
 Asked verbatim. Four static pages go, `public/event.html` (the design page for event 134, which the D1 event pages replaced), `public/tagline.html`, `public/tagline-47.html` and `public/logo.html`, and with them the `/edit/events/new` route and the Add button on the public events list that was its only door. Files: the four pages (deleted), `public/derive.html`, `public/ds.html`, `public/type.html` (the 38 links to `./event.html`), `src/editor.mjs`, `src/render/editor.mjs`, `src/render/events.mjs`, `src/render/chrome.mjs`.

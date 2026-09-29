@@ -44,9 +44,12 @@ page rows, `ic_large_*` at 900 px for the event pages).
 
 The header is the mark with the wordmark beside it in Instrument Sans (the
 `beside` lockup, 37 units, the `under` lockup at 40 units on a phone), the
-menu of seven items centred, and the ET/EN switch; on a phone the menu sits
-behind a 3rem square with three 1px lines, opens under the header, and the
-switch comes last in it. The footer is three columns and the City of Music
+menu of seven items centred, and the ET/EN switch. Between 48rem and 70rem
+the menu takes a row of its own under the mark, starting at the frame's left,
+with the switch at the first row's far end, since the seven items stop fitting
+beside the mark below about 1090 px. On a phone the menu sits behind three 1px
+lines in a 3rem box (the box's own rule asked away 2026-09-29), opens under the
+header, and the switch comes last in it. The footer is three columns and the City of Music
 mark: the mark and the copyright, the menu in two columns, the venue, the
 postal address, the phone, Kirjuta meile, Instagram and Facebook. The Worker's
 pages take it from `src/render/mark.mjs` (HEADER and FOOTER strings, the
