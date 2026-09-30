@@ -6,16 +6,19 @@
 // so the unique transformations stay bounded, w-descriptors and an honest
 // sizes, width and height always, no dpr= and no client hints.
 //
-// The renditions need Image Transformations switched on for the zone in the
-// dashboard; until the IMAGE_TRANSFORMS var in wrangler.jsonc says "on", a
-// picture is its original with the same attributes and no srcset, since
-// /cdn-cgi/image/ answers 404 on a zone without them (MEASURED 2026-09-30).
+// The renditions need Image Transformations on the zone, a dashboard switch,
+// on for positron.studio since 2026-09-30 with "This zone only" as the
+// allowed sources; IMAGE_TRANSFORMS in wrangler.jsonc turns them off again,
+// and then a picture is its original with the same attributes and no srcset.
 import { html } from './html.mjs';
 
 let ON = false;
 export const useTransforms = (v) => { ON = v === 'on'; };
 const QUALITY = 82;
-export const cdn = (key, t) => `/cdn-cgi/image/${t},quality=${QUALITY},format=auto/${key}`;
+// onerror=redirect: past the free plan's 5,000 unique transformations a
+// month a new one answers error 9422, and this sends it to the original
+// instead (developers.cloudflare.com/images/pricing/, read 2026-09-30)
+export const cdn = (key, t) => `/cdn-cgi/image/${t},quality=${QUALITY},format=auto,onerror=redirect/${key}`;
 // a rung wider than the original would be an upscale, which is the one sin
 // (the images plan, section 4); the original's own width stands in for them
 const rungs = (ladder, w) => { const r = ladder.filter((x) => x <= w); return r.length === ladder.length ? r : r.concat(w); };

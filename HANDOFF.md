@@ -62,15 +62,16 @@ worktree removed: `/sitemap.xml` (23 urls locally, hreflang pairs, `lastmod`),
 fallback, enclosure length from `media.bytes`). Advertised nowhere until
 cutover, as the plan says.
 
-**The image ladder, off.** `src/render/pic.mjs` is trip's `cdn()` with
+**The image ladder, on.** `src/render/pic.mjs` is trip's `cdn()` with
 eccm's paths: the list at 300, 600, 900 (3 to 2, cover), the poster at 640,
 960, 1280, 1920 with `fetchpriority="high"` and a mirrored preload, never a
 rung wider than the original. `/cdn-cgi/image/` answers 404 on this zone and
-Transformations are a dashboard switch only, so `IMAGE_TRANSFORMS` in
-`wrangler.jsonc` is `"off"` and pages draw originals (the poster is still
-preloaded). **To switch on:** the owner enables Images, Transformations,
-positron.studio in the dashboard; then set the var to `"on"`, deploy, and
-`curl -sI -H 'Accept: image/avif'` one rendition twice for the type and a HIT.
+Transformations are a dashboard switch only; the owner switched them on the
+same day ("This zone only", the free plan: 5,000 unique a month, never
+billed, and every URL carries `onerror=redirect` so a transformation past the
+limit falls back to the original). `IMAGE_TRANSFORMS` in `wrangler.jsonc` is
+`"on"`; `"off"` draws originals. MEASURED live: renditions 200 in AVIF, a
+MISS then a HIT, an R2 upload resized as well.
 
 **The font jump.** Newsreader, the body face on a serif event, was not
 preloaded and Georgia is wider, so the page reflowed. Now: Newsreader is
@@ -82,7 +83,7 @@ stack). MEASURED on a 620 px Estonian paragraph at 18 px: each face and its
 fallback 7 lines, the bare system face 8. Newsreader's width must be taken
 at body size: its optical size axis is 10 per cent narrower at 100 px.
 
-**Open from today:** push (above); Transformations on the zone; the
+**Open from today:** push (above); the
 canonical, `robots.txt` and `.ics` parts of the URL plan's sessions 8 and 9;
 the list rows are all `loading="lazy"` where the plan wants the first two
 eager; an upload has no delete and a replaced picture's row and object stay.
@@ -350,6 +351,6 @@ centre, so use `1 0` for the top of a page.
 `BACKLOG.md` has every ask of all four days verbatim with what was measured,
 the open ones at the top. The first candidates: the Estonian front page from
 D1, the `tuma` key, the website field on the event page, and today's open
-list above (push first, then Transformations). Agents report and do not commit; the
+list above (push first). Agents report and do not commit; the
 session commits by path, deploys and pushes, and a deploy ships the working
 tree, so `git status` before every deploy.
