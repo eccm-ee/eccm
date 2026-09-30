@@ -15,7 +15,8 @@
    and latin-ext (Š and Ž live in the second), fetched once from Google's
    static host, SIL OFL beside them in ./vendor/, served from here; the page
    asserts both faces are loaded and in use. The fallback is Helvetica, then
-   Arial, and it is not size-adjusted: a swap reflows the page once. */
+   Arial, size-adjusted to the face since 2026-09-30 (the fallbacks below), so
+   a swap no longer reflows the page. */
 @font-face {
   font-family: 'Schibsted Grotesk';
   font-weight: 400 900;
@@ -32,6 +33,19 @@
 }
 @font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+/* the fallbacks at the webfonts' own metrics, trip's recipe
+   (trip/plans/typography.md, the CLS story): until the woff2 arrives the
+   text is drawn in the machine's face scaled and spaced to the webfont, so
+   the swap changes the letters and moves nothing (asked 2026-09-30: "i saw
+   font change jump ... can we optimize / preload?"). MEASURED 2026-09-30 in
+   headless Chrome with canvas measureText over one Estonian and English
+   line: size-adjust is the width ratio at the body's 18 px, since
+   Newsreader's optical size axis draws a narrower cut at 100 px (91 per cent
+   at 18 against 101 at 100), and the overrides the webfont's font box at
+   100 px divided by it; Helvetica and Arial measured alike. Checked on a
+   620 px paragraph: webfont and fallback break into the same lines */
+@font-face { font-family: 'Schibsted Grotesk Fallback'; src: local('Helvetica'), local('Arial'); size-adjust: 90.39%; ascent-override: 108.42%; descent-override: 28.76%; line-gap-override: 0%; }
+@font-face { font-family: 'Newsreader Fallback'; src: local('Georgia'); size-adjust: 91.38%; ascent-override: 80.98%; descent-override: 28.45%; line-gap-override: 0%; }
 /* the serif a derived page may set (plans/plan-eccm-design-from-image.md),
    declared here rather than in derive.html so it is declared once: Newsreader
    since 2026-09-28 ("use newsreader in derive"), with Literata and Roboto
@@ -98,7 +112,7 @@
 
   html { background: var(--eccm-ground); color: var(--eccm-ink); }
   body {
-    font: 400 var(--eccm-t-m) / var(--eccm-lh-body) 'Schibsted Grotesk', Helvetica, Arial, sans-serif;
+    font: 400 var(--eccm-t-m) / var(--eccm-lh-body) 'Schibsted Grotesk', 'Schibsted Grotesk Fallback', Helvetica, Arial, sans-serif;
     text-wrap: pretty;
     /* grayscale antialiasing: on a Mac the default subpixel rendering draws
        Helvetica heavier than a designed site looks, and a lighter page was
@@ -360,7 +374,7 @@
      fallback, and the inversed one takes the derived accent when there is
      one, with the text colour the derivation says passes on it. 3rem is a
      finger, not a relationship */
-  .btn { display: inline-flex; align-items: center; block-size: 3rem; padding-inline: var(--eccm-s-6); border: 1px solid var(--ev-ink, var(--eccm-ink)); background: transparent; color: var(--ev-ink, var(--eccm-ink)); text-decoration: none; cursor: pointer; font-family: 'Schibsted Grotesk', Helvetica, Arial, sans-serif; font-weight: 400; }
+  .btn { display: inline-flex; align-items: center; block-size: 3rem; padding-inline: var(--eccm-s-6); border: 1px solid var(--ev-ink, var(--eccm-ink)); background: transparent; color: var(--ev-ink, var(--eccm-ink)); text-decoration: none; cursor: pointer; font-family: 'Schibsted Grotesk', 'Schibsted Grotesk Fallback', Helvetica, Arial, sans-serif; font-weight: 400; }
   .btn:hover { text-decoration: none; outline: 1px solid var(--ev-ink, var(--eccm-ink)); outline-offset: -2px; }
   /* the filled button is the ground's inverse, never the accent (derive.html, asked 2026-09-27:
      "Readability issues on a purchase button"), and a derived scheme names both halves */

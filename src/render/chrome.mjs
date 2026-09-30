@@ -35,7 +35,9 @@ export const LABEL = { et: 'ET', en: 'EN' };
 // pairs when both texts exist (plans/plan-eccm-event-markup.md section 4)
 // notice: one line above main, ruled under, which the editor's preview uses
 // to say nothing is saved (src/editor.mjs); absent on every public page
-export const page = ({ lang, title, alternate, canonical, alternates, body, notice }) => {
+// head: preloads the page itself knows it needs, the event's poster and the
+// serif its scheme sets (src/render/pic.mjs, src/render/event.mjs)
+export const page = ({ lang, title, alternate, canonical, alternates, body, notice, head }) => {
   const t = T[lang];
   return html`<!doctype html>
 <html lang="${lang}">
@@ -53,6 +55,7 @@ ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflan
 <link rel="stylesheet" href="/eccm.css">
 <link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/vendor/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+${head || ''}
 </head>
 <body>
 ${raw(SYMBOL)}

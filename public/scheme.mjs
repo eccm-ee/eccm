@@ -284,7 +284,7 @@ export const scheme = (r, t) => {
 };
 // the serif a derived page takes, Newsreader since 2026-09-28, with the two
 // alternatives derive.html switches to on ?serif=
-export const SERIFS = { newsreader: { name: 'Newsreader', family: "'Newsreader', Georgia, serif", weight: 400 }, literata: { name: 'Literata', family: "'Literata', Georgia, serif", weight: 400 }, roboto: { name: 'Roboto Serif', family: "'Roboto Serif', Georgia, serif", weight: 400 } };
+export const SERIFS = { newsreader: { name: 'Newsreader', family: "'Newsreader', 'Newsreader Fallback', Georgia, serif", weight: 400 }, literata: { name: 'Literata', family: "'Literata', Georgia, serif", weight: 400 }, roboto: { name: 'Roboto Serif', family: "'Roboto Serif', Georgia, serif", weight: 400 } };
 
 // the body takes the serif only on a ground near white; on a darker light
 // ground, the Gestures sage, it stays in the sans, the same legibility rule

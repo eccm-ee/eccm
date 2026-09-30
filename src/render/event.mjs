@@ -6,6 +6,7 @@ import { html, raw, esc } from './html.mjs';
 import { md } from './md.mjs';
 import { T, OTHER, page } from './chrome.mjs';
 import { dateLong, dayMonth, clock, mapsUrl } from './dates.mjs';
+import { poster } from './pic.mjs';
 
 export const CATEGORY = {
   eccm: { et: 'ECCM', en: 'ECCM' }, koostoo: { et: 'Koostöö', en: 'Collaboration' }, improtest: { et: 'Improtest', en: 'Improtest' },
@@ -31,14 +32,14 @@ const schemeStyle = (json) => {
   if (!json) return null;
   let s; try { s = JSON.parse(json); } catch { return null; }
   const decl = Object.entries(VARS).filter(([k]) => s[k] != null).map(([k, v]) => `${v}: ${s[k]}`);
-  return { mode: s.mode === 'dark' ? 'dark' : 'light', style: esc(decl.join('; ')) };
+  return { mode: s.mode === 'dark' ? 'dark' : 'light', style: esc(decl.join('; ')), serif: !!(s.titleFace || s.bodyFace) };
 };
 // a scheme as the editor's browser posts it, kept only when every value is
 // one the detector can write: six colours as hex, the faces from
 // public/scheme.mjs's SERIFS, so nothing a visitor typed reaches a style
 // attribute; returns the JSON to store, or null
 const HEX = /^#[0-9a-f]{6}$/;
-const FACES = ["'Newsreader', Georgia, serif", "'Literata', Georgia, serif", "'Roboto Serif', Georgia, serif"];
+const FACES = ["'Newsreader', 'Newsreader Fallback', Georgia, serif", "'Literata', Georgia, serif", "'Roboto Serif', Georgia, serif"];
 export const cleanScheme = (json) => {
   let s; try { s = JSON.parse(json); } catch { return null; }
   if (!s || typeof s !== 'object' || !Number.isInteger(s.v) || !['light', 'dark'].includes(s.mode)) return null;
@@ -76,6 +77,11 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
     { hreflang: 'x-default', href: origin + (lang === 'et' ? path : alternate.href) },
   ] : [];
   const canonical = origin + (fallback ? eventPath('et', text.slug) : path);
+  // the poster is the page's LCP and the serif, when the scheme sets one, is
+  // most of its text, so both are asked for before the stylesheet finds them
+  // (asked 2026-09-30: "i saw font change jump ... can we optimize / preload?")
+  const pic = media ? poster(media, media[`alt_${lang}`] || media.alt_et) : null;
+  const head = html`${pic ? pic.preload : ''}${scheme && scheme.serif ? html`<link rel="preload" href="/vendor/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>` : ''}`;
 
   const body = html`  <article class="event"${scheme ? raw(` data-scheme="${scheme.mode}" style="${scheme.style}"`) : ''}>
     <header class="event-top">
@@ -96,7 +102,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
         </p>
       </div>
       ${media ? html`<figure class="event-pic">
-        <img src="/${media.key}" width="${media.width}" height="${media.height}" alt="${media[`alt_${lang}`] || media.alt_et}">
+        ${pic.img}
         ${design ? html`<figcaption>${creditLabel(design, lang)} ${creditValue(design, lang)}</figcaption>` : ''}
       </figure>` : ''}
     </header>
@@ -117,5 +123,5 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
       </ol>
     </section>` : ''}
   </article>`;
-  return page({ lang, title, alternate, canonical, alternates, body, notice });
+  return page({ lang, title, alternate, canonical, alternates, body, notice, head });
 };

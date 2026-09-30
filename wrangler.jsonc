@@ -35,7 +35,11 @@
       "d1_databases": [{ "binding": "DB", "database_name": "eccm-staging", "database_id": "3be30799-baa1-4844-937c-b4c6858fc915", "migrations_dir": "migrations" }],
       // the uploaded pictures, one original per sha256 (src/media.mjs), created
       // 2026-09-30 with wrangler r2 bucket create eccm-media-staging
-      "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "eccm-media-staging" }]
+      "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "eccm-media-staging" }],
+      // "on" once Image Transformations are enabled for positron.studio in the
+      // dashboard (Images, Transformations); until then /cdn-cgi/image/ answers
+      // 404 and src/render/pic.mjs draws the originals
+      "vars": { "IMAGE_TRANSFORMS": "off" }
     },
     "production": {
       "name": "eccm"

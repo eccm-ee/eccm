@@ -17,6 +17,7 @@ import { html, raw } from './html.mjs';
 import { T, OTHER, page } from './chrome.mjs';
 import { dateLong, dateShort, clock, mapsUrl } from './dates.mjs';
 import { offsetFor, CATEGORY } from './event.mjs';
+import { listImg } from './pic.mjs';
 
 export const LIST = { et: '/et/sundmused', en: '/en/events' };
 const eventPath = (l, slug) => (l === 'et' ? `/et/sundmused/${slug}` : `/en/events/${slug}`);
@@ -37,7 +38,7 @@ const row = (e, lang) => {
   const foreign = e.tlang !== lang ? raw(` lang="${e.tlang}"`) : '';
   const summary = lead(e.body);
   return html`<li class="ev">
-      ${e.pic ? html`<a class="ev-pic" href="${href}" tabindex="-1" aria-hidden="true"><img src="/${e.pic}" width="${e.width}" height="${e.height}" alt="" loading="lazy"></a>` : html`<span class="ev-pic ev-blank" aria-hidden="true"></span>`}
+      ${e.pic ? html`<a class="ev-pic" href="${href}" tabindex="-1" aria-hidden="true">${listImg(e.pic, e.width, e.height)}</a>` : html`<span class="ev-pic ev-blank" aria-hidden="true"></span>`}
       <div class="ev-body">
         <p class="ev-kicker"><time datetime="${e.starts_at}${offsetFor(e.starts_at)}"><span class="d-long">${dateLong(e.starts_at, lang)}</span><span class="d-short">${dateShort(e.starts_at, lang)}</span></time><time>${clock(e.starts_at, lang)}</time><span><a class="place" href="${mapsUrl(e.venue)}">${e.venue}</a></span>${e.category !== 'eccm' && CATEGORY[e.category] ? html`<span>${CATEGORY[e.category][lang]}</span>` : ''}</p>
         <h2 class="ev-title"><a href="${href}"${foreign}>${e.title}</a></h2>

@@ -27,6 +27,7 @@ import { notFound, OTHER } from './render/chrome.mjs';
 import { editor } from './editor.mjs';
 import { renderSitemap, renderFeed } from './render/feeds.mjs';
 import { serveMedia } from './media.mjs';
+import { useTransforms } from './render/pic.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
 const EVENT = { et: /^\/et\/sundmused\/([a-z0-9-]+)$/, en: /^\/en\/events\/([a-z0-9-]+)$/ };
@@ -88,6 +89,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const p = url.pathname;
+    useTransforms(env.IMAGE_TRANSFORMS);
     // the uploaded pictures from R2, /media/{sha256}.{ext} (src/media.mjs)
     if (p.startsWith('/media/')) { const out = await serveMedia(env, p); if (out) return out; }
     // the sitemap and the feeds, named nowhere until cutover (src/render/feeds.mjs), url.origin while staging only
