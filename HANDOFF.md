@@ -1,33 +1,91 @@
-# Handoff, 2026-09-29, the third day of the eccm repository
+# Handoff, 2026-09-30, the fourth day of the eccm repository
 
 The prototype of a new eccm.ee moved out of positron on 2026-09-27 and has
-grown for three days. Everything below is live at
-**https://eccm.positron.studio/**, committed on `main` of
-**https://github.com/kristjanjansen/eccm**, private, and pushed: `HEAD` is
-`9fb68bd` and `origin/main` is the same, so nothing is outstanding. Today's two
-commits are `2faec1e` and `9fb68bd`. Numbers here were counted with a command
-when this was written; count again before building on one.
+grown for four days. Everything below is live at
+**https://eccm.positron.studio/** and committed on `main` of
+**https://github.com/kristjanjansen/eccm**, private. **Not pushed:** `HEAD`
+is the handoff commit on top of `28530e5` and `41a651c`, and `origin/main` is
+still `25bbfd1`, because both GitHub logins on this machine answer "The token
+in default is invalid" (`gh auth status`) and `git push` has no credentials.
+The owner runs `gh auth login -h github.com` as `kristjanjansen`; then push
+per CLAUDE.md. Numbers here were counted with a command when this was
+written; count again before building on one.
 
-The day was one long run of small asks, each answered and shipped: the editor
-lost its door, four study pages went, the event form was reshaped six ways,
-the footer grew a column and the header learned a middle width. `BACKLOG.md`
-has every one verbatim with what was measured.
+## 2026-09-30: upload, schemes, sitemap, feeds, the image ladder, the font jump
 
-## 2026-09-30, the fourth day: upload, schemes, sitemap, feeds
+Four asks, verbatim, each with its full entry and measurements in
+`BACKLOG.md`:
 
-Asked: *"implement image upload and apply detection (bg color, sans/serif etc)
-on current content. in bg also sitemap, rss. see plans"*. `BACKLOG.md` has
-the whole entry with what was measured. In short: the detector is
-`public/scheme.mjs`, imported by `derive.html`, the editor and
-`tools/scheme.mjs`; all nine pictures carry a scheme (`data/seed-step5-schemes.sql`,
-applied remote) and every event page wears its picture's ground, inks and
-faces; the event form uploads to R2 `eccm-media-staging` under the sha256,
-with the scheme read in the editor's browser; `/sitemap.xml`,
-`/et/feed.xml` and `/en/feed.xml` answer and are advertised nowhere.
-Migration `0004_media_upload.sql` (`media.bytes`) is on the remote database.
-Open: renditions and `srcset` wait for Image Transformations on the zone;
-canonical, `robots.txt` and the `.ics` feeds are the rest of the URL plan's
-sessions 8 and 9.
+1. *"implement image upload and apply detection (bg color, sans/serif etc) on
+   current content. in bg also sitemap, rss. see plans"*
+2. *"Resized image versions -- see ../trip implementation"*
+3. *"i saw font change jump on .../gestuurid-situatsioonid-ilma-partituurita-kuulamine
+   - can we optimize / preload? see ../trip"*
+4. *"why you are using positron skills?"*, answered: CLAUDE.md says to load
+   `positron-compose` beside `eccm-ui` before any change under `public/`. The
+   owner did not ask for it to change.
+
+**The detector is one module.** `readColour`, `readType` and `scheme` moved
+unchanged from `derive.html` into `public/scheme.mjs`, with `contract()`
+writing the flat JSON of `plans/plan-eccm-social-images.md` section 10 and
+`DETECTOR_V = 1`. derive.html, the editor and `tools/scheme.mjs` import it.
+
+**Every current picture has a scheme.** `node tools/scheme.mjs` (`--remote`
+for the keys on Cloudflare, `--keys a,b` for a probe that writes nothing)
+reads each media row's picture in headless Chrome through its own small
+server and writes `data/seed-step5-schemes.sql`, applied local and remote:
+9 of 9, 6 light and 3 dark. No seeded picture's type was readable, so the
+only serif is Gestures, marked by hand as derive.html does (`HAND` in the
+tool). Keys under `media/` are skipped: uploads got theirs in the browser.
+
+**The event page wears it.** `.event[data-scheme]` in `eccm.css` redefines
+the site's tokens from the `--ev-*` values, the ground runs edge to edge
+between header and footer (a clipped shadow, no overflow), and the title,
+facts and credits take the serif when set, the body only on a ground near
+white. `.btn-pri` is the scheme's button fill, never the accent.
+
+**Upload.** The event form posts multipart. The Pilt section is the picture,
+a drop field, two description fields and the old file-name field as
+Olemasolev pilt. The browser reads a chosen file with `scheme.mjs` and
+sends the scheme; `src/media.mjs` sniffs the format from the bytes, reads
+width and height from the header, puts the file in R2 bucket
+`eccm-media-staging` (binding `MEDIA`, created today) as
+`media/{sha256}.{ext}` and upserts the media row. `/media/*` serves it
+immutable with CORS, a miss 404 `no-store`. A picture with no scheme is read
+as its form opens and gets one on save. The posted scheme passes
+`cleanScheme` in `event.mjs` value by value and the style attribute is
+escaped. Migration `0004_media_upload.sql` (`media.bytes`) is on the remote.
+
+**Sitemap and feeds**, by a background agent in a worktree, merged and the
+worktree removed: `/sitemap.xml` (23 urls locally, hreflang pairs, `lastmod`),
+`/et/feed.xml` and `/en/feed.xml` (RSS 2.0, 20 newest per language, no
+fallback, enclosure length from `media.bytes`). Advertised nowhere until
+cutover, as the plan says.
+
+**The image ladder, off.** `src/render/pic.mjs` is trip's `cdn()` with
+eccm's paths: the list at 300, 600, 900 (3 to 2, cover), the poster at 640,
+960, 1280, 1920 with `fetchpriority="high"` and a mirrored preload, never a
+rung wider than the original. `/cdn-cgi/image/` answers 404 on this zone and
+Transformations are a dashboard switch only, so `IMAGE_TRANSFORMS` in
+`wrangler.jsonc` is `"off"` and pages draw originals (the poster is still
+preloaded). **To switch on:** the owner enables Images, Transformations,
+positron.studio in the dashboard; then set the var to `"on"`, deploy, and
+`curl -sI -H 'Accept: image/avif'` one rendition twice for the type and a HIT.
+
+**The font jump.** Newsreader, the body face on a serif event, was not
+preloaded and Georgia is wider, so the page reflowed. Now: Newsreader is
+preloaded on every event whose scheme sets it, and `Schibsted Grotesk
+Fallback` (Helvetica, Arial) and `Newsreader Fallback` (Georgia) carry
+`size-adjust` and ascent and descent overrides MEASURED in headless Chrome,
+named in the stacks (the stored schemes regenerated for the new Newsreader
+stack). MEASURED on a 620 px Estonian paragraph at 18 px: each face and its
+fallback 7 lines, the bare system face 8. Newsreader's width must be taken
+at body size: its optical size axis is 10 per cent narrower at 100 px.
+
+**Open from today:** push (above); Transformations on the zone; the
+canonical, `robots.txt` and `.ics` parts of the URL plan's sessions 8 and 9;
+the list rows are all `loading="lazy"` where the plan wants the first two
+eager; an upload has no delete and a replaced picture's row and object stay.
 
 ## What is live, page by page
 
@@ -150,18 +208,19 @@ needs its backslashes doubled**, and the check is `curl` and `grep`, not a
 reading of the source.
 
 The remote database is `eccm-staging` (id in `wrangler.jsonc`), migrated with
-`migrations/0001_step1.sql`, `0002_editing.sql` and `0003_page_editing.sql`
-and seeded with `data/seed-step1.sql` to `seed-step4.sql`. COUNTED on the
+`migrations/0001_step1.sql` to `0004_media_upload.sql`
+and seeded with `data/seed-step1.sql` to `seed-step4.sql` and `seed-step5-schemes.sql`. COUNTED on the
 remote 2026-09-29: 10 events, 12 event texts, 19 credits, 9 pictures, 5 pages,
-7 page texts, and 0 rows with anything in `updated_by`. Sessions 1, 2, 5 and 6
-of `plans/plan-eccm-cms-step-1.md` are done, 3 and 4 are not, and the editing
-the plan left out of step 1 is in.
+7 page texts, and 0 rows with anything in `updated_by`. All six sessions
+of `plans/plan-eccm-cms-step-1.md` are done since 2026-09-30, and the editing
+the plan left out of step 1 is in. The 2026-09-30 upload test left no row:
+it was deleted with its R2 object, so the bucket is empty.
 
 The dev server for local work is `npx wrangler dev --env staging`; none is up.
-`.wrangler/state` is the current one and holds the three migrations and the
-four seeds; `.wrangler/state-editor`, `state-front`, `state-pages` and
+`.wrangler/state` is the current one and holds the four migrations and the
+five seeds, plus two local test uploads (media rows 10 and 11, used by no event); `.wrangler/state-editor`, `state-front`, `state-pages` and
 `state-pages-edit` are leftovers of the agents of 2026-09-28 and can go. A
-fresh state takes the three migrations and the four seeds in order.
+fresh state takes the four migrations and the five seeds in order.
 
 ## The plans
 
@@ -266,7 +325,6 @@ ornament; both lines of a tagline pair are centred or both start on the E.
   section 7. Then the outlines for whichever wins; a true 16 px mark; a
   maskable Android icon; the bios migration when that plan is read.
 - **Konkursid** holds the intro and a link to the full call on eccm.ee.
-- Sessions 3 and 4 of the CMS plan: the scheme on the media row, uploads.
 
 ## The machine
 
@@ -289,10 +347,9 @@ centre, so use `1 0` for the top of a page.
 
 ## How to go on
 
-`BACKLOG.md` has every ask of all three days verbatim with what was measured,
+`BACKLOG.md` has every ask of all four days verbatim with what was measured,
 the open ones at the top. The first candidates: the Estonian front page from
-D1, the `tuma` key, the website field on the event page. Then session 3 of the
-CMS plan, `tools/scheme.mjs` reading the pictures through derive.html's own
-functions and writing `media.scheme`. Agents report and do not commit; the
+D1, the `tuma` key, the website field on the event page, and today's open
+list above (push first, then Transformations). Agents report and do not commit; the
 session commits by path, deploys and pushes, and a deploy ships the working
 tree, so `git status` before every deploy.
