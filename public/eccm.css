@@ -298,6 +298,29 @@
   .next-list a:hover, .next-list a:focus-visible, .edit-list a:hover, .edit-list a:focus-visible { text-decoration-line: underline; }
   .next-list small, .edit-list small { display: block; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
   .event-pic figcaption { margin-block-start: var(--eccm-s-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+  /* an event whose picture has a derived scheme (media.scheme, read by
+     public/scheme.mjs; asked 2026-09-30 as "apply detection (bg color,
+     sans/serif etc) on current content"): the whole article takes the
+     picture's ground and inks, the way the derive page's sample does. The
+     site's own tokens are redefined inside it, so every rule under it that
+     reads --eccm-ink-2 or --eccm-rule follows without a rule of its own. The
+     ground runs edge to edge through a shadow clipped to the article's block,
+     so it takes no width and scrolls nothing; main gives its padding to the
+     article, so the ground meets the header and the footer */
+  .event[data-scheme] {
+    --eccm-ground: var(--ev-ground); --eccm-ink: var(--ev-ink); --eccm-ink-2: var(--ev-ink2);
+    --eccm-accent: var(--ev-accent, var(--ev-ink)); --eccm-rule-strong: var(--ev-accent, var(--ev-ink2));
+    --eccm-rule: color-mix(in srgb, var(--ev-ink2) 45%, var(--ev-ground));
+    background: var(--ev-ground); color: var(--ev-ink);
+    box-shadow: 0 0 0 100vmax var(--ev-ground); clip-path: inset(0 -100vmax);
+    padding-block: var(--eccm-s-8) var(--eccm-s-16);
+  }
+  main:has(> .event[data-scheme]) { padding-block: 0; }
+  /* the faces: the title and the facts' values in the serif when the picture's
+     type read as one, the body only where the scheme says so (a ground near
+     white); labels stay in the sans, as on the derive page */
+  .event[data-scheme] h1, .event[data-scheme] .prose h2, .event[data-scheme] .facts dd, .event[data-scheme] .credits dd { font-family: var(--ev-title-face, inherit); font-weight: var(--ev-title-weight, 400); }
+  .event[data-scheme] .prose > :not(h2, .credits) { font-family: var(--ev-body-face, inherit); }
   /* prose flow: the owl, and the space is counted in the leading, Rutter's
      one line between paragraphs and a heading carrying two above and half a
      line below (eccm-ui §1, Bringhurst 2.2.2). The first cut said one leading
@@ -339,8 +362,10 @@
      finger, not a relationship */
   .btn { display: inline-flex; align-items: center; block-size: 3rem; padding-inline: var(--eccm-s-6); border: 1px solid var(--ev-ink, var(--eccm-ink)); background: transparent; color: var(--ev-ink, var(--eccm-ink)); text-decoration: none; cursor: pointer; font-family: 'Schibsted Grotesk', Helvetica, Arial, sans-serif; font-weight: 400; }
   .btn:hover { text-decoration: none; outline: 1px solid var(--ev-ink, var(--eccm-ink)); outline-offset: -2px; }
-  .btn-pri { background: var(--ev-accent, var(--ev-ink, var(--eccm-ink))); color: var(--ev-on-accent, var(--ev-ground, var(--eccm-ground))); border-color: transparent; }
-  .btn-pri:hover { outline-color: var(--ev-on-accent, var(--ev-ground, var(--eccm-ground))); }
+  /* the filled button is the ground's inverse, never the accent (derive.html, asked 2026-09-27:
+     "Readability issues on a purchase button"), and a derived scheme names both halves */
+  .btn-pri { background: var(--ev-btn-fill, var(--eccm-ink)); color: var(--ev-on-btn, var(--eccm-ground)); border-color: transparent; }
+  .btn-pri:hover { outline-color: var(--ev-on-btn, var(--eccm-ground)); }
   /* disabled: the same button at 45 per cent, which fades ink, rule and fill
      together on any ground, and takes no pointer; a link carries
      aria-disabled and no href, a button the attribute (asked 2026-09-27:

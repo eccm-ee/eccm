@@ -2,7 +2,7 @@
 // stands with the three changes plans/plan-eccm-event-markup.md section 3
 // asks for: the top block is a header, the duration is a time element, and
 // a page shown in the other language's chrome carries lang on its text.
-import { html, raw } from './html.mjs';
+import { html, raw, esc } from './html.mjs';
 import { md } from './md.mjs';
 import { T, OTHER, page } from './chrome.mjs';
 import { dateLong, dayMonth, clock, mapsUrl } from './dates.mjs';
@@ -31,7 +31,20 @@ const schemeStyle = (json) => {
   if (!json) return null;
   let s; try { s = JSON.parse(json); } catch { return null; }
   const decl = Object.entries(VARS).filter(([k]) => s[k] != null).map(([k, v]) => `${v}: ${s[k]}`);
-  return { mode: s.mode, style: decl.join('; ') };
+  return { mode: s.mode === 'dark' ? 'dark' : 'light', style: esc(decl.join('; ')) };
+};
+// a scheme as the editor's browser posts it, kept only when every value is
+// one the detector can write: six colours as hex, the faces from
+// public/scheme.mjs's SERIFS, so nothing a visitor typed reaches a style
+// attribute; returns the JSON to store, or null
+const HEX = /^#[0-9a-f]{6}$/;
+const FACES = ["'Newsreader', Georgia, serif", "'Literata', Georgia, serif", "'Roboto Serif', Georgia, serif"];
+export const cleanScheme = (json) => {
+  let s; try { s = JSON.parse(json); } catch { return null; }
+  if (!s || typeof s !== 'object' || !Number.isInteger(s.v) || !['light', 'dark'].includes(s.mode)) return null;
+  if (!['ground', 'ink', 'ink2', 'btnFill', 'onBtn'].every((k) => HEX.test(s[k])) || !(s.accent === null || HEX.test(s.accent))) return null;
+  if (![s.titleFace, s.bodyFace].every((f) => f === null || FACES.includes(f)) || !(s.titleWeight === null || /^\d{3}$/.test(s.titleWeight))) return null;
+  return JSON.stringify(s);
 };
 
 const creditValue = (c, lang) => {

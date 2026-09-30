@@ -11,13 +11,13 @@ It left the positron repository on 2026-09-27 with its history
 | --- | --- |
 | `HANDOFF.md` | what state this is in right now |
 | `BACKLOG.md` | what has been asked for and not yet done, every ask verbatim |
-| `public/` | the site, served as static assets: `index.html` (the list), `derive.html` (design from a picture), `ds.html` (the design system, the wordmark at its foot), `type.html` (the faces, and the sans and serifs in the derived page's three uses), `site.mjs` (the phone menu), `eccm.css`, `vendor/` (the fonts, each with its licence), `icons/` (the square marks and every icon size), the pictures, the logo and wordmark SVGs, `manifest.webmanifest`, `_headers` (`X-Robots-Tag: noindex` while the site is on this hostname) |
-| `src/` | the Worker: `index.mjs` the router, `editor.mjs` the editing routes, open to anyone since 2026-09-29, `render/` the templates (`html.mjs`, `md.mjs`, `chrome.mjs`, `mark.mjs` the shared chrome markup, `event.mjs`, `editor.mjs`, `dates.mjs`) |
-| `migrations/`, `data/` | the D1 schema (`0001_step1.sql`, `0002_editing.sql`, `0003_page_editing.sql`) and the seed files |
+| `public/` | the site, served as static assets: `index.html` (the list), `derive.html` (design from a picture), `ds.html` (the design system, the wordmark at its foot), `type.html` (the faces, and the sans and serifs in the derived page's three uses), `site.mjs` (the phone menu), `scheme.mjs` (the detector, one copy for derive, the editor and `tools/scheme.mjs`), `eccm.css`, `vendor/` (the fonts, each with its licence), `icons/` (the square marks and every icon size), the pictures, the logo and wordmark SVGs, `manifest.webmanifest`, `_headers` (`X-Robots-Tag: noindex` while the site is on this hostname) |
+| `src/` | the Worker: `index.mjs` the router, `editor.mjs` the editing routes, open to anyone since 2026-09-29, `media.mjs` the upload into the R2 bucket `eccm-media-staging` (binding `MEDIA`) and `/media/*`, `render/` the templates (`html.mjs`, `md.mjs`, `chrome.mjs`, `mark.mjs` the shared chrome markup, `event.mjs`, `editor.mjs`, `dates.mjs`, `feeds.mjs` the sitemap and the RSS feeds, named nowhere until cutover) |
+| `migrations/`, `data/` | the D1 schema (`0001_step1.sql`, `0002_editing.sql`, `0003_page_editing.sql`, `0004_media_upload.sql`) and the seed files |
 | `plans/` | every plan, thirteen today (`ls plans/*.md \| wc -l`, counted and never remembered): the four that came with the move and the nine since, each relayed in full when written |
 | `.claude/skills/eccm-ui` | the type half of the design system, with every rule's measurement and the owner's words. Load before any change under `public/` |
 | `.claude/skills/positron-compose` | the composition half, copied from positron. Load beside `eccm-ui` |
-| `tools/` | `shot.mjs`, `which-rule-won.mjs`, `ancestry.mjs`, `check-html.mjs`, copied from positron with a header saying so (`shot.mjs` gained `--from px` here on 2026-09-27, owed to positron's copy by hand), and `mark.mjs` with `icons.mjs`, which draw the mark per icon size and write the ICOs |
+| `tools/` | `shot.mjs`, `which-rule-won.mjs`, `ancestry.mjs`, `check-html.mjs`, copied from positron with a header saying so (`shot.mjs` gained `--from px` here on 2026-09-27, owed to positron's copy by hand), `mark.mjs` with `icons.mjs`, which draw the mark per icon size and write the ICOs, and `scheme.mjs`, which reads every media row's picture in headless Chrome and writes `data/seed-step5-schemes.sql` |
 | `archive/` | what was removed and why, verbatim |
 | `wrangler.jsonc` | two environments. `staging` is this account and `eccm.positron.studio`; `production` is ECCM's account and `eccm.ee`, blank until cutover |
 
@@ -25,7 +25,7 @@ It left the positron repository on 2026-09-27 with its history
 
 ```sh
 npx wrangler d1 migrations apply eccm-staging --local --env staging   # the schema into the local database, once and after every new migration
-npx wrangler d1 execute eccm-staging --local --env staging --file data/seed-step1.sql   # the seeded rows (then seed-step2.sql, seed-step3.sql and seed-step4.sql, in that order)
+npx wrangler d1 execute eccm-staging --local --env staging --file data/seed-step1.sql   # the seeded rows (then seed-step2.sql to seed-step5-schemes.sql, in that order)
 npx wrangler dev --env staging                 # http://127.0.0.1:8787/ , the pages under /et/ and /en/ come from D1
 node tools/check-html.mjs public/*.html        # every module block parses, no browser
 node tools/shot.mjs http://127.0.0.1:8787/ 375 1280   # LOOK, on an iPhone mini and at the desk, before saying it is done

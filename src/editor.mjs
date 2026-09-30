@@ -25,7 +25,8 @@
 // free for editing", so anyone who reaches a form may save from it. Every
 // reply here is still no-store and noindex; nothing under /edit is a page for
 // a visitor or a crawler.
-import { renderEvent } from './render/event.mjs';
+import { renderEvent, cleanScheme } from './render/event.mjs';
+import { storeUpload } from './media.mjs';
 import { renderPage, pagePath } from './render/page.mjs';
 import { OTHER } from './render/chrome.mjs';
 import { editorForm, pageForm, errorPage, CATEGORIES, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
@@ -86,6 +87,7 @@ export const parse = (fd, before) => {
     starts_at: local(s(fd, 'starts_at')), ends_at: local(s(fd, 'ends_at')), duration_min: s(fd, 'duration_min'),
     venue: s(fd, 'venue'), address: s(fd, 'address'), ticket_url: s(fd, 'ticket_url'), website_url: s(fd, 'website_url'),
     category: s(fd, 'category'), image_key: s(fd, 'image_key'), image_id: '', status: s(fd, 'status'), publish_at: local(s(fd, 'publish_at')),
+    alt_et: s(fd, 'alt_et'), alt_en: s(fd, 'alt_en'), image_scheme: cleanScheme(s(fd, 'image_scheme')),
     et: { title: s(fd, 'title_et'), slug: s(fd, 'slug_et').toLowerCase(), body: s(fd, 'body_et'), exists: before.et.exists },
     en: { title: s(fd, 'title_en'), slug: s(fd, 'slug_en').toLowerCase(), body: s(fd, 'body_en'), exists: before.en.exists },
     credits: [],
@@ -163,6 +165,14 @@ const creditRows = (v, before) => {
 const eventValues = (v) => [v.starts_at, v.ends_at || null, v.duration_min === '' ? null : +v.duration_min, v.venue, v.address, v.ticket_url, v.website_url, v.category, v.image_id ? +v.image_id : null, v.status, v.publish_at || null];
 const EVENT_COLS = 'starts_at, ends_at, duration_min, venue, address, ticket_url, website_url, category, image_id, status, publish_at';
 
+// the picture's descriptions go onto its media row, and the scheme the
+// editor's browser read goes there too when the row has none yet (a picture
+// seeded before the detector ran, read as the form opened)
+const mediaStmts = (db, v, guard, g) => (v.image_id ? [
+  db.prepare(`UPDATE media SET alt_et = ?, alt_en = ? WHERE id = ? AND ${guard}`).bind(v.alt_et, v.alt_en, +v.image_id, ...g),
+  ...(v.image_scheme ? [db.prepare(`UPDATE media SET scheme = ?, scheme_v = ? WHERE id = ? AND scheme IS NULL AND ${guard}`).bind(v.image_scheme, JSON.parse(v.image_scheme).v, +v.image_id, ...g)] : []),
+] : []);
+
 async function save(db, v, before) {
   const credits = creditRows(v, before.creditRows);
   const texts = ['et', 'en'].filter((l) => v[l].title);
@@ -181,6 +191,7 @@ async function save(db, v, before) {
   const stmts = texts.map((l) => db.prepare(`INSERT INTO event_text (event_id, lang, slug, title, body) SELECT ?,?,?,?,? WHERE ${guard} ON CONFLICT (event_id, lang) DO UPDATE SET slug = excluded.slug, title = excluded.title, body = excluded.body`).bind(v.id, l, v[l].slug, v[l].title, v[l].body, ...g))
     .concat([db.prepare(`DELETE FROM event_credit WHERE event_id = ? AND ${guard}`).bind(v.id, ...g)])
     .concat(credits.map((c) => db.prepare(`INSERT INTO event_credit (event_id, position, role_key, label_et, label_en, people, orgs) SELECT ?,?,?,?,?,?,? WHERE ${guard}`).bind(v.id, c.position, c.role_key, c.label_et, c.label_en, c.people, c.orgs, ...g)))
+    .concat(mediaStmts(db, v, guard, g))
     .concat([db.prepare(`UPDATE event SET starts_at = ?, ends_at = ?, duration_min = ?, venue = ?, address = ?, ticket_url = ?, website_url = ?, category = ?, image_id = ?, status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = NULL, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(...eventValues(v), ...g)]);
   const results = await db.batch(stmts);
   return { id: v.id, stale: results[results.length - 1].meta.changes !== 1 };
@@ -335,9 +346,19 @@ async function form(request, env, url, id) {
   const fd = await request.formData();
   const v = parse(fd, before.values);
   const action = s(fd, 'do');
+  // a file in the picture field is stored before anything else is looked at,
+  // so a form that fails validation comes back naming the stored picture and
+  // the file is not asked for twice
+  const file = fd.get('image_file');
+  const upErrors = [];
+  if (file && typeof file === 'object' && file.size > 0) {
+    const up = await storeUpload(env, file, v.image_scheme, { et: v.alt_et, en: v.alt_en });
+    if (up.error) upErrors.push({ field: 'image_file', msg: up.error });
+    else { v.image_key = up.row.key; if (!media.some((m) => m.id === up.row.id)) media.push(up.row); }
+  }
   // one more blank credit block, the typed values kept, nothing validated and nothing saved
   if (action === 'add-credit') return reply(editorForm({ v: { ...v, credits: v.credits.concat([BLANK_CREDIT()]) }, roles, media, cancel }));
-  const errors = await validate(v, db, roles, media);
+  const errors = upErrors.concat(await validate(v, db, roles, media));
   if (errors.length) return reply(editorForm({ v: padded(v), errors, roles, media, cancel }), 422);
   if (action.startsWith('preview')) return preview(db, v, action.endsWith('en') ? 'en' : 'et', before, roles, media, url);
   const out = await save(db, v, before);

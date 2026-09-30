@@ -13,6 +13,22 @@ lost its door, four study pages went, the event form was reshaped six ways,
 the footer grew a column and the header learned a middle width. `BACKLOG.md`
 has every one verbatim with what was measured.
 
+## 2026-09-30, the fourth day: upload, schemes, sitemap, feeds
+
+Asked: *"implement image upload and apply detection (bg color, sans/serif etc)
+on current content. in bg also sitemap, rss. see plans"*. `BACKLOG.md` has
+the whole entry with what was measured. In short: the detector is
+`public/scheme.mjs`, imported by `derive.html`, the editor and
+`tools/scheme.mjs`; all nine pictures carry a scheme (`data/seed-step5-schemes.sql`,
+applied remote) and every event page wears its picture's ground, inks and
+faces; the event form uploads to R2 `eccm-media-staging` under the sha256,
+with the scheme read in the editor's browser; `/sitemap.xml`,
+`/et/feed.xml` and `/en/feed.xml` answer and are advertised nowhere.
+Migration `0004_media_upload.sql` (`media.bytes`) is on the remote database.
+Open: renditions and `srcset` wait for Image Transformations on the zone;
+canonical, `robots.txt` and the `.ics` feeds are the rest of the URL plan's
+sessions 8 and 9.
+
 ## What is live, page by page
 
 | URL | what |

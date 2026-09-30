@@ -25,6 +25,8 @@ import { renderPage } from './render/page.mjs';
 import { renderEvents, LIST } from './render/events.mjs';
 import { notFound, OTHER } from './render/chrome.mjs';
 import { editor } from './editor.mjs';
+import { renderSitemap, renderFeed } from './render/feeds.mjs';
+import { serveMedia } from './media.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
 const EVENT = { et: /^\/et\/sundmused\/([a-z0-9-]+)$/, en: /^\/en\/events\/([a-z0-9-]+)$/ };
@@ -86,6 +88,12 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const p = url.pathname;
+    // the uploaded pictures from R2, /media/{sha256}.{ext} (src/media.mjs)
+    if (p.startsWith('/media/')) { const out = await serveMedia(env, p); if (out) return out; }
+    // the sitemap and the feeds, named nowhere until cutover (src/render/feeds.mjs), url.origin while staging only
+    if (p === '/sitemap.xml') return new Response(renderSitemap({ origin: url.origin, events: (await env.DB.prepare("SELECT e.id, e.updated_at, t.lang, t.slug FROM event e JOIN event_text t ON t.event_id = e.id WHERE e.status = 'published'").all()).results, pages: (await env.DB.prepare("SELECT p.id, p.updated_at, t.lang, t.slug FROM page p JOIN page_text t ON t.page_id = p.id WHERE p.status = 'published'").all()).results }), { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, s-maxage=86400, stale-while-revalidate=86400' } });
+    const fm = /^\/(et|en)\/feed\.xml$/.exec(p);
+    if (fm) return new Response(renderFeed({ origin: url.origin, lang: fm[1], rows: (await env.DB.prepare("SELECT m.*, e.*, t.slug, t.title, t.body FROM event e JOIN event_text t ON t.event_id = e.id AND t.lang = ? LEFT JOIN media m ON m.id = e.image_id WHERE e.status = 'published' ORDER BY e.created_at DESC, e.id DESC LIMIT 20").bind(fm[1]).all()).results }), { headers: { 'content-type': 'application/rss+xml; charset=utf-8', 'cache-control': 'public, max-age=60' } });
     for (const lang of ['et', 'en']) {
       const m = EVENT[lang].exec(p);
       if (m) { const out = await event(env, lang, m[1], url); if (out) return reply(out); break; }

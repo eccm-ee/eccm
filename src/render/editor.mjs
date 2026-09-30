@@ -64,6 +64,26 @@ const SAME_HEIGHT = `      const tas = [...document.querySelectorAll('.langs tex
       const ro = new ResizeObserver((entries) => { for (const en of entries) { const h = en.target.offsetHeight; for (const t of tas) if (t !== en.target && t.offsetHeight !== h) t.style.height = h + 'px'; } });
       tas.forEach((t) => ro.observe(t));`;
 
+// what the detector gave, in one line under the picture: the scheme's mode, its ground and whether the titles
+// take the serif; the same words from the stored row and from the browser's reading
+const say = (s) => `${s.mode === 'dark' ? 'Tume' : 'Hele'} skeem, taust ${s.ground}${s.accent ? `, rõhuvärv ${s.accent}` : ''}, ${s.serif ? 'pealkiri seriifkirjas' : 'kiri groteskne'}.`;
+const schemeSay = (json) => { try { return say(JSON.parse(json)); } catch { return ''; } };
+// the picture field's script: a chosen or dropped file is shown at once and read with public/scheme.mjs, and the
+// reading goes into the hidden field the save stores on the media row; a picture already on the event with no
+// scheme yet is read the same way on load, so opening and saving an old event gives it one
+const READ_PICTURE = `      const { read, contract } = await import('/scheme.mjs');
+      const say = ${say.toString()};
+      const fig = document.querySelector('.edit-pic'), img = fig.querySelector('img'), out = document.getElementById('scheme-say');
+      const field = document.querySelector('[name="image_scheme"]'), file = document.querySelector('[name="image_file"]');
+      const reading = async (el) => { await el.decode(); const { r, t, s } = read(el); const c = contract(r, t, s); field.value = JSON.stringify(c); out.textContent = say(c); };
+      file.addEventListener('change', async () => {
+        const f = file.files[0]; if (!f) return;
+        field.value = ''; out.textContent = 'Loen pilti.';
+        img.removeAttribute('width'); img.removeAttribute('height'); img.src = URL.createObjectURL(f); fig.hidden = false;
+        try { await reading(img); } catch { out.textContent = 'Pilti ei õnnestunud lugeda; see salvestub ilma skeemita.'; }
+      });
+      if (img.hasAttribute('data-read')) reading(img).catch(() => {});`;
+
 // v: the form's values (src/editor.mjs, fromRows or parse); errors: [{ field,
 // msg }]; roles: the role table; media: the media table; saved: the row's
 // updated_at when the page follows a save; texts: the saved text rows, for
@@ -97,7 +117,7 @@ export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmus
   const body = html`  <h1>${title}</h1>
   ${errors.length ? html`<div class="errors" role="alert"><p>Ei salvestatud. Paranda:</p><ul>${errors.map((e) => html`<li>${e.msg}</li>`)}</ul></div>` : ''}
 
-  <form class="form form-wide" method="post" action="${action}">
+  <form class="form form-wide" method="post" action="${action}" enctype="multipart/form-data">
     <input type="hidden" name="rev" value="${v.rev}">
     <input type="hidden" name="credit_count" value="${v.credits.length}">
     <h2>Pealkiri</h2>
@@ -107,9 +127,24 @@ export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmus
     </div>
 
     <h2>Pilt</h2>
-    ${pic ? html`<figure class="edit-pic"><img src="/${pic.key}" width="${pic.width}" height="${pic.height}" alt="${pic.alt_et}"><figcaption>${pic.alt_et}</figcaption></figure>` : ''}
+    <!-- the picture and a drop field side by side (asked 2026-09-30: "implement image upload"); the
+         browser reads a chosen file with public/scheme.mjs, the derive page's own detector, and sends
+         the scheme beside it, so the page takes the picture's colours and faces from the first save -->
+    <div class="drop">
+      <figure class="edit-pic"${pic ? '' : raw(' hidden')}><img src="${pic ? `/${pic.key}` : ''}"${pic ? raw(` width="${pic.width}" height="${pic.height}"`) : ''} alt=""${pic && !pic.scheme ? raw(' data-read') : ''}><figcaption id="scheme-say">${pic && pic.scheme ? schemeSay(pic.scheme) : ''}</figcaption></figure>
+      <label class="drop-zone">
+        <span class="drop-say"><b>Lohista pilt siia</b> või vali fail</span>
+        <span class="hint${err('image_file') ? ' err' : ''}">${err('image_file') || 'JPEG, PNG, WebP või GIF, kuni 10 MB. Suurim originaal, mis on olemas.'}</span>
+        <input type="file" name="image_file" accept="image/jpeg,image/png,image/webp,image/gif">
+      </label>
+    </div>
+    <input type="hidden" name="image_scheme" value="">
     <div class="fields">
-      ${field({ id: 'f-image', label: 'Pilt', err: err('image_key'), hint: 'Faili nimi. Üleslaadimine tuleb hiljem.', control: input('f-image', 'image_key', imageKey) })}
+      <div class="field-row">
+        ${field({ id: 'f-alt-et', label: 'Pildi kirjeldus', hint: 'Mida pildil näeb, lugejale, kes pilti ei näe.', control: input('f-alt-et', 'alt_et', v.alt_et ?? pic?.alt_et ?? '') })}
+        ${field({ id: 'f-alt-en', label: 'Picture description, in English', control: input('f-alt-en', 'alt_en', v.alt_en ?? pic?.alt_en ?? '') })}
+      </div>
+      ${field({ id: 'f-image', label: 'Olemasolev pilt', err: err('image_key'), hint: 'Faili nimi, kui pilt on juba olemas. Üles laaditud pilt asendab selle.', control: input('f-image', 'image_key', imageKey, ' spellcheck="false"') })}
     </div>
 
     <h2>Millal ja kus</h2>
@@ -146,6 +181,7 @@ export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmus
     <template id="credit-tpl">${credit(BLANK_CREDIT(), v.credits.length, '__i__')}</template>
     <script type="module">
 ${raw(SAME_HEIGHT)}
+${raw(READ_PICTURE)}
       // with script the block is added in place; without, the same button posts the form and the server adds it
       const btn = document.querySelector('[name="do"][value="add-credit"]'), tpl = document.getElementById('credit-tpl'), list = document.querySelector('.credits-edit'), count = document.querySelector('[name="credit_count"]');
       btn.addEventListener('click', (e) => {

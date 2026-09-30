@@ -32,7 +32,10 @@
       "workers_dev": true,
       // the database, created 2026-09-27 with wrangler d1 create eccm-staging
       // on this account; the same name serves the local file under wrangler dev
-      "d1_databases": [{ "binding": "DB", "database_name": "eccm-staging", "database_id": "3be30799-baa1-4844-937c-b4c6858fc915", "migrations_dir": "migrations" }]
+      "d1_databases": [{ "binding": "DB", "database_name": "eccm-staging", "database_id": "3be30799-baa1-4844-937c-b4c6858fc915", "migrations_dir": "migrations" }],
+      // the uploaded pictures, one original per sha256 (src/media.mjs), created
+      // 2026-09-30 with wrangler r2 bucket create eccm-media-staging
+      "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "eccm-media-staging" }]
     },
     "production": {
       "name": "eccm"
