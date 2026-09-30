@@ -11,7 +11,7 @@ import { SYMBOL, HEADER, FOOTER } from './mark.mjs';
 export const T = {
   et: {
     menu: 'Menüü', markAlt: 'Eesti nüüdismuusika keskus', upcoming: 'Tulevased üritused', events: 'Sündmused', past: 'Toimunud', noEvents: 'Ühtegi tulevast sündmust ei ole.',
-    nav: [['/', 'Avaleht'], ['/et/eccm', 'ECCM'], ['/et/tallinn-1965', 'Tallinn 1965'], ['/et/nan', 'NAN'], ['/et/ulysses', 'Ulysses'], ['/et/konkursid', 'Konkursid'], ['/et/sundmused', 'Sündmused']],
+    nav: [['/', 'Sündmused'], ['/et/eccm', 'ECCM'], ['/et/tallinn-1965', 'Tallinn 1965'], ['/et/nan', 'NAN'], ['/et/ulysses', 'Ulysses'], ['/et/konkursid', 'Konkursid']],
     foot: 'Eesti Nüüdismuusika Keskus, Pühavaimu 9, Tallinn',
     notFound: 'Sellist lehte ei ole.', notFoundLead: 'Aadress võib olla vananenud või valesti kirjutatud.',
     when: 'Millal', where: 'Kus', series: 'Sari', calendar: 'Kalendrisse', ask: 'Küsi', at: 'kell', min: 'min',
@@ -20,7 +20,7 @@ export const T = {
   },
   en: {
     menu: 'Menu', markAlt: 'Estonian Centre of Contemporary Music', upcoming: 'Upcoming events', events: 'Events', past: 'Past events', noEvents: 'No upcoming events.',
-    nav: [['/en/', 'Home'], ['/en/eccm', 'ECCM'], ['/en/tallinn-1965', 'Tallinn 1965'], ['/en/nan', 'NAN'], ['/en/ulysses', 'Ulysses'], ['/en/open-calls', 'Open calls'], ['/en/events', 'Events']],
+    nav: [['/en/', 'Events'], ['/en/eccm', 'ECCM'], ['/en/tallinn-1965', 'Tallinn 1965'], ['/en/nan', 'NAN'], ['/en/ulysses', 'Ulysses'], ['/en/open-calls', 'Open calls']],
     foot: 'Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinn',
     notFound: 'There is no such page.', notFoundLead: 'The address may be out of date or mistyped.',
     when: 'When', where: 'Where', series: 'Series', calendar: 'Add to calendar', ask: 'Ask', at: 'at', min: 'min',

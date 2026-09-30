@@ -302,8 +302,10 @@
      nothing moves while it arrives */
   .event-pic { max-inline-size: var(--eccm-measure); }
   .event-pic img { inline-size: 100%; aspect-ratio: 900 / 599; object-fit: cover; }
-  /* the next events at the foot, so the page does not end in a dead end */
-  .next { margin-block-start: var(--eccm-s-16); }
+  /* the next events at the foot, so the page does not end in a dead end; set off from the credits by the
+     scale's top step, since it is another page's business (asked 2026-09-30: "add more space on top of
+     Järgmised üritused") */
+  .next { margin-block-start: var(--eccm-s-24); }
   .next h2 { font-size: var(--eccm-t-l); margin-block-end: var(--eccm-s-6); }
   .next-list, .edit-list { display: grid; gap: var(--eccm-s-4); max-inline-size: var(--eccm-measure); }
   .next-list li, .edit-list li { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--eccm-s-6); }
@@ -510,6 +512,9 @@
   /* the list's heading is a label above the list, small and muted, because
      the titles are the page (arvopart.ee's ghost section label, compared
      2026-09-26); it stays the h1 for the outline */
+  /* a heading kept for the outline and hidden from the eye: the front page's "Tulevased üritused", asked
+     away 2026-09-30 ("rm Upcoming events (and est) heading"), since the list under the menu says it */
+  .vh { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   h1.list-label { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-6); }
 }
 

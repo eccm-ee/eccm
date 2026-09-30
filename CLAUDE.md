@@ -26,7 +26,7 @@ It left the positron repository on 2026-09-27 with its history
 ```sh
 npx wrangler d1 migrations apply eccm-staging --local --env staging   # the schema into the local database, once and after every new migration
 npx wrangler d1 execute eccm-staging --local --env staging --file data/seed-step1.sql   # the seeded rows (then seed-step2.sql to seed-step5-schemes.sql, in that order)
-npx wrangler dev --env staging                 # http://127.0.0.1:8787/ , the pages under /et/ and /en/ come from D1
+npx wrangler dev --env staging --var IMAGE_TRANSFORMS:off   # http://127.0.0.1:8787/ , the pages under /et/ and /en/ come from D1; the var because wrangler dev serves no /cdn-cgi/image/
 node tools/check-html.mjs public/*.html        # every module block parses, no browser
 node tools/shot.mjs http://127.0.0.1:8787/ 375 1280   # LOOK, on an iPhone mini and at the desk, before saying it is done
 node tools/which-rule-won.mjs http://127.0.0.1:8787/event '.ev-title' font-size

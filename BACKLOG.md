@@ -7,6 +7,14 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-09-30: "add more space on top of Järgmised üritused", "menu: Syndused = Esileht. Rename to Sündmused", "rm Upcoming events (and est) heading"
+
+Asked verbatim, three in a row. Files: `public/eccm.css`, `src/render/mark.mjs`, `src/render/chrome.mjs`, `src/render/events.mjs`, `public/index.html`, `public/derive.html`, `public/ds.html`, `public/type.html`, `CLAUDE.md`.
+✅ `.next` sits `--eccm-s-24` (6rem) under the credits, the scale's top step, where it was `--eccm-s-16`.
+✅ The menu's first item and its last were one page, so they are one item: Sündmused (Events in English) leading to the front page, and the item to `/et/sundmused` and `/en/events` is gone, in the header and the footer menu of the Worker's chrome and of the four static pages. Six items where there were seven. `/et/sundmused` still answers, reached from nowhere in the menu.
+✅ The front pages' "Tulevased üritused" and "Upcoming events" label is hidden from the eye and kept as the page's `h1` for the outline, through a new `.vh` class. The event page's crumb of the same words is a link, not the heading, and stays.
+Found on the way: with `IMAGE_TRANSFORMS` on, `wrangler dev` draws no picture, since it serves no `/cdn-cgi/image/`; CLAUDE.md's dev line carries `--var IMAGE_TRANSFORMS:off`.
+
 ### Done 2026-09-30: "Resized image versions -- see ../trip implementation" and "i saw font change jump on .../gestuurid-situatsioonid-ilma-partituurita-kuulamine - can we optimize / preload? see ../trip"
 
 Asked verbatim, one after the other. Files: `src/render/pic.mjs` (new), `src/render/event.mjs`, `src/render/events.mjs`, `src/render/chrome.mjs`, `src/index.mjs`, `wrangler.jsonc`, `public/eccm.css`, `public/scheme.mjs`, `public/derive.html`, `data/seed-step5-schemes.sql`.

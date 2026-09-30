@@ -59,7 +59,7 @@ export const renderEvents = ({ lang, upcoming, past, origin, path, home = false 
     { hreflang: 'x-default', href: origin + where.et },
   ];
   const body = html`  <article class="event">
-    ${home ? html`<h1 class="list-label">${t.upcoming}</h1>` : html`<h1>${t.events}</h1>`}
+    ${home ? html`<h1 class="vh">${t.upcoming}</h1>` : html`<h1>${t.events}</h1>`}
     ${upcoming.length ? html`<ol class="events">
     ${upcoming.map((e) => row(e, lang))}
     </ol>` : html`<p class="note">${t.noEvents}</p>`}
