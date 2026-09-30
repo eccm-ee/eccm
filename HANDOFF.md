@@ -3,17 +3,19 @@
 The prototype of a new eccm.ee moved out of positron on 2026-09-27 and has
 grown for four days. Everything below is live at
 **https://eccm.positron.studio/** and committed on `main` of
-**https://github.com/kristjanjansen/eccm**, private. **Not pushed:** `HEAD`
-is the handoff commit on top of `28530e5` and `41a651c`, and `origin/main` is
-still `25bbfd1`, because both GitHub logins on this machine answer "The token
-in default is invalid" (`gh auth status`) and `git push` has no credentials.
-The owner runs `gh auth login -h github.com` as `kristjanjansen`; then push
-per CLAUDE.md. Numbers here were counted with a command when this was
+**https://github.com/kristjanjansen/eccm**, private. **Not pushed:** five
+commits sit on top of `origin/main` (`25bbfd1`): `41a651c`, `28530e5`,
+`4535a20`, `7eacbf9` and the one carrying this handoff (`git log --oneline
+origin/main..HEAD` lists them). `gh auth status` shows the work account
+`Kristjan-Jansen_enefit` logged in again and `kristjanjansen`, the account
+that owns this repository, still "The token in default is invalid", so
+`git push` cannot reach it. The owner runs `gh auth login -h github.com` as
+`kristjanjansen`; then push per CLAUDE.md and switch back. Numbers here were counted with a command when this was
 written; count again before building on one.
 
 ## 2026-09-30: upload, schemes, sitemap, feeds, the image ladder, the font jump
 
-Four asks, verbatim, each with its full entry and measurements in
+Five asks, verbatim, each with its full entry and measurements in
 `BACKLOG.md`:
 
 1. *"implement image upload and apply detection (bg color, sans/serif etc) on
@@ -24,6 +26,10 @@ Four asks, verbatim, each with its full entry and measurements in
 4. *"why you are using positron skills?"*, answered: CLAUDE.md says to load
    `positron-compose` beside `eccm-ui` before any change under `public/`. The
    owner did not ask for it to change.
+5. *"is it paid option?"* of the dashboard's allowed-origins screen, answered:
+   no, that screen only chooses sources ("This zone only" kept), and
+   transformations are free to 5,000 unique a month and never billed on the
+   free plan. Then *"its on"*, and the ladder was switched on the same hour.
 
 **The detector is one module.** `readColour`, `readType` and `scheme` moved
 unchanged from `derive.html` into `public/scheme.mjs`, with `contract()`
