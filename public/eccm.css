@@ -150,6 +150,13 @@
      component asks its own box, never the window), because the row's shape
      depends on whether 45 ch of text fits beside a 300 px picture */
   main { padding-block: var(--eccm-s-8) var(--eccm-s-16); container-type: inline-size; }
+  /* on a desk a page is at least the window tall and main takes what is left, so a short page keeps its
+     footer at the foot of the window rather than half way up it (asked 2026-10-01: "make min h for page
+     in desktop, it should be more"); a phone scrolls anyway and keeps the plain flow */
+  @media (min-width: 48rem) {
+    body { display: flex; flex-direction: column; min-block-size: 100svh; }
+    main { flex: 1 0 auto; }
+  }
 }
 
 @layer components {
@@ -217,11 +224,13 @@
   .site-foot .cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto; gap: var(--eccm-s-8); }
   .site-foot .two { display: grid; grid-template-columns: repeat(2, max-content); column-gap: var(--eccm-s-12); row-gap: var(--eccm-s-2); }
   .site-foot .contact p + p { margin-block-start: var(--eccm-s-3); }
-  .site-foot .end { justify-self: end; display: flex; align-items: flex-start; gap: var(--eccm-s-8); }
-  /* ULYSSES Platform beside Tallinn's mark (asked 2026-10-01: "put olyssus image to partners"), its box
-     its ink, so none of the City of Music mark's margins: the two inks share a top, and two lines of its
-     capitals at 6rem sit beside the 4rem square without outweighing it */
-  .site-foot .partner.partner-uly { --pw: 6rem; margin: 0; }
+  .site-foot .end { justify-self: end; display: flex; align-items: center; gap: var(--eccm-s-8); }
+  /* ULYSSES Platform beside Tallinn's mark (asked 2026-10-01: "put olyssus image to partners", then
+     "make ulyssus smaller and vert align with other logo"): 4.5rem, its box its ink, and centred on the
+     City of Music mark's ink. That mark's file carries white round its ink, which its own negative
+     margins trim, so its ink centre sits half a top margin above the box flex centres; the same top
+     margin here moves this mark's centre by the same half, and the two inks share one middle line */
+  .site-foot .partner.partner-uly { --pw: 4.5rem; margin: 0; margin-block-start: calc(4rem * -0.1355); }
   .site-foot .partner { --pw: 4rem; display: block; inline-size: var(--pw); margin-block-start: calc(var(--pw) * -0.1355); margin-inline-end: calc(var(--pw) * -0.136); }
   .site-foot .partner img { display: block; inline-size: 100%; block-size: auto; }
   @media (max-width: 48rem) {
