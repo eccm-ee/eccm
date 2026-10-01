@@ -281,6 +281,7 @@
 
   /* ── the event page and the edit form, HTML only ─────────────────────────── */
   /* a crumb above a title: the page this one came from, small, in the muted ink */
+  .crumb-sep { padding-inline: var(--eccm-s-2); }
   .crumb { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-4); }
   /* the head of an event page: the title, the facts and the actions in one
      column and the picture beside them at its own size on a desk, the two
@@ -397,10 +398,6 @@
   /* the small button (asked 2026-10-01: "Make small button variant and use it in tables"): a row's own action
      in a table or a list, two thirds of the 3rem box and in the small type, so it sits on the row's line and
      does not set its height; the same edge and the same inward hover */
-  /* the light button: a choice between equals, filled with a light grey rather than one of them filled black
-     (asked 2026-10-01 of Eesti keeles and Inglise keeles: "both same with light bg") */
-  .btn-light { background: color-mix(in srgb, var(--eccm-ink) 7%, var(--eccm-ground)); border-color: transparent; }
-  .btn-light:hover { outline-color: var(--eccm-ink); }
   .btn-sm { block-size: 2rem; padding-inline: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: 1; }
   .table td .btn-sm { vertical-align: middle; }
   /* the form: one column at the measure, a visible label above each field,
@@ -567,7 +564,6 @@
   /* the channels, as many as the station has: small buttons that wrap as a cluster at their own sizes,
      the one playing filled, a group's gap above what it switches */
   .station-channels { display: flex; flex-wrap: wrap; gap: var(--eccm-s-2); margin-block-end: var(--eccm-s-8); }
-  .station .table td.who { white-space: normal; overflow-wrap: anywhere; }
   /* four short readouts pair up on a phone too, where the facts would stack them one a row */
   .facts.station-read { margin-block-start: var(--eccm-s-8); grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr)); }
   .station-read dd { min-block-size: 1lh; }

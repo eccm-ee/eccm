@@ -40,6 +40,13 @@ export const LABEL = { et: 'ET', en: 'EN' };
 // wide: a tool page (asked 2026-10-01: "admin pages full w"), its forms, tables and grids over the whole frame
 export const page = ({ lang, title, alternate, canonical, alternates, body, notice, head, wide }) => {
   const t = T[lang];
+  // every tool page leads back to /admin (asked 2026-10-01: "all admin pages should have upper link back to
+  // /admin"): in front of the page's own crumb when it has one, as a crumb of its own when not; /admin
+  // itself passes wide: 'root' and gets none
+  if (wide === true) {
+    const b = String(body), back = '<a href="/admin">Haldus</a>';
+    body = raw(b.includes('<p class="crumb">') ? b.replace('<p class="crumb">', `<p class="crumb">${back}<span class="crumb-sep" aria-hidden="true">/</span>`) : `  <p class="crumb">${back}</p>\n${b}`);
+  }
   return html`<!doctype html>
 <html lang="${lang}">
 <head>

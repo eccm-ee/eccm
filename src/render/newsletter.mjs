@@ -78,8 +78,8 @@ export const renderIssues = ({ issues, counts }) => {
       <h2>Uus kiri</h2>
       <p class="hint">Kiri tuleb ette täidetuna järgmise kuue nädala sündmustega. Tervitus, üks lõik ja allkiri on sinu kirjutada.</p>
       <div class="actions">
-        <button class="btn btn-light" type="submit" name="lang" value="et">Eesti keeles</button>
-        <button class="btn btn-light" type="submit" name="lang" value="en">Inglise keeles</button>
+        <button class="btn" type="submit" name="lang" value="et">Eesti keeles</button>
+        <button class="btn" type="submit" name="lang" value="en">Inglise keeles</button>
       </div>
     </form>
     <section class="items-list">
