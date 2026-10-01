@@ -11,6 +11,8 @@
 // Workers Paid lifts that (plans/plan-eccm-cms.md section 5).
 
 const MAX = 3;
+// the sending domain, out of 'ECCM <uudiskiri@eccm.positron.studio>'
+const domain = (from) => /@([^>\s]+)/.exec(from)?.[1] || 'eccm.ee';
 const BATCH = 20;   // a drain stays well inside one invocation's subrequests
 
 export async function queue(env, rows) {
@@ -31,7 +33,10 @@ export async function drain(env) {
       await env.EMAIL.send({
         to: m.to_addr, from: env.MAIL_FROM, subject: m.subject, text: m.text,
         ...(m.html ? { html: m.html } : {}),
-        ...(m.unsub ? { headers: { 'List-Unsubscribe': `<${m.unsub}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } } : {}),
+        // List-Id names the list, which Gmail reads with List-Unsubscribe when it decides whether to
+        // offer its own Unsubscribe beside the sender; that choice is Gmail's and comes with the sending
+        // domain's volume and reputation, so the letter's own Lahku link is the one that always works
+        ...(m.unsub ? { headers: { 'List-Unsubscribe': `<${m.unsub}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click', 'List-Id': `ECCM <uudiskiri.${domain(env.MAIL_FROM)}>` } } : {}),
       });
       await env.DB.prepare("UPDATE outbox SET sent_at = strftime('%Y-%m-%dT%H:%M:%SZ','now'), tries = tries + 1, error = NULL WHERE id = ?").bind(m.id).run();
       sent++;
