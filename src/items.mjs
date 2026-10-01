@@ -13,11 +13,13 @@
 //   POST /items              the form, then 303 back, or the form again with what to fix
 //   POST /items/subscribe    a browser's PushSubscription as JSON (public/items.mjs)
 //   POST /items/unsubscribe  { endpoint }
+//   GET  /items/list         the list alone, for the page's own refresh
+//   GET  /items/{id}, POST   one notice's form, then a save or a delete
 //   GET  /items/key          the public VAPID key a browser subscribes with (public/push.mjs)
 //
 // Open like the editor: nobody logs in (src/editor.mjs says since when).
 import { send } from './push.mjs';
-import { renderItems } from './render/items.mjs';
+import { renderItems, renderItemEdit, itemsList, local } from './render/items.mjs';
 
 const HEAD = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' };
 const JSON_HEAD = { 'content-type': 'application/json', 'cache-control': 'no-store' };
@@ -113,6 +115,26 @@ export class Items {
       await this.rearm();
       return json({ ok: true });
     }
+    if (path === '/get') {
+      return json({ item: [...this.sql.exec(`SELECT * FROM items WHERE id = ?`, String(body.id))][0] || null });
+    }
+    // a time is moved only while the notice waits: the guard is in the
+    // statement, so a notice the alarm published between the form and the
+    // save keeps its time and the reply says so
+    if (path === '/edit') {
+      const it = [...this.sql.exec(`SELECT status FROM items WHERE id = ?`, String(body.id))][0];
+      if (!it) return json({ error: 'gone' }, 404);
+      if (body.publish_at != null && it.status !== 'waiting') return json({ error: 'published' }, 409);
+      this.sql.exec(`UPDATE items SET title = ?, body = ?, url = ? WHERE id = ?`, body.title, body.body || '', body.url || '', body.id);
+      if (body.publish_at != null) this.sql.exec(`UPDATE items SET publish_at = ? WHERE id = ? AND status = 'waiting'`, Math.max(Number(body.publish_at), Date.now()), body.id);
+      await this.rearm();
+      return json({ ok: true });
+    }
+    if (path === '/delete') {
+      this.sql.exec(`DELETE FROM items WHERE id = ?`, String(body.id));
+      await this.rearm();
+      return json({ ok: true });
+    }
     if (path === '/subscribe') {
       const { endpoint, keys } = body;
       if (!/^https:\/\//.test(endpoint || '') || !keys?.p256dh || !keys?.auth) return json({ error: 'a PushSubscription: endpoint and keys.p256dh, keys.auth' }, 400);
@@ -135,20 +157,48 @@ const page = async (env, form = {}, errors = [], status = 200) => {
   return new Response(renderItems({ items, subs, form, errors }), { status, headers: HEAD });
 };
 
+// the posted form, trimmed, and what is wrong with it
+const readForm = async (request) => {
+  const f = Object.fromEntries([...(await request.formData())].map(([k, v]) => [k, String(v).trim()]));
+  f.title ??= ''; f.body ??= ''; f.url ??= ''; f.publish_at ??= '';
+  const errors = [];
+  if (!f.title) errors.push({ field: 'title', msg: 'Pealkiri on puudu.' });
+  if (f.title.length > 120) errors.push({ field: 'title', msg: 'Pealkiri on pikem kui 120 märki.' });
+  if (f.url && !/^(https?:\/\/\S+|\/\S*)$/.test(f.url)) errors.push({ field: 'url', msg: 'Link algab https:// või kaldkriipsuga.' });
+  if (f.publish_at && !LOCAL.test(f.publish_at)) errors.push({ field: 'publish_at', msg: 'Aeg on vigane.' });
+  return { f, errors };
+};
+const back = () => new Response(null, { status: 303, headers: { ...HEAD, location: '/items' } });
+
+async function one(request, env, id) {
+  const { item: it } = await ask(env, '/get', { id });
+  if (!it) return null;
+  if (request.method !== 'POST') {
+    const form = { title: it.title, body: it.body, url: it.url, publish_at: local(it.publish_at) };
+    return new Response(renderItemEdit({ it, form }), { headers: HEAD });
+  }
+  const { f, errors } = await readForm(request);
+  if (f.do === 'delete') { await ask(env, '/delete', { id }); return back(); }
+  if (errors.length) return new Response(renderItemEdit({ it, form: f, errors }), { status: 400, headers: HEAD });
+  const waiting = it.status === 'waiting';
+  const out = await ask(env, '/edit', { id, title: f.title, body: f.body, url: f.url, ...(waiting ? { publish_at: f.publish_at ? tallinnMs(f.publish_at) : Date.now() } : {}) });
+  if (out.error === 'published') {
+    const { item } = await ask(env, '/get', { id });
+    return new Response(renderItemEdit({ it: item, form: f, errors: [{ field: 'publish_at', msg: 'Teade ilmus vahepeal, seda enam muuta ei saa.' }] }), { status: 409, headers: HEAD });
+  }
+  return back();
+}
+
 export async function itemsRoute(request, env, url) {
   const p = url.pathname.replace(/\/$/, '');
   if (p === '/items' && request.method === 'GET') return page(env);
   if (p === '/items/key') return json({ key: env.VAPID_PUBLIC || null });
+  if (p === '/items/list') return new Response(String(itemsList((await ask(env, '/list')).items)), { headers: HEAD });
   if (p === '/items' && request.method === 'POST') {
-    const f = Object.fromEntries([...(await request.formData())].map(([k, v]) => [k, String(v).trim()]));
-    const errors = [];
-    if (!f.title) errors.push({ field: 'title', msg: 'Pealkiri on puudu.' });
-    if (f.title.length > 120) errors.push({ field: 'title', msg: 'Pealkiri on pikem kui 120 märki.' });
-    if (f.url && !/^(https?:\/\/\S+|\/\S*)$/.test(f.url)) errors.push({ field: 'url', msg: 'Link algab https:// või kaldkriipsuga.' });
-    if (f.publish_at && !LOCAL.test(f.publish_at)) errors.push({ field: 'publish_at', msg: 'Aeg on vigane.' });
+    const { f, errors } = await readForm(request);
     if (errors.length) return page(env, f, errors, 400);
     await ask(env, '/add', { title: f.title, body: f.body, url: f.url, publish_at: f.publish_at ? tallinnMs(f.publish_at) : Date.now() });
-    return new Response(null, { status: 303, headers: { ...HEAD, location: '/items' } });
+    return back();
   }
   if ((p === '/items/subscribe' || p === '/items/unsubscribe') && request.method === 'POST') {
     const body = await request.json().catch(() => null);
@@ -156,5 +206,7 @@ export async function itemsRoute(request, env, url) {
     const out = await ask(env, p.slice('/items'.length), body);
     return json(out, out.ok ? 200 : 400);
   }
+  const m = /^\/items\/([0-9a-f-]{36})$/.exec(p);
+  if (m) return one(request, env, m[1]);
   return null;
 }
