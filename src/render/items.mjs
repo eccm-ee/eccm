@@ -44,7 +44,7 @@ export const itemsList = (items) => (items.length ? table({
       html`<time datetime="${new Date(Number(it.publish_at)).toISOString()}">${when(it.publish_at)}</time>`,
       html`${it.url ? html`<a href="${it.url}">${it.title}</a>` : it.title}${it.body ? html`<br><span class="small">${it.body}</span>` : ''}`,
       fate(it),
-      html`<a href="/items/${it.id}">Muuda</a>`,
+      html`<a class="btn btn-sm" href="/items/${it.id}">Muuda</a>`,
     ],
   })),
 }) : html`<p class="note">Teateid ei ole veel.</p>`);
