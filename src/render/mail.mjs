@@ -34,10 +34,13 @@ const L = {
 };
 
 const inlineBody = (h) => h
-  .replace(/<p>/g, `<p style="margin:0 0 18px;font-size:17px;mso-line-height-rule:exactly;line-height:1.5;color:${INK}">`)
-  .replace(/<h2>/g, `<h2 style="margin:32px 0 10px;font-size:21px;mso-line-height-rule:exactly;line-height:1.25;color:${INK};font-weight:400">`)
+  // one empty line between paragraphs and two above a heading, half under it: the site's own .flow
+  // rule (eccm-ui section 1), in pixels because mail has no lh unit; 17px at 1.5 is a 26px line
+  // (asked 2026-10-01: "add one empty line / space before each title")
+  .replace(/<p>/g, `<p style="margin:0 0 26px;font-size:17px;mso-line-height-rule:exactly;line-height:1.5;color:${INK}">`)
+  .replace(/<h2>/g, `<h2 style="margin:52px 0 13px;font-size:21px;mso-line-height-rule:exactly;line-height:1.25;color:${INK};font-weight:400">`)
   .replace(/<h3>/g, `<h3 style="margin:24px 0 8px;font-size:17px;mso-line-height-rule:exactly;line-height:1.3;color:${INK};font-weight:700">`)
-  .replace(/<(ul|ol)>/g, `<$1 style="margin:0 0 18px;padding:0 0 0 22px;font-size:17px;mso-line-height-rule:exactly;line-height:1.5;color:${INK}">`)
+  .replace(/<(ul|ol)>/g, `<$1 style="margin:0 0 26px;padding:0 0 0 22px;font-size:17px;mso-line-height-rule:exactly;line-height:1.5;color:${INK}">`)
   .replace(/<li>/g, '<li style="margin:0 0 6px">')
   .replace(/<b>/g, '<b style="font-weight:700">')
   .replace(/<a href=/g, `<a style="color:${INK};text-decoration:underline" href=`);

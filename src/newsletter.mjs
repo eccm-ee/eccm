@@ -37,11 +37,15 @@ const later = (ctx, env) => ctx?.waitUntil(drain(env).catch(() => {}));
 // ── the composer ─────────────────────────────────────────────────────────
 const ADESSIVE = ['jaanuaril', 'veebruaril', 'märtsil', 'aprillil', 'mail', 'juunil', 'juulil', 'augustil', 'septembril', 'oktoobril', 'novembril', 'detsembril'];
 const MONTH = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-// "30. septembril kell 19.00, ECCM saal" and "30 September at 19:00, ECCM saal": the
-// date in its own sentence, needing no year and no lexicon (section 5, hint 3)
+const WEEKDAY = { et: ['Pühapäeval', 'Esmaspäeval', 'Teisipäeval', 'Kolmapäeval', 'Neljapäeval', 'Reedel', 'Laupäeval'], en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] };
+// "Kolmapäeval, 8. oktoobril kell 19.00, ECCM saal" and "Wednesday 8 October at 19:00, ECCM saal":
+// the date in its own sentence, needing no year and no lexicon (section 5, hint 3). The weekday
+// leads, and not only for the reader: a line opening "8. oktoobril" is an ordered list item to
+// src/render/md.mjs, which drew it as "1. oktoobril" in the first test letter (2026-10-01)
 const when = (local, venue, lang) => {
   const m = Number(local.slice(5, 7)) - 1, d = Number(local.slice(8, 10)), hm = local.slice(11, 16);
-  const at = lang === 'et' ? `${d}. ${ADESSIVE[m]} kell ${hm.replace(':', '.')}` : `${d} ${MONTH[m]} at ${hm}`;
+  const wd = WEEKDAY[lang][new Date(`${local.slice(0, 10)}T12:00:00Z`).getUTCDay()];
+  const at = lang === 'et' ? `${wd}, ${d}. ${ADESSIVE[m]} kell ${hm.replace(':', '.')}` : `${wd} ${d} ${MONTH[m]} at ${hm}`;
   return venue ? `${at}, ${venue}` : at;
 };
 const eventUrl = (origin, lang, slug) => `${origin}${lang === 'et' ? '/et/sundmused/' : '/en/events/'}${slug}`;
@@ -103,7 +107,9 @@ async function leave(request, env, url, tok) {
 }
 
 // ── the editor ───────────────────────────────────────────────────────────
-const mailFor = (issue, origin, unsub = `${origin}/uudiskiri/lahku/test`) => renderIssueMail(issue, { web: `${origin}${NL[issue.lang]}/${issue.slug || 'eelvaade'}`, unsub });
+// a sent issue's web page is its slug; a draft's, which a test letter links, is its preview
+const webFor = (issue, origin) => `${origin}${NL[issue.lang]}/${issue.status === 'sent' && issue.slug ? issue.slug : `eelvaade/${issue.id}`}`;
+const mailFor = (issue, origin, unsub = `${origin}/uudiskiri/lahku/test`) => renderIssueMail(issue, { web: webFor(issue, origin), unsub });
 
 async function issuePage(request, env, url, ctx, id) {
   const issue = await env.DB.prepare('SELECT * FROM issue WHERE id = ?').bind(id).first();
@@ -143,7 +149,7 @@ async function issuePage(request, env, url, ctx, id) {
     // sent first, guarded on draft, so a second press sends nothing
     const done = await env.DB.prepare(`UPDATE issue SET status = 'sent', slug = ?, sent_at = ${NOW}, sent_count = ? WHERE id = ? AND status = 'draft'`).bind(slug, subs.length, id).run();
     if (!done.meta.changes) return go(`/edit/uudiskiri/${id}`);
-    const sent = { ...now, slug };
+    const sent = { ...now, slug, status: 'sent' };
     await queue(env, subs.map((s) => { const unsub = `${url.origin}/uudiskiri/lahku/${s.token}`; const m = mailFor(sent, url.origin, unsub); return { kind: 'issue', issue_id: id, to: s.email, subject: now.subject, text: m.text, html: m.html, unsub }; }));
     later(ctx, env);
     return go(`/edit/uudiskiri/${id}`);
@@ -155,6 +161,14 @@ export async function newsletter(request, env, url, ctx) {
   const p = url.pathname.replace(/\/$/, '');
   for (const lang of ['et', 'en']) {
     if (p === NL[lang]) return signup(request, env, url, ctx, lang);
+    // a draft's preview, which a test letter's "Loe veebis" opens; noindex, and gone once the issue is sent
+    const pv = new RegExp(`^${NL[lang]}/eelvaade/(\\d+)$`).exec(p);
+    if (pv) {
+      const issue = await env.DB.prepare('SELECT * FROM issue WHERE id = ? AND lang = ?').bind(Number(pv[1]), lang).first();
+      if (!issue) return null;
+      if (issue.status === 'sent') return go(`${NL[lang]}/${issue.slug}`);
+      return reply(renderArchive({ lang, issue, draft: true }), 200, EDIT);
+    }
     if (p.startsWith(`${NL[lang]}/`)) {
       const issue = await env.DB.prepare("SELECT * FROM issue WHERE lang = ? AND slug = ? AND status = 'sent'").bind(lang, p.slice(NL[lang].length + 1)).first();
       return issue ? reply(renderArchive({ lang, issue })) : null;

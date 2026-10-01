@@ -16,11 +16,11 @@ const T = {
   et: { title: 'Uudiskiri', lead: 'ECCM-i kava ja uudised e-postiga. Lahkuda saab iga kirja lõpust.', email: 'E-post', join: 'Liitu', bad: 'See ei ole e-posti aadress.',
         sent: (a) => `Saatsime aadressile ${a} kirja. Tellimus hakkab kehtima, kui avad selles oleva lingi.`, already: (a) => `Aadress ${a} on juba uudiskirjaga liitunud.`,
         past: 'Varasemad kirjad', confirmed: 'Oled uudiskirjaga liitunud. Esimene kiri tuleb koos järgmise kavaga.', gone: 'Seda linki ei ole. Võib-olla on tellimus juba lõpetatud.',
-        leaveQ: (a) => `Lahkud ECCM-i uudiskirjast aadressil ${a}.`, leave: 'Lahku', left: 'Oled uudiskirjast lahkunud. Rohkem kirju ei tule.', back: 'Tagasi uudiskirja lehele' },
+        leaveQ: (a) => `Lahkud ECCM-i uudiskirjast aadressil ${a}.`, leave: 'Lahku', left: 'Oled uudiskirjast lahkunud. Rohkem kirju ei tule.', back: 'Tagasi uudiskirja lehele', draft: 'Eelvaade. See kiri on veel saatmata.' },
   en: { title: 'Newsletter', lead: 'The ECCM programme and news by email. Every letter ends with a way to leave.', email: 'Email', join: 'Subscribe', bad: 'That is not an email address.',
         sent: (a) => `We sent a letter to ${a}. The subscription starts when you open the link in it.`, already: (a) => `${a} is already subscribed.`,
         past: 'Earlier letters', confirmed: 'You are subscribed. The first letter comes with the next programme.', gone: 'There is no such link. Perhaps the subscription has already ended.',
-        leaveQ: (a) => `You are leaving the ECCM newsletter at ${a}.`, leave: 'Unsubscribe', left: 'You have unsubscribed. No more letters will come.', back: 'Back to the newsletter page' },
+        leaveQ: (a) => `You are leaving the ECCM newsletter at ${a}.`, leave: 'Unsubscribe', left: 'You have unsubscribed. No more letters will come.', back: 'Back to the newsletter page', draft: 'Preview. This letter has not been sent yet.' },
 };
 const alt = (lang) => ({ lang: OTHER[lang], href: NL[OTHER[lang]] });
 const sentDay = (utc, lang) => dateLong(utc.slice(0, 10), lang);
@@ -54,13 +54,14 @@ export const renderNotice = ({ lang, text, form }) => {
 export const NOTICE = T;
 
 // one sent issue as a page
-export const renderArchive = ({ lang, issue }) => {
+// draft: a test letter's preview, under the notice line the editor's preview uses
+export const renderArchive = ({ lang, issue, draft = false }) => {
   const body = html`  <article class="page-text">
-    <p class="crumb"><a href="${NL[lang]}">${T[lang].title}</a>, ${sentDay(issue.sent_at, lang)}</p>
-    <h1>${issue.subject}</h1>
+    <p class="crumb"><a href="${NL[lang]}">${T[lang].title}</a>${draft ? '' : `, ${sentDay(issue.sent_at, lang)}`}</p>
+    <h1>${issue.subject || T[lang].title}</h1>
     <div class="prose flow">${raw(md(issue.body))}</div>
   </article>`;
-  return page({ lang, title: `${issue.subject}.`, alternate: alt(lang), body });
+  return page({ lang, title: `${issue.subject || T[lang].title}.`, alternate: alt(lang), body, notice: draft ? T[lang].draft : undefined });
 };
 
 // ── the editor ───────────────────────────────────────────────────────────
