@@ -217,7 +217,11 @@
   .site-foot .cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto; gap: var(--eccm-s-8); }
   .site-foot .two { display: grid; grid-template-columns: repeat(2, max-content); column-gap: var(--eccm-s-12); row-gap: var(--eccm-s-2); }
   .site-foot .contact p + p { margin-block-start: var(--eccm-s-3); }
-  .site-foot .end { justify-self: end; }
+  .site-foot .end { justify-self: end; display: flex; align-items: flex-start; gap: var(--eccm-s-8); }
+  /* ULYSSES Platform beside Tallinn's mark (asked 2026-10-01: "put olyssus image to partners"), its box
+     its ink, so none of the City of Music mark's margins: the two inks share a top, and two lines of its
+     capitals at 6rem sit beside the 4rem square without outweighing it */
+  .site-foot .partner.partner-uly { --pw: 6rem; margin: 0; }
   .site-foot .partner { --pw: 4rem; display: block; inline-size: var(--pw); margin-block-start: calc(var(--pw) * -0.1355); margin-inline-end: calc(var(--pw) * -0.136); }
   .site-foot .partner img { display: block; inline-size: 100%; block-size: auto; }
   @media (max-width: 48rem) {

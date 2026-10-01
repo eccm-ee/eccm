@@ -17,3 +17,13 @@ and *"NB! Võimalusel kasutage alati .svg faile"*. The usage guide it links is
 `UCCN_Logo_Guidelines_EN.pdf` at the same upload path, not copied here.
 eccm.ee shows the older wording of this mark in its sidebar as a 120 by 118
 JPEG (`tallinn_muusika_small.jpg`).
+
+## ULYSSES Platform (the ULYSSES Network)
+
+`ulysses-platform-black.svg` is the mark as the network draws it in the
+header of its own site, https://ulysses-platform.eu/ , copied byte for byte
+from that page's inline SVG on 2026-10-01 (116 by 40, every fill black), with
+only `role="img"` and an `aria-label` added. No press kit or logo download was
+found: the older project site, https://project.ulysses-network.eu/ , serves
+only a coloured PNG, `UlyssesNetwork-project.png` (960 by 201, "ULYSSES
+network PROJECT"), and no SVG beside it.
