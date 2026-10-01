@@ -35,12 +35,12 @@ export const tallinnClock = (utc) => fmtClock.format(new Date(utc)).replace(':',
 const tallinnStamp = (utc) => fmtStamp.format(new Date(utc)).replace(/(\d+):(\d+)$/, '$1.$2');
 
 const opts = (options, value) => options.map(([v, label]) => html`<option value="${v}"${String(v) === String(value ?? '') ? raw(' selected') : ''}>${label}</option>`);
-const field = ({ id, label, hint, err, control, cls = '' }) => html`<div class="field${cls ? ' ' + cls : ''}">
+export const field = ({ id, label, hint, err, control, cls = '' }) => html`<div class="field${cls ? ' ' + cls : ''}">
         <label for="${id}">${label}</label>
         ${control}
         ${err ? html`<p class="hint err">${err}</p>` : hint ? html`<p class="hint">${hint}</p>` : ''}
       </div>`;
-const input = (id, name, value, attrs = '') => html`<input id="${id}" name="${name}" value="${value ?? ''}"${raw(attrs)}>`;
+export const input = (id, name, value, attrs = '') => html`<input id="${id}" name="${name}" value="${value ?? ''}"${raw(attrs)}>`;
 // a choice of a few as native radio buttons in a row, each with its label (asked 2026-09-28: "make it radiobutton
 // [ Mustand | Avaldatud ]", then "make classic horiz radions (o) () instead of radiobuttons"); a fieldset with the
 // field's look, its legend where the label sits

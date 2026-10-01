@@ -13,6 +13,10 @@ that owns this repository, still "The token in default is invalid", so
 `kristjanjansen`; then push per CLAUDE.md and switch back. Numbers here were counted with a command when this was
 written; count again before building on one.
 
+## 2026-10-01: notices, push and the installable site
+
+Asked: *"see ../positron items demo. i want eccm.positron.app to pwa with push notifications. move that items infra over to eccm. for pwa logo use single line logo. make page on eccm to list and add items"*, then *"use eccm edit style"*. Done, in `BACKLOG.md` in full: **https://eccm.positron.studio/items** lists and adds notices, a Durable Object publishes each on its moment and pushes it with plain Web Push (VAPID, no Firebase), the site installs as ECCM with the single-line mark. Staging carries one test notice, Proov, and one dead headless subscription that the next push drops. Open: a banner on a real iPhone, and whether /items should stay open to anyone like the editor.
+
 ## 2026-09-30: upload, schemes, sitemap, feeds, the image ladder, the font jump
 
 Five asks, verbatim, each with its full entry and measurements in

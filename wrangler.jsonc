@@ -23,6 +23,8 @@
     "not_found_handling": "none"
   },
   "observability": { "enabled": true },
+  // SQLite-backed, the shape positron's workers/items proved
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Items"] }],
   "env": {
     "staging": {
       "name": "eccm-staging",
@@ -39,7 +41,14 @@
       // Image Transformations are on for positron.studio since 2026-09-30
       // (dashboard, Images, Transformations, "This zone only"); "off" makes
       // src/render/pic.mjs draw the originals, as a zone without them needs
-      "vars": { "IMAGE_TRANSFORMS": "on" }
+      // the notices of /items (src/items.mjs), one Durable Object holding
+      // the list, its alarm and the browsers' subscriptions, since 2026-10-01
+      "durable_objects": { "bindings": [{ "name": "ITEMS", "class_name": "Items" }] },
+      // VAPID_PUBLIC is the public half of the key Web Push is signed with
+      // (src/push.mjs) and VAPID_SUB the contact a push service sees; the
+      // private half is the secret VAPID_JWK (wrangler secret put VAPID_JWK
+      // --env staging). A new key means every browser subscribes again.
+      "vars": { "IMAGE_TRANSFORMS": "on", "VAPID_PUBLIC": "BMFK4ASgBxY0RNxBPRoJTUHFf3pTkyx9lR3jIYG_miJdtrc7a_moyVkig2QlFVBr5d5BuacnyV6skIeaxvTGHM4", "VAPID_SUB": "https://eccm.positron.studio/" }
     },
     "production": {
       "name": "eccm"

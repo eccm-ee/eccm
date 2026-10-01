@@ -495,6 +495,11 @@
   .credit .field-row > .field.free { display: none; }
   .credit:has(select option[value=""]:checked) .field-row > .field.free { display: grid; }
   /* the picture the select names, at the thumbnail's own width */
+  /* /items (src/render/items.mjs): three sections in the editor form, the
+     gap between them two steps above the form's own, each heading at the form's size */
+  .items { display: grid; row-gap: var(--eccm-s-16); max-inline-size: var(--eccm-measure); }
+  .items h2 { font-size: var(--eccm-t-l); margin-block: 0; }
+  .items-list { display: grid; gap: var(--eccm-s-6); }
   .edit-pic { max-inline-size: var(--eccm-pic-w); }
   .edit-pic figcaption { margin-block-start: var(--eccm-s-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
   /* what did not save: in words, the colour only points at them (eccm-ui §2,
@@ -559,3 +564,7 @@
     .ev-title { font-size: var(--eccm-t-l); }
   }
 }
+
+/* unlayered, so no layered display can beat it: a hidden button stays hidden
+   whatever its component sets (positron-compose section 8) */
+[hidden] { display: none; }

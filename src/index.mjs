@@ -28,6 +28,8 @@ import { editor } from './editor.mjs';
 import { renderSitemap, renderFeed } from './render/feeds.mjs';
 import { serveMedia } from './media.mjs';
 import { useTransforms } from './render/pic.mjs';
+import { itemsRoute } from './items.mjs';
+export { Items } from './items.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
 const EVENT = { et: /^\/et\/sundmused\/([a-z0-9-]+)$/, en: /^\/en\/events\/([a-z0-9-]+)$/ };
@@ -105,6 +107,8 @@ export default {
     if (LIST_LANG[p]) return reply(await eventsList(env, LIST_LANG[p], url));
     const pm = PAGE.exec(p);
     if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }
+    // the notices and their push subscriptions (src/items.mjs), since 2026-10-01
+    if (p === '/items' || p.startsWith('/items/')) { const out = await itemsRoute(request, env, url); if (out) return out; }
     if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
