@@ -7,19 +7,31 @@
 //
 // What it reads, all from the station's own origin, which answers every route
 // with access-control-allow-origin *:
+//   /channels.json   once on load: every channel, its title and what it plays
 //   /station.m3u8    the live playlist, to hls.js or to WebKit's own player
 //   /media/{key}     the byte ranges the playlist names, fetched by the player
-//   /now.json        every two seconds, from load: on air or not, the programme, into, the slot
+//   /now.json        every two seconds, from load: on air or not, the programme, its title and who, into, the slot
 //   /schedule.json   the running order with wall-clock times, on load and when /now.json says it moved
+// Every channel but the default one answers the last three under /c/{name}/;
+// the default answers them where they always were, so this page works against
+// a station from before channels, where /channels.json is a 404 and the
+// switch simply never appears.
 // /schedule.json and the `title` and `slot` of /now.json are new in positron on
 // 2026-10-01; where the deployed station has neither, the page says so in words
 // and marks the playing row by its key.
 
 // `?base=` points the page at another copy of the station worker, which is how
 // it is run against `wrangler dev` without touching the deployed one
-const STATION = (new URLSearchParams(location.search).get('base')
+const PARAMS = new URLSearchParams(location.search);
+const STATION = (PARAMS.get('base')
   || 'https://positron-station.kristjan-jansen.workers.dev').replace(/\/+$/, '');
-const PLAYLIST = `${STATION}/station.m3u8`;
+
+// The channel, from ?k=, else the station's default. Until /channels.json has
+// answered, the default is taken to be `main`, which is what the station calls
+// the channel that was the whole station before there were others.
+const ch = { name: PARAMS.get('k') || null, def: 'main', list: [] };
+const route = (path) => `${STATION}${!ch.name || ch.name === ch.def ? '' : `/c/${encodeURIComponent(ch.name)}`}${path}`;
+const chTitle = () => ch.list.find((c) => c.name === (ch.name || ch.def))?.title || 'Raadio';
 const POLL_MS = 2000;          // how often the numbers are re-read
 const RATE_WINDOW_MS = 4000;   // over how long `advance` is measured
 const ORDER_RETRY_MS = 60000;  // how long a running order that did not load waits before it is asked again
@@ -33,15 +45,22 @@ const NATIVE_HLS = 'ManagedMediaSource' in window
   && !!document.createElement('audio').canPlayType('application/vnd.apple.mpegurl');
 
 const $ = (id) => document.getElementById(id);
-const air = $('st-air'), title = $('st-title'), btn = $('st-play');
+const air = $('st-air'), title = $('st-title'), who = $('st-who'), btn = $('st-play'), chNav = $('st-channels');
 const read = { into: $('st-into'), behind: $('st-behind'), advance: $('st-advance'), crossed: $('st-crossed') };
 const orderBox = $('st-order'), orderSay = $('st-order-say'), rows = orderBox.querySelector('tbody');
 const logList = $('st-log');
 
 // numbers in Estonian: a decimal comma, one place
 const num = (n, places = 1) => n.toLocaleString('et-EE', { minimumFractionDigits: places, maximumFractionDigits: places });
-// a readout that has nothing to say yet says when it will, in the second ink
-const set = (k, text) => { read[k].textContent = text || 'kuulates'; read[k].classList.toggle('small', !text); };
+// A readout with nothing to say is empty, its line held. The three that
+// measure this page's own listening (behind, speed, crossings) have nothing to
+// say until Kuula is pressed, and one line under them says so, once, instead
+// of a placeholder word in each that read as a broken readout (asked
+// 2026-10-01, of "Otsest maas kuulates / Kiirus kuulates / Saatevahetusi
+// kuulates": "3 last ones empty?"). After the first press the line is emptied
+// with its height kept, and a pause leaves the last numbers standing.
+const readSay = $('st-read-say');
+const set = (k, text) => { read[k].textContent = text || ''; };
 
 // the wall clock in Tallinn, with seconds, since a slot can be forty seconds
 // long; the dot is this site's clock separator (src/render/dates.mjs)
@@ -102,7 +121,7 @@ function onAir(answered) {
 // playlist, so the table cannot disagree with what plays. It is read once on
 // load and again only when /now.json reports a new loop or a new running
 // order; the marked row moves on the two second poll that already runs.
-const order = { rev: null, loop: null, playing: null, key: null, busy: false, failedAt: 0, ok: false };
+const order = { rev: null, loop: null, playing: null, key: null, busy: false, failedAt: 0, ok: false, ch: null };
 function mark() {
   for (const tr of rows.children) {
     const on = order.playing != null ? Number(tr.dataset.i) === order.playing : tr.dataset.key === order.key;
@@ -120,9 +139,11 @@ async function readOrder() {
   if (order.busy) return;
   if (!order.ok && order.failedAt && Date.now() - order.failedAt < ORDER_RETRY_MS) return;
   order.busy = true;
+  const asked = ch.name;
   try {
-    const r = await fetch(`${STATION}/schedule.json`, { cache: 'no-store' });
+    const r = await fetch(route('/schedule.json'), { cache: 'no-store' });
     const s = await r.json();
+    if (asked !== ch.name) return;   // the channel changed while this was on its way
     if (!Array.isArray(s.slots)) throw new Error(s.error || `${r.status}`);
     order.rev = s.rev; order.loop = s.loop; order.ok = true;
     if (s.playing != null && order.playing == null) order.playing = s.playing;
@@ -134,6 +155,7 @@ async function readOrder() {
         cell(x.open ? 'lahtine' : clock(x.to), 'Lõpp'),
         cell(x.missing ? '' : span(x.dur), 'Kestus', 'num'),
         cell(x.title || x.key, 'Saade', 'main'),
+        cell(x.who || '', 'Kes', 'who'),
         cell(KIND[x.missing ? 'missing' : x.kind] || x.kind, 'Liik'),
       );
       return tr;
@@ -146,6 +168,7 @@ async function readOrder() {
   } catch {
     // the station is allowed to be slow, and a station that has no running
     // order to give says so here in words; the page goes on without the table
+    if (asked !== ch.name) return;
     order.failedAt = Date.now();
     if (!order.ok) orderSay.textContent = 'Kava ei ole jaamast praegu saada.';
   } finally { order.busy = false; }
@@ -153,7 +176,7 @@ async function readOrder() {
 readOrder();
 
 let hls = null, engine = 'none';
-let stalls = 0, crossed = 0, lastProgramme = null, playing = false;
+let stalls = 0, crossed = 0, lastProgramme = null, lastTitle = null, lastWho = null, playing = false;
 let rateAt = 0, rateT = 0;
 
 // a stall is an event that HAPPENED rather than a number sitting at zero, so
@@ -165,14 +188,15 @@ audio.addEventListener('waiting', () => { if (playing) { stalls++; log(`Puhverda
 // icon, and the pause button on a pair of headphones does nothing. The
 // metadata is refreshed on every programme change, because a station that keeps
 // one title across four programmes is lying on the one surface a listener sees
-// with the screen off. The artwork is the site's own square mark.
+// with the screen off. The artwork is the site's own square mark; the artist is
+// who made what is on, from the programme's record, and the album the channel.
 const MEDIA_SESSION = 'mediaSession' in navigator;
-function announce(name) {
+function announce(name, by) {
   if (!MEDIA_SESSION) return;
   navigator.mediaSession.metadata = new MediaMetadata({
     title: name || 'Raadio',
-    artist: 'ECCM',
-    album: 'Raadio',
+    artist: by || 'ECCM',
+    album: chTitle(),
     artwork: [{ src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' }],
   });
   navigator.mediaSession.playbackState = playing ? 'playing' : 'paused';
@@ -238,7 +262,9 @@ async function poll() {
   }
 
   let n = null;
-  try { n = await fetch(`${STATION}/now.json`, { cache: 'no-store' }).then((r) => r.json()); } catch { /* the station is allowed to be slow */ }
+  const asked = ch.name;
+  try { n = await fetch(route('/now.json'), { cache: 'no-store' }).then((r) => r.json()); } catch { /* the station is allowed to be slow */ }
+  if (asked !== ch.name) return;   // an answer about the channel that was left
   if (!n || n.error) { onAir(false); return; }
   // The station answered with a programme, which is the whole of the claim the
   // line above makes, stamped with this clock and never a time from inside the
@@ -248,6 +274,8 @@ async function poll() {
   // title at all until 2026-10-01, and positron told every visitor `no title`
   // beside a file name
   title.textContent = n.title || n.programme;
+  who.textContent = n.who || '';
+  lastWho = n.who || null;
   // a new loop moves every row's clock time, and a new rev is a new running
   // order, so either one means the table is read again
   if (n.rev !== order.rev || n.loop !== order.loop) readOrder();
@@ -257,11 +285,12 @@ async function poll() {
   set('into', `${num(n.into)} s`);
   if (lastProgramme && n.programme !== lastProgramme) {
     if (playing) { crossed++; set('crossed', String(crossed)); }
-    log(`${lastProgramme}, siis ${n.programme}.`);
-    announce(n.title || n.programme);
+    log(`${lastTitle}, siis ${n.title || n.programme}.`);
+    announce(n.title || n.programme, n.who);
   }
-  if (!lastProgramme) announce(n.title || n.programme);
+  if (!lastProgramme) announce(n.title || n.programme, n.who);
   lastProgramme = n.programme;
+  lastTitle = n.title || n.programme;
 }
 
 // ── going on air ────────────────────────────────────────────────────────────
@@ -275,8 +304,7 @@ function stop() {
   audio.removeAttribute('src');
   audio.load();
   btn.textContent = 'Kuula'; btn.setAttribute('aria-pressed', 'false');
-  set('behind', ''); set('advance', '');
-  announce(lastProgramme);
+  announce(lastTitle, lastWho);
 }
 
 function start() {
@@ -290,7 +318,7 @@ function start() {
     // an AirPlay-eligible element can be handed to a remote route
     // mid-measurement, and then the numbers describe a device that is not here
     audio.disableRemotePlayback = true;
-    audio.src = PLAYLIST;
+    audio.src = route('/station.m3u8');
   } else if (window.Hls && Hls.isSupported()) {
     engine = 'hls.js';
     hls = new Hls({ lowLatencyMode: false, liveSyncDurationCount: 3 });
@@ -314,7 +342,7 @@ function start() {
       log(`hls.js: ${data.type} ${data.details}.`);
       if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError?.();
     });
-    hls.loadSource(PLAYLIST);
+    hls.loadSource(route('/station.m3u8'));
     hls.attachMedia(audio);
   } else {
     engine = 'none';
@@ -330,11 +358,86 @@ function start() {
   audio.play().catch((e) => log(`Mängimine ootab: ${e.name}.`));
   rateAt = 0; rateT = 0;   // the average starts at the first frame, not at the press
   crossed = 0; set('crossed', '0');
+  readSay.textContent = '';
   poll();
   clearInterval(timer); timer = setInterval(poll, POLL_MS);
 }
 
 btn.addEventListener('click', () => (playing ? stop() : start()));
+
+// ── the channels ────────────────────────────────────────────────────────────
+// One small button per channel, as many as the station has, wrapping at their
+// own sizes; the one this page plays is filled and carries aria-current. Each
+// is a real link to ?k=<name>, so it opens in a new tab and works with no
+// script; a click here switches in place instead: the player is torn down and,
+// if it was playing, built again on the new channel's playlist, since a live
+// channel has no past to carry over. One channel draws no switch at all.
+function drawChannels() {
+  chNav.replaceChildren(...ch.list.map((c) => {
+    const a = document.createElement('a');
+    const q = new URLSearchParams(PARAMS);
+    q.set('k', c.name);
+    a.href = `?${q}`;
+    a.textContent = c.title || c.name;
+    const on = c.name === (ch.name || ch.def);
+    a.className = on ? 'btn btn-sm btn-pri' : 'btn btn-sm';
+    if (on) a.setAttribute('aria-current', 'true');
+    a.addEventListener('click', (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+      e.preventDefault();
+      choose(c.name);
+    });
+    return a;
+  }));
+  chNav.hidden = ch.list.length < 2;
+}
+
+function choose(name) {
+  if (name === (ch.name || ch.def)) return;
+  const was = playing;
+  stop();
+  ch.name = name;
+  const q = new URLSearchParams(PARAMS);
+  q.set('k', name);
+  history.replaceState(null, '', `?${q}`);
+  forget();
+  drawChannels();
+  log(`Kanal ${chTitle()}.`);
+  if (was) start();
+}
+
+// Everything on the page that was about the channel just left, cleared and
+// asked again of the one now chosen.
+function forget() {
+  Object.assign(order, { rev: null, loop: null, playing: null, key: null, failedAt: 0, ok: false });
+  rows.replaceChildren(); orderBox.hidden = true; orderSay.textContent = 'Kava loetakse jaamast.';
+  lastProgramme = null; lastTitle = null; lastWho = null;
+  title.textContent = 'Eetrist väljas'; who.textContent = '';
+  set('into', '');
+  readOrder(); poll();
+}
+
+async function readChannels() {
+  try {
+    const r = await fetch(`${STATION}/channels.json`, { cache: 'no-store' });
+    if (!r.ok) return;   // a station from before channels: one channel, no switch
+    const d = await r.json();
+    ch.def = d.default || 'main';
+    ch.list = d.channels || [];
+    // a name the station does not have plays the default, and the log and the
+    // address say so
+    if (ch.name && !ch.list.some((c) => c.name === ch.name)) {
+      const bad = ch.name;
+      ch.name = null;
+      log(`Kanalit ${bad} ei ole, mängib ${chTitle()}.`);
+      const q = new URLSearchParams(PARAMS); q.delete('k');
+      history.replaceState(null, '', q.size ? `?${q}` : location.pathname);
+      if (!playing) forget();
+    }
+    drawChannels();
+  } catch { /* the switch waits for a station that answers */ }
+}
+readChannels();
 
 log('Leht avati, jaama loetakse.');
 let timer = setInterval(poll, POLL_MS);
