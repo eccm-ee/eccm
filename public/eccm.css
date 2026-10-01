@@ -566,7 +566,20 @@
   .station-who { color: var(--eccm-ink-2); margin-block-start: var(--eccm-s-1); overflow-wrap: anywhere; min-block-size: 1lh; }
   /* the channels, as many as the station has: small buttons that wrap as a cluster at their own sizes,
      the one playing filled, a group's gap above what it switches */
-  .station-channels { display: flex; flex-wrap: wrap; gap: var(--eccm-s-2); margin-block-end: var(--eccm-s-8); }
+  /* the channels side by side, a column each (asked 2026-10-01: "show stations in colums"): no box, a rule on
+     top, ink on the one this page follows and the light rule on the others; three to a row on a desk, fewer as
+     the frame narrows; inside, the title, what is on in the body size, who, its button and the next two */
+  .station-cols { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: var(--eccm-s-8) var(--eccm-s-6); margin-block-end: var(--eccm-s-12); }
+  .station-col { display: grid; align-content: start; gap: var(--eccm-s-2); padding-block-start: var(--eccm-s-4); border-block-start: 1px solid var(--eccm-rule); }
+  .station-col[aria-current="true"] { border-block-start-color: var(--eccm-ink); }
+  .station-col h3 { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+  .station-col h3 a { text-decoration-line: none; color: inherit; }
+  .station-col h3 a:hover { text-decoration-line: underline; }
+  .station-col-now { font-size: var(--eccm-t-l); line-height: var(--eccm-lh-head); overflow-wrap: anywhere; }
+  .station-col .btn { justify-self: start; margin-block: var(--eccm-s-2); }
+  .station-col-next { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--eccm-s-4); row-gap: var(--eccm-s-1); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
+  .station-col-next li { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; }
+  .station-col-next time { color: var(--eccm-ink-2); }
   /* four short readouts pair up on a phone too, where the facts would stack them one a row */
   .facts.station-read { margin-block-start: var(--eccm-s-8); grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr)); }
   .station-read dd { min-block-size: 1lh; }

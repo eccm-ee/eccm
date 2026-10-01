@@ -21,7 +21,7 @@ export const renderStation = () => {
   <p class="note">Üks voog, mille järjekorra kirjutab tekstifail: millised sekundid millisest salvestusest tulevad järgmisena.</p>
   <div class="station">
   <section class="station-now">
-    <nav class="station-channels" id="st-channels" aria-label="Kanalid" hidden></nav>
+    <div class="station-cols" id="st-channels" role="group" aria-label="Kanalid" hidden></div>
     <div aria-live="polite">
       <p class="small" id="st-air">Jaama olekut veel ei tea.</p>
       <p class="station-title" id="st-title">Eetrist väljas</p>

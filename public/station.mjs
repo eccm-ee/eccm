@@ -299,6 +299,7 @@ async function poll() {
 function stop() {
   if (!playing) return;
   playing = false;
+  drawChannels();
   audio.pause();
   if (hls) { hls.destroy(); hls = null; }
   audio.removeAttribute('src');
@@ -310,6 +311,7 @@ function stop() {
 function start() {
   if (playing) return;
   playing = true;
+  drawChannels();
   restarts = 0;
   btn.textContent = 'Peata'; btn.setAttribute('aria-pressed', 'true');
   if (NATIVE_HLS) {
@@ -365,32 +367,89 @@ function start() {
 
 btn.addEventListener('click', () => (playing ? stop() : start()));
 
-// ── the channels ────────────────────────────────────────────────────────────
-// One small button per channel, as many as the station has, wrapping at their
-// own sizes; the one this page plays is filled and carries aria-current. Each
-// is a real link to ?k=<name>, so it opens in a new tab and works with no
-// script; a click here switches in place instead: the player is torn down and,
-// if it was playing, built again on the new channel's playlist, since a live
-// channel has no past to carry over. One channel draws no switch at all.
+// ── the channels, in columns ───────────────────────────────────────────────
+// Every channel side by side (asked 2026-10-01: "show stations in colums"): its
+// title, what it plays now and by whom, the next two programmes with their
+// start, and its own small Kuula, which on the column being heard reads Peata.
+// The column this page follows carries an ink rule on top and aria-current;
+// its full detail, the readouts, the whole running order and the log, stays
+// below. Each title is a real link to ?k=<name>, so it opens in a new tab and
+// works with no script. The columns are read again every COLS_MS from
+// /channels.json and each channel's /schedule.json, which is a few small JSON
+// reads, never the audio.
+const COLS_MS = 5000;
+const upcoming = {};   // channel name -> the next two slots, from its /schedule.json
+const chRoute = (name, path) => `${STATION}${name === ch.def ? '' : `/c/${encodeURIComponent(name)}`}${path}`;
+async function readUpcoming() {
+  await Promise.all(ch.list.map(async (c) => {
+    try {
+      const r = await fetch(chRoute(c.name, '/schedule.json'), { cache: 'no-store' });
+      if (!r.ok) return;
+      const d = await r.json();
+      const list = (d.slots || []).filter((x) => !x.missing);
+      const at = list.findIndex((x) => x.i === d.playing);
+      upcoming[c.name] = (at < 0 ? list : [...list.slice(at + 1), ...list.slice(0, at)]).slice(0, 2);
+    } catch { /* this column keeps what it last had */ }
+  }));
+}
 function drawChannels() {
   chNav.replaceChildren(...ch.list.map((c) => {
+    const on = c.name === (ch.name || ch.def);
+    const col = document.createElement('section');
+    col.className = 'station-col';
+    if (on) col.setAttribute('aria-current', 'true');
+    const h = document.createElement('h3');
     const a = document.createElement('a');
-    const q = new URLSearchParams(PARAMS);
-    q.set('k', c.name);
+    const q = new URLSearchParams(PARAMS); q.set('k', c.name);
     a.href = `?${q}`;
     a.textContent = c.title || c.name;
-    const on = c.name === (ch.name || ch.def);
-    a.className = on ? 'btn btn-sm btn-pri' : 'btn btn-sm';
-    if (on) a.setAttribute('aria-current', 'true');
     a.addEventListener('click', (e) => {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
-      e.preventDefault();
-      choose(c.name);
+      e.preventDefault(); choose(c.name);
     });
-    return a;
+    h.append(a);
+    const now = document.createElement('p');
+    now.className = 'station-col-now';
+    const p = c.playing || {};
+    now.textContent = p.title || p.programme || 'Eetrist väljas';
+    const by = document.createElement('p');
+    by.className = 'small';
+    by.textContent = p.who || '';
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = on && playing ? 'btn btn-sm btn-pri' : 'btn btn-sm';
+    b.textContent = on && playing ? 'Peata' : 'Kuula';
+    b.addEventListener('click', () => {
+      if (on && playing) { stop(); drawChannels(); return; }
+      if (!on) choose(c.name);
+      if (!playing) start();
+      drawChannels();
+    });
+    const next = document.createElement('ol');
+    next.className = 'station-col-next';
+    for (const x of upcoming[c.name] || []) {
+      const li = document.createElement('li');
+      const t = document.createElement('time');
+      t.textContent = clock(x.from);
+      const n = document.createElement('span');
+      n.textContent = x.title || x.key;
+      li.append(t, n);
+      next.append(li);
+    }
+    col.append(h, now, by, b, next);
+    return col;
   }));
   chNav.hidden = ch.list.length < 2;
 }
+async function refreshCols() {
+  try {
+    const r = await fetch(`${STATION}/channels.json`, { cache: 'no-store' });
+    if (r.ok) { const d = await r.json(); ch.list = d.channels || ch.list; }
+  } catch { /* keep the last list */ }
+  await readUpcoming();
+  drawChannels();
+}
+setInterval(refreshCols, COLS_MS);
 
 function choose(name) {
   if (name === (ch.name || ch.def)) return;
@@ -434,8 +493,9 @@ async function readChannels() {
       history.replaceState(null, '', q.size ? `?${q}` : location.pathname);
       if (!playing) forget();
     }
+    await readUpcoming();
     drawChannels();
-  } catch { /* the switch waits for a station that answers */ }
+  } catch { /* the columns wait for a station that answers */ }
 }
 readChannels();
 
