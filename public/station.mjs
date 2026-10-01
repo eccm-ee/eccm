@@ -89,8 +89,9 @@ function markOrder(c) {
 async function readSchedule(c) {
   try {
     const r = await fetch(route(c.name, '/schedule.json'), { cache: 'no-store' });
-    if (!r.ok) return;
-    const d = await r.json();
+    // an empty channel (an open live slot before its first chunk) answers 503 and still lists its slots
+    const d = await r.json().catch(() => null);
+    if (!d || !Array.isArray(d.slots)) return;
     c.slots = d.slots || [];
     // the station's own order: the slot on air first, then what follows it, each with its next start
     c.rev = d.rev; c.loop = d.loop;
@@ -117,10 +118,13 @@ function drawNow(c) {
     u.times.textContent = slot && slot.open ? 'otse' : '';
   }
   const on = playing && current === c.name;
-  u.state.textContent = c.down ? 'ei vasta' : on ? 'kuulad' : 'eetris';
+  u.state.textContent = c.down ? 'ei vasta' : on ? 'kuulad' : p.programme ? 'eetris' : 'ootab';
   u.btn.textContent = on ? 'Peata' : 'Kuula';
   u.btn.className = on ? 'btn btn-sm btn-pri' : 'btn btn-sm';
   u.btn.setAttribute('aria-pressed', String(on));
+  // a channel with nothing on air (a live slot before its first chunk) has no playlist to start
+  u.btn.disabled = !on && !p.programme;
+  if (!p.programme) u.now.textContent = c.slots?.some((x) => x.open) ? 'Ootab otseülekannet' : 'Eetrist väljas';
   if (current === c.name) u.col.setAttribute('aria-current', 'true'); else u.col.removeAttribute('aria-current');
 }
 
