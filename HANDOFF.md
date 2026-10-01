@@ -2,13 +2,42 @@
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
 committed on `main` of **https://github.com/kristjanjansen/eccm**, private.
-**Not pushed:** 37 commits sit on `origin/main` (count with `git log --oneline
+**Not pushed:** 43 commits sit on `origin/main` (count with `git log --oneline
 origin/main..HEAD`), because `kristjanjansen`, the account that owns the
 repository, has no valid token on this machine (`gh auth switch` answers "no
 token found"). The owner runs `gh auth login -h github.com` as
 `kristjanjansen`; then push per CLAUDE.md and switch back. positron has the
 same: 74 commits on its `origin/main`, local too. Numbers here were counted with a
 command when this was written; count again before building on one.
+
+## 2026-10-01, late: the station page, UbuWeb, the share cards
+
+- **/station** (https://eccm.positron.studio/station) is the channels in
+  columns, each holding the whole of its station and nothing said twice: name
+  and state (eetris, kuulad, ootab, ei vasta), what is on in two fixed lines,
+  who, a progress line with "0:22 / 0:30", one Kuula or Peata, and the running
+  order with the slot on air first, as NTS lays out its two live channels.
+  Every part has a fixed height so nothing moves. The intro line and the
+  "Tehnilised andmed" fold are gone (asked); the numbers and the log go to the
+  browser console, `[station]`. A channel with nothing on air (a live slot
+  before its first chunk) says "Ootab otseülekannet" with its button off.
+- **Põhikanal is UbuWeb now** (channel `main`, titled UbuWeb): nine sound
+  poetry classics from ubu.com, copied into the station's R2 as
+  `ubu-*.mp3` with title, who and a `meta.source` link to the UbuWeb page,
+  about a 20 minute loop (Lucier clipped to 5 minutes). The ERR relay left it.
+  UbuWeb's fair-use stance is not a licence: settle rights before anything
+  public. **Otse proov** (`live-test`) is only the live slot "Proovisaade" now.
+- **The site has a share card:** `/og/site-et.png` and `/og/site-en.png`, the
+  original logo alone on white (the header's lockup, Instrument Sans Condensed
+  for the tagline), named by `page()` for every page with no image of its own
+  (`useOrigin` in `src/render/chrome.mjs`, set per request in `src/index.mjs`)
+  and written by hand into the four static pages with the staging host, **to
+  change at cutover**. Before it, a link to /station previewed as a crop of the
+  footer's ULYSSES mark. No card draws a staff line past the mark's ends;
+  serif card titles take the size the sans would (`TEMPLATE_V` 5). An iMessage
+  preview of the bare front page address stays cached without a picture on the
+  owner's phone; the server answers iMessage's own fetcher with the card
+  (checked), and a fresh address such as `/?p=1` shows it.
 
 ## 2026-10-01, the night: admin, components, the station's channels and live
 
