@@ -14,5 +14,8 @@
   "overrides": {
     "workerd": "1.20260701.1",
     "@cloudflare/workerd-darwin-arm64": "1.20260701.1"
+  },
+  "dependencies": {
+    "@resvg/resvg-wasm": "2.6.2"
   }
 }

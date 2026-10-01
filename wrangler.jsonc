@@ -23,6 +23,9 @@
     "not_found_handling": "none"
   },
   "observability": { "enabled": true },
+  // the share images' faces (src/og/render.mjs), bundled as bytes; the
+  // resvg wasm needs no rule, a .wasm import is a compiled module by default
+  "rules": [{ "type": "Data", "globs": ["**/*.ttf"], "fallthrough": true }],
   // SQLite-backed, the shape positron's workers/items proved
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Items"] }],
   "env": {

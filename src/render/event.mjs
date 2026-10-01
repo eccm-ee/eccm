@@ -7,6 +7,37 @@ import { md } from './md.mjs';
 import { T, OTHER, page } from './chrome.mjs';
 import { dateLong, dayMonth, clock, mapsUrl } from './dates.mjs';
 import { poster } from './pic.mjs';
+import { cardInput, cardVersion, cardPath, cardAlt, W as CARD_W, H as CARD_H } from '../og/card.mjs';
+
+// the Open Graph head of plans/plan-eccm-event-markup.md section 4, with the
+// versioned share image of src/og/card.mjs; the description is the body's
+// first paragraph as plain text, cut at a word under 200 characters
+const SITE_NAME = { et: 'Eesti Nüüdismuusika Keskus', en: 'Estonian Centre of Contemporary Music' };
+const LOCALE = { et: 'et_EE', en: 'en_GB' };
+const firstPara = (body) => {
+  const p = (body || '').split(/\n\s*\n/).map((s) => s.trim()).find((s) => s && !/^(#|[-*] |\d+\. )/.test(s)) || '';
+  const plain = p.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/[*_`>#]/g, '').replace(/\s+/g, ' ').trim();
+  return plain.length <= 200 ? plain : plain.slice(0, 200).replace(/\s+\S*$/, '') + '…';
+};
+const ogHead = ({ lang, title, body, ev, media, origin, canonical }) => {
+  const input = cardInput({ lang, title, ev, scheme: media && media.scheme });
+  const desc = firstPara(body);
+  return html`<meta property="og:type" content="website">
+<meta property="og:url" content="${canonical}">
+<meta property="og:title" content="${title}">
+${desc ? html`<meta name="description" content="${desc}">
+<meta property="og:description" content="${desc}">` : ''}
+<meta property="og:site_name" content="${SITE_NAME[lang]}">
+<meta property="og:locale" content="${LOCALE[lang]}">
+<meta property="og:locale:alternate" content="${LOCALE[OTHER[lang]]}">
+<meta property="og:image" content="${origin + cardPath(ev.id, lang, cardVersion(input))}">
+<meta property="og:image:width" content="${CARD_W}">
+<meta property="og:image:height" content="${CARD_H}">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="${cardAlt(input)}">
+<meta name="twitter:card" content="summary_large_image">
+`;
+};
 
 export const CATEGORY = {
   eccm: { et: 'ECCM', en: 'ECCM' }, koostoo: { et: 'Koostöö', en: 'Collaboration' }, improtest: { et: 'Improtest', en: 'Improtest' },
@@ -81,7 +112,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
   // most of its text, so both are asked for before the stylesheet finds them
   // (asked 2026-09-30: "i saw font change jump ... can we optimize / preload?")
   const pic = media ? poster(media, media[`alt_${lang}`] || media.alt_et) : null;
-  const head = html`${pic ? pic.preload : ''}${scheme && scheme.serif ? html`<link rel="preload" href="/vendor/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>` : ''}`;
+  const head = html`${ogHead({ lang, title, body: text.body, ev, media, origin, canonical })}${pic ? pic.preload : ''}${scheme && scheme.serif ? html`<link rel="preload" href="/vendor/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>` : ''}`;
 
   const body = html`  <article class="event"${scheme ? raw(` data-scheme="${scheme.mode}" style="${scheme.style}"`) : ''}>
     <header class="event-top">
@@ -93,7 +124,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
           <div><dt>${t.when}</dt><dd><time datetime="${ev.starts_at}${off}">${dateLong(ev.starts_at, lang)} ${t.at} ${clock(ev.starts_at, lang)}</time>${ev.duration_min ? html`, <time datetime="PT${ev.duration_min}M">${ev.duration_min} ${t.min}</time>` : ''}</dd></div>
           <div><dt>${t.where}</dt><dd><a class="place" href="${mapsUrl(where)}">${where}</a></dd></div>
           ${ev.category !== 'eccm' ? html`<div><dt>${t.series}</dt><dd>${CATEGORY[ev.category][lang]}</dd></div>` : ''}
-          <div><dt>${t.calendar}</dt><dd><a href="${gcal}">Google</a> <a href="${outlook}">Outlook</a></dd></div>
+          <div><dt>${t.calendar}</dt><dd><a href="${gcal}">Google</a> <a href="${outlook}">Outlook</a> <a href="${eventPath(textLang, text.slug)}.ics">iCal</a></dd></div>
           <div><dt>${t.ask}</dt><dd><a href="tel:${CONTACT.tel}">${CONTACT.telText}</a>, <a href="${CONTACT.site}">${CONTACT.siteText}</a></dd></div>
         </dl>
         <p class="event-actions">

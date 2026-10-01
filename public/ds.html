@@ -58,6 +58,12 @@
     /* a negative icon carries its own black square; the row stays on the page (asked 2026-09-27: "put black to back to each icon not whole block") */
     .ds-neg img { background: #1a1a1a; }
     .ds-sizes img { display: block; }
+    /* the share images, each at half its 1200 px where two fit and the column's width where one does, so a pair is clearly
+       equal; a 1 px rule in the page's own colour around every one, since a ground near white has no other edge */
+    .ds-og { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(30rem, 100%), 1fr)); gap: var(--eccm-s-12) var(--eccm-s-8); margin-block: var(--eccm-s-8); }
+    .ds-og figure { margin: 0; }
+    .ds-og img { display: block; inline-size: 100%; block-size: auto; max-inline-size: 600px; outline: 1px solid var(--eccm-rule); }
+    .ds-og figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
     /* the icon's square shows on hover, since a positive mark on white has no edge (asked 2026-09-27) */
     .ds-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--eccm-s-2); max-inline-size: var(--eccm-measure); }
     /* artist bios, plans/plan-eccm-bios.md section 3: no box, no tint, no
@@ -371,6 +377,11 @@
     <figure><img src="./icons/stack-neg-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
     <figure><img src="./icons/stack-neg-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
   </div>
+  <h2>Share images</h2>
+  <div class="prose flow">
+    <p>The image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Newsreader or Schibsted Grotesk, then the date, time and venue in the second ink, and the mark at the foot with its stave run to the right edge, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
+  </div>
+  <div class="ds-og" id="og-cards"><p class="ds-cap">Loading the events.</p></div>
 </main>
 
 <footer class="site-foot" lang="en">
@@ -378,7 +389,7 @@
     <div><a class="mk" href="./" aria-label="Estonian Centre of Contemporary Music"><svg viewBox="35 27 310 96.5" aria-hidden="true"><use href="#mark" x="35" y="27" width="310" height="96.5"/></svg></a><p class="copy">© 2026 Estonian Centre of Contemporary Music</p></div>
     <div><ul class="two"><li><a href="./">Events</a></li><li><a href="/en/eccm">ECCM</a></li><li><a href="/en/tallinn-1965">Tallinn 1965</a></li><li><a href="/en/nan">NAN</a></li><li><a href="/en/ulysses">Ulysses</a></li><li><a href="/en/open-calls">Open calls</a></li></ul></div>
     <div class="contact"><p>Hall<br>Pühavaimu 9, Tallinn</p><p>Postal address<br>Herne 11A, 10135 Tallinn</p></div><div class="contact"><p>Phone<br><a href="tel:+3725162103">+372 516 2103</a></p><p><a href="https://eccm.ee/index.php/et/eccm/kontakt">Write to us</a></p><p><a href="https://www.instagram.com/eccm.ee/">Instagram</a></p><p><a href="https://www.facebook.com/eestinyydismuusikakeskus">Facebook</a></p></div>
-    <div class="end"><a class="partner" href="https://muusikalinntallinn.ee/eng/"><img src="./partners/tallinn-cityofmusic-black_RGB.svg" alt="Tallinn, UNESCO City of Music"></a></div>
+    <div class="end"><a class="partner partner-uly" href="https://ulysses-platform.eu/"><img src="/partners/ulysses-platform-black.svg" alt="ULYSSES Platform"></a><a class="partner" href="https://muusikalinntallinn.ee/eng/"><img src="./partners/tallinn-cityofmusic-black_RGB.svg" alt="Tallinn, UNESCO City of Music"></a></div>
   </div></div>
 </footer>
 <script type="module" src="./site.mjs"></script>
@@ -526,6 +537,26 @@ const draw = async () => {
   window.__wordmark = { count: cells.querySelectorAll('.cell').length, under: UNDER, beside: BESIDE, gap: BESIDE_GAP, enFit: +enFit.toFixed(1), etFit: +etFit.toFixed(1), enUnder: +blockWidth(split2(EN), UNDER).toFixed(1), etUnder: +blockWidth(split2(ET), UNDER).toFixed(1), enBeside: +blockWidth(split2(EN), BESIDE).toFixed(1), etBeside: +blockWidth(split2(ET), BESIDE).toFixed(1), boxes, frames, margins, instrument: document.fonts.check('500 100px "Instrument Sans"') };
 };
 draw();
+</script>
+<script type="module">
+// the share images: the list the Worker answers at /og/e.json, each card the
+// URL its event page carries, so what shows here is what a scraper fetches
+const box = document.getElementById('og-cards');
+try {
+  const cards = await (await fetch('/og/e.json')).json();
+  box.replaceChildren(...cards.map((c) => {
+    const f = document.createElement('figure');
+    const a = document.createElement('a'); a.href = c.page;
+    const img = document.createElement('img'); img.src = c.image; img.width = 1200; img.height = 630; img.alt = c.title;
+    a.append(img);
+    const cap = document.createElement('figcaption');
+    cap.textContent = `${c.lang.toUpperCase()}, ${c.serif ? 'Newsreader' : 'Schibsted Grotesk'} on ${c.ground}`;
+    f.append(a, cap); return f;
+  }));
+  if (!cards.length) box.innerHTML = '<p class="ds-cap">No published events.</p>';
+} catch (e) {
+  box.innerHTML = '<p class="ds-cap">The list did not load. It comes from the Worker, so this page shows it only where the Worker runs.</p>';
+}
 </script>
 </body>
 </html>

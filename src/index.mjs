@@ -28,8 +28,10 @@ import { editor } from './editor.mjs';
 import { renderSitemap, renderFeed } from './render/feeds.mjs';
 import { serveMedia } from './media.mjs';
 import { useTransforms } from './render/pic.mjs';
+import { renderIcs } from './render/ics.mjs';
 import { itemsRoute } from './items.mjs';
 import { newsletter, drain } from './newsletter.mjs';
+import { ogRoute } from './og/route.mjs';
 export { Items } from './items.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
@@ -88,6 +90,25 @@ async function textPage(env, lang, slug, url) {
   return renderPage({ lang, text, fallback, twin, origin: url.origin, path: url.pathname });
 }
 
+// an event's or a language's calendar; the rows are the list's query, one event or the window
+const ICS = { 'content-type': 'text/calendar; charset=utf-8', 'cache-control': 'public, max-age=300' };
+const CALNAME = { et: 'ECCM sündmused', en: 'ECCM events' };
+async function calendar(env, lang, slug, url) {
+  const q = `SELECT e.id, e.starts_at, e.ends_at, e.duration_min, e.venue, e.address, e.ticket_url, e.updated_at, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang, COALESCE(t1.body, t0.body) AS body
+    FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et'
+    WHERE e.status = 'published' AND COALESCE(t1.title, t0.title) IS NOT NULL`;
+  let rows;
+  if (slug) {
+    rows = (await env.DB.prepare(`${q} AND (t1.slug = ? OR (t1.slug IS NULL AND t0.slug = ?))`).bind(lang, slug, slug).all()).results;
+    if (!rows.length) return null;
+  } else {
+    const since = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn' }).format(new Date(Date.now() - 90 * 864e5));
+    rows = (await env.DB.prepare(`${q} AND substr(e.starts_at, 1, 10) >= ? ORDER BY e.starts_at`).bind(lang, since).all()).results;
+  }
+  const headers = { ...ICS, ...(slug ? { 'content-disposition': `attachment; filename="${slug}.ics"` } : {}) };
+  return new Response(renderIcs({ rows, origin: url.origin, lang, name: slug ? rows[0].title : CALNAME[lang] }), { headers });
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -95,10 +116,16 @@ export default {
     useTransforms(env.IMAGE_TRANSFORMS);
     // the uploaded pictures from R2, /media/{sha256}.{ext} (src/media.mjs)
     if (p.startsWith('/media/')) { const out = await serveMedia(env, p); if (out) return out; }
+    // the event share images and their list for /ds (src/og/route.mjs), since 2026-10-01
+    if (p.startsWith('/og/')) { const out = await ogRoute(request, env, url, ctx); if (out) return out; }
     // the sitemap and the feeds, named nowhere until cutover (src/render/feeds.mjs), url.origin while staging only
     if (p === '/sitemap.xml') return new Response(renderSitemap({ origin: url.origin, events: (await env.DB.prepare("SELECT e.id, e.updated_at, t.lang, t.slug FROM event e JOIN event_text t ON t.event_id = e.id WHERE e.status = 'published'").all()).results, pages: (await env.DB.prepare("SELECT p.id, p.updated_at, t.lang, t.slug FROM page p JOIN page_text t ON t.page_id = p.id WHERE p.status = 'published'").all()).results }), { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, s-maxage=86400, stale-while-revalidate=86400' } });
     const fm = /^\/(et|en)\/feed\.xml$/.exec(p);
     if (fm) return new Response(renderFeed({ origin: url.origin, lang: fm[1], rows: (await env.DB.prepare("SELECT m.*, e.*, t.slug, t.title, t.body FROM event e JOIN event_text t ON t.event_id = e.id AND t.lang = ? LEFT JOIN media m ON m.id = e.image_id WHERE e.status = 'published' ORDER BY e.created_at DESC, e.id DESC LIMIT 20").bind(fm[1]).all()).results }), { headers: { 'content-type': 'application/rss+xml; charset=utf-8', 'cache-control': 'public, max-age=60' } });
+    // the calendars (src/render/ics.mjs), session 1's last piece since 2026-10-01: one event at its page's
+    // address plus .ics, and a feed per language at the list's, the coming events and the last ninety days
+    const ic = /^\/(et\/sundmused|en\/events)(?:\/([a-z0-9-]+))?\.ics$/.exec(p);
+    if (ic) { const out = await calendar(env, ic[1] === 'et/sundmused' ? 'et' : 'en', ic[2], url); if (out) return out; }
     for (const lang of ['et', 'en']) {
       const m = EVENT[lang].exec(p);
       if (m) { const out = await event(env, lang, m[1], url); if (out) return reply(out); break; }
