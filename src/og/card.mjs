@@ -183,35 +183,30 @@ export const cardSvg = (input) => {
 export const cardAlt = (input) => [input.title, ...input.meta].join(', ');
 
 // ── the site's own card ──────────────────────────────────────────────────────
-// Every page that is not an event shares the logo and nothing else (asked
-// 2026-10-01: "make eccm default social card", then "just original logo",
-// after a link to /station previewed as a crop of the ULYSSES mark in the
-// footer, which is what a scraper takes when a page names no image). The
-// header's lockup, the letters with their own short stave and the tagline in
-// Instrument Sans at its narrowest width beside them (.tag-is), centred on
-// white; geometry and words are the header's (src/render/mark.mjs), drawn at
-// the one scale that makes the English, the longer, 800 px wide. No staff line
-// runs past the mark's own ends, here or on any card.
-const LOCKUP = {
-  et: { w: 537.5, lines: ['eesti nüüdis', 'muusika keskus'], hyphen: [529.3, 58.32, 11.1, 1.5] },
-  en: { w: 601.5, lines: ['estonian centre of', 'contemporary music'] },
-};
-const SITE_K = 800 / LOCKUP.en.w;
+// Every page that is not an event shares this one (asked 2026-10-01: "make eccm
+// default social card", then "default og should have event card style, pick a
+// bg, put logo to bottom left", after a link to /station previewed as a crop of
+// the footer's ULYSSES mark, which is what a scraper takes when a page names no
+// image). It is an event card: the centre's name as the title, the hall's
+// address as the meta line, the mark at the foot on the left, on a ground no
+// event takes from its picture, the deep blue /ds already shows as its dark
+// ground, with white ink, so a shared page reads as ECCM's own at a glance.
+const SITE_CARD = { ground: '#1b2746', ink: '#ffffff', ink2: '#c9c9c9' };
+const SITE_NAME = { et: 'Eesti Nüüdismuusika Keskus', en: 'Estonian Centre of Contemporary Music' };
+export const SITE_V = 2;   // the site card's own version, in its R2 key
 export const siteSvg = (lang) => {
-  const L = LOCKUP[lang] || LOCKUP.et;
-  const k = SITE_K, ink = SITE.ink;
-  const tx = Math.round((W - L.w * k) / 2 - 35 * k), ty = Math.round((H - 96.5 * k) / 2 - 27 * k);
-  const letters = `<g transform="translate(${tx} ${ty}) scale(${k})" fill="${ink}">${LETTERS.replace(/INK/g, ink)}</g>`;
-  // the hairlines and the joins snapped to whole pixels, never scaled into grey
-  const rect = ([x, y, w, h]) => {
-    const x0 = Math.round(tx + x * k), x1 = Math.max(x0 + 1, Math.round(tx + (x + w) * k));
-    const y0 = Math.round(ty + y * k), hh = Math.max(1, Math.round(h * k));
-    return `<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${hh}" fill="${ink}"/>`;
-  };
-  const lines = LINES.map(([x, y, w]) => rect([x, y, w, 1.5])).join('') + (L.hyphen ? rect(L.hyphen) : '');
-  const tag = L.lines.map((t, i) => `<text x="373" y="${i ? 104 : 68.9}" font-family="Instrument Sans Condensed" font-size="37" fill="${ink}">${xml(t)}</text>`).join('');
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`
-    + `<rect width="${W}" height="${H}" fill="${SITE.ground}"/>${letters}<g transform="translate(${tx} ${ty}) scale(${k})">${tag}</g><g shape-rendering="crispEdges">${lines}</g></svg>`;
+  const l = lang === 'en' ? 'en' : 'et';
+  return cardSvg({ lang: l, title: SITE_NAME[l], meta: ['Pühavaimu 9, Tallinn'], ...SITE_CARD, serif: false });
 };
+// the radio's own card, the same shape on a deep wine, so a link to /radio is
+// told from the site's card at a glance (asked 2026-10-01: "rename station to
+// radio and make a social card for it")
+const RADIO_CARD = { ground: '#3b1d2b', ink: '#ffffff', ink2: '#d9c8d0' };
+const RADIO_NAME = { et: 'Raadio', en: 'Radio' };
+export const radioSvg = (lang) => {
+  const l = lang === 'en' ? 'en' : 'et';
+  return cardSvg({ lang: l, title: RADIO_NAME[l], meta: [SITE_NAME[l]], ...RADIO_CARD, serif: false });
+};
+export const radioPath = (lang) => `/og/radio-${lang === 'en' ? 'en' : 'et'}.png`;
 export const sitePath = (lang) => `/og/site-${lang === 'en' ? 'en' : 'et'}.png`;
 export const siteAlt = (lang) => (lang === 'en' ? 'ECCM, Estonian Centre of Contemporary Music' : 'ECCM, Eesti Nüüdismuusika Keskus');

@@ -17,7 +17,8 @@
 // page's own listening and its log go to the browser's console, not the page
 // (asked 2026-10-01: "rm tehnilsied andmed").
 import { html } from './html.mjs';
-import { page } from './chrome.mjs';
+import { page, origin } from './chrome.mjs';
+import { radioPath, W as OG_W, H as OG_H } from '../og/card.mjs';
 
 export const renderStation = () => {
   const body = html`  <h1>Raadio</h1>
@@ -26,5 +27,16 @@ export const renderStation = () => {
   </div>
   <script src="/vendor/hls-1.7.1.min.js"></script>
   <script type="module" src="/station.mjs"></script>`;
-  return page({ lang: 'et', title: 'Raadio.', alternate: { lang: 'en', href: '/en/' }, body, wide: true });
+  // its own share card, the radio's (src/og/card.mjs), in place of the site's
+  const head = html`<meta property="og:type" content="website">
+<meta property="og:site_name" content="ECCM">
+<meta property="og:title" content="Raadio ECCM">
+<meta property="og:url" content="${origin()}/radio">
+<meta property="og:image" content="${origin() + radioPath('et')}">
+<meta property="og:image:width" content="${OG_W}">
+<meta property="og:image:height" content="${OG_H}">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="Raadio, Eesti Nüüdismuusika Keskus">
+<meta name="twitter:card" content="summary_large_image">`;
+  return page({ lang: 'et', title: 'Raadio.', alternate: { lang: 'en', href: '/en/' }, body, wide: true, head });
 };

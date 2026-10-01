@@ -13,6 +13,7 @@ import { sitePath, siteAlt, W as OG_W, H as OG_H } from '../og/card.mjs';
 // address a share image needs
 let ORIGIN = '';
 export const useOrigin = (o) => { ORIGIN = o; };
+export const origin = () => ORIGIN;
 // every page that names no share image of its own names the site's card, the
 // logo (asked 2026-10-01: "make eccm default social card", "just original
 // logo"): a link to such a page used to preview as whatever picture a scraper

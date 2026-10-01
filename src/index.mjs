@@ -143,7 +143,9 @@ export default {
     // the notices and their push subscriptions (src/items.mjs), since 2026-10-01
     if (p === '/items' || p.startsWith('/items/')) { const out = await itemsRoute(request, env, url); if (out) return out; }
     // the radio, positron's station in this site's chrome (src/render/station.mjs), since 2026-10-01
-    if (p === '/station') return reply(renderStation());
+    // the radio, at /radio since 2026-10-01 ("rename station to radio"); /station answers with the way there
+    if (p === '/radio') return reply(renderStation());
+    if (p === '/station') return new Response(null, { status: 301, headers: { location: `/radio${url.search}` } });
     // the tools, one card each (src/render/admin.mjs), since 2026-10-01
     if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
