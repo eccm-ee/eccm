@@ -201,7 +201,7 @@
   // choice, stays as the alternative on ?serif=literata ("put literata to derive as well as alternative")
   // Newsreader since 2026-09-28 ("use newsreader in derive"); Literata and Roboto Serif, the day's earlier choices, stay as the
   // alternatives on ?serif=literata and ?serif=roboto
-  const serifKey = SERIFS[new URL(location.href).searchParams.get('serif')] ? new URL(location.href).searchParams.get('serif') : 'newsreader';
+  const serifKey = SERIFS[new URL(location.href).searchParams.get('serif')] ? new URL(location.href).searchParams.get('serif') : 'roboto';
   const SERIF = SERIFS[serifKey];
   {
     // the line under the intro that switches the serif on the same set

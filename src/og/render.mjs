@@ -7,8 +7,8 @@
 import { initWasm, Resvg } from '@resvg/resvg-wasm';
 import wasm from '@resvg/resvg-wasm/index_bg.wasm';
 import sans from './fonts/instrument-sans.ttf';
-import serif from './fonts/newsreader-display.ttf';
-import serifText from './fonts/newsreader-text.ttf';
+import serif from './fonts/roboto-serif-display.ttf';
+import serifText from './fonts/roboto-serif-text.ttf';
 
 let ready = null;
 let fonts = null;

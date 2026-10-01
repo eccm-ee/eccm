@@ -63,14 +63,18 @@ const schemeStyle = (json) => {
   if (!json) return null;
   let s; try { s = JSON.parse(json); } catch { return null; }
   const decl = Object.entries(VARS).filter(([k]) => s[k] != null).map(([k, v]) => `${v}: ${s[k]}`);
-  return { mode: s.mode === 'dark' ? 'dark' : 'light', style: esc(decl.join('; ')), serif: !!(s.titleFace || s.bodyFace) };
+  return { mode: s.mode === 'dark' ? 'dark' : 'light', style: esc(decl.join('; ')), serif: !!(s.titleFace || s.bodyFace), file: SERIF_FILE[/'(Roboto|Newsreader|Literata)/.exec(s.titleFace || s.bodyFace || '')?.[1]] };
 };
 // a scheme as the editor's browser posts it, kept only when every value is
 // one the detector can write: six colours as hex, the faces from
 // public/scheme.mjs's SERIFS, so nothing a visitor typed reaches a style
 // attribute; returns the JSON to store, or null
 const HEX = /^#[0-9a-f]{6}$/;
-const FACES = ["'Newsreader', 'Newsreader Fallback', Georgia, serif", "'Literata', Georgia, serif", "'Roboto Serif', Georgia, serif"];
+// Roboto Serif with its fallback is the serif since 2026-10-01 ("change serif to Roboto Serif"); the
+// others stay acceptable so a row written before still renders
+const FACES = ["'Roboto Serif', 'Roboto Serif Fallback', Georgia, serif", "'Newsreader', 'Newsreader Fallback', Georgia, serif", "'Literata', Georgia, serif", "'Roboto Serif', Georgia, serif"];
+// the file a scheme's serif needs first, preloaded with the page
+const SERIF_FILE = { Roboto: '/vendor/roboto-serif-latin.woff2', Newsreader: '/vendor/newsreader-latin.woff2', Literata: '/vendor/literata-latin.woff2' };
 export const cleanScheme = (json) => {
   let s; try { s = JSON.parse(json); } catch { return null; }
   if (!s || typeof s !== 'object' || !Number.isInteger(s.v) || !['light', 'dark'].includes(s.mode)) return null;
@@ -112,7 +116,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
   // most of its text, so both are asked for before the stylesheet finds them
   // (asked 2026-09-30: "i saw font change jump ... can we optimize / preload?")
   const pic = media ? poster(media, media[`alt_${lang}`] || media.alt_et) : null;
-  const head = html`${ogHead({ lang, title, body: text.body, ev, media, origin, canonical })}${pic ? pic.preload : ''}${scheme && scheme.serif ? html`<link rel="preload" href="/vendor/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>` : ''}`;
+  const head = html`${ogHead({ lang, title, body: text.body, ev, media, origin, canonical })}${pic ? pic.preload : ''}${scheme && scheme.file ? html`<link rel="preload" href="${scheme.file}" as="font" type="font/woff2" crossorigin>` : ''}`;
 
   const body = html`  <article class="event"${scheme ? raw(` data-scheme="${scheme.mode}" style="${scheme.style}"`) : ''}>
     <header class="event-top">

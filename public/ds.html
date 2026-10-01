@@ -212,8 +212,8 @@
       </dl>
     </div>
     <div>
-      <p class="ds-cap">Serif, on a page whose picture reads as serif: title, facts and credits in Newsreader, and the body too on a ground near white</p>
-      <div class="ds-serif" lang="et" style="--ev-title-face: 'Newsreader', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Newsreader', Georgia, serif">
+      <p class="ds-cap">Serif, on a page whose picture reads as serif: title, facts and credits in Roboto Serif, and the body too on a ground near white</p>
+      <div class="ds-serif" lang="et" style="--ev-title-face: 'Roboto Serif', 'Roboto Serif Fallback', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Roboto Serif', 'Roboto Serif Fallback', Georgia, serif">
         <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10</h1></div>
         <dl class="facts">
           <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12.11.2026 kell 19.00</time></dd></div>
@@ -228,7 +228,7 @@
         </dl>
       </div>
     </div>
-    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Newsreader', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
+    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Roboto Serif', 'Roboto Serif Fallback', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
       <p class="ds-cap" lang="en">The same on a dark derived ground: title, facts and credits keep the serif, the body stays in the sans</p>
       <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Uus kontserdisari: Up to Three / Kuni kolm</h1></div>
       <dl class="facts">
@@ -410,7 +410,7 @@
   </div>
   <h2>Share images</h2>
   <div class="prose flow">
-    <p>The image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Newsreader or Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
+    <p>The image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Roboto Serif or Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
   </div>
   <div class="ds-og" id="og-cards"><p class="ds-cap">Loading the events.</p></div>
 </main>
@@ -581,7 +581,7 @@ try {
     const img = document.createElement('img'); img.src = c.image; img.width = 1200; img.height = 630; img.alt = c.title;
     a.append(img);
     const cap = document.createElement('figcaption');
-    cap.textContent = `${c.lang.toUpperCase()}, ${c.serif ? 'Newsreader' : 'Instrument Sans'} on ${c.ground}`;
+    cap.textContent = `${c.lang.toUpperCase()}, ${c.serif ? 'Roboto Serif' : 'Instrument Sans'} on ${c.ground}`;
     f.append(a, cap); return f;
   }));
   if (!cards.length) box.innerHTML = '<p class="ds-cap">No published events.</p>';

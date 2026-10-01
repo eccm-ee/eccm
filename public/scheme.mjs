@@ -282,9 +282,10 @@ export const scheme = (r, t) => {
   s.serifHow = t.verdict === 'serif' ? 'the detector read the type as serif' : r.serifByHand ? 'marked serif by hand, the detector found no type: the letters lie on the dark disc under three rules' : '';
   return s;
 };
-// the serif a derived page takes, Newsreader since 2026-09-28, with the two
+// the serif a derived page takes, Roboto Serif since 2026-10-01 ("change serif to Roboto Serif"; Newsreader
+// from 2026-09-28), with the two
 // alternatives derive.html switches to on ?serif=
-export const SERIFS = { newsreader: { name: 'Newsreader', family: "'Newsreader', 'Newsreader Fallback', Georgia, serif", weight: 400 }, literata: { name: 'Literata', family: "'Literata', Georgia, serif", weight: 400 }, roboto: { name: 'Roboto Serif', family: "'Roboto Serif', Georgia, serif", weight: 400 } };
+export const SERIFS = { newsreader: { name: 'Newsreader', family: "'Newsreader', 'Newsreader Fallback', Georgia, serif", weight: 400 }, literata: { name: 'Literata', family: "'Literata', Georgia, serif", weight: 400 }, roboto: { name: 'Roboto Serif', family: "'Roboto Serif', 'Roboto Serif Fallback', Georgia, serif", weight: 400 } };
 
 // the body takes the serif only on a ground near white; on a darker light
 // ground, the Gestures sage, it stays in the sans, the same legibility rule
@@ -294,7 +295,7 @@ export const bodySerif = (s) => s.serif && s.mode === 'light' && lum(s.ground) >
 // a reading as the row stores it: the nine values the event page sets as
 // --ev-* properties, the mode and the serif, and the readings kept so a false
 // verdict can be argued with later; nothing renders from those
-export const contract = (r, t, s, face = SERIFS.newsreader) => ({
+export const contract = (r, t, s, face = SERIFS.roboto) => ({
   v: DETECTOR_V,
   detector: 'derive 2026-09-27',
   mode: s.mode,

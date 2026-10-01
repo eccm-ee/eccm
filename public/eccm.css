@@ -33,6 +33,9 @@
 /* MEASURED 2026-10-01 in headless Chrome over one Estonian and English line: Instrument Sans at its
    normal width sets it 2.09 per cent wider than Helvetica at 18 px, its box 97 over 25 per 100 px */
 @font-face { font-family: 'Instrument Sans Fallback'; src: local('Helvetica'), local('Arial'); size-adjust: 102.09%; ascent-override: 95.02%; descent-override: 24.49%; line-gap-override: 0%; }
+/* Roboto Serif, the serif since 2026-10-01, over Georgia: MEASURED that day over one Estonian and English
+   line, 11.01 per cent wider at 18 px, its box 93 over 24 per 100 px */
+@font-face { font-family: 'Roboto Serif Fallback'; src: local('Georgia'); size-adjust: 111.01%; ascent-override: 83.78%; descent-override: 21.62%; line-gap-override: 0%; }
 @font-face { font-family: 'Newsreader Fallback'; src: local('Georgia'); size-adjust: 91.38%; ascent-override: 80.98%; descent-override: 28.45%; line-gap-override: 0%; }
 /* the serif a derived page may set (plans/plan-eccm-design-from-image.md),
    declared here rather than in derive.html so it is declared once: Newsreader
