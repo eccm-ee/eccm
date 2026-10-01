@@ -346,6 +346,8 @@ double opt-in"* under REMAINING (unstarted), so it is not a lift. Inbound
 (`info@`, replies, bounces) is Email Routing to a Worker, free, and positron's
 `workers/mail` is exactly that shape.
 
+**Built 2026-10-01 on the free plan** (`src/newsletter.mjs`, `src/mail.mjs`; `BACKLOG.md` has the entry): the sign-up with double opt-in, the outbox, the composer pre-filled from the events, the archive, the one-click unsubscribe. What waits for Workers Paid is the first send to an address the account has not verified.
+
 ### The rada7 shape, MEASURED from four letters, and what an ECCM issue borrows
 
 Asked 2026-09-26: *"see ../toimps on rada7 newsletter parser. id assume eccm

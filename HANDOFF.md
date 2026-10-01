@@ -13,6 +13,10 @@ that owns this repository, still "The token in default is invalid", so
 `kristjanjansen`; then push per CLAUDE.md and switch back. Numbers here were counted with a command when this was
 written; count again before building on one.
 
+## 2026-10-01: the newsletter, on the free plan
+
+Asked *"can we start newsletter work event on nonpaid account? see ../trip"*, then *"go"*. Built, in `BACKLOG.md` in full: the sign-up with double opt-in at **https://eccm.positron.studio/et/uudiskiri** (and `/en/newsletter`), unlinked until cutover; the composer at **https://eccm.positron.studio/edit/uudiskiri**; trip's outbox and mail template, sent through the `send_email` binding from `uudiskiri@positron.studio`. On the free plan only verified destination addresses receive mail, and none is verified for the owner yet, so the staging test letter sits in the outbox refused.
+
 ## 2026-10-01: notices, push and the installable site
 
 Asked: *"see ../positron items demo. i want eccm.positron.app to pwa with push notifications. move that items infra over to eccm. for pwa logo use single line logo. make page on eccm to list and add items"*, then *"use eccm edit style"*. Done, in `BACKLOG.md` in full: **https://eccm.positron.studio/items** lists and adds notices, a Durable Object publishes each on its moment and pushes it with plain Web Push (VAPID, no Firebase), the site installs as ECCM with the single-line mark. Staging carries one test notice, Proov, and one dead headless subscription that the next push drops. Then *"yes. just put button somewhere up, rm footer"*: a Luba teated bar under the header in the installed app, the footer link gone, and *"it works"* on the owner's iPhone. Then *"do it"*: Muuda on every notice, a waiting one's time movable, any one deletable, and the list refreshing itself. Open: whether /items should stay open to anyone like the editor.

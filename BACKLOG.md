@@ -7,6 +7,15 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-10-01: "can we start newsletter work event on nonpaid account? see ../trip", then "go"
+
+Asked verbatim. Answered yes: on the Workers Free plan Email Sending reaches only the account's verified destination addresses, free and off quota (READ, developers.cloudflare.com/email-service/platform/pricing and limits, updated 2026-09-25); arbitrary recipients need Workers Paid, which belongs on ECCM's account at cutover. Files: `migrations/0005_newsletter.sql`, `src/mail.mjs`, `src/newsletter.mjs`, `src/render/mail.mjs`, `src/render/newsletter.mjs`, `src/index.mjs`, `public/eccm.css`, `wrangler.jsonc`, `CLAUDE.md`, `plans/plan-eccm-cms.md`.
+✅ **From ../trip:** the outbox (`outbox`, a mail is a row first and a send second, drained by the `send_email` binding and retried by a cron every ten minutes, three tries), the mail template (`astro-prod/src/lib/emailRender.ts` ported: tables, inline styles, the MSO width, the padded preheader, Helvetica and Arial, a text wordmark, white with no box, a dark-mode block) with a real plain part, and one row per recipient carrying its own one-click unsubscribe (RFC 8058).
+✅ **New, which trip never built:** the sign-up without an account, `/et/uudiskiri` and `/en/newsletter`, with double opt-in (a pending row, the confirm mail, `/uudiskiri/kinnita/{token}`), a honeypot field, and the leave page `/uudiskiri/lahku/{token}` whose POST is also the mail client's one-click. Sent issues are pages under the same addresses. Not linked from the menu: the list starts at cutover (plans/plan-eccm-presence.md item 5).
+✅ **The composer**, `/edit/uudiskiri`: a new issue comes filled with the next six weeks' events as section 5 of the CMS plan has them (the title in bold, "8. oktoobril kell 19.00, venue", Loe lähemalt and the ticket), a greeting, one paragraph and a name left for a person. Save, delete, a test letter to one address, and Saada kõigile behind a checkbox, guarded so a second press sends nothing; the letter as it will arrive is drawn under the form. `/edit/uudiskiri/postkast` lists the outbox with addresses masked.
+✅ MEASURED locally with the binding simulated: sign-up, a bad address 400, the honeypot, the confirm mail and link, compose, the test, send without the checkbox 400, the send, a second send 409, the archive page 200, the leave page and the one-click POST 200 to `unsubscribed`. On staging, deployed with the binding and the cron: the pages 200, and a test letter refused by Cloudflare with "destination address is not a verified address", the free plan's rule; that draft, "Proov: oktoober ECCM-is", is left for the retry.
+Open: the owner adds a destination address (dashboard, Email Service, Email Routing, Destination Addresses) to receive test letters; the editor and its send are open to anyone like the rest of /edit; pictures in a letter (JPEG only); the footer field of `plans/plan-eccm-footer-newsletter.md` at cutover.
+
 ### Open 2026-10-01: the notices' away moment, and Saada ka kirjana
 
 Asked as *"do it"* of the two notice ideas `plans/plan-eccm-cms.md` section 8 still owes.

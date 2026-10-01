@@ -29,6 +29,7 @@ import { renderSitemap, renderFeed } from './render/feeds.mjs';
 import { serveMedia } from './media.mjs';
 import { useTransforms } from './render/pic.mjs';
 import { itemsRoute } from './items.mjs';
+import { newsletter, drain } from './newsletter.mjs';
 export { Items } from './items.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
@@ -88,7 +89,7 @@ async function textPage(env, lang, slug, url) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const p = url.pathname;
     useTransforms(env.IMAGE_TRANSFORMS);
@@ -105,6 +106,8 @@ export default {
     if (p === '/en' || p === '/en/') return reply(await eventsList(env, 'en', url, true));
     if (p === '/et' || p === '/et/') return new Response(null, { status: 301, headers: { location: '/' } });
     if (LIST_LANG[p]) return reply(await eventsList(env, LIST_LANG[p], url));
+    // the newsletter: sign-up, confirm, leave, the archive and its editor (src/newsletter.mjs), since 2026-10-01
+    if (/^\/(et\/uudiskiri|en\/newsletter|uudiskiri|edit\/uudiskiri)(\/|$)/.test(p)) { const out = await newsletter(request, env, url, ctx); if (out) return out; }
     const pm = PAGE.exec(p);
     if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }
     // the notices and their push subscriptions (src/items.mjs), since 2026-10-01
@@ -113,4 +116,6 @@ export default {
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
   },
+  // the cron of wrangler.jsonc: the outbox's retry, every ten minutes (src/mail.mjs)
+  async scheduled(event, env, ctx) { ctx.waitUntil(drain(env)); },
 };
