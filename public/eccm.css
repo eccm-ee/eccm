@@ -44,7 +44,10 @@
    at 18 against 101 at 100), and the overrides the webfont's font box at
    100 px divided by it; Helvetica and Arial measured alike. Checked on a
    620 px paragraph: webfont and fallback break into the same lines */
-@font-face { font-family: 'Schibsted Grotesk Fallback'; src: local('Helvetica'), local('Arial'); size-adjust: 90.39%; ascent-override: 108.42%; descent-override: 28.76%; line-gap-override: 0%; }
+/* re-measured 2026-10-01: the two Schibsted files had each other's names, so until then every ASCII
+   letter was drawn in Helvetica and the first figures measured that; with the files right the face sets
+   one Estonian and English line 4.44 per cent wider than Helvetica at 18 px, its box 98 over 26 per 100 px */
+@font-face { font-family: 'Schibsted Grotesk Fallback'; src: local('Helvetica'), local('Arial'); size-adjust: 104.44%; ascent-override: 93.83%; descent-override: 24.89%; line-gap-override: 0%; }
 @font-face { font-family: 'Newsreader Fallback'; src: local('Georgia'); size-adjust: 91.38%; ascent-override: 80.98%; descent-override: 28.45%; line-gap-override: 0%; }
 /* the serif a derived page may set (plans/plan-eccm-design-from-image.md),
    declared here rather than in derive.html so it is declared once: Newsreader
@@ -277,7 +280,7 @@
      then the summary at body size. Reported 2026-09-26 with a crop of a row
      whose title, date and summary were three sizes a step apart: "it feels
      unprofessiona (yea type size scale but...)" */
-  .ev-kicker { display: flex; flex-wrap: wrap; gap: var(--eccm-s-1) var(--eccm-s-4); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); font-variant-numeric: tabular-nums; margin-block-end: var(--eccm-s-3); }
+  .ev-kicker { display: flex; flex-wrap: wrap; gap: var(--eccm-s-1) var(--eccm-s-4); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-3); }
   .ev-kicker time + time { margin-inline-start: calc(-1 * var(--eccm-s-2)); }
   /* a step down the scale, 2xl to xl at the desk and xl to l in the compact row (asked 2026-09-28: "frontpage index titles too big") */
   .ev-title { font-size: var(--eccm-t-xl); overflow-wrap: anywhere; }
@@ -322,7 +325,10 @@
   .next h2 { font-size: var(--eccm-t-l); margin-block-end: var(--eccm-s-6); }
   .next-list, .edit-list { display: grid; gap: var(--eccm-s-4); max-inline-size: var(--eccm-measure); }
   .next-list li, .edit-list li { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--eccm-s-6); }
-  .next-list time, .edit-list time { font-variant-numeric: tabular-nums; color: var(--eccm-ink-2); }
+  /* proportional figures, never tabular: Schibsted Grotesk's tnum also sets the full stop and the comma a
+     figure wide, 63 against 28 per 100, so "10. okt 19.30" read "10 . okt 19 . 30"; Helvetica's touched only the
+     digits, which is why it went unseen until the face was really drawn (2026-10-01) */
+  .next-list time, .edit-list time { color: var(--eccm-ink-2); }
   .next-list a, .edit-list a { text-decoration-line: none; }
   .next-list a:hover, .next-list a:focus-visible, .edit-list a:hover, .edit-list a:focus-visible { text-decoration-line: underline; }
   .next-list small, .edit-list small { display: block; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }

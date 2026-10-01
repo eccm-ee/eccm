@@ -14,16 +14,17 @@ import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
-export const TEMPLATE_V = 1;
+export const TEMPLATE_V = 2;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
 const PAD = 64;
-// the mark at 7 / 7.375 of its units, so the stave's pitch is 7 px and each
-// line one pixel, public/icons/stave.svg at its own size; the letters E to M
-// are then 283 px, the block every alignment is taken from (eccm-ui, the mark)
-const K = 7 / 7.375;
-const E_LEFT = 35, E_TOP = 29, E_BOTTOM = 122, M_RIGHT = 333;
+// the mark at 4 / 7.375 of its units, so the stave's pitch is a whole 4 px and
+// each line one pixel; the letters E to M are then 162 px, the block every
+// alignment is taken from (eccm-ui, the mark). It was 7 / 7.375, 283 px, until
+// asked 2026-10-01: "make logo smaller and rm long noodijooned"
+const K = 4 / 7.375;
+const E_LEFT = 35, E_TOP = 29, E_BOTTOM = 122;
 const MARK_H = (E_BOTTOM - E_TOP) * K;
 const MARK_TOP = Math.round(H - PAD - MARK_H);
 // the least air between the text and the mark, --eccm-s-12; it is usually far more
@@ -136,17 +137,17 @@ const LETTERS = SRC.slice(SRC.indexOf('<g class="letters">') + 19, SRC.indexOf('
 const LINES = [...SRC.slice(SRC.indexOf('<g class="lines">')).matchAll(/<rect x="([\d.]+)" y="([\d.]+)" width="([\d.]+)" height="([\d.]+)"/g)].map((m) => m.slice(1).map(Number));
 
 // the mark at the foot: the E's left edge on the frame, the E's foot on the
-// bottom margin, the whole at whole pixels; the five stave lines run from
-// the M to the card's right edge, one pixel each on a seven pixel pitch,
-// snapped rather than scaled (eccm-ui, hairlines in a raster), and the three
-// joins between the letters drawn the same way
+// bottom margin, the whole at whole pixels; the five stave lines stay the
+// mark's own short ends past the M (they ran to the card's edge until
+// 2026-10-01), one pixel each, snapped rather than scaled (eccm-ui, hairlines
+// in a raster), and the three joins between the letters drawn the same way
 const markSvg = (ink) => {
   const tx = PAD - E_LEFT * K, ty = MARK_TOP - E_TOP * K;
   const letters = `<g transform="translate(${tx} ${ty}) scale(${K})" fill="${ink}">${LETTERS.replace(/INK/g, ink)}</g>`;
   const lines = LINES.map(([x, y, w]) => {
     const top = Math.round(ty + y * K);
     const x0 = Math.round(tx + x * K);
-    const x1 = x >= M_RIGHT ? W : Math.round(tx + (x + w) * K);
+    const x1 = Math.max(x0 + 1, Math.round(tx + (x + w) * K));
     return `<rect x="${x0}" y="${top}" width="${x1 - x0}" height="1" fill="${ink}"/>`;
   }).join('');
   return letters + `<g shape-rendering="crispEdges">${lines}</g>`;

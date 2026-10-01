@@ -99,6 +99,9 @@
     .locks { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--eccm-s-12); }
     /* the beside lockups as a grid of two columns, plain and white on black, and three rows, English, Estonian and both (asked 2026-09-28 with a crop: "put them to 2x3 grid") */
     #beside .locks, #under .locks { display: grid; grid-template-columns: repeat(2, max-content); align-items: start; }
+    /* one column on a phone: the pair side by side is 466 px and dragged the whole page sideways at 375, which
+       zoomed the phone out and drew everything on /ds small, the share images with it (2026-10-01) */
+    @media (max-width: 48rem) { #beside .locks, #under .locks { grid-template-columns: minmax(0, 1fr); } .locks svg { max-inline-size: 100%; block-size: auto; } }
     .locks figure { margin: 0; }
     .locks svg { display: block; overflow: visible; }
     .w20 { inline-size: 20rem; } .w11 { inline-size: 11rem; }
@@ -379,7 +382,7 @@
   </div>
   <h2>Share images</h2>
   <div class="prose flow">
-    <p>The image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Newsreader or Schibsted Grotesk, then the date, time and venue in the second ink, and the mark at the foot with its stave run to the right edge, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
+    <p>The image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Newsreader or Schibsted Grotesk, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
   </div>
   <div class="ds-og" id="og-cards"><p class="ds-cap">Loading the events.</p></div>
 </main>

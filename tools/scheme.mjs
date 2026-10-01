@@ -6,6 +6,9 @@
 //
 //   node tools/scheme.mjs            # the keys from the local database
 //   node tools/scheme.mjs --remote   # the keys from eccm-staging on Cloudflare
+//   node tools/scheme.mjs --missing --out data/seed-step6-schemes.sql
+//                                    # only the rows with no scheme yet, matched by key
+//                                    # alone since media ids differ between databases
 //
 // then apply the file the same way as a seed, --local or --remote. A picture
 // is read from public/ through a small server of this script's own, in
@@ -20,7 +23,9 @@ import { tmpdir } from 'node:os';
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const PUBLIC = new URL('../public/', import.meta.url).pathname;
-const OUT = new URL('../data/seed-step5-schemes.sql', import.meta.url).pathname;
+const arg = (name) => process.argv.includes(name) ? process.argv[process.argv.indexOf(name) + 1] : null;
+const OUT = arg('--out') ? new URL('../' + arg('--out'), import.meta.url).pathname : new URL('../data/seed-step5-schemes.sql', import.meta.url).pathname;
+const missing = process.argv.includes('--missing');
 const where = process.argv.includes('--remote') ? '--remote' : '--local';
 // derive.html's serifByHand: the Gestures letters lie on a dark disc under
 // three rules and the detector finds no type in them
@@ -29,7 +34,7 @@ const HAND = { 'ic_large_w900h600q100_gestures-situations-small.jpg': { serif: t
 const q = (sql) => JSON.parse(execFileSync('npx', ['wrangler', 'd1', 'execute', 'eccm-staging', where, '--env', 'staging', '--json', '--command', sql], { encoding: 'utf8', env: { ...process.env, CF_API_TOKEN: '', CLOUDFLARE_API_TOKEN: '' } }))[0].results;
 // --keys a.jpg,b.png reads those files and writes nothing, for a probe
 const probe = process.argv.includes('--keys') ? process.argv[process.argv.indexOf('--keys') + 1].split(',') : null;
-const rows = probe ? probe.map((key, i) => ({ id: i, key })) : q('SELECT id, key FROM media ORDER BY id').filter((r) => !r.key.startsWith('media/'));
+const rows = probe ? probe.map((key, i) => ({ id: i, key })) : q(`SELECT id, key FROM media${missing ? ' WHERE scheme IS NULL' : ''} ORDER BY id`).filter((r) => !r.key.startsWith('media/'));
 
 const PAGE = `<!doctype html><meta charset="utf-8"><script type="module">
 import { read, contract } from '/scheme.mjs';
@@ -62,7 +67,11 @@ const results = await posted;
 clearTimeout(timer); chrome.kill(); server.close();
 await rm(profile, { recursive: true, force: true }).catch(() => {});
 const sqlText = (s) => `'${s.replace(/'/g, "''")}'`;
-const lines = results.filter((x) => x.scheme).map((x) => `UPDATE media SET scheme = ${sqlText(JSON.stringify(x.scheme))}, scheme_v = ${x.scheme.v} WHERE id = ${x.id} AND key = ${sqlText(x.key)};`);
-if (!probe) await writeFile(OUT, `-- seed-step5-schemes.sql: the derived scheme of every picture in public/, written by\n-- tools/scheme.mjs on ${new Date().toISOString().slice(0, 10)} from the ${where.slice(2)} database; apply after the four seeds.\n${lines.join('\n')}\n`);
+const lines = results.filter((x) => x.scheme).map((x) => `UPDATE media SET scheme = ${sqlText(JSON.stringify(x.scheme))}, scheme_v = ${x.scheme.v} WHERE ${missing ? '' : `id = ${x.id} AND `}key = ${sqlText(x.key)}${missing ? ' AND scheme IS NULL' : ''};`);
+const name = OUT.split('/').pop();
+const head = missing
+  ? `-- ${name}: the derived scheme of every picture in public/ that had none, written by\n-- tools/scheme.mjs --missing on ${new Date().toISOString().slice(0, 10)} from the ${where.slice(2)} database; apply after the seed that added them.\n`
+  : `-- ${name}: the derived scheme of every picture in public/, written by\n-- tools/scheme.mjs on ${new Date().toISOString().slice(0, 10)} from the ${where.slice(2)} database; apply after the four seeds.\n`;
+if (!probe) await writeFile(OUT, `${head}${lines.join('\n')}\n`);
 for (const x of results) console.log(x.error ? `${x.id} ${x.key}: ${x.error}` : `${x.id} ${x.scheme.mode} ground ${x.scheme.ground} accent ${x.scheme.accent ?? 'none'} ${x.scheme.serif ? 'serif' : 'sans'} (${x.scheme.readings.type.verdict})`);
-console.log(probe ? `${results.length} read, nothing written` : `${lines.length} of ${results.length} rows written to data/seed-step5-schemes.sql`);
+console.log(probe ? `${results.length} read, nothing written` : `${lines.length} of ${results.length} rows written to data/${name}`);

@@ -274,7 +274,13 @@ essential for one purpose: vertically aligned columns"*. eccm.ee sets the date
 white in a box over the picture, **1.36 : 1 on the grey it falls back to**
 (MEASURED). `.ev-when` sets `font-variant-numeric` to tabular so ten dates
 down a list align. Helvetica and Arial carry lining figures only, so Bringhurst
-3.2.1's text figures (READ, toc) are not a choice here.
+3.2.1's text figures (READ, toc) are not a choice here. ⚠️ **NOT SINCE
+2026-10-01, AND THE REASON IS THE FACE.** Until that day the two Schibsted
+Grotesk files had each other's names and every ASCII letter was drawn in
+Helvetica, whose `tnum` touches only digits. Schibsted Grotesk's `tnum` also
+sets the full stop and the comma a figure wide (MEASURED 63 against 28 units
+per 100), so an Estonian date read "10 . okt 19 . 30". Dates are proportional
+now, and a column of them aligns on its left edge.
 
 ⚠️ **SENTENCE CASE IN THE DATA, NO `text-transform`, AND CAPITALS ONLY IN THE
 MARK.** Butterick (READ, summary): *"All caps are fine for less than one line
