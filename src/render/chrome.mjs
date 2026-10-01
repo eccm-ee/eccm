@@ -57,7 +57,6 @@ ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflan
 <meta name="apple-mobile-web-app-title" content="ECCM">
 <link rel="stylesheet" href="/eccm.css">
 <link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/vendor/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
 ${head || ''}
 </head>
 <body>

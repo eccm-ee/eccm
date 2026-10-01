@@ -30,6 +30,7 @@ import { serveMedia } from './media.mjs';
 import { useTransforms } from './render/pic.mjs';
 import { renderIcs } from './render/ics.mjs';
 import { itemsRoute } from './items.mjs';
+import { renderStation } from './render/station.mjs';
 import { newsletter, drain } from './newsletter.mjs';
 import { ogRoute } from './og/route.mjs';
 export { Items } from './items.mjs';
@@ -139,6 +140,8 @@ export default {
     if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }
     // the notices and their push subscriptions (src/items.mjs), since 2026-10-01
     if (p === '/items' || p.startsWith('/items/')) { const out = await itemsRoute(request, env, url); if (out) return out; }
+    // the radio, positron's station in this site's chrome (src/render/station.mjs), since 2026-10-01
+    if (p === '/station') return reply(renderStation());
     if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);

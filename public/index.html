@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>ECCM: tulevased üritused</title>
 <!-- public/index.html: a reading site for eccm.ee, laid out like that site's
-     own front page and set in Schibsted Grotesk, chosen off ./type.html on
+     own front page and set in Instrument Sans since 2026-10-01, Schibsted Grotesk before it, chosen off ./type.html on
      2026-09-26 (before that the machine's Helvetica, which is what eccm.ee
      draws). It imports nothing from positron's demo/shell/ and loads nothing from
      eccm.ee at all: the ten
@@ -30,7 +30,6 @@
 <meta name="apple-mobile-web-app-title" content="ECCM">
 <link rel="stylesheet" href="./eccm.css">
 <link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/vendor/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="mark" viewBox="35 27 310 96.5"><!-- the box is the ink, 27 to 123.5: the C's stroke reaches 2 over the E and M's top at 29 and 1.5 under their bottom at 122, the round letter's overshoot, and a box of 29 to 122 cut both (reported 2026-09-27, "C ups and downs are cut off") --><g fill="currentColor"><g class="letters"><!-- E: a 14 stem, two 38 bars and a 31 bar; the bottom bar starts at
@@ -220,11 +219,11 @@
       assert('nothing drags the page sideways', de.scrollWidth <= de.clientWidth,
         `${de.scrollWidth} px of page in ${de.clientWidth} px of viewport`);
 
-      // the face is Schibsted Grotesk in two subsets, and both have to be in
+      // the face is Instrument Sans in two subsets, and both have to be in
       // use: dropping latin-ext would draw š and ž from the fallback mid-word
-      const faces = [...document.fonts].filter((f) => f.family.replace(/["']/g, '') === 'Schibsted Grotesk');
+      const faces = [...document.fonts].filter((f) => f.family.replace(/["']/g, '') === 'Instrument Sans');
       const facesLoaded = faces.filter((f) => f.status === 'loaded').length;
-      assert('both Schibsted Grotesk subsets are loaded and in use, latin for õäöü and latin-ext for šž',
+      assert('both Instrument Sans subsets are loaded and in use, latin for õäöü and latin-ext for šž',
         faces.length === 2 && facesLoaded === 2, `${facesLoaded} of ${faces.length} faces loaded: ${faces.map((f) => f.status).join(', ')}; body font-family ${getComputedStyle(document.body).fontFamily}`);
 
       const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);

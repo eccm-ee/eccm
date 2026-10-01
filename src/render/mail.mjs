@@ -7,7 +7,7 @@
 // - tables with role="presentation": Outlook on Windows renders with Word, so
 //   no flex or grid, the width held by an MSO conditional table;
 // - no web fonts: Outlook and the Gmail app drop them, so Helvetica and Arial,
-//   the faces eccm.css names after Schibsted Grotesk, and a text wordmark;
+//   the faces eccm.css names after Instrument Sans, and a text wordmark;
 // - mso-line-height-rule:exactly wherever a line height is set, the Apple
 //   no-reformatting meta, and a hidden preheader padded with invisible
 //   characters so the inbox snippet is the letter's first line and no more;

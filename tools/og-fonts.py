@@ -22,7 +22,8 @@ OUT = os.path.join(ROOT, 'src', 'og', 'fonts')
 
 # family name in the SVG, vendor stem, the instance's axis values
 FACES = [
-    ('sans', 'Schibsted Grotesk', 'schibsted-grotesk', {'wght': 400}),
+    # the sans since 2026-10-01 ("schibsted to instrments sans everywhere, incl social"), at its normal width
+    ('sans', 'Instrument Sans', 'instrument-sans', {'wght': 400, 'wdth': 100}),
     # the title, 44 to 96 px: the display end of the optical size axis
     ('serif', 'Newsreader Display', 'newsreader', {'wght': 400, 'opsz': 72}),
     # the meta line at 30 px: the axis at the size it is drawn

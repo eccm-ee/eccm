@@ -21,7 +21,6 @@
 <meta name="apple-mobile-web-app-title" content="ECCM">
 <link rel="stylesheet" href="./eccm.css">
 <link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/vendor/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* the page's own layout for tables of tokens, swatches and specimens; the
      type in them is the site's small register, and the only painted grounds
@@ -171,7 +170,7 @@
 
   <h2>Typography</h2>
   <div class="prose flow">
-    <p>One family, Schibsted Grotesk. Headings are weight 400 and the hierarchy comes from size and space, never from bold or from a rule. On a page whose scheme is derived from its picture, Newsreader takes the headings when the picture's own type reads as serif, and the body only on a ground near white.</p>
+    <p>One family, Instrument Sans at its normal width (since 2026-10-01; Schibsted Grotesk before). Headings are weight 400 and the hierarchy comes from size and space, never from bold or from a rule. On a page whose scheme is derived from its picture, Newsreader takes the headings when the picture's own type reads as serif, and the body only on a ground near white.</p>
   </div>
   <div class="ds-spec">
     <div>
@@ -331,6 +330,35 @@
     <p class="ds-btns" lang="et"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a><a class="btn btn-pri" aria-disabled="true">Osta pilet</a><a class="btn" aria-disabled="true">Lisa kalendrisse</a></p>
   </div>
 
+  <h2>Table</h2>
+  <div class="prose flow">
+    <p>Rows whose cells are compared down a column: no box, no tint and no rule between rows, one hairline under the head. Times align on their left edge in proportional figures, amounts on their right, and the main column takes what is left and wraps. The current row is marked by weight and by <code>aria-current</code>. Under 36rem of its own width a row becomes its main cell over the others in the small register, each led by its column's name. Used on <a href="/station">/station</a> for the running order.</p>
+  </div>
+  <div class="ds-spec">
+    <div>
+      <p class="ds-cap"><code>.table</code> around a <code>table</code>, <code>.num</code> and <code>.main</code> on the cells, <code>data-label</code> on each cell for the narrow form</p>
+      <div lang="et">
+      <div class="table">
+        <table>
+          <thead><tr><th scope="col">Algus</th><th scope="col">Lõpp</th><th scope="col" class="num">Kestus</th><th scope="col" class="main">Saade</th><th scope="col">Liik</th></tr></thead>
+          <tbody><tr><td data-label="Algus">19.00.00</td><td data-label="Lõpp">19.40.12</td><td data-label="Kestus" class="num">40:12</td><td data-label="Saade" class="main">Ludens: Grisey ja Riley, salvestis kontserdilt</td><td data-label="Liik">salvestis</td></tr><tr aria-current="true"><td data-label="Algus">19.40.12</td><td data-label="Lõpp">19.50.12</td><td data-label="Kestus" class="num">10:00</td><td data-label="Saade" class="main">ERR Klassikaraadio otse</td><td data-label="Liik">ülekanne</td></tr><tr><td data-label="Algus">19.50.12</td><td data-label="Lõpp">20.31.40</td><td data-label="Kestus" class="num">41:28</td><td data-label="Saade" class="main">Morton Feldman, For Philip Guston, esimene osa</td><td data-label="Liik">salvestis</td></tr><tr><td data-label="Algus">20.31.40</td><td data-label="Lõpp">lahtine</td><td data-label="Kestus" class="num"></td><td data-label="Saade" class="main">Stuudiost otse</td><td data-label="Liik">otse</td></tr></tbody>
+        </table>
+      </div>
+      </div>
+    </div>
+    <div>
+      <p class="ds-cap">The same table in a 20rem column, as a phone draws it</p>
+      <div lang="et" style="max-inline-size: 20rem">
+      <div class="table">
+        <table>
+          <thead><tr><th scope="col">Algus</th><th scope="col">Lõpp</th><th scope="col" class="num">Kestus</th><th scope="col" class="main">Saade</th><th scope="col">Liik</th></tr></thead>
+          <tbody><tr><td data-label="Algus">19.00.00</td><td data-label="Lõpp">19.40.12</td><td data-label="Kestus" class="num">40:12</td><td data-label="Saade" class="main">Ludens: Grisey ja Riley, salvestis kontserdilt</td><td data-label="Liik">salvestis</td></tr><tr aria-current="true"><td data-label="Algus">19.40.12</td><td data-label="Lõpp">19.50.12</td><td data-label="Kestus" class="num">10:00</td><td data-label="Saade" class="main">ERR Klassikaraadio otse</td><td data-label="Liik">ülekanne</td></tr><tr><td data-label="Algus">19.50.12</td><td data-label="Lõpp">20.31.40</td><td data-label="Kestus" class="num">41:28</td><td data-label="Saade" class="main">Morton Feldman, For Philip Guston, esimene osa</td><td data-label="Liik">salvestis</td></tr><tr><td data-label="Algus">20.31.40</td><td data-label="Lõpp">lahtine</td><td data-label="Kestus" class="num"></td><td data-label="Saade" class="main">Stuudiost otse</td><td data-label="Liik">otse</td></tr></tbody>
+        </table>
+      </div>
+      </div>
+    </div>
+  </div>
+
   <h2>Logo</h2>
   <div class="prose flow">
     <p>The square mark, no tagline, for icons and avatars, positive and negative; the outlined, plain and bold variants are files under icons/.</p>
@@ -382,7 +410,7 @@
   </div>
   <h2>Share images</h2>
   <div class="prose flow">
-    <p>The image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Newsreader or Schibsted Grotesk, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
+    <p>The image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Newsreader or Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
   </div>
   <div class="ds-og" id="og-cards"><p class="ds-cap">Loading the events.</p></div>
 </main>
@@ -553,7 +581,7 @@ try {
     const img = document.createElement('img'); img.src = c.image; img.width = 1200; img.height = 630; img.alt = c.title;
     a.append(img);
     const cap = document.createElement('figcaption');
-    cap.textContent = `${c.lang.toUpperCase()}, ${c.serif ? 'Newsreader' : 'Schibsted Grotesk'} on ${c.ground}`;
+    cap.textContent = `${c.lang.toUpperCase()}, ${c.serif ? 'Newsreader' : 'Instrument Sans'} on ${c.ground}`;
     f.append(a, cap); return f;
   }));
   if (!cards.length) box.innerHTML = '<p class="ds-cap">No published events.</p>';

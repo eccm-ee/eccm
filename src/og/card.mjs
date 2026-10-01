@@ -14,7 +14,7 @@ import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
-export const TEMPLATE_V = 2;
+export const TEMPLATE_V = 3;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
