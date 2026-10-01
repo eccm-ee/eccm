@@ -870,3 +870,9 @@ INSERT OR IGNORE INTO page_text (page_id, lang, slug, title, legacy_path, body)
 - [Üle Heli Festival](https://www.ule-heli.ee/)
 - YXUS ensemble'
   FROM page WHERE key = 'liikmed';
+
+-- the two dated Schönberg placeholders (19 November, 8 December) carry the
+-- series' own picture, the one Versioonid uses, rather than none (asked
+-- 2026-10-01: "no image? reuse existing"); matched by key, only where empty
+UPDATE event SET image_id = (SELECT id FROM media WHERE key = 'ic_large_w900h600q100_558d761d-3ef9-4d73-a3f1-27d3372b760d.png')
+  WHERE image_id IS NULL AND id IN (SELECT event_id FROM event_text WHERE lang = 'et' AND slug IN ('schonbergi-sari-2026-11-19', 'schonbergi-sari-2026-12-08'));
