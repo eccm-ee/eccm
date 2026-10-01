@@ -92,7 +92,8 @@ export const renderIssues = ({ issues, counts }) => {
 export const renderIssueForm = ({ issue, form = issue, errors = [], say, mail, test = '' }) => {
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
   const sent = issue.status === 'sent';
-  const body = html`  <h1>${issue.subject || 'Uus kiri'}</h1>
+  const body = html`  <p class="crumb"><a href="/edit/uudiskiri">Uudiskiri</a></p>
+  <h1>${issue.subject || 'Uus kiri'}</h1>
   <p class="note">Kiri ${LANG[issue.lang]}. ${STATE(issue)}${sent ? html` <a href="${NL[issue.lang]}/${issue.slug}">Veebis</a>.` : ''}</p>
   ${errors.length ? html`<div class="errors" role="alert"><p>Ei õnnestunud. Paranda:</p><ul>${errors.map((e) => html`<li>${e.msg}</li>`)}</ul></div>` : ''}
   ${say ? html`<p class="news-say" role="status">${say}</p>` : ''}
@@ -121,9 +122,9 @@ const mask = (a) => String(a).replace(/^(.)[^@]*/, '$1***');
 const fate = (m) => (m.sent_at ? `Saadetud ${m.sent_at.slice(0, 16).replace('T', ' ')}.` : m.error ? `Ei läinud (${m.tries} korda): ${m.error}` : 'Ootab saatmist.');
 const KIND = { confirm: 'Kinnitus', issue: 'Kiri', test: 'Testkiri' };
 export const renderOutbox = ({ rows }) => {
-  const body = html`  <h1>Postkast</h1>
+  const body = html`  <p class="crumb"><a href="/edit/uudiskiri">Uudiskiri</a></p>
+  <h1>Postkast</h1>
   <p class="note">Viimased 100 kirja, uuemad eespool. Saatmata kiri proovitakse uuesti iga kümne minuti järel, kuni kolm korda.</p>
-  ${rows.length ? html`<ol class="edit-list">${rows.map((m) => html`<li><time datetime="${m.created_at}">${m.created_at.slice(0, 16).replace('T', ' ')}</time><div>${KIND[m.kind]}: ${m.subject}<small>${mask(m.to_addr)}. ${fate(m)}</small></div></li>`)}</ol>` : html`<p class="note">Kirju ei ole veel.</p>`}
-  <p><a href="/edit/uudiskiri">Tagasi uudiskirja juurde</a></p>`;
+  ${rows.length ? html`<ol class="edit-list">${rows.map((m) => html`<li><time datetime="${m.created_at}">${m.created_at.slice(0, 16).replace('T', ' ')}</time><div>${KIND[m.kind]}: ${m.subject}<small>${mask(m.to_addr)}. ${fate(m)}</small></div></li>`)}</ol>` : html`<p class="note">Kirju ei ole veel.</p>`}`;
   return page({ lang: 'et', title: 'Postkast.', alternate: alt('et'), body });
 };

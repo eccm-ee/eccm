@@ -389,7 +389,7 @@
   .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.45; cursor: default; pointer-events: none; }
   /* the form: one column at the measure, a visible label above each field,
      fields a finger tall, ruled in the strong hairline, ink on white */
-  .note { color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-8); }
+  .note { color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-8); max-inline-size: var(--eccm-measure); }
   .form { display: grid; gap: var(--eccm-s-6); max-inline-size: var(--eccm-measure); }
   /* a field is a label, a control and maybe a hint, stacked from the top: without align-content the grid
      stretched the field to its row and shared the spare height between the label and the control, so a

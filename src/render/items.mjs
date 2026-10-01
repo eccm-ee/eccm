@@ -75,7 +75,8 @@ export const renderItems = ({ items, subs, form = {}, errors = []}) => {
 export const renderItemEdit = ({ it, form, errors = [] }) => {
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
   const waiting = it.status === 'waiting';
-  const body = html`  <h1>${it.title}</h1>
+  const body = html`  <p class="crumb"><a href="/items">Teated</a></p>
+  <h1>${it.title}</h1>
   <p class="note">${waiting ? `Ootab, ilmub ${when(it.publish_at)}.` : `${when(it.publish_at)}: ${fate(it)} Telefonidesse läinud teadet ei saa muuta, siin muutub ainult teadete nimekiri.`}</p>
   ${errorList(errors, 'Ei salvestatud.')}
   <form class="form" method="post" action="/items/${it.id}">
