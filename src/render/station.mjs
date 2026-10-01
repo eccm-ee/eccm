@@ -21,7 +21,6 @@ import { page } from './chrome.mjs';
 
 export const renderStation = () => {
   const body = html`  <h1>Raadio</h1>
-  <p class="note">Iga kanal on oma veerus: mis on eetris, kes, ja mis tuleb järgmisena.</p>
   <div class="station-cols" id="st-channels" role="group" aria-label="Kanalid">
     <p class="small" id="st-loading">Jaama loetakse.</p>
   </div>
