@@ -1,17 +1,79 @@
-# Handoff, 2026-09-30, the fourth day of the eccm repository
+# Handoff, 2026-10-01, the fifth day of the eccm repository
 
-The prototype of a new eccm.ee moved out of positron on 2026-09-27 and has
-grown for four days. Everything below is live at
-**https://eccm.positron.studio/** and committed on `main` of
-**https://github.com/kristjanjansen/eccm**, private. **Not pushed:** five
-commits sit on top of `origin/main` (`25bbfd1`): `41a651c`, `28530e5`,
-`4535a20`, `7eacbf9` and the one carrying this handoff (`git log --oneline
-origin/main..HEAD` lists them). `gh auth status` shows the work account
-`Kristjan-Jansen_enefit` logged in again and `kristjanjansen`, the account
-that owns this repository, still "The token in default is invalid", so
-`git push` cannot reach it. The owner runs `gh auth login -h github.com` as
-`kristjanjansen`; then push per CLAUDE.md and switch back. Numbers here were counted with a command when this was
-written; count again before building on one.
+The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
+committed on `main` of **https://github.com/kristjanjansen/eccm**, private.
+**Not pushed:** 26 commits sit on `origin/main` (count with `git log --oneline
+origin/main..HEAD`), because `kristjanjansen`, the account that owns the
+repository, has no valid token on this machine (`gh auth switch` answers "no
+token found"). The owner runs `gh auth login -h github.com` as
+`kristjanjansen`; then push per CLAUDE.md and switch back. positron has the
+same: its commits from today are local too. Numbers here were counted with a
+command when this was written; count again before building on one.
+
+## 2026-10-01, the evening: what is live and what to know
+
+- **The type changed twice and the first change found a bug.** The two
+  Schibsted Grotesk files under `public/vendor/` had each other's names, so
+  since 2026-09-26 every ASCII letter on the site was drawn in Helvetica
+  (MEASURED with `CSS.getPlatformFontsForNode`: 6 of 55 glyphs in a title were
+  Schibsted). Fixed, then the owner chose **Instrument Sans** at its normal
+  width everywhere, the share cards included (*"jep, schibsted to instrments
+  sans everywhere, incl social"*), and **Roboto Serif** as the serif in place of
+  Newsreader (*"change serif to Roboto Serif"*). Each has a fallback measured
+  in headless Chrome (Instrument Sans 102.09 per cent of Helvetica, Roboto
+  Serif 111.01 of Georgia). Tabular figures are off: Schibsted's tnum widened
+  the full stop, and the eccm-ui skill records it. Stored schemes, the seed
+  files and the share-card TTFs (`tools/og-fonts.py`, `TEMPLATE_V` 4) all name
+  the new faces; `public/type.html` still shows the old specimens, as a study.
+- **Share cards** are 1200 by 630 PNGs per event and language
+  (`/og/e/{id}-{lang}-{v}.png`, resvg wasm, cached in R2), title, meta, and the
+  ECCM letters small at the foot with their own short stave (the long staff
+  lines went, asked). `/ds` shows the real ones and fits a phone now.
+- **More of eccm.ee is in D1:** `data/seed-step6.sql` added 20 events, 6
+  English texts for old ones and the Liikmed / Members page (`/et/liikmed`,
+  `/en/members`, linked from no menu yet), applied to staging; 30 events in
+  all. Open data questions are in `BACKLOG.md`: U:'s 23:42, Residentuu:r 4's two
+  venues, the Huddersfield picture read as serif, and the festival's 15:51.
+- **Session 1 is complete:** an `.ics` per event (the iCal link in the
+  calendar row) and per language (`/et/sundmused.ics`, `/en/events.ics`,
+  unlinked until cutover).
+- **The newsletter sends for real.** The owner onboarded
+  `eccm.positron.studio` as an Email Sending domain (dashboard, 1,000 a day),
+  `MAIL_FROM` is `ECCM <uudiskiri@eccm.positron.studio>`, DKIM, SPF and DMARC
+  pass (read off a delivered letter's headers), and one real issue, "ECCM
+  oktoobris", went to the one confirmed subscriber, the owner. Gmail's own
+  Unsubscribe link does not show yet: the headers are right and signed, which
+  Gmail decides on by sending reputation. Anyone who finds `/edit/uudiskiri`
+  can send to the list.
+- **The footer** carries ULYSSES Platform beside Tallinn's mark (the black SVG
+  from the network's own header), and on a desk a short page keeps its footer
+  at the foot of the window.
+- **/station** (https://eccm.positron.studio/station) is positron's station in
+  this site's chrome, Estonian only: player, readouts, log and the running
+  order in a new `.table` component (also on `/ds`), read from the station
+  Worker's `/schedule.json`. The owner asked *"station page is in english
+  only"*, which was answered with a question: whether an English
+  `/en/station` is wanted. Not yet answered.
+
+## 2026-10-01: in positron, for the station and the items demo
+
+- **The items demo is gone** from positron (archived in its
+  `archive/items/README.md`, copied here as `archive/positron-items.md`); its
+  worker `positron-items` was deleted by the owner; the view was deployed
+  without it.
+- **The station** (`workers/station`, https://positron.studio/station/) gained
+  an upcoming-first programme table, 30 s clips, and an ERR Klassikaraadio
+  relay slot cut from ERR's Icecast MP3 by the Schedule object, and the
+  `levelParsingError` was found and fixed (the discontinuity sequence,
+  MEASURED 40 mismatches in 200 s before, 0 after). The running order is now
+  proga, Klassikaraadio live, progd, progb, 30 s each. **The station's write
+  token was rotated** because the old one was unrecoverable: the new one is
+  `STATION_TOKEN` in positron's git-ignored `.env`, and anything that wrote
+  with the old one (a live recorder) needs it. Rebroadcasting ERR publicly
+  may need ERR's permission.
+- positron commits: `c6c1143` (station), `35f05bc` (the deployed tree, which
+  also shipped the earlier "cap: all secondary buttons" change), `e7f3fba`,
+  `d49ed54`, `b132ab9`, `54950bd`; not pushed.
 
 ## 2026-10-01: share images, calendars, the Ulysses mark
 
