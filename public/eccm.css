@@ -580,12 +580,6 @@
   .station-col-order span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .station-col-order li[aria-current="true"] { font-weight: 600; }
   @media (prefers-reduced-motion: reduce) { .station-col-bar > span { transition: none; } }
-  /* the numbers about this page's own listening and the log, once, folded under the columns */
-  .station-tech { margin-block-start: var(--eccm-s-16); }
-  .station-tech summary { cursor: pointer; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-  .facts.station-read { margin-block: var(--eccm-s-6); grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr)); }
-  .station-read dd { min-block-size: 1lh; }
-  .station-log { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); gap: var(--eccm-s-2); }
   /* the newsletter (src/render/newsletter.mjs): the answer to a sign-up in the body's size, the field a
      person never sees, the send's one checkbox, and the letter as it arrives drawn in a frame of its width */
   .news-page > * + * { margin-block-start: var(--eccm-s-8); }

@@ -30,21 +30,15 @@ const RATE_WINDOW_MS = 4000;   // how long `advance` waits before it says anythi
 const NATIVE_HLS = 'ManagedMediaSource' in window && !!document.createElement('audio').canPlayType('application/vnd.apple.mpegurl');
 
 const $ = (id) => document.getElementById(id);
-const box = $('st-channels'), logList = $('st-log');
-const read = { behind: $('st-behind'), advance: $('st-advance'), crossed: $('st-crossed'), engine: $('st-engine') };
+const box = $('st-channels');
 const num = (n, places = 1) => n.toLocaleString('et-EE', { minimumFractionDigits: places, maximumFractionDigits: places });
 const CLOCK = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Tallinn', hour: '2-digit', minute: '2-digit' });
 const clock = (ms) => (ms == null ? '' : CLOCK.format(new Date(ms)).replace(':', '.'));
 const mmss = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 
-function log(text) {
-  const li = el('li');
-  const t = el('time', null, CLOCK.format(new Date()).replace(':', '.'));
-  li.append(t, el('div', null, text));
-  logList.prepend(li);
-  while (logList.children.length > 40) logList.lastElementChild.remove();
-}
+// what happens, for whoever opens the console; the page itself shows only the station (asked: "rm tehnilsied andmed")
+const log = (text) => console.info(`[station] ${text}`);
 
 // ── the channels ─────────────────────────────────────────────────────────────
 // one record per channel, its column's nodes in `ui` so a poll changes text and
@@ -180,7 +174,7 @@ function announce() {
 }
 function crossedOne(c) {
   if (!playing) return;
-  crossed++; read.crossed.textContent = String(crossed);
+  crossed++;
   log(`${c.title}: ${c.playing?.title || c.playing?.programme || ''}.`);
   announce();
 }
@@ -220,9 +214,10 @@ function numbers() {
   watchdog();
   const now = performance.now();
   if (!rateT && audio.currentTime > 0 && !audio.paused) { rateAt = audio.currentTime; rateT = now; }
-  if (rateT && now - rateT >= RATE_WINDOW_MS) read.advance.textContent = `${num((audio.currentTime - rateAt) / ((now - rateT) / 1000), 2)} x`;
-  const b = behindS();
-  read.behind.textContent = b === null ? '' : `${num(b)} s`;
+  if (rateT && now - rateT >= RATE_WINDOW_MS && Math.round((now - rateT) / POLL_MS) % 15 === 0) {
+    const b = behindS();
+    log(`kiirus ${num((audio.currentTime - rateAt) / ((now - rateT) / 1000), 2)} x, otsest maas ${b === null ? '?' : `${num(b)} s`}, saatevahetusi ${crossed}`);
+  }
 }
 
 // a pause tears the player down and a press builds a new one at the live edge
@@ -261,8 +256,7 @@ function start(name) {
     return;
   }
   playing = true;
-  read.engine.textContent = engine;
-  crossed = 0; read.crossed.textContent = '0'; rateAt = 0; rateT = 0;
+  crossed = 0; rateAt = 0; rateT = 0;
   log(`${chans.get(name)?.title || name}, ${engine}.`);
   // fire and move on: play() waits on a gesture and never rejects usefully
   audio.play().catch((e) => log(`Mängimine ootab: ${e.name}.`));
