@@ -13,6 +13,7 @@ import { html } from './html.mjs';
 import { page } from './chrome.mjs';
 import { field, input } from './editor.mjs';
 import { dayMonth, clock } from './dates.mjs';
+import { table } from './table.mjs';
 
 // a moment in ms as Tallinn's local ISO text, the shape dates.mjs reads
 export const local = (ms) => new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(Number(ms))).replace(' ', 'T');
@@ -34,10 +35,19 @@ const fields = (form, err, time = true) => html`${field({ id: 'f-title', label: 
 const errorList = (errors, what) => (errors.length ? html`<div class="errors" role="alert"><p>${what} Paranda:</p><ul>${errors.map((e) => html`<li>${e.msg}</li>`)}</ul></div>` : '');
 
 // the list alone, which public/items.mjs swaps in when it has changed
-export const itemsList = (items) => (items.length ? html`<ol class="edit-list">${items.map((it) => html`<li>
-      <time datetime="${new Date(Number(it.publish_at)).toISOString()}">${when(it.publish_at)}</time>
-      <div>${it.url ? html`<a href="${it.url}">${it.title}</a>` : it.title}${it.body ? html`<small>${it.body}</small>` : ''}<small>${fate(it)} <a href="/items/${it.id}">Muuda</a></small></div>
-    </li>`)}</ol>` : html`<p class="note">Teateid ei ole veel.</p>`);
+export const itemsList = (items) => (items.length ? table({
+  label: 'Teated',
+  cols: [{ label: 'Aeg' }, { label: 'Teade', cls: 'main' }, { label: 'Olek' }, { label: '' }],
+  rows: items.map((it) => ({
+    current: it.status === 'waiting',
+    cells: [
+      html`<time datetime="${new Date(Number(it.publish_at)).toISOString()}">${when(it.publish_at)}</time>`,
+      html`${it.url ? html`<a href="${it.url}">${it.title}</a>` : it.title}${it.body ? html`<br><span class="small">${it.body}</span>` : ''}`,
+      fate(it),
+      html`<a href="/items/${it.id}">Muuda</a>`,
+    ],
+  })),
+}) : html`<p class="note">Teateid ei ole veel.</p>`);
 
 export const renderItems = ({ items, subs, form = {}, errors = []}) => {
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;

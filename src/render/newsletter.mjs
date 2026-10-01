@@ -10,16 +10,17 @@ import { page, OTHER } from './chrome.mjs';
 import { field, input } from './editor.mjs';
 import { md } from './md.mjs';
 import { dateLong } from './dates.mjs';
+import { table } from './table.mjs';
 
 export const NL = { et: '/et/uudiskiri', en: '/en/newsletter' };
 const T = {
   et: { title: 'Uudiskiri', lead: 'ECCM-i kava ja uudised e-postiga. Lahkuda saab iga kirja lõpust.', email: 'E-post', join: 'Liitu', bad: 'See ei ole e-posti aadress.',
         sent: (a) => `Saatsime aadressile ${a} kirja. Tellimus hakkab kehtima, kui avad selles oleva lingi.`, already: (a) => `Aadress ${a} on juba uudiskirjaga liitunud.`,
-        past: 'Varasemad kirjad', confirmed: 'Oled uudiskirjaga liitunud. Esimene kiri tuleb koos järgmise kavaga.', gone: 'Seda linki ei ole. Võib-olla on tellimus juba lõpetatud.',
+        past: 'Varasemad kirjad', date: 'Kuupäev', letter: 'Kiri', confirmed: 'Oled uudiskirjaga liitunud. Esimene kiri tuleb koos järgmise kavaga.', gone: 'Seda linki ei ole. Võib-olla on tellimus juba lõpetatud.',
         leaveQ: (a) => `Lahkud ECCM-i uudiskirjast aadressil ${a}.`, leave: 'Lahku', left: 'Oled uudiskirjast lahkunud. Rohkem kirju ei tule.', back: 'Tagasi uudiskirja lehele', draft: 'Eelvaade. See kiri on veel saatmata.' },
   en: { title: 'Newsletter', lead: 'The ECCM programme and news by email. Every letter ends with a way to leave.', email: 'Email', join: 'Subscribe', bad: 'That is not an email address.',
         sent: (a) => `We sent a letter to ${a}. The subscription starts when you open the link in it.`, already: (a) => `${a} is already subscribed.`,
-        past: 'Earlier letters', confirmed: 'You are subscribed. The first letter comes with the next programme.', gone: 'There is no such link. Perhaps the subscription has already ended.',
+        past: 'Earlier letters', date: 'Date', letter: 'Letter', confirmed: 'You are subscribed. The first letter comes with the next programme.', gone: 'There is no such link. Perhaps the subscription has already ended.',
         leaveQ: (a) => `You are leaving the ECCM newsletter at ${a}.`, leave: 'Unsubscribe', left: 'You have unsubscribed. No more letters will come.', back: 'Back to the newsletter page', draft: 'Preview. This letter has not been sent yet.' },
 };
 const alt = (lang) => ({ lang: OTHER[lang], href: NL[OTHER[lang]] });
@@ -36,7 +37,7 @@ export const renderSignup = ({ lang, issues, form = {}, say, err }) => {
       <div class="hp" aria-hidden="true"><label for="n-site">Website</label><input id="n-site" name="website" tabindex="-1" autocomplete="off"></div>
       <div class="actions"><button class="btn btn-pri" type="submit">${t.join}</button></div>
     </form>`}
-    ${issues.length ? html`<section class="news-past"><h2>${t.past}</h2><ol class="edit-list">${issues.map((i) => html`<li><time datetime="${i.sent_at}">${sentDay(i.sent_at, lang)}</time><div><a href="${NL[lang]}/${i.slug}">${i.subject}</a></div></li>`)}</ol></section>` : ''}
+    ${issues.length ? html`<section class="news-past"><h2>${t.past}</h2>${table({ label: t.past, cols: [{ label: t.date }, { label: t.letter, cls: 'main' }], rows: issues.map((i) => [html`<time datetime="${i.sent_at}">${sentDay(i.sent_at, lang)}</time>`, html`<a href="${NL[lang]}/${i.slug}">${i.subject}</a>`]) })}</section>` : ''}
   </article>`;
   return page({ lang, title: `${t.title}.`, alternate: alt(lang), body });
 };
@@ -83,7 +84,7 @@ export const renderIssues = ({ issues, counts }) => {
     </form>
     <section class="items-list">
       <h2>Kirjad</h2>
-      ${issues.length ? html`<ol class="edit-list">${issues.map((i) => html`<li><time datetime="${i.updated_at}">${sentDay(i.sent_at || i.updated_at, 'et')}</time><div><a href="/edit/uudiskiri/${i.id}">${i.subject || '(teemata)'}</a><small>${LANG[i.lang]}. ${STATE(i)}</small></div></li>`)}</ol>` : html`<p class="note">Kirju ei ole veel.</p>`}
+      ${issues.length ? table({ label: 'Kirjad', cols: [{ label: 'Kuupäev' }, { label: 'Teema', cls: 'main' }, { label: 'Keel' }, { label: 'Olek' }], rows: issues.map((i) => ({ current: i.status === 'draft', cells: [html`<time datetime="${i.sent_at || i.updated_at}">${sentDay(i.sent_at || i.updated_at, 'et')}</time>`, html`<a href="/edit/uudiskiri/${i.id}">${i.subject || '(teemata)'}</a>`, i.lang === 'et' ? 'eesti' : 'inglise', i.status === 'sent' ? `saadetud, ${i.sent_count}` : 'mustand'] })) }) : html`<p class="note">Kirju ei ole veel.</p>`}
     </section>
     <p><a href="/edit/uudiskiri/postkast">Postkast</a>: iga saadetud ja saatmata kiri.</p>
   </div>`;
@@ -120,12 +121,11 @@ export const renderIssueForm = ({ issue, form = issue, errors = [], say, mail, t
 
 // a@b.ee as a***@b.ee: the outbox shows that a mail went and to whom roughly, never the list
 const mask = (a) => String(a).replace(/^(.)[^@]*/, '$1***');
-const fate = (m) => (m.sent_at ? `Saadetud ${m.sent_at.slice(0, 16).replace('T', ' ')}.` : m.error ? `Ei läinud (${m.tries} korda): ${m.error}` : 'Ootab saatmist.');
 const KIND = { confirm: 'Kinnitus', issue: 'Kiri', test: 'Testkiri' };
 export const renderOutbox = ({ rows }) => {
   const body = html`  <p class="crumb"><a href="/edit/uudiskiri">Uudiskiri</a></p>
   <h1>Postkast</h1>
   <p class="note">Viimased 100 kirja, uuemad eespool. Saatmata kiri proovitakse uuesti iga kümne minuti järel, kuni kolm korda.</p>
-  ${rows.length ? html`<ol class="edit-list">${rows.map((m) => html`<li><time datetime="${m.created_at}">${m.created_at.slice(0, 16).replace('T', ' ')}</time><div>${KIND[m.kind]}: ${m.subject}<small>${mask(m.to_addr)}. ${fate(m)}</small></div></li>`)}</ol>` : html`<p class="note">Kirju ei ole veel.</p>`}`;
+  ${rows.length ? table({ label: 'Postkast', cols: [{ label: 'Aeg' }, { label: 'Liik' }, { label: 'Teema', cls: 'main' }, { label: 'Saaja' }, { label: 'Olek' }], rows: rows.map((m) => [html`<time datetime="${m.created_at}">${m.created_at.slice(0, 16).replace('T', ' ')}</time>`, KIND[m.kind], html`${m.subject}${!m.sent_at && m.error ? html`<br><span class="small">${m.error}</span>` : ''}`, mask(m.to_addr), m.sent_at ? 'saadetud' : m.error ? `ei läinud, ${m.tries} korda` : 'ootab']) }) : html`<p class="note">Kirju ei ole veel.</p>`}`;
   return page({ lang: 'et', title: 'Postkast.', alternate: alt('et'), body });
 };
