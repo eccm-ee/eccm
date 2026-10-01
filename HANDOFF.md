@@ -2,13 +2,63 @@
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
 committed on `main` of **https://github.com/kristjanjansen/eccm**, private.
-**Not pushed:** 26 commits sit on `origin/main` (count with `git log --oneline
+**Not pushed:** 37 commits sit on `origin/main` (count with `git log --oneline
 origin/main..HEAD`), because `kristjanjansen`, the account that owns the
 repository, has no valid token on this machine (`gh auth switch` answers "no
 token found"). The owner runs `gh auth login -h github.com` as
 `kristjanjansen`; then push per CLAUDE.md and switch back. positron has the
-same: its commits from today are local too. Numbers here were counted with a
+same: 74 commits on its `origin/main`, local too. Numbers here were counted with a
 command when this was written; count again before building on one.
+
+## 2026-10-01, the night: admin, components, the station's channels and live
+
+- **/admin** (https://eccm.positron.studio/admin) is a grid of cards, one per
+  tool: Sündmused, Teated, Raadio, Uudiskiri, Disainisüsteem, Kirjatüübid
+  (Postkast and /derive asked off; the outbox is linked from the newsletter
+  page). Every tool page passes `page({ wide: true })` in
+  `src/render/chrome.mjs`: it gets a crumb "Haldus" back to /admin (in front
+  of its own crumb when it has one) and its forms, tables and grids use the
+  whole frame; notes keep the measure. /ds and /type carry the crumb by hand.
+- **Components new today, all on /ds:** `.card` (16 by 9, a 1 px ink edge,
+  title and description top left, a pointer lightens it with a 200 ms ease),
+  `.table` (no box, no zebra, one hairline under the head, the current row in
+  600, a narrow form under 36rem of its own width; `src/render/table.mjs`
+  writes it, used on the notices, the newsletter's letters, its outbox and its
+  public archive, and the station), `.btn-sm` (a row's own action, Muuda in the
+  notices table). A light button variant was made and asked away again: the
+  two language buttons are plain `.btn`. Lists of a date beside a title
+  (`.next-list`, `.edit-list`) hold their two columns on the list and take
+  them through subgrid, so titles align.
+- **The station has channels and a programme library**, deployed:
+  `workers/station` in positron. One Schedule Durable Object per channel
+  (`main` is the old one, its clock kept), a `Library` object holding the
+  channel registry and one loose record per programme (title, who, kind,
+  duration, free `meta`), filled from ID3 on upload and by `POST /backfill`.
+  Routes `/c/<name>/station.m3u8`, `/now.json`, `/schedule.json`,
+  `/channels.json`, `/programmes.json`. Three channels today: **main**
+  (Põhikanal: tones and the ERR Klassikaraadio relay, 30 s each), **toonid**
+  (Toonid: three tones) and **live-test** (Otse proov: a tone, then an open
+  live slot `mic-test`). The four test files are `test-tone-*.mp3` now; the old
+  `prog*.mp3` objects are still in R2 and in the library, unused.
+- **Live into the station:** `workers/station/live.mjs` in positron is the
+  recorder. It cuts any MP3 stream into frame-aligned 10 s chunks and posts
+  them to `/live/<key>/append`; Ctrl-C closes the show. MEASURED locally: a
+  25 s tone arrived as 10 + 10 + 5.07 s and closed cleanly. Not yet run against
+  the live station. To test: `ffmpeg -f avfoundation -i ":0" -ac 2 -ar 44100
+  -b:a 128k -f mp3 - | node workers/station/live.mjs --key mic-test --channel
+  live-test` from positron, then Kuula on Otse proov. While a live slot is open
+  its channel follows the show, not the loop.
+- **eccm /station** shows every channel in a column (title, what is on, who,
+  its own Kuula or Peata, the next two), the chosen one's readouts, running
+  order and log below, `?k=<name>` in the address.
+- **The station's write token was rotated** earlier today and lives as
+  `STATION_TOKEN` in positron's git-ignored `.env`; `live.mjs` reads it there.
+- **Open:** whether /station wants an English twin (asked back, unanswered);
+  the newsletter composer makes a draft on the first press, so abandoned ones
+  stay as "(teemata)" (two were deleted); the if-router in `src/index.mjs`
+  could become one route table; "scheme" might be renamed "theme" (asked,
+  undecided); a broadcast page in the browser, with MP3 encoded there, is the
+  next step for live from a phone.
 
 ## 2026-10-01, the evening: what is live and what to know
 
