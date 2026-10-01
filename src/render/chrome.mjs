@@ -7,6 +7,25 @@
 // static page under public/, changed together.
 import { html, raw } from './html.mjs';
 import { SYMBOL, HEADER, FOOTER } from './mark.mjs';
+import { sitePath, siteAlt, W as OG_W, H as OG_H } from '../og/card.mjs';
+
+// the request's origin, set once per request by src/index.mjs, for the absolute
+// address a share image needs
+let ORIGIN = '';
+export const useOrigin = (o) => { ORIGIN = o; };
+// every page that names no share image of its own names the site's card, the
+// logo (asked 2026-10-01: "make eccm default social card", "just original
+// logo"): a link to such a page used to preview as whatever picture a scraper
+// found, a crop of the footer's ULYSSES mark
+const siteOg = (lang, title) => html`<meta property="og:type" content="website">
+<meta property="og:site_name" content="ECCM">
+<meta property="og:title" content="${title}">
+<meta property="og:image" content="${ORIGIN + sitePath(lang)}">
+<meta property="og:image:width" content="${OG_W}">
+<meta property="og:image:height" content="${OG_H}">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="${siteAlt(lang)}">
+<meta name="twitter:card" content="summary_large_image">`;
 
 export const T = {
   et: {
@@ -66,6 +85,7 @@ ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflan
 <link rel="stylesheet" href="/eccm.css">
 <link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 ${head || ''}
+${String(head || '').includes('og:image') ? '' : siteOg(lang, `${title} ECCM`)}
 </head>
 <body>
 ${raw(SYMBOL)}

@@ -14,7 +14,7 @@ import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
-export const TEMPLATE_V = 4;
+export const TEMPLATE_V = 5;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
@@ -90,9 +90,16 @@ const room = (fs, face, metaN) => {
   return 1 + Math.floor(avail / (TITLE_LH * fs));
 };
 
+// The size is the one the sans would take for this title, for both faces, so a
+// serif card and a sans card of the same title are set at the same size (asked
+// 2026-10-01: "same font size to sans serif"; Roboto Serif sets wider, and
+// fitting it on its own widths put its titles a step smaller). The serif then
+// wraps at that size and steps down only when it truly does not fit.
 function fitTitle(title, face, metaN) {
   const raw = pieces(title);
-  for (const fs of STEPS) {
+  const fits = (f, fs) => wrapAt(fitPieces(raw, f, fs, MEASURE), f, fs, MEASURE).length <= room(fs, f, metaN);
+  const start = face === 'sans' ? 0 : Math.max(0, STEPS.findIndex((fs) => fits('sans', fs)));
+  for (const fs of STEPS.slice(start)) {
     const ps = fitPieces(raw, face, fs, MEASURE);
     if (wrapAt(ps, face, fs, MEASURE).length <= room(fs, face, metaN)) return { fs, lines: balance(ps, face, fs, MEASURE) };
   }
@@ -174,3 +181,37 @@ export const cardSvg = (input) => {
 
 // the words a reader of the card's alt hears: the title, then the meta line
 export const cardAlt = (input) => [input.title, ...input.meta].join(', ');
+
+// ── the site's own card ──────────────────────────────────────────────────────
+// Every page that is not an event shares the logo and nothing else (asked
+// 2026-10-01: "make eccm default social card", then "just original logo",
+// after a link to /station previewed as a crop of the ULYSSES mark in the
+// footer, which is what a scraper takes when a page names no image). The
+// header's lockup, the letters with their own short stave and the tagline in
+// Instrument Sans at its narrowest width beside them (.tag-is), centred on
+// white; geometry and words are the header's (src/render/mark.mjs), drawn at
+// the one scale that makes the English, the longer, 800 px wide. No staff line
+// runs past the mark's own ends, here or on any card.
+const LOCKUP = {
+  et: { w: 537.5, lines: ['eesti nüüdis', 'muusika keskus'], hyphen: [529.3, 58.32, 11.1, 1.5] },
+  en: { w: 601.5, lines: ['estonian centre of', 'contemporary music'] },
+};
+const SITE_K = 800 / LOCKUP.en.w;
+export const siteSvg = (lang) => {
+  const L = LOCKUP[lang] || LOCKUP.et;
+  const k = SITE_K, ink = SITE.ink;
+  const tx = Math.round((W - L.w * k) / 2 - 35 * k), ty = Math.round((H - 96.5 * k) / 2 - 27 * k);
+  const letters = `<g transform="translate(${tx} ${ty}) scale(${k})" fill="${ink}">${LETTERS.replace(/INK/g, ink)}</g>`;
+  // the hairlines and the joins snapped to whole pixels, never scaled into grey
+  const rect = ([x, y, w, h]) => {
+    const x0 = Math.round(tx + x * k), x1 = Math.max(x0 + 1, Math.round(tx + (x + w) * k));
+    const y0 = Math.round(ty + y * k), hh = Math.max(1, Math.round(h * k));
+    return `<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${hh}" fill="${ink}"/>`;
+  };
+  const lines = LINES.map(([x, y, w]) => rect([x, y, w, 1.5])).join('') + (L.hyphen ? rect(L.hyphen) : '');
+  const tag = L.lines.map((t, i) => `<text x="373" y="${i ? 104 : 68.9}" font-family="Instrument Sans Condensed" font-size="37" fill="${ink}">${xml(t)}</text>`).join('');
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`
+    + `<rect width="${W}" height="${H}" fill="${SITE.ground}"/>${letters}<g transform="translate(${tx} ${ty}) scale(${k})">${tag}</g><g shape-rendering="crispEdges">${lines}</g></svg>`;
+};
+export const sitePath = (lang) => `/og/site-${lang === 'en' ? 'en' : 'et'}.png`;
+export const siteAlt = (lang) => (lang === 'en' ? 'ECCM, Estonian Centre of Contemporary Music' : 'ECCM, Eesti Nüüdismuusika Keskus');

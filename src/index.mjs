@@ -23,7 +23,7 @@
 import { renderEvent } from './render/event.mjs';
 import { renderPage } from './render/page.mjs';
 import { renderEvents, LIST } from './render/events.mjs';
-import { notFound, OTHER } from './render/chrome.mjs';
+import { notFound, OTHER, useOrigin } from './render/chrome.mjs';
 import { editor } from './editor.mjs';
 import { renderSitemap, renderFeed } from './render/feeds.mjs';
 import { serveMedia } from './media.mjs';
@@ -116,6 +116,7 @@ export default {
     const url = new URL(request.url);
     const p = url.pathname;
     useTransforms(env.IMAGE_TRANSFORMS);
+    useOrigin(url.origin);
     // the uploaded pictures from R2, /media/{sha256}.{ext} (src/media.mjs)
     if (p.startsWith('/media/')) { const out = await serveMedia(env, p); if (out) return out; }
     // the event share images and their list for /ds (src/og/route.mjs), since 2026-10-01

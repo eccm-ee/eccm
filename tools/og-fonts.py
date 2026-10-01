@@ -24,6 +24,8 @@ OUT = os.path.join(ROOT, 'src', 'og', 'fonts')
 FACES = [
     # the sans since 2026-10-01 ("schibsted to instrments sans everywhere, incl social"), at its normal width
     ('sans', 'Instrument Sans', 'instrument-sans', {'wght': 400, 'wdth': 100}),
+    # the tagline of the logo, as the header sets it (.tag-is): the narrowest width at 500, for the site card
+    ('tag', 'Instrument Sans Condensed', 'instrument-sans', {'wght': 500, 'wdth': 75}),
     # the title, 44 to 96 px: the display end of the optical size axis
     # the serif since 2026-10-01 ("change serif to Roboto Serif"), Newsreader before
     ('serif', 'Roboto Serif Display', 'roboto-serif', {'wght': 400, 'opsz': 72, 'wdth': 100}),

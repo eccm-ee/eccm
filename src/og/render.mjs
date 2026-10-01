@@ -9,13 +9,14 @@ import wasm from '@resvg/resvg-wasm/index_bg.wasm';
 import sans from './fonts/instrument-sans.ttf';
 import serif from './fonts/roboto-serif-display.ttf';
 import serifText from './fonts/roboto-serif-text.ttf';
+import tag from './fonts/instrument-sans-condensed.ttf';
 
 let ready = null;
 let fonts = null;
 
 export async function renderPng(svg, width) {
   await (ready ??= initWasm(wasm));
-  fonts ??= [sans, serif, serifText].map((b) => new Uint8Array(b));
+  fonts ??= [sans, serif, serifText, tag].map((b) => new Uint8Array(b));
   return new Resvg(svg, {
     fitTo: { mode: 'width', value: width },
     font: { fontBuffers: fonts, loadSystemFonts: false, defaultFontFamily: 'Instrument Sans' },
