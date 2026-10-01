@@ -13,6 +13,10 @@ that owns this repository, still "The token in default is invalid", so
 `kristjanjansen`; then push per CLAUDE.md and switch back. Numbers here were counted with a command when this was
 written; count again before building on one.
 
+## 2026-10-01: share images, calendars, the Ulysses mark
+
+Share images per event in the derived ground and face, live (`/og/e/...png`, the Open Graph head, real cards on **https://eccm.positron.studio/ds**); the `.ics` per event and per language; ULYSSES Platform in the footer. `BACKLOG.md` has the measurements. A background agent is importing more of eccm.ee's events and one more page into `data/seed-step6.sql`, local only until read.
+
 ## 2026-10-01: the newsletter, on the free plan
 
 Asked *"can we start newsletter work event on nonpaid account? see ../trip"*, then *"go"*. Built, in `BACKLOG.md` in full: the sign-up with double opt-in at **https://eccm.positron.studio/et/uudiskiri** (and `/en/newsletter`), unlinked until cutover; the composer at **https://eccm.positron.studio/edit/uudiskiri**; trip's outbox and mail template, sent through the `send_email` binding from `uudiskiri@positron.studio`. On the free plan only verified destination addresses receive mail, and none is verified for the owner yet, so the staging test letter sits in the outbox refused.
