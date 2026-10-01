@@ -78,7 +78,7 @@ export const renderItems = ({ items, subs, form = {}, errors = []}) => {
   </section>
   </div>
   <script type="module" src="/items.mjs"></script>`;
-  return page({ lang: 'et', title: 'Teated.', alternate: { lang: 'en', href: '/en/' }, body });
+  return page({ wide: true, lang: 'et', title: 'Teated.', alternate: { lang: 'en', href: '/en/' }, body });
 };
 
 // one notice's form; form is the notice's values, or what was posted when it had something to fix
@@ -97,5 +97,5 @@ export const renderItemEdit = ({ it, form, errors = [] }) => {
       <a class="btn btn-end" href="/items">Loobu</a>
     </div>
   </form>`;
-  return page({ lang: 'et', title: `${it.title}.`, alternate: { lang: 'en', href: '/en/' }, body });
+  return page({ wide: true, lang: 'et', title: `${it.title}.`, alternate: { lang: 'en', href: '/en/' }, body });
 };

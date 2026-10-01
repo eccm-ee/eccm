@@ -78,8 +78,8 @@ export const renderIssues = ({ issues, counts }) => {
       <h2>Uus kiri</h2>
       <p class="hint">Kiri tuleb ette täidetuna järgmise kuue nädala sündmustega. Tervitus, üks lõik ja allkiri on sinu kirjutada.</p>
       <div class="actions">
-        <button class="btn btn-pri" type="submit" name="lang" value="et">Eesti keeles</button>
-        <button class="btn" type="submit" name="lang" value="en">Inglise keeles</button>
+        <button class="btn btn-light" type="submit" name="lang" value="et">Eesti keeles</button>
+        <button class="btn btn-light" type="submit" name="lang" value="en">Inglise keeles</button>
       </div>
     </form>
     <section class="items-list">
@@ -88,7 +88,7 @@ export const renderIssues = ({ issues, counts }) => {
     </section>
     <p><a href="/edit/uudiskiri/postkast">Postkast</a>: iga saadetud ja saatmata kiri.</p>
   </div>`;
-  return page({ lang: 'et', title: 'Uudiskiri.', alternate: alt('et'), body });
+  return page({ wide: true, lang: 'et', title: 'Uudiskiri.', alternate: alt('et'), body });
 };
 
 export const renderIssueForm = ({ issue, form = issue, errors = [], say, mail, test = '' }) => {
@@ -116,7 +116,7 @@ export const renderIssueForm = ({ issue, form = issue, errors = [], say, mail, t
   </form>`}
   <h2 class="mail-head">Nii see postkastis paistab</h2>
   <iframe class="mail-preview" title="Kiri postkastis" srcdoc="${mail}"></iframe>`;
-  return page({ lang: 'et', title: `${issue.subject || 'Uus kiri'}.`, alternate: alt('et'), body });
+  return page({ wide: true, lang: 'et', title: `${issue.subject || 'Uus kiri'}.`, alternate: alt('et'), body });
 };
 
 // a@b.ee as a***@b.ee: the outbox shows that a mail went and to whom roughly, never the list
@@ -127,5 +127,5 @@ export const renderOutbox = ({ rows }) => {
   <h1>Postkast</h1>
   <p class="note">Viimased 100 kirja, uuemad eespool. Saatmata kiri proovitakse uuesti iga kümne minuti järel, kuni kolm korda.</p>
   ${rows.length ? table({ label: 'Postkast', cols: [{ label: 'Aeg' }, { label: 'Liik' }, { label: 'Teema', cls: 'main' }, { label: 'Saaja' }, { label: 'Olek' }], rows: rows.map((m) => [html`<time datetime="${m.created_at}">${m.created_at.slice(0, 16).replace('T', ' ')}</time>`, KIND[m.kind], html`${m.subject}${!m.sent_at && m.error ? html`<br><span class="small">${m.error}</span>` : ''}`, mask(m.to_addr), m.sent_at ? 'saadetud' : m.error ? `ei läinud, ${m.tries} korda` : 'ootab']) }) : html`<p class="note">Kirju ei ole veel.</p>`}`;
-  return page({ lang: 'et', title: 'Postkast.', alternate: alt('et'), body });
+  return page({ wide: true, lang: 'et', title: 'Postkast.', alternate: alt('et'), body });
 };

@@ -21,7 +21,7 @@ const TOOLS = [
 ];
 
 export const renderAdmin = () => page({
-  lang: 'et', title: 'Haldus.', alternate: { lang: 'en', href: '/en/' },
+  wide: true, lang: 'et', title: 'Haldus.', alternate: { lang: 'en', href: '/en/' },
   body: html`  <h1>Haldus</h1>
   <div class="cards">
     ${TOOLS.map(([href, title, desc]) => html`<a class="card" href="${href}"><span class="card-title">${title}</span><span class="card-desc">${desc}</span></a>`)}

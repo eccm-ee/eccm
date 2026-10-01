@@ -37,7 +37,8 @@ export const LABEL = { et: 'ET', en: 'EN' };
 // to say nothing is saved (src/editor.mjs); absent on every public page
 // head: preloads the page itself knows it needs, the event's poster and the
 // serif its scheme sets (src/render/pic.mjs, src/render/event.mjs)
-export const page = ({ lang, title, alternate, canonical, alternates, body, notice, head }) => {
+// wide: a tool page (asked 2026-10-01: "admin pages full w"), its forms, tables and grids over the whole frame
+export const page = ({ lang, title, alternate, canonical, alternates, body, notice, head, wide }) => {
   const t = T[lang];
   return html`<!doctype html>
 <html lang="${lang}">
@@ -64,7 +65,7 @@ ${raw(SYMBOL)}
 ${raw(alternate ? HEADER[lang].replace(/<a href="[^"]*" lang="(?:en|et)">/g, `<a href="${alternate.href}" hreflang="${alternate.lang}" lang="${alternate.lang}">`) : HEADER[lang])}
 
 ${notice ? html`<div class="notice"><p class="frame">${notice}</p></div>` : ''}
-<main class="frame">
+<main class="frame${wide ? ' admin' : ''}">
 ${body}
 </main>
 

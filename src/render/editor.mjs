@@ -200,7 +200,7 @@ ${raw(READ_PICTURE)}
       <a class="btn btn-end" href="${cancel}">Loobu</a>
     </div>
   </form>`;
-  return page({ lang: 'et', title: `${title}.`, alternate: ALT, body });
+  return page({ wide: true, lang: 'et', title: `${title}.`, alternate: ALT, body });
 };
 
 // ── the text pages: the same form with nothing a page lacks ─────────────────
@@ -244,7 +244,7 @@ ${raw(SAME_HEIGHT)}
       <a class="btn btn-end" href="${cancel}">Loobu</a>
     </div>
   </form>`;
-  return page({ lang: 'et', title: `${title}.`, alternate: ALT, body });
+  return page({ wide: true, lang: 'et', title: `${title}.`, alternate: ALT, body });
 };
 
 // the two things that can go wrong now that nothing is locked: the row is not
@@ -255,7 +255,7 @@ export const errorPage = ({ status, reason }) => {
       ? ['Sellist lehte ei ole.', html`Lehed on menüüs ja igal lehel on Muuda nupp.`]
       : ['Sellist sündmust ei ole.', html`Sündmused on <a href="/et/sundmused">nimekirjas</a>.`])
     : ['Toimetaja ei vasta.', 'Andmebaas vastas veaga. Värskel paigaldusel on põhjus enamasti rakendamata migratsioon, migrations/0002_editing.sql või 0003_page_editing.sql.'];
-  return page({ lang: 'et', title: `${what[0]}`, alternate: ALT, body: html`  <p class="crumb">Toimeta</p>
+  return page({ wide: true, lang: 'et', title: `${what[0]}`, alternate: ALT, body: html`  <p class="crumb">Toimeta</p>
   <h1>${what[0]}</h1>
   <p class="note">${what[1]}</p>` });
 };

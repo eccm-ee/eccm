@@ -397,6 +397,10 @@
   /* the small button (asked 2026-10-01: "Make small button variant and use it in tables"): a row's own action
      in a table or a list, two thirds of the 3rem box and in the small type, so it sits on the row's line and
      does not set its height; the same edge and the same inward hover */
+  /* the light button: a choice between equals, filled with a light grey rather than one of them filled black
+     (asked 2026-10-01 of Eesti keeles and Inglise keeles: "both same with light bg") */
+  .btn-light { background: color-mix(in srgb, var(--eccm-ink) 7%, var(--eccm-ground)); border-color: transparent; }
+  .btn-light:hover { outline-color: var(--eccm-ink); }
   .btn-sm { block-size: 2rem; padding-inline: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: 1; }
   .table td .btn-sm { vertical-align: middle; }
   /* the form: one column at the measure, a visible label above each field,
@@ -526,6 +530,10 @@
      the whole size of a 16 by 9 box in the ink's own line, its title and one line of description set from
      the top left with the frame's own inset; the cards a grid holds (.cards) are three to a row on a desk,
      two then one as the row narrows, each at least 16rem */
+  /* a tool page (page({ wide }) in src/render/chrome.mjs: /admin, the notices, the newsletter's editor and
+     outbox, the event and page editors) spends the whole frame on its forms, tables and grids, asked
+     2026-10-01 as "admin pages full w"; a note above them keeps the measure, since it is still read */
+  main.admin :is(.items, .form, .table, .cards, .fields, .langs) { max-inline-size: none; }
   .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: var(--eccm-s-6); }
   @media (min-width: 64rem) { .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .card { display: flex; flex-direction: column; justify-content: flex-start; gap: var(--eccm-s-2); aspect-ratio: 16 / 9; padding: var(--eccm-s-6); border: 1px solid var(--eccm-ink); color: var(--eccm-ink); text-decoration: none; min-inline-size: 0; }
@@ -553,9 +561,18 @@
   .station h2 { font-size: var(--eccm-t-l); margin-block-end: var(--eccm-s-6); }
   .station .note { margin-block-end: var(--eccm-s-6); }
   .station-title { font-size: var(--eccm-t-xl); line-height: var(--eccm-lh-head); margin-block-start: var(--eccm-s-2); overflow-wrap: anywhere; min-block-size: 1lh; }
+  /* who made what is on, one step under the title in the second ink; its line is held while it is
+     empty, so a programme with no name for its maker does not pull the button up a line */
+  .station-who { color: var(--eccm-ink-2); margin-block-start: var(--eccm-s-1); overflow-wrap: anywhere; min-block-size: 1lh; }
+  /* the channels, as many as the station has: small buttons that wrap as a cluster at their own sizes,
+     the one playing filled, a group's gap above what it switches */
+  .station-channels { display: flex; flex-wrap: wrap; gap: var(--eccm-s-2); margin-block-end: var(--eccm-s-8); }
+  .station .table td.who { white-space: normal; overflow-wrap: anywhere; }
   /* four short readouts pair up on a phone too, where the facts would stack them one a row */
   .facts.station-read { margin-block-start: var(--eccm-s-8); grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr)); }
   .station-read dd { min-block-size: 1lh; }
+  /* the one line that says why three readouts are empty, its height kept once it is emptied */
+  .station-read-say { margin-block-start: var(--eccm-s-4); min-block-size: 1lh; }
   .station-log { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); gap: var(--eccm-s-2); }
   /* the newsletter (src/render/newsletter.mjs): the answer to a sign-up in the body's size, the field a
      person never sees, the send's one checkbox, and the letter as it arrives drawn in a frame of its width */
