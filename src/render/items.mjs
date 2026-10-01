@@ -21,13 +21,13 @@ const fate = (it) => {
   return it.failed ? `Ükski seade ei võtnud vastu (${it.failed}).` : 'Ilmus, ühtegi seadet ei olnud.';
 };
 
-export const renderItems = ({ items, subs, form = {}, errors = [], key }) => {
+export const renderItems = ({ items, subs, form = {}, errors = []}) => {
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
   const body = html`  <h1>Teated</h1>
   <p class="note">Määratud ajal ilmub teade siia ja jõuab igasse seadmesse, kus teated on lubatud.</p>
   ${errors.length ? html`<div class="errors" role="alert"><p>Ei avaldatud. Paranda:</p><ul>${errors.map((e) => html`<li>${e.msg}</li>`)}</ul></div>` : ''}
   <div class="items">
-  <section class="form items-device" data-key="${key || ''}">
+  <section class="form items-device">
     <h2>See seade</h2>
     <p id="push-say">Teated jõuavad ${subs} seadmesse.</p>
     <div class="actions">

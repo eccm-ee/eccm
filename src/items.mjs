@@ -13,6 +13,7 @@
 //   POST /items              the form, then 303 back, or the form again with what to fix
 //   POST /items/subscribe    a browser's PushSubscription as JSON (public/items.mjs)
 //   POST /items/unsubscribe  { endpoint }
+//   GET  /items/key          the public VAPID key a browser subscribes with (public/push.mjs)
 //
 // Open like the editor: nobody logs in (src/editor.mjs says since when).
 import { send } from './push.mjs';
@@ -131,12 +132,13 @@ const ask = async (env, path, body) => (await store(env).fetch(`https://items${p
 
 const page = async (env, form = {}, errors = [], status = 200) => {
   const { items, subs } = await ask(env, '/list');
-  return new Response(renderItems({ items, subs, form, errors, key: env.VAPID_PUBLIC }), { status, headers: HEAD });
+  return new Response(renderItems({ items, subs, form, errors }), { status, headers: HEAD });
 };
 
 export async function itemsRoute(request, env, url) {
   const p = url.pathname.replace(/\/$/, '');
   if (p === '/items' && request.method === 'GET') return page(env);
+  if (p === '/items/key') return json({ key: env.VAPID_PUBLIC || null });
   if (p === '/items' && request.method === 'POST') {
     const f = Object.fromEntries([...(await request.formData())].map(([k, v]) => [k, String(v).trim()]));
     const errors = [];

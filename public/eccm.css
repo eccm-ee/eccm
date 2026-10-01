@@ -510,6 +510,9 @@
   /* the preview's one line above the page, ruled under in the hairline */
   .notice { border-block-end: 1px solid var(--eccm-rule); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
   .notice > .frame { padding-block: var(--eccm-s-3); }
+  /* the bar site.mjs puts under the header in the installed app while notifications are off: a row with two ends, the line and its button, which wraps to two left-aligned lines on a narrow phone */
+  .push-ask > .frame { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--eccm-s-3) var(--eccm-s-6); }
+  .push-ask p { font-size: var(--eccm-t-m); line-height: var(--eccm-lh-body); color: var(--eccm-ink); }
 }
 
 @layer page {
