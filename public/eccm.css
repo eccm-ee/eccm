@@ -555,36 +555,36 @@
   .table .num { text-align: end; }
   .table .main { inline-size: 100%; white-space: normal; overflow-wrap: anywhere; }
   .table tr[aria-current="true"] > * { font-weight: 600; }
-  /* the radio, /station (src/render/station.mjs): what is on in the title size over its one button, the
-     readouts in the facts' shape, then the running order and the log as sections a scale step apart */
-  .station { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: var(--eccm-s-16); }
-  .station h2 { font-size: var(--eccm-t-l); margin-block-end: var(--eccm-s-6); }
-  .station .note { margin-block-end: var(--eccm-s-6); }
-  .station-title { font-size: var(--eccm-t-xl); line-height: var(--eccm-lh-head); margin-block-start: var(--eccm-s-2); overflow-wrap: anywhere; min-block-size: 1lh; }
-  /* who made what is on, one step under the title in the second ink; its line is held while it is
-     empty, so a programme with no name for its maker does not pull the button up a line */
-  .station-who { color: var(--eccm-ink-2); margin-block-start: var(--eccm-s-1); overflow-wrap: anywhere; min-block-size: 1lh; }
-  /* the channels, as many as the station has: small buttons that wrap as a cluster at their own sizes,
-     the one playing filled, a group's gap above what it switches */
-  /* the channels side by side, a column each (asked 2026-10-01: "show stations in colums"): no box, a rule on
-     top, ink on the one this page follows and the light rule on the others; three to a row on a desk, fewer as
-     the frame narrows; inside, the title, what is on in the body size, who, its button and the next two */
-  .station-cols { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: var(--eccm-s-8) var(--eccm-s-6); margin-block-end: var(--eccm-s-12); }
-  .station-col { display: grid; align-content: start; gap: var(--eccm-s-2); padding-block-start: var(--eccm-s-4); border-block-start: 1px solid var(--eccm-rule); }
+  /* the radio, /station (src/render/station.mjs, public/station.mjs): every channel a column holding the whole
+     of that station, nothing said twice (asked 2026-10-01: "whole stations need to fit so single col. avoid
+     dumplication and vertical jumps"), the shape NTS gives its two live channels. No box: a rule on top, ink on
+     the channel being heard. Every part above the running order has a fixed height (the title two lines, who
+     and the times one each, the bar 2 px), so the parts line up across the columns and nothing inside a column
+     moves when its text changes */
+  .station-cols { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); column-gap: var(--eccm-s-8); row-gap: var(--eccm-s-12); }
+  .station-col { display: flex; flex-direction: column; gap: var(--eccm-s-2); padding-block-start: var(--eccm-s-3); border-block-start: 1px solid var(--eccm-rule); min-inline-size: 0; }
   .station-col[aria-current="true"] { border-block-start-color: var(--eccm-ink); }
-  .station-col h3 { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-  .station-col h3 a { text-decoration-line: none; color: inherit; }
-  .station-col h3 a:hover { text-decoration-line: underline; }
-  .station-col-now { font-size: var(--eccm-t-l); line-height: var(--eccm-lh-head); overflow-wrap: anywhere; }
-  .station-col .btn { justify-self: start; margin-block: var(--eccm-s-2); }
-  .station-col-next { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--eccm-s-4); row-gap: var(--eccm-s-1); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
-  .station-col-next li { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; }
-  .station-col-next time { color: var(--eccm-ink-2); }
-  /* four short readouts pair up on a phone too, where the facts would stack them one a row */
-  .facts.station-read { margin-block-start: var(--eccm-s-8); grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr)); }
+  .station-col-head { display: flex; justify-content: space-between; gap: var(--eccm-s-4); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+  .station-col-head a { color: var(--eccm-ink); text-decoration-line: none; }
+  .station-col-head a:hover { text-decoration-line: underline; }
+  .station-col-now { font-size: var(--eccm-t-l); line-height: var(--eccm-lh-head); block-size: 2lh; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow-wrap: anywhere; }
+  .station-col-who { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); block-size: 1lh; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .station-col-bar { block-size: 2px; background: var(--eccm-rule); margin-block-start: var(--eccm-s-2); }
+  .station-col-bar > span { display: block; block-size: 100%; inline-size: 0; background: var(--eccm-ink); transition: inline-size 1s linear; }
+  .station-col-times { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); block-size: 1lh; }
+  .station-col .btn { align-self: flex-start; margin-block: var(--eccm-s-2); }
+  /* the running order: a start time beside a title, one line each, the row on air in weight */
+  .station-col-order { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--eccm-s-4); row-gap: var(--eccm-s-1); align-content: start; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); padding-block-start: var(--eccm-s-2); border-block-start: 1px solid var(--eccm-rule); }
+  .station-col-order li { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; }
+  .station-col-order time { color: var(--eccm-ink-2); }
+  .station-col-order span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .station-col-order li[aria-current="true"] { font-weight: 600; }
+  @media (prefers-reduced-motion: reduce) { .station-col-bar > span { transition: none; } }
+  /* the numbers about this page's own listening and the log, once, folded under the columns */
+  .station-tech { margin-block-start: var(--eccm-s-16); }
+  .station-tech summary { cursor: pointer; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+  .facts.station-read { margin-block: var(--eccm-s-6); grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr)); }
   .station-read dd { min-block-size: 1lh; }
-  /* the one line that says why three readouts are empty, its height kept once it is emptied */
-  .station-read-say { margin-block-start: var(--eccm-s-4); min-block-size: 1lh; }
   .station-log { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); gap: var(--eccm-s-2); }
   /* the newsletter (src/render/newsletter.mjs): the answer to a sign-up in the body's size, the field a
      person never sees, the send's one checkbox, and the letter as it arrives drawn in a frame of its width */
