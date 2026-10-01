@@ -49,12 +49,12 @@
       // private half is the secret VAPID_JWK (wrangler secret put VAPID_JWK
       // --env staging). A new key means every browser subscribes again.
       // the newsletter's mail (src/mail.mjs): the send_email binding, the
-      // address it sends from on positron.studio, whose Email Routing is on,
-      // and the cron that drains what did not go at once. On the Workers Free
-      // plan only the account's verified addresses receive anything.
+      // address it sends from on eccm.positron.studio, the sending domain the
+      // owner onboarded 2026-10-01 (Email Sending, Enabled, 1,000 a day), and
+      // the cron that drains what did not go at once.
       "send_email": [{ "name": "EMAIL" }],
       "triggers": { "crons": ["*/10 * * * *"] },
-      "vars": { "IMAGE_TRANSFORMS": "on", "MAIL_FROM": "ECCM <uudiskiri@positron.studio>", "VAPID_PUBLIC": "BMFK4ASgBxY0RNxBPRoJTUHFf3pTkyx9lR3jIYG_miJdtrc7a_moyVkig2QlFVBr5d5BuacnyV6skIeaxvTGHM4", "VAPID_SUB": "https://eccm.positron.studio/" }
+      "vars": { "IMAGE_TRANSFORMS": "on", "MAIL_FROM": "ECCM <uudiskiri@eccm.positron.studio>", "VAPID_PUBLIC": "BMFK4ASgBxY0RNxBPRoJTUHFf3pTkyx9lR3jIYG_miJdtrc7a_moyVkig2QlFVBr5d5BuacnyV6skIeaxvTGHM4", "VAPID_SUB": "https://eccm.positron.studio/" }
     },
     "production": {
       "name": "eccm"
