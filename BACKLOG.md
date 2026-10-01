@@ -7,6 +7,12 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Open 2026-10-01: the notices' away moment, and Saada ka kirjana
+
+Asked as *"do it"* of the two notice ideas `plans/plan-eccm-cms.md` section 8 still owes.
+- **An away moment.** A `shelf_at` column on the object's `items` table, a second time field on the form, the alarm taking the earlier of the waiting publish and the due shelving, the shelving silent (no push), and the list hiding or greying what is put away. Positron's rules for it are in `archive/positron-items.md`.
+- **Saada ka kirjana.** A checkbox on the notice form that makes a newsletter `issue` row from the notice. Waits for the newsletter, `plans/plan-eccm-cms.md` section 11 session 4.
+
 ### Done 2026-10-01: "see ../positron items demo. i want eccm.positron.app to pwa with push notifications. move that items infra over to eccm. for pwa logo use single line logo. make page on eccm to list and add items", then "use eccm edit style"
 
 Asked verbatim, the second mid-work. Read as eccm.positron.studio, the site's hostname. Files: `src/items.mjs` (new), `src/push.mjs` (new), `src/render/items.mjs` (new), `public/items.mjs` (new), `public/sw.js` (new), `public/manifest.webmanifest`, `public/eccm.css`, `src/index.mjs`, `src/render/editor.mjs`, `src/render/chrome.mjs`, `src/render/mark.mjs`, the four static pages, `wrangler.jsonc`, `CLAUDE.md`.

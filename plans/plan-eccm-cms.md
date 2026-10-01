@@ -715,10 +715,10 @@ visibility is `status = 'published' AND (publish_at IS NULL OR publish_at <=
 for the things that must happen rather than merely appear: sending a scheduled
 issue, purging or re-rendering a pre-built page when its `publish_at` passes,
 and the nightly D1 export to R2. One trigger every fifteen minutes does all
-three. positron's `workers/items` is the measured alternative, a Durable
-Object alarm that fires AT the time and records scheduled-against-actual; it is
-the right tool if a send must land at 09:00:00 and overkill for a concert
-listing.
+three. A Durable Object alarm that fires AT the time is the alternative,
+which positron's `workers/items` measured and `src/items.mjs` now runs for the
+notices (section 8); it is the right tool if a send must land at 09:00:00 and
+overkill for a concert listing.
 
 ### Drafts: where an unsaved draft lives
 
@@ -759,8 +759,8 @@ different jobs, and the server copy is the record.**
   save ten times without a visitor seeing a half-finished sentence. This is one
   table more than section 7 lists.
 
-For comparison, positron's `workers/items` store has no PUT at all: an item is
-POSTed once with a `publish_at`, its `unpublished` status is *scheduled*, not
+For comparison, positron's `workers/items` store (archived 2026-10-01) had no
+PUT at all: an item was POSTed once with a `publish_at`, its `unpublished` status is *scheduled*, not
 *draft*, and the page's `draft()` is a function that reads the two fields at
 press time. Nothing is persisted on the client. That is right for a two-field
 notification and wrong for an 800-word open call.
@@ -843,31 +843,49 @@ no date control at all (MEASURED: no `date`, `datetime-local` or picker in
 ### Items for the stream, which the editor also composes
 
 Asked: *"note that they also compose items for streaming (see items demo)"*.
-Read as: ECCM will also write short items that go out at a moment to phones
-and to a feed, the thing `demo/items/` does, not only pages that appear. That
-page is a two-field composer (title, body) and a moment; the store (a Durable
-Object per room, `workers/items`) holds the item as `unpublished`, fires an
-**alarm at the named moment**, flips it to `new`, announces it once over FCM to
-the phones that asked, and later puts it away at a `shelf_at` it was also
-told when written. It records scheduled-against-actual, which is how it knows
-its alarms land within a few hundred milliseconds.
+Read as: ECCM will also write short items that go out at a moment to phones,
+not only pages that appear. **Built 2026-10-01** on *"move that items infra
+over to eccm"*, and positron's demo and worker were discarded the same day,
+their lessons kept in `archive/positron-items.md`. This section says what
+exists and what is still owed.
 
-- **Two publish paths in one editor.** Pages and events go to D1 and appear
-  by the WHERE clause; a stream item goes to the items store, because *appear
-  when asked for* and *fire at 09:00:00 and tell the phones* are different
-  promises and only the second needs an alarm. The editor's item form is the
-  `demo/items/` composer with an `away` moment added.
-- **The store's room is `eccm`**, and section 10 of this plan already says
-  why the FCM topic is an allowlist of one room rather than a prefix test:
-  every run of a test suite once notified every real subscriber for a day.
-- **The same item can be the newsletter's short issue.** An item with
-  `publish_at` and a body is also a paragraph, and the composer can offer
-  *"saada ka kirjana"*, which creates an `issue` row from it; this is the
-  cheap version of the *"short issue in any week that has a premiere"* above.
-- **What a stream item is not**: an event. It has no venue, no hall, no
-  ticket; it is *"täna õhtul on veel kümme piletit"*. Modelling it as a third
-  content type with two fields is right, and modelling it as an event with
-  most fields empty is the Joomla schema arriving by another road.
+**What is built.** `/items` is the notices page, in Estonian, in the editor's
+form: the device's own state with Luba teated, the form (Pealkiri, Tekst,
+Link, Avalda in Tallinn time, empty for now) and the list, refreshing itself
+every ten seconds while in sight. `/items/{id}` edits one notice: a waiting
+one its words and its time, a published one its words in the list only, and
+either can be deleted. One Durable Object, `Items` in `src/items.mjs`, holds
+the notices, the browsers' subscriptions and one alarm, set for the next
+waiting notice; at that moment the notice turns published and goes to every
+subscription through `src/push.mjs`, plain Web Push signed with ECCM's own
+VAPID key. There is no Firebase, no topic and no room: the object knows its
+subscribers and drops one its push service answers 404 or 410 for. The site
+is installable (`public/manifest.webmanifest`, the single-line mark), and in
+the installed app a bar under the header turns notifications on, since iOS
+offers them only there and lists the app in Settings only once allowed.
+
+- **Two publish paths in one site, as planned.** Pages and events go to D1
+  and appear by the WHERE clause; a notice goes to the object, because
+  *appear when asked for* and *fire at 09:00 and tell the phones* are
+  different promises and only the second needs an alarm.
+- **What a notice is not**: an event. It has no venue, no hall, no ticket; it
+  is *"täna õhtul on veel kümme piletit"*. A third content type with four
+  fields, never an event with most fields empty.
+
+**What is still owed.**
+
+- **An away moment.** The demo gave each item a second time at which it left
+  the top of the list, silently; the notices here stay in the list for ever.
+  A `shelf_at` column, the alarm taking the earlier of the two moments, and
+  the list hiding what is put away.
+- **Saada ka kirjana.** A notice with a time and a body is also a paragraph,
+  so the form can offer to make a newsletter `issue` row from it, the cheap
+  version of the *"short issue in any week that has a premiere"* in section 5.
+  It waits for the newsletter itself (section 11, session 4).
+- **A gate.** `/items` is open like the editor (asked 2026-09-29, "all is free
+  for editing"), so anyone who finds it can send to every subscribed phone.
+  The Access application of section 11, session 2, covers both.
+- **A feed.** Notices reach phones and this page, not `/et/feed.xml`.
 
 ### Images, the `../trip` model in full
 
@@ -1043,7 +1061,8 @@ thing by that name in the tree; both are plans and the libraries under them:
   (`not_found_handling: none`, custom domain routes) is the template.
 - **`workers/items`**: a SQLite Durable Object whose alarm publishes an item AT
   its time and records punctuality. The measured answer to "scheduled posting
-  without a cron poll", kept in reserve for the newsletter send.
+  without a cron poll". Carried over 2026-10-01 as `src/items.mjs`, its
+  lessons in `archive/positron-items.md`, and in reserve for the newsletter send.
 - **`.claude/skills/positron-start/`** (`SKILL.md` and `PARTS.md`): the whole
   procedure for standing a site up on somebody else's Cloudflare account, and
   the parts of it that matter here are not technical: say the revision out
