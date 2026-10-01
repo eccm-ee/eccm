@@ -517,6 +517,17 @@
      and a column of amounts on its right, .num. The main column, .main, takes what is left and wraps; every
      other cell keeps its words on one line. The current row is the one bold line it has room for, 600 as in
      prose, carried by aria-current, so the mark is in the markup and not in a colour */
+  /* a card (asked 2026-10-01: "card that is 16:9 1px black border and title and desc in top left"): one link
+     the whole size of a 16 by 9 box in the ink's own line, its title and one line of description set from
+     the top left with the frame's own inset; the cards a grid holds (.cards) are three to a row on a desk,
+     two then one as the row narrows, each at least 16rem, and a pointer on one thickens its edge inward
+     the way .btn does, so nothing around it moves */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: var(--eccm-s-6); }
+  @media (min-width: 64rem) { .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .card { display: flex; flex-direction: column; justify-content: flex-start; gap: var(--eccm-s-2); aspect-ratio: 16 / 9; padding: var(--eccm-s-6); border: 1px solid var(--eccm-ink); color: var(--eccm-ink); text-decoration: none; min-inline-size: 0; }
+  .card:hover, .card:focus-visible { outline: 1px solid var(--eccm-ink); outline-offset: -2px; }
+  .card-title { font-size: var(--eccm-t-l); line-height: var(--eccm-lh-head); }
+  .card-desc { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); max-inline-size: 32ch; }
   .table { container: table / inline-size; max-inline-size: 60rem; }
   .table table { inline-size: 100%; border-collapse: collapse; }
   .table th, .table td { padding-block: var(--eccm-s-2); padding-inline: 0 var(--eccm-s-6); text-align: start; vertical-align: baseline; white-space: nowrap; }

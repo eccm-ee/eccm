@@ -31,6 +31,7 @@ import { useTransforms } from './render/pic.mjs';
 import { renderIcs } from './render/ics.mjs';
 import { itemsRoute } from './items.mjs';
 import { renderStation } from './render/station.mjs';
+import { renderAdmin } from './render/admin.mjs';
 import { newsletter, drain } from './newsletter.mjs';
 import { ogRoute } from './og/route.mjs';
 export { Items } from './items.mjs';
@@ -142,6 +143,8 @@ export default {
     if (p === '/items' || p.startsWith('/items/')) { const out = await itemsRoute(request, env, url); if (out) return out; }
     // the radio, positron's station in this site's chrome (src/render/station.mjs), since 2026-10-01
     if (p === '/station') return reply(renderStation());
+    // the tools, one card each (src/render/admin.mjs), since 2026-10-01
+    if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
