@@ -28,6 +28,14 @@ command when this was written; count again before building on one.
   `live.mjs --realtime` into a temporary slot on `live-test` came back as
   five chunks joined into one 45.000 s MP3 (720,978 bytes) that ffmpeg
   decodes without an error; the channel's running order was put back after.
+- **/radio/kava is a sketch of the programming page** (`src/render/radio-plan.mjs`,
+  asked: "do a page with radio ui, does not have to work. also put radio ui
+  links below"): the channels, a week of typed slots (loop, live, replay,
+  file) told apart by their left edge, the Friday live slot opened as a form
+  (artists, fallback, a broadcaster key good only in the slot, the episode's
+  address, recording), the checks, the episodes, and the tools'
+  pages from `plans/plan-eccm-radio-research.md`. Nothing saves; a card on
+  /admin leads to it.
 - Not done: putting a kept show back into a channel's running order (a write
   to the station, positron's token) and an English /radio.
 

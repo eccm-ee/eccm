@@ -15,6 +15,7 @@ const TOOLS = [
   ['/et/sundmused', 'Sündmused', 'Kõik sündmused. Iga sündmust muudetakse tema enda lehe nupust Muuda.'],
   ['/items', 'Teated', 'Teade telefonidesse kindlal ajal, ja teadete nimekiri.'],
   ['/radio', 'Raadio', 'Jaama voog, kava ja otseülekanne.'],
+  ['/radio/kava', 'Raadio kava', 'Kavand: nädala kava, otsesaated, kordused ja episoodid.'],
   ['/edit/uudiskiri', 'Uudiskiri', 'Kirjad tellijatele: koosta sündmustest, saada testiks, saada kõigile.'],
   ['/ds', 'Disainisüsteem', 'Kirjad, värvid, logo, komponendid ja sotsiaalmeedia pildid.'],
   ['/type', 'Kirjatüübid', 'Kirjatüüpide võrdlus lehe enda suurustes.'],
