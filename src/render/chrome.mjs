@@ -7,7 +7,7 @@
 // static page under public/, changed together.
 import { html, raw } from './html.mjs';
 import { SYMBOL, HEADER, FOOTER } from './mark.mjs';
-import { sitePath, siteAlt, W as OG_W, H as OG_H } from '../og/card.mjs';
+import { sitePath, siteAlt, pageInput, pagePath, pageVersion, W as OG_W, H as OG_H } from '../og/card.mjs';
 
 // the request's origin, set once per request by src/index.mjs, for the absolute
 // address a share image needs
@@ -18,14 +18,16 @@ export const origin = () => ORIGIN;
 // logo (asked 2026-10-01: "make eccm default social card", "just original
 // logo"): a link to such a page used to preview as whatever picture a scraper
 // found, a crop of the footer's ULYSSES mark
-const siteOg = (lang, title) => html`<meta property="og:type" content="website">
+// og: { key, title, lang } names the page's own card (src/og/card.mjs, pageInput), the site card otherwise; lang
+// is the card's when it differs from the page's, a text page shown in its other language
+const siteOg = (lang, title, og) => html`<meta property="og:type" content="website">
 <meta property="og:site_name" content="ECCM">
 <meta property="og:title" content="${title}">
-<meta property="og:image" content="${ORIGIN + sitePath(lang)}">
+<meta property="og:image" content="${ORIGIN + (og ? pagePath(og.key, og.lang || lang, pageVersion(pageInput(og.key, og.lang || lang, og.title))) : sitePath(lang))}">
 <meta property="og:image:width" content="${OG_W}">
 <meta property="og:image:height" content="${OG_H}">
 <meta property="og:image:type" content="image/png">
-<meta property="og:image:alt" content="${siteAlt(lang)}">
+<meta property="og:image:alt" content="${og ? og.title : siteAlt(lang)}">
 <meta name="twitter:card" content="summary_large_image">`;
 
 export const T = {
@@ -62,7 +64,7 @@ export const LABEL = { et: 'ET', en: 'EN' };
 // head: preloads the page itself knows it needs, the event's poster and the
 // serif its scheme sets (src/render/pic.mjs, src/render/event.mjs)
 // wide: a tool page (asked 2026-10-01: "admin pages full w"), its forms, tables and grids over the whole frame
-export const page = ({ lang, title, alternate, canonical, alternates, body, notice, head, wide }) => {
+export const page = ({ lang, title, alternate, canonical, alternates, body, notice, head, wide, og }) => {
   const t = T[lang];
   // every tool page leads back to /admin (asked 2026-10-01: "all admin pages should have upper link back to
   // /admin"): in front of the page's own crumb when it has one, as a crumb of its own when not; /admin
@@ -95,7 +97,7 @@ ${raw(THEME_HEAD)}
 <link rel="stylesheet" href="/eccm.css">
 <link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 ${head || ''}
-${String(head || '').includes('og:image') ? '' : siteOg(lang, `${title} ECCM`)}
+${String(head || '').includes('og:image') ? '' : siteOg(lang, `${title} ECCM`, og)}
 </head>
 <body>
 ${raw(SYMBOL)}

@@ -397,7 +397,9 @@
   /* the faces: the title and the facts' values in the serif when the picture's
      type read as one, the body only where the scheme says so (a ground near
      white); labels stay in the sans, as on the derive page */
-  .event[data-scheme] h1, .event[data-scheme] .prose h2, .event[data-scheme] .facts dd, .event[data-scheme] .credits dd { font-family: var(--ev-title-face, inherit); font-weight: var(--ev-title-weight, 400); }
+  /* the facts and the credits, the page's meta, stay in the sans when the title is a serif (asked 2026-10-02: "in
+     serif social cards use sans serif for meta info. same for event pages"); they took the title's face before */
+  .event[data-scheme] h1, .event[data-scheme] .prose h2 { font-family: var(--ev-title-face, inherit); font-weight: var(--ev-title-weight, 400); }
   .event[data-scheme] .prose > :not(h2, .credits) { font-family: var(--ev-body-face, inherit); }
   /* prose flow: the owl, and the space is counted in the leading, Rutter's
      one line between paragraphs and a heading carrying two above and half a

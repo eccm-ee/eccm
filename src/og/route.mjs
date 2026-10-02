@@ -8,7 +8,7 @@
 // og/e/, and a render that fills both after the response. A stale v answers
 // 302 to the current card and a missing event 404, both no-store, so a
 // fetch made before the content exists cannot poison the URL.
-import { cardInput, cardVersion, cardPath, tallVersion, tallPath, cardSvg, siteSvg, radioSvg, TEMPLATE_V, SITE_V, W, TALL_W } from './card.mjs';
+import { cardInput, cardVersion, cardPath, tallVersion, tallPath, cardSvg, siteSvg, radioSvg, PAGE_TITLES, pageInput, pagePath, pageVersion, TEMPLATE_V, SITE_V, W, TALL_W } from './card.mjs';
 import { renderPng } from './render.mjs';
 
 const CC = 'public, max-age=31536000, immutable';
@@ -34,9 +34,59 @@ async function rows(db, id, lang) {
   return cardInput({ lang, title: text.title, ev, scheme: media && media.scheme, pic: media && media.key });
 }
 
+// a page's card title: a fixed page's from PAGE_TITLES, a text page's from its
+// row in that language; null for anything else, so no text can be put on a
+// card through its address
+async function pageTitle(db, key, lang) {
+  if (PAGE_TITLES[key]) return PAGE_TITLES[key][lang];
+  const r = await db.prepare("SELECT t.title FROM page_text t JOIN page p ON p.id = t.page_id WHERE t.slug = ? AND t.lang = ? AND p.status = 'published'").bind(key, lang).first();
+  return r ? r.title : null;
+}
+
+// every page's two cards, for /social: the fixed pages, then the text pages in menu order
+async function pageList(env) {
+  const out = [];
+  const add = (key, lang, title, page) => {
+    const input = pageInput(key, lang, title);
+    out.push({ key, lang, title, page, image: pagePath(key, lang, pageVersion(input)), tall: pagePath(key, lang, pageVersion(input, true), true) });
+  };
+  for (const lang of ['et', 'en']) {
+    add('home', lang, PAGE_TITLES.home[lang], lang === 'et' ? '/' : '/en/');
+    add('events', lang, PAGE_TITLES.events[lang], lang === 'et' ? '/et/sundmused' : '/en/events');
+  }
+  const texts = (await env.DB.prepare("SELECT t.slug, t.lang, t.title FROM page_text t JOIN page p ON p.id = t.page_id WHERE p.status = 'published' ORDER BY p.menu_order, t.lang").all()).results;
+  for (const t of texts) add(t.slug, t.lang, t.title, `/${t.lang}/${t.slug}`);
+  for (const lang of ['et', 'en']) {
+    add('newsletter', lang, PAGE_TITLES.newsletter[lang], lang === 'et' ? '/et/uudiskiri' : '/en/newsletter');
+    add('radio', lang, PAGE_TITLES.radio[lang], '/radio');
+  }
+  return new Response(JSON.stringify(out), { headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=60' } });
+}
+
 export async function ogRoute(request, env, url, ctx) {
   const p = url.pathname;
   if (p === '/og/e.json') return list(env, url);
+  if (p === '/og/g.json') return pageList(env);
+  // a page's own card, /og/g/ to share and /og/gt/ for Instagram, kept as an event's is
+  const g = /^\/og\/(g|gt)\/([a-z0-9-]+)-(et|en)-([0-9a-f]{8})\.png$/.exec(p);
+  if (g) {
+    const [, kind, key, lang, v] = g, tall = kind === 'gt';
+    const cache = caches.default;
+    const hit = await cache.match(request);
+    if (hit) return png(hit.body, 'cache');
+    const rkey = `og/${kind}/${key}-${lang}-${v}.png`;
+    const stored = env.MEDIA && await env.MEDIA.get(rkey);
+    if (stored) { const bytes = await stored.arrayBuffer(); ctx.waitUntil(cache.put(request, png(bytes, 'cache'))); return png(bytes, 'r2'); }
+    const title = await pageTitle(env.DB, key, lang);
+    if (!title) return none(404);
+    const input = pageInput(key, lang, title);
+    const now = pageVersion(input, tall);
+    if (now !== v) return none(302, { location: pagePath(key, lang, now, tall) });
+    const bytes = await renderPng(cardSvg(input, null, tall), tall ? TALL_W : W);
+    if (env.MEDIA) ctx.waitUntil(env.MEDIA.put(rkey, bytes, { httpMetadata: { contentType: 'image/png', cacheControl: CC } }).catch(() => {}));
+    ctx.waitUntil(cache.put(request, png(bytes, 'cache')));
+    return png(bytes, 'render');
+  }
   // the site's own card, the logo: one address per language, kept a day, its
   // bytes in R2 under the template's version so a new template renders anew
   const site = /^\/og\/(site|radio)-(et|en)\.png$/.exec(p);

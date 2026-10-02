@@ -51,5 +51,5 @@ export const renderPage = ({ lang, text, fallback, twin, origin, path, notice, e
       ${raw(md(text.body))}
     </div>
   </article>`;
-  return page({ lang, title: text.title, alternate, canonical, alternates, body, notice });
+  return page({ lang, title: text.title, alternate, canonical, alternates, body, notice, og: { key: text.slug, title: text.title, lang: textLang } });
 };

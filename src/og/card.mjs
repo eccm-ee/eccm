@@ -14,7 +14,7 @@ import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
-export const TEMPLATE_V = 12;
+export const TEMPLATE_V = 14;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
@@ -60,15 +60,16 @@ export const TALL_W = 1080, TALL_H = 1350;
 // the date and venue at 52 since the same evening ("make ig subtext bigger
 // too"), 44 for an hour before and the share card's 30 before that
 const TALL_META = 52;
-// the mark half as large again as on the share card, 9 / 7.375, the stave's
-// pitch a whole 9 px and the letters E to M 364 px (asked the same evening: "ig
-// cards logos too small", at 8 / 7.375, then "ig logo bigger a bit"); the
-// nameplate grows with it
-const TALL_K = 9 / 7.375;
+// the mark at 10 / 7.375, the stave's pitch a whole 10 px and the letters E to
+// M 404 px (asked the same evening: "ig cards logos too small", at 8 / 7.375,
+// "ig logo bigger a bit", at 9, then "make eccm logo on ig cards 10% bigger",
+// the whole-pixel step nearest 10 per cent); the nameplate grows with it
+const TALL_K = 10 / 7.375;
 const TALL_MARK_H = (E_BOTTOM - E_TOP) * TALL_K;
 // MEASURED over the 50 live titles: the title at 104 cut none with the date
 // and venue at 52 and the mark at 8 / 7.375; with the mark at 9 / 7.375 it cuts
-// 1, so 100, which cuts none, the longest on eight lines
+// 1, so 100, which cuts none, the longest on eight lines; it still does with
+// the mark at 10 / 7.375
 const TALL_TITLE = 100;
 
 // where everything goes on the two cards with text: the text's top, the mark's
@@ -126,7 +127,7 @@ const metaLines = (cells, face, fs, measure) => cells.filter(Boolean).flatMap((c
 const room = (fs, face, metaN, L = LAYOUTS.wide) => {
   const cap = M[face].cap * fs;
   const meta = L.meta || META;
-  const metaBlock = 0.25 * fs + GROUP + M[face === 'serif' ? 'serifText' : 'sans'].cap * meta + (metaN - 1) * META_LH * meta + 0.25 * meta;
+  const metaBlock = 0.25 * fs + GROUP + M.sans.cap * meta + (metaN - 1) * META_LH * meta + 0.25 * meta;
   const avail = L.markTop - AIR - L.top - cap - metaBlock;
   return 1 + Math.floor(avail / (TITLE_LH * fs));
 };
@@ -236,7 +237,9 @@ export const cardSvg = (input, picture = null, tall = false, part = 1) => {
     + `<rect width="${TALL_W}" height="${TALL_H}" fill="${input.ground}"/><image x="${(1 - part) * TALL_W}" y="0" width="${2 * TALL_W}" height="${TALL_H}" preserveAspectRatio="xMidYMid slice" href="${picture}"/></svg>`;
   const L = tall ? LAYOUTS.tall : LAYOUTS.wide;
   const face = input.serif ? 'serif' : 'sans';
-  const metaFace = input.serif ? 'serifText' : 'sans';
+  // the date and venue in the sans on every card, a serif title's too (asked 2026-10-02: "in serif social
+  // cards use sans serif for meta info. same for event pages"); it was the serif's text cut under a serif title
+  const metaFace = 'sans';
   const meta = metaLines(input.meta, metaFace, L.meta || META, L.measure);
   const { fs, lines } = fitTitle(input.title, face, meta.length, L);
   const out = [];
@@ -288,5 +291,22 @@ export const radioSvg = (lang) => {
   return cardSvg({ lang: l, title: RADIO_NAME[l], meta: [SITE_NAME[l]], ...RADIO_CARD, serif: false, plate: false });
 };
 export const radioPath = (lang) => `/og/radio-${lang === 'en' ? 'en' : 'et'}.png`;
+
+// ── a card for each page ─────────────────────────────────────────────────────
+// Every page that is not an event has a card of its own, made as an event's is
+// (asked 2026-10-02: "pages og cards same as event og cards"): the page's title,
+// the hall's address under it, the nameplate at the foot, on the site's white,
+// at an address with its version, and its Instagram text card beside it. The
+// site and radio cards above stay at their addresses for whatever still names
+// them. A page is a key: a fixed one below, or a text page's slug.
+export const PAGE_TITLES = {
+  home: SITE_NAME,
+  events: { et: 'Sündmused', en: 'Events' },
+  radio: RADIO_NAME,
+  newsletter: { et: 'Uudiskiri', en: 'Newsletter' },
+};
+export const pageInput = (key, lang, title) => ({ lang, title, meta: ['Pühavaimu 9, Tallinn'], ...SITE, serif: false, page: key });
+export const pagePath = (key, lang, v, tall = false) => `/og/${tall ? 'gt' : 'g'}/${key}-${lang}-${v}.png`;
+export const pageVersion = (input, tall = false) => cardVersion(tall ? { ...input, layout: 'tall' } : input);
 export const sitePath = (lang) => `/og/site-${lang === 'en' ? 'en' : 'et'}.png`;
 export const siteAlt = (lang) => (lang === 'en' ? 'ECCM, Estonian Centre of Contemporary Music' : 'ECCM, Eesti Nüüdismuusika Keskus');

@@ -76,7 +76,8 @@
        equal; a 1 px rule in the page's own colour around every one, since a ground near white has no other edge */
     .ds-og { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(30rem, 100%), 1fr)); gap: var(--eccm-s-12) var(--eccm-s-8); margin-block: var(--eccm-s-8); }
     .ds-og figure { margin: 0; }
-    .ds-og img { display: block; inline-size: 100%; block-size: auto; max-inline-size: 600px; outline: 1px solid var(--eccm-rule); }
+    /* no frame on a card: each is an image with a ground of its own (asked 2026-10-02: "no borders on og / ig cards") */
+    .ds-og img { display: block; inline-size: 100%; block-size: auto; max-inline-size: 600px; }
     .ds-og figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
     /* one event to a block: its share card drawn small on a line of its own, then its Instagram cards on the
        next, the text card and the picture's two halves, the halves with no gap so they read as the one picture
@@ -85,12 +86,11 @@
     .og-rows { display: grid; gap: var(--eccm-s-16); margin-block: var(--eccm-s-8); }
     .og-row { display: grid; gap: var(--eccm-s-4); }
     .og-row figure { margin: 0; }
-    .og-row img { display: block; inline-size: 100%; block-size: auto; outline: 1px solid var(--eccm-rule); }
+    .og-row img { display: block; inline-size: 100%; block-size: auto; }
     .og-row figcaption { margin-block-start: var(--eccm-s-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
     .og-share { max-inline-size: 28rem; }
     .og-ig { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 28rem); column-gap: var(--eccm-s-4); align-items: start; }
     .og-pair { display: grid; grid-template-columns: 1fr 1fr; column-gap: 0; }
-    .og-pair img { outline: none; }
     /* the icon's square shows on hover, since a positive mark on white has no edge (asked 2026-09-27) */
     /* the figures compared: three candidates side by side on a desk and one under another on a phone, each a
        column of start times beside a column of lengths ending on one x, then an id and the small register */
@@ -207,14 +207,9 @@
   <h1 class="list-label">Social</h1>
   <h2>Pages</h2>
   <div class="prose flow">
-    <p>Every page that is not an event names one of these. The site card is the centre's name on deep blue, in the page's language; the radio has its own in the wine. The images carry ?v= here because their addresses are kept an hour by a browser, and a page that changed them would otherwise show the old ones.</p>
+    <p>Every page that is not an event has a card made as an event's is: the page's title, the hall's address, the nameplate at the foot, on the site's white, and its Instagram text card under it.</p>
   </div>
-  <div class="ds-og">
-    <figure><img src="/og/site-et.png?v=3" width="1200" height="630" alt="Eesti Nüüdismuusika Keskus, Pühavaimu 9, Tallinn"><figcaption>Site card, ET: the front page, Sündmused, the text pages (ECCM, Tallinn 1965, NAN, Ulysses, Konkursid), the newsletter and its archive</figcaption></figure>
-    <figure><img src="/og/site-en.png?v=3" width="1200" height="630" alt="Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinn"><figcaption>Site card, EN: /en/, Events, the English text pages and the newsletter</figcaption></figure>
-    <figure><img src="/og/radio-et.png?v=3" width="1200" height="630" alt="Raadio, Eesti Nüüdismuusika Keskus"><figcaption>Radio card, ET</figcaption></figure>
-    <figure><img src="/og/radio-en.png?v=3" width="1200" height="630" alt="Radio, Estonian Centre of Contemporary Music"><figcaption>Radio card, EN: /radio</figcaption></figure>
-  </div>
+  <div id="og-pages"><p class="ds-cap">Loading the pages.</p></div>
   <h2>Events</h2>
   <div class="prose flow">
     <p>Each event on a row: its share card, and beside it the two Instagram cards at 1080 by 1350, Instagram's 4:5, the text card and the picture split across two cards, so a carousel's swipe shows it whole, the text card's type larger than the share card's since a feed is read on a phone. The share card is the image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Roboto Serif or Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
@@ -242,7 +237,10 @@ try {
   // "unique" by eye, not by hex: four browns a few steps apart are one theme, so a card is kept only when its
   // ground is far from every ground already kept, or its face differs (MEASURED 2026-10-02: 19 exact grounds
   // among 50 cards, about half of them near twins; at 30 apart seven remain)
-  const all = await (await fetch('/og/e.json')).json();
+  // Improtest and U:'s end-of-year concert left out (asked 2026-10-02: "rm improtest and u christmas, get
+  // somethign else"), so the next events of other schemes take their place
+  const SKIP = new Set([6, 10, 14, 30]);
+  const all = (await (await fetch('/og/e.json')).json()).filter((c) => !SKIP.has(c.id));
   const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
   const far = (a, b) => Math.hypot(...rgb(a).map((v, i) => v - rgb(b)[i])) > 30;
   const cards = [];
@@ -257,6 +255,21 @@ try {
     cap.textContent = `${what}: ${c.lang.toUpperCase()}, ${c.serif ? 'Roboto Serif' : 'Instrument Sans'} on ${c.ground}`;
     f.append(a, cap); return f;
   };
+  // the pages, each its share card and its Instagram text card, in the events' own shape
+  const pagesBox = document.getElementById('og-pages');
+  try {
+    const pages = await (await fetch('/og/g.json')).json();
+    pagesBox.className = 'og-rows';
+    pagesBox.replaceChildren(...pages.map((c) => {
+      const row = document.createElement('div'); row.className = 'og-row';
+      const at = { page: c.page, title: c.title, lang: c.lang, serif: false, ground: '#ffffff' };
+      const share = fig(at, c.image, `${c.title}, share card`); share.classList.add('og-share');
+      const ig = document.createElement('div'); ig.className = 'og-ig';
+      ig.append(fig(at, c.tall, `${c.title}, Instagram`, 1080, 1350));
+      row.append(share, ig);
+      return row;
+    }));
+  } catch { pagesBox.innerHTML = '<p class="ds-cap">The pages did not load.</p>'; }
   box.className = 'og-rows';
   box.replaceChildren(...cards.map((c) => {
     const row = document.createElement('div'); row.className = 'og-row';

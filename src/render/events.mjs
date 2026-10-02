@@ -13,6 +13,7 @@
 // with that route. With home set it is the English front page at /en/ (asked
 // 2026-09-28 with a picture of /en/ answering the 404): the front page's
 // heading, the events to come, no button and no past.
+import { PAGE_TITLES } from '../og/card.mjs';
 import { html, raw } from './html.mjs';
 import { T, OTHER, page } from './chrome.mjs';
 import { dateLong, dateShort, clock, mapsUrl } from './dates.mjs';
@@ -71,5 +72,5 @@ export const renderEvents = ({ lang, upcoming, past, origin, path, home = false 
       </ol>
     </section>` : ''}
   </article>`;
-  return page({ lang, title: home ? t.upcoming : t.events, alternate, canonical: origin + path, alternates, body });
+  return page({ lang, title: home ? t.upcoming : t.events, alternate, canonical: origin + path, alternates, body, og: home ? { key: 'home', title: PAGE_TITLES.home[lang] } : { key: 'events', title: PAGE_TITLES.events[lang] } });
 };

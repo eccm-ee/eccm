@@ -19,7 +19,7 @@
 // (asked 2026-10-01: "rm tehnilsied andmed").
 import { html } from './html.mjs';
 import { page, origin } from './chrome.mjs';
-import { radioPath, W as OG_W, H as OG_H } from '../og/card.mjs';
+import { PAGE_TITLES } from '../og/card.mjs';
 import { table } from './table.mjs';
 import { dayMonth, clock } from './dates.mjs';
 
@@ -57,16 +57,6 @@ export const renderStation = (shows = []) => {
   </section>
   <script src="/vendor/hls-1.7.1.min.js"></script>
   <script type="module" src="/station.mjs"></script>`;
-  // its own share card, the radio's (src/og/card.mjs), in place of the site's
-  const head = html`<meta property="og:type" content="website">
-<meta property="og:site_name" content="ECCM">
-<meta property="og:title" content="ECCM Radio">
-<meta property="og:url" content="${origin()}/radio">
-<meta property="og:image" content="${origin() + radioPath('en')}">
-<meta property="og:image:width" content="${OG_W}">
-<meta property="og:image:height" content="${OG_H}">
-<meta property="og:image:type" content="image/png">
-<meta property="og:image:alt" content="Radio, Estonian Centre of Contemporary Music">
-<meta name="twitter:card" content="summary_large_image">`;
-  return page({ lang: 'en', title: 'Radio.', body, wide: true, head });
+  // its own card, made as an event's is since 2026-10-02 ("pages og cards same as event og cards")
+  return page({ lang: 'en', title: 'Radio.', body, wide: true, og: { key: 'radio', title: PAGE_TITLES.radio.en } });
 };

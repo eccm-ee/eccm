@@ -5,6 +5,7 @@
 // 2026-10-02: "convert all admin pages to english only") and in its form: the list of issues, one issue's form with the letter as it will
 // arrive drawn under it, and the outbox with the addresses masked, since the
 // editor is open to anyone.
+import { PAGE_TITLES } from '../og/card.mjs';
 import { html, raw } from './html.mjs';
 import { page, OTHER } from './chrome.mjs';
 import { field, input } from './editor.mjs';
@@ -39,7 +40,7 @@ export const renderSignup = ({ lang, issues, form = {}, say, err }) => {
     </form>`}
     ${issues.length ? html`<section class="news-past"><h2>${t.past}</h2>${table({ label: t.past, cols: [{ label: t.date }, { label: t.letter, cls: 'main' }], rows: issues.map((i) => [html`<time datetime="${i.sent_at}">${sentDay(i.sent_at, lang)}</time>`, html`<a href="${NL[lang]}/${i.slug}">${i.subject}</a>`]) })}</section>` : ''}
   </article>`;
-  return page({ lang, title: `${t.title}.`, alternate: alt(lang), body });
+  return page({ lang, title: `${t.title}.`, alternate: alt(lang), body, og: { key: 'newsletter', title: PAGE_TITLES.newsletter[lang] } });
 };
 
 // the page a confirm or unsubscribe link lands on
@@ -50,7 +51,7 @@ export const renderNotice = ({ lang, text, form }) => {
     <p class="news-say" role="status">${text}</p>
     ${form ? html`<form class="form" method="post" action="${form}"><div class="actions"><button class="btn btn-pri" type="submit">${t.leave}</button></div></form>` : html`<p><a href="${NL[lang]}">${t.back}</a></p>`}
   </article>`;
-  return page({ lang, title: `${t.title}.`, alternate: alt(lang), body });
+  return page({ lang, title: `${t.title}.`, alternate: alt(lang), body, og: { key: 'newsletter', title: PAGE_TITLES.newsletter[lang] } });
 };
 export const NOTICE = T;
 
