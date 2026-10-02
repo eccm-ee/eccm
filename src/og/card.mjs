@@ -272,7 +272,7 @@ export const cardAlt = (input) => [input.title, ...input.meta].join(', ');
 // address as the meta line, the mark at the foot on the left, on a ground no
 // event takes from its picture, the deep blue /ds already shows as its dark
 // ground, with white ink, so a shared page reads as ECCM's own at a glance.
-const SITE_CARD = { ground: '#1b2746', ink: '#ffffff', ink2: '#c9c9c9' };
+export const SITE_CARD = { ground: '#1b2746', ink: '#ffffff', ink2: '#c9c9c9' };
 const SITE_NAME = { et: 'Eesti Nüüdismuusika Keskus', en: 'Estonian Centre of Contemporary Music' };
 export const SITE_V = 3;   // the site card's own version, in its R2 key
 export const siteSvg = (lang) => {
@@ -309,24 +309,37 @@ export const PAGE_TITLES = {
 };
 // Each page in a colour of its own and with its own words under the title
 // (asked 2026-10-02: "use different colors per page content og cards. use desc
-// / 1st sencene from the page"): a text page's first sentence, the front page
-// the ECCM page's, the rest a line of their own. Both slugs of a page take its
-// colour. Every pair is at least 12 : 1 for the title and 5.95 : 1 for the
-// line under it (computed 2026-10-02).
-const PAGE_COLORS = {
-  home: { ground: '#1b2746', ink: '#ffffff', ink2: '#c9cfdc' },
-  events: { ground: '#1f3a2e', ink: '#ffffff', ink2: '#c3d4ca' },
-  eccm: { ground: '#2b2b2b', ink: '#ffffff', ink2: '#cfcfcf' },
-  'tallinn-1965': { ground: '#efe6d2', ink: '#2a2418', ink2: '#5e5340' },
-  nan: { ground: '#e1eaf2', ink: '#14263a', ink2: '#46596b' },
-  ulysses: { ground: '#f3e2de', ink: '#3a1612', ink2: '#6b4139' },
-  konkursid: { ground: '#2e2a4a', ink: '#ffffff', ink2: '#cfcbe6' },
-  liikmed: { ground: '#e6eee1', ink: '#1f2e18', ink2: '#4b5c42' },
-  newsletter: { ground: '#3b1d2b', ink: '#ffffff', ink2: '#dcc9d2' },
-  radio: RADIO_CARD,
+// / 1st sencene from the page"). The colours are the events' own, the schemes
+// their pictures were read for, never a palette made up for the pages (asked
+// the same evening: "reuse the events colors, do not invert new ones (by slug
+// hash?)"): every distinct ground but pure white, which vanishes on the white
+// page, and each page takes the one its key hashes to, the page table's key for
+// a text page so both languages match, stepping on to the next free colour when
+// another page has it, so no two pages share one (MEASURED that evening: with
+// near twins merged six colours were left and four pages fell on one brown).
+// The list changes as events do, and the pages' colours with it.
+export const schemeColors = (schemes) => {
+  const out = new Map();
+  for (const raw of schemes) {
+    let s = null;
+    try { s = JSON.parse(raw); } catch { continue; }
+    if (!s || !HEX.test(s.ground) || !HEX.test(s.ink) || !HEX.test(s.ink2) || s.ground === '#ffffff') continue;
+    if (!out.has(s.ground)) out.set(s.ground, { ground: s.ground, ink: s.ink, ink2: s.ink2 });
+  }
+  return [...out.values()].sort((a, b) => a.ground.localeCompare(b.ground));
 };
-PAGE_COLORS['open-calls'] = PAGE_COLORS.konkursid;
-PAGE_COLORS.members = PAGE_COLORS.liikmed;
+const fnv = (str) => { let h = 0x811c9dc5; for (const b of new TextEncoder().encode(str)) { h ^= b; h = Math.imul(h, 0x01000193) >>> 0; } return h; };
+// every page's colour at once, keys in a fixed order so the stepping is the same on every request
+export const pageColorMap = (keys, colors) => {
+  const map = new Map(), taken = new Set();
+  if (!colors.length) return map;
+  for (const k of [...keys].sort()) {
+    let i = fnv(k) % colors.length;
+    for (let n = 0; taken.has(i) && n < colors.length; n++) i = (i + 1) % colors.length;
+    taken.add(i); map.set(k, colors[i]);
+  }
+  return map;
+};
 // the pages with no text of their own to take a sentence from
 export const PAGE_DESC = {
   events: { et: 'Tulevased üritused.', en: 'Upcoming events.' },
@@ -344,7 +357,7 @@ export const firstSentence = (md) => {
 };
 // its sentence a third larger than an event's date and venue, 40 to share and 69 on Instagram (asked
 // 2026-10-02: "make descs bigger")
-export const pageInput = (key, lang, title, desc) => ({ lang, title, meta: [desc].filter(Boolean), ...(PAGE_COLORS[key] || SITE_CARD), serif: false, page: key, metaScale: 4 / 3 });
+export const pageInput = (key, lang, title, desc, colors = SITE_CARD) => ({ lang, title, meta: [desc].filter(Boolean), ground: colors.ground, ink: colors.ink, ink2: colors.ink2, serif: false, page: key, metaScale: 4 / 3 });
 // one address per page and language, read fresh: the card follows the page's words when they are edited,
 // and its bytes are kept under its version (src/og/route.mjs)
 export const pagePath = (key, lang, tall = false) => `/og/${tall ? 'gt' : 'g'}/${key}-${lang}.png`;

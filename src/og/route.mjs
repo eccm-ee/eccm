@@ -8,7 +8,7 @@
 // og/e/, and a render that fills both after the response. A stale v answers
 // 302 to the current card and a missing event 404, both no-store, so a
 // fetch made before the content exists cannot poison the URL.
-import { cardInput, cardVersion, cardPath, tallVersion, tallPath, cardSvg, siteSvg, radioSvg, PAGE_TITLES, PAGE_DESC, firstSentence, pageInput, pagePath, pageVersion, TEMPLATE_V, SITE_V, W, TALL_W } from './card.mjs';
+import { cardInput, cardVersion, cardPath, tallVersion, tallPath, cardSvg, siteSvg, radioSvg, PAGE_TITLES, PAGE_DESC, firstSentence, schemeColors, pageColorMap, SITE_CARD, pageInput, pagePath, pageVersion, TEMPLATE_V, SITE_V, W, TALL_W } from './card.mjs';
 import { renderPng } from './render.mjs';
 
 const CC = 'public, max-age=31536000, immutable';
@@ -37,11 +37,15 @@ async function rows(db, id, lang) {
 // a page's card: its title and the line under it, from the page's own row when it has one; null for
 // anything else, so no text can be put on a card through its address
 async function pageCard(db, key, lang) {
-  const text = (slug) => db.prepare("SELECT t.title, t.body FROM page_text t JOIN page p ON p.id = t.page_id WHERE t.slug = ? AND t.lang = ? AND p.status = 'published'").bind(slug, lang).first();
-  if (key === 'home') { const e = await text('eccm'); return { title: PAGE_TITLES.home[lang], desc: e ? firstSentence(e.body) : '' }; }
-  if (PAGE_TITLES[key]) return { title: PAGE_TITLES[key][lang], desc: PAGE_DESC[key][lang] };
+  const schemes = (await db.prepare("SELECT DISTINCT m.scheme FROM media m JOIN event e ON e.image_id = m.id WHERE e.status = 'published' AND m.scheme IS NOT NULL ORDER BY m.id").all()).results.map((r) => r.scheme);
+  const pageKeys = (await db.prepare("SELECT key FROM page WHERE status = 'published'").all()).results.map((r) => `page:${r.key}`);
+  const map = pageColorMap([...Object.keys(PAGE_TITLES), ...pageKeys], schemeColors(schemes));
+  const pageColors = (k) => map.get(k) || SITE_CARD;
+  const text = (slug) => db.prepare("SELECT t.title, t.body, p.key FROM page_text t JOIN page p ON p.id = t.page_id WHERE t.slug = ? AND t.lang = ? AND p.status = 'published'").bind(slug, lang).first();
+  if (key === 'home') { const e = await text('eccm'); return { title: PAGE_TITLES.home[lang], desc: e ? firstSentence(e.body) : '', colors: pageColors('home') }; }
+  if (PAGE_TITLES[key]) return { title: PAGE_TITLES[key][lang], desc: PAGE_DESC[key][lang], colors: pageColors(key) };
   const r = await text(key);
-  return r ? { title: r.title, desc: firstSentence(r.body) } : null;
+  return r ? { title: r.title, desc: firstSentence(r.body), colors: pageColors(`page:${r.key}`) } : null;
 }
 
 // every page's two cards, for /social, each with its version as a query so a browser's hour-old copy does not stand in
@@ -50,7 +54,7 @@ async function pageList(env) {
   const add = async (key, lang, page) => {
     const c = await pageCard(env.DB, key, lang);
     if (!c) return;
-    const input = pageInput(key, lang, c.title, c.desc);
+    const input = pageInput(key, lang, c.title, c.desc, c.colors);
     out.push({ key, lang, title: c.title, desc: c.desc, page, ground: input.ground, image: `${pagePath(key, lang)}?v=${pageVersion(input)}`, tall: `${pagePath(key, lang, true)}?v=${pageVersion(input, true)}` });
   };
   for (const lang of ['et', 'en']) {
@@ -78,7 +82,7 @@ export async function ogRoute(request, env, url, ctx) {
     const hour = (body, from) => new Response(body, { headers: { 'content-type': 'image/png', 'cache-control': 'public, max-age=3600', 'x-og': from } });
     const c = await pageCard(env.DB, key, lang);
     if (!c) return none(404);
-    const input = pageInput(key, lang, c.title, c.desc);
+    const input = pageInput(key, lang, c.title, c.desc, c.colors);
     const rkey = `og/${kind}/${key}-${lang}-${pageVersion(input, tall)}.png`;
     const stored = env.MEDIA && await env.MEDIA.get(rkey);
     if (stored) return hour(await stored.arrayBuffer(), 'r2');
