@@ -24,12 +24,13 @@ export const cdn = (key, t) => `/cdn-cgi/image/${t},quality=${QUALITY},format=au
 const rungs = (ladder, w) => { const r = ladder.filter((x) => x <= w); return r.length === ladder.length ? r : r.concat(w); };
 
 // the list: 3 to 2, cover, the 300 px slot at 1x, 2x and 3x; under 51rem the
-// slot is the compact row's 6.5rem square, which the 300 rung covers
+// slot is the compact row's 6.5rem square, which the 300 rung covers, and under 38rem the phone row's
+// full column, where the 600 and 900 rungs are what a 3x phone asks for
 const LIST = [300, 600, 900];
 export const listImg = (key, w, h) => {
   if (!ON) return html`<img src="/${key}" width="${w}" height="${h}" alt="" loading="lazy" decoding="async">`;
   const set = rungs(LIST, w).map((x) => `${cdn(key, `width=${x},height=${Math.round(x * 2 / 3)},fit=cover`)} ${x}w`).join(', ');
-  return html`<img src="${cdn(key, 'width=300,height=200,fit=cover')}" srcset="${set}" sizes="(max-width: 51rem) 6.5rem, 300px" width="300" height="200" alt="" loading="lazy" decoding="async">`;
+  return html`<img src="${cdn(key, 'width=300,height=200,fit=cover')}" srcset="${set}" sizes="(max-width: 38rem) calc(100vw - 2rem), (max-width: 51rem) 6.5rem, 300px" width="300" height="200" alt="" loading="lazy" decoding="async">`;
 };
 
 // the poster, the event page's LCP: the original's own ratio, eager, high

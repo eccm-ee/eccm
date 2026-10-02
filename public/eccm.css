@@ -795,6 +795,18 @@
   }
 }
 
+/* the phone row (asked 2026-10-02: "in mobile images are full w in events page"): under 36rem the picture is the
+   column's width at 3 : 2 above the kicker, and a row without a picture shows no box. Rows go back to the
+   desk's gap, three steps over the picture's gap to its text */
+@container (max-width: 36rem) {
+  @layer components {
+    .events { row-gap: var(--eccm-s-12); }
+    .ev { grid-template-columns: minmax(0, 1fr); row-gap: var(--eccm-s-4); }
+    .ev-pic { aspect-ratio: 3 / 2; }
+    .ev-blank { display: none; }
+  }
+}
+
 /* a table in a column under 36rem, which is where five columns stop leaving the main one 12rem: each row is
    its main cell at the body size over a cluster of the others in the small register, each led by its column's
    name from data-label, since the head is gone; rows a scale step apart and two steps more than within one */

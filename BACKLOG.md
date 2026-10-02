@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-10-02: "in mobile images are full w in events page"
+
+Asked verbatim. ✅ Under 36rem a list row is one column: the picture at the column's width, 3 : 2, above the kicker, and a row without a picture shows no box. Between 36 and 47rem the square thumbnail stays. The same list on the front page follows, since it is one component.
+
 ### Done 2026-10-02: "pick feather and implement. add bunch on icons in buttons (big and small) to icons page. move icons up one level"
 
 Asked verbatim, after "more icons upcoming, whole radio ssation upcoming" and "but i do not want lucode rounded stuff". ✅ Feather is the site's set: `public/vendor/icons/feather/icons.svg`, 63 icons in five groups, written by `tools/feather.mjs`, which squares every corner of radius 2 or less and keeps the line one CSS pixel. `.ico`, `.btn-ico` and `.play-btn` are in eccm.css. https://eccm.positron.studio/icons shows 28 icons alone and 12 beside a word in small and large buttons on both grounds, the play button, four sizes and the whole set, and its card is on /admin. The six other sets left (archive/icon-sets.md). Still open: Feather has no antenna or ticket, and nothing on /radio or /admin/files uses the buttons yet.
