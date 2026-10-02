@@ -400,10 +400,9 @@
     padding-block: var(--eccm-s-8) var(--eccm-s-16);
   }
   main:has(> .event[data-scheme]) { padding-block: 0; }
-  /* the scheme is the picture's own palette, so it stays in the dark mode too (2026-10-02): an article on a
-     light scheme is a light article on a dark page, and its color-scheme says so, so every light-dark() it
-     does not redefine and the browser's own controls inside it take the light half */
-  .event[data-scheme="light"] { color-scheme: light; }
+  /* a dark scheme is the picture's own dark and stays dark in both themes. A light scheme follows the site:
+     its colours are light-dark() pairs, the dark half the same hue made dark (public/scheme.mjs darkOf, asked
+     2026-10-02: "figure out dark mode colors for derived colors"), so it takes the root's color-scheme */
   .event[data-scheme="dark"] { color-scheme: dark; }
   /* the faces: the title and the facts' values in the serif when the picture's
      type read as one, the body only where the scheme says so (a ground near
@@ -412,6 +411,10 @@
      serif social cards use sans serif for meta info. same for event pages"); they took the title's face before */
   .event[data-scheme] h1, .event[data-scheme] .prose h2 { font-family: var(--ev-title-face, inherit); font-weight: var(--ev-title-weight, 400); }
   .event[data-scheme] .prose > :not(h2, .credits) { font-family: var(--ev-body-face, inherit); }
+  /* the body serif is for a ground near white only (scheme.mjs bodySerif), so a light scheme gone dark sets
+     its body in the sans, as a dark scheme does */
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .event[data-scheme="light"] .prose > :not(h2, .credits) { font-family: inherit; } }
+  :root[data-theme="dark"] .event[data-scheme="light"] .prose > :not(h2, .credits) { font-family: inherit; }
   /* prose flow: the owl, and the space is counted in the leading, Rutter's
      one line between paragraphs and a heading carrying two above and half a
      line below (eccm-ui §1, Bringhurst 2.2.2). The first cut said one leading

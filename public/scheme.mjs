@@ -282,6 +282,33 @@ export const scheme = (r, t) => {
   s.serifHow = t.verdict === 'serif' ? 'the detector read the type as serif' : r.serifByHand ? 'marked serif by hand, the detector found no type: the letters lie on the dark disc under three rules' : '';
   return s;
 };
+// the dark half of a light scheme (asked 2026-10-02: "figure out dark mode colors for derived colors"): the
+// same hue at the dark scheme's own lightness, so a light article goes dark with the site and keeps its
+// colour. The ground is the light ground's hue at OKLCH 0.24, a step above the site's #121212 so the band
+// still shows, with its chroma at most doubled to 0.05 (a breath of colour at 0.96 reads as less at 0.24);
+// a ground with no hue, or a muddy one, is the site's own dark. Ink and second ink are the dark scheme's, the second
+// lightened to 4.5 : 1; the accent keeps its hue and is walked up under the dark rule above; the button is
+// the inverse, as in every scheme. Computed where the page is drawn, from the stored hex, so no row changes
+export const darkOf = (light) => {
+  const [, C, h] = lch(toLab(fromHex(light.ground)));
+  // hues 40 to 110 go to mud when dark, the detector's own rule for a dark ground, so they take the site's dark
+  const ground = C >= 0.008 && !(h >= 40 && h <= 110) ? gamutLch(0.24, Math.min(C * 2, 0.05), h).rgb : fromHex('#121212');
+  const yg = lum(ground);
+  const ink = fromHex('#f7f7f7');
+  let ink2 = fromHex('#c9c9c9');
+  while (contrast(lum(ink2), yg) < 4.5) ink2 = ink2.map((c) => c + (1 - c) * 0.1);
+  let accent = null;
+  if (light.accent) {
+    const [, Ca, ha] = lch(toLab(fromHex(light.accent)));
+    for (let L = 0.45; L <= 0.9 && !accent; L += 0.005) {
+      const g = gamutLch(L, Ca, ha);
+      const y = lum(g.rgb);
+      if (g.C >= 0.04 && contrast(y, yg) >= 3 && contrast(y, Y_INK) >= 4.5 && y <= 0.6) accent = g.rgb;
+    }
+  }
+  return { ground: hex(ground), ink: hex(ink), ink2: hex(ink2), accent: accent && hex(accent), btnFill: hex(ink), onBtn: hex(ground) };
+};
+
 // the serif a derived page takes, Roboto Serif since 2026-10-01 ("change serif to Roboto Serif"; Newsreader
 // from 2026-09-28), with the two
 // alternatives derive.html switches to on ?serif=

@@ -2,6 +2,7 @@
 // stands with the three changes plans/plan-eccm-event-markup.md section 3
 // asks for: the top block is a header, the duration is a time element, and
 // a page shown in the other language's chrome carries lang on its text.
+import { darkOf } from '../../public/scheme.mjs';
 import { html, raw, esc } from './html.mjs';
 import { md } from './md.mjs';
 import { T, OTHER, page } from './chrome.mjs';
@@ -62,7 +63,11 @@ const VARS = { ground: '--ev-ground', ink: '--ev-ink', ink2: '--ev-ink2', accent
 const schemeStyle = (json) => {
   if (!json) return null;
   let s; try { s = JSON.parse(json); } catch { return null; }
-  const decl = Object.entries(VARS).filter(([k]) => s[k] != null).map(([k, v]) => `${v}: ${s[k]}`);
+  // a light scheme carries its dark half (public/scheme.mjs darkOf), each colour a light-dark() pair, so the
+  // article follows the site's theme; a dark scheme is the picture's dark and stays dark in both
+  const dk = s.mode === 'light' && HEX.test(s.ground) ? darkOf(s) : null;
+  const val = (k) => (dk && k in dk && s[k] != null ? `light-dark(${s[k]}, ${dk[k] || dk.ink})` : s[k]);
+  const decl = Object.entries(VARS).filter(([k]) => val(k) != null).map(([k, v]) => `${v}: ${val(k)}`);
   return { mode: s.mode === 'dark' ? 'dark' : 'light', style: esc(decl.join('; ')), serif: !!(s.titleFace || s.bodyFace), file: SERIF_FILE[/'(Roboto|Newsreader|Literata)/.exec(s.titleFace || s.bodyFace || '')?.[1]] };
 };
 // a scheme as the editor's browser posts it, kept only when every value is

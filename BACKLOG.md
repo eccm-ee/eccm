@@ -7,6 +7,10 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Done 2026-10-02: "figure out dark mode colors for derived colors"
+
+Asked verbatim. ✅ A light scheme now follows the site's theme: event.mjs writes each colour as light-dark(light, dark), the dark half from darkOf in public/scheme.mjs, computed from the stored hex so no row changes. The ground keeps its hue at OKLCH 0.24 (chroma at most 0.05); white, grey and the muddy hues 40 to 110 take the site's #121212; the ink is the site's dark ink, the second ink at 4.5 : 1, the accent its own hue walked up under the dark scheme's rule, the button the inverse. The body serif goes back to the sans in dark, as on a dark scheme. A dark scheme stays dark in both themes. Of the 14 light schemes, 7 get a tinted dark ground and 7 the site's dark.
+
 ### Done 2026-10-02: "in mobile images are full w in events page"
 
 Asked verbatim. ✅ Under 36rem a list row is one column: the picture at the column's width, 3 : 2, above the kicker, and a row without a picture shows no box. Between 36 and 47rem the square thumbnail stays. The same list on the front page follows, since it is one component.
