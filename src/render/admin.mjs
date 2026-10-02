@@ -22,7 +22,7 @@ const TOOLS = [
   ['/edit/uudiskiri', 'Newsletter', 'Issues to subscribers: compose from events, send a test, send to all.'],
   ['/ds', 'Components', 'Type, figures, colour, space, buttons, tables and cards.'],
   ['/logo', 'Logo', 'The square mark, the wordmark in both languages, and every icon size.'],
-  ['/social', 'Social images', 'The share image of every published event, as a scraper sees it.'],
+  ['/social', 'Social', 'The share image of every published event, as a scraper sees it.'],
   ['/admin/research', 'Research', 'Typography and radio programming tools.'],
 ];
 
