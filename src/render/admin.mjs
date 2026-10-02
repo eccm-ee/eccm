@@ -11,19 +11,20 @@
 import { html } from './html.mjs';
 import { page } from './chrome.mjs';
 
+// in English since 2026-10-02 ("convert all admin pages to english only"), and the type study moved under
+// Research the same day with the radio tools ("in admin page to reseach card link")
 const TOOLS = [
-  ['/et/sundmused', 'Sündmused', 'Kõik sündmused. Iga sündmust muudetakse tema enda lehe nupust Muuda.'],
-  ['/items', 'Teated', 'Teade telefonidesse kindlal ajal, ja teadete nimekiri.'],
-  ['/radio', 'Raadio', 'Jaama voog, kava ja otseülekanne.'],
-  ['/radio/kava', 'Raadio kava', 'Kavand: nädala kava, otsesaated, kordused ja episoodid.'],
-  ['/edit/uudiskiri', 'Uudiskiri', 'Kirjad tellijatele: koosta sündmustest, saada testiks, saada kõigile.'],
-  ['/ds', 'Disainisüsteem', 'Kirjad, värvid, logo, komponendid ja sotsiaalmeedia pildid.'],
-  ['/type', 'Kirjatüübid', 'Kirjatüüpide võrdlus lehe enda suurustes.'],
+  ['/et/sundmused', 'Events', 'Every event. Each one is edited from the Edit button on its own page.'],
+  ['/items', 'Notices', 'A notice to phones at a set time, and the list of notices.'],
+  ['/radio', 'Radio', 'The station\u2019s channels, what is on, and the recorded live shows.'],
+  ['/edit/uudiskiri', 'Newsletter', 'Issues to subscribers: compose from events, send a test, send to all.'],
+  ['/ds', 'Design system', 'Type, colour, logo, components and share images.'],
+  ['/admin/research', 'Research', 'Typography and radio programming tools.'],
 ];
 
 export const renderAdmin = () => page({
-  wide: 'root', lang: 'et', title: 'Haldus.', alternate: { lang: 'en', href: '/en/' },
-  body: html`  <h1>Haldus</h1>
+  wide: 'root', lang: 'en', title: 'Admin.',
+  body: html`  <h1>Admin</h1>
   <div class="cards">
     ${TOOLS.map(([href, title, desc]) => html`<a class="card" href="${href}"><span class="card-title">${title}</span><span class="card-desc">${desc}</span></a>`)}
   </div>`,

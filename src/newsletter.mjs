@@ -119,28 +119,28 @@ async function issuePage(request, env, url, ctx, id) {
     return reply(renderIssueForm({ issue, mail: mailFor(shown, url.origin).html, ...extra }), status, EDIT);
   };
   if (request.method !== 'POST') return show();
-  if (issue.status === 'sent') return show({ errors: [{ field: 'body', msg: 'Saadetud kirja ei saa enam muuta.' }] }, 409);
+  if (issue.status === 'sent') return show({ errors: [{ field: 'body', msg: 'A sent letter cannot be changed.' }] }, 409);
   const f = await form(request);
   if (f.do === 'delete') { await env.DB.prepare('DELETE FROM issue WHERE id = ?').bind(id).run(); return go('/edit/uudiskiri'); }
   await env.DB.prepare(`UPDATE issue SET subject = ?, body = ?, updated_at = ${NOW} WHERE id = ?`).bind(f.subject || '', f.body || '', id).run();
   const now = { ...issue, subject: f.subject || '', body: f.body || '' };
   const errors = [];
   if (f.do === 'test' || f.do === 'send') {
-    if (!now.subject) errors.push({ field: 'subject', msg: 'Teema on puudu.' });
-    if (!now.body) errors.push({ field: 'body', msg: 'Kiri on tühi.' });
+    if (!now.subject) errors.push({ field: 'subject', msg: 'The subject is missing.' });
+    if (!now.body) errors.push({ field: 'body', msg: 'The letter is empty.' });
   }
   if (f.do === 'test') {
-    if (!EMAIL.test(f.test || '')) errors.push({ field: 'test', msg: 'Testkirja aadress puudub või on vigane.' });
+    if (!EMAIL.test(f.test || '')) errors.push({ field: 'test', msg: 'The test address is missing or not valid.' });
     if (errors.length) return show({ form: f, errors, test: f.test }, 400);
     const m = mailFor(now, url.origin);
     await queue(env, [{ kind: 'test', issue_id: id, to: f.test, subject: `[test] ${now.subject}`, text: m.text, html: m.html, unsub: `${url.origin}/uudiskiri/lahku/test` }]);
     await drain(env);
     const last = await env.DB.prepare("SELECT * FROM outbox WHERE kind = 'test' AND issue_id = ? ORDER BY id DESC LIMIT 1").bind(id).first();
-    const say = last?.sent_at ? `Testkiri saadetud aadressile ${f.test}.` : `Testkiri on postkastis, aga ei läinud${last?.error ? `: ${last.error}` : '. Saatmine pole seadistatud.'}`;
+    const say = last?.sent_at ? `Test letter sent to ${f.test}.` : `The test letter is in the outbox but did not go${last?.error ? `: ${last.error}` : '. Sending is not set up.'}`;
     return reply(renderIssueForm({ issue: now, mail: m.html, say, test: f.test }), 200, EDIT);
   }
   if (f.do === 'send') {
-    if (f.sure !== '1') errors.push({ field: 'sure', msg: 'Märgi, et saadad kõigile.' });
+    if (f.sure !== '1') errors.push({ field: 'sure', msg: 'Tick the box to confirm sending to everyone.' });
     if (errors.length) return show({ form: f, errors, test: f.test }, 400);
     const subs = (await env.DB.prepare("SELECT email, token FROM subscriber WHERE lang = ? AND status = 'confirmed'").bind(issue.lang).all()).results;
     // the slug from the subject, made unique in this language

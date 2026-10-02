@@ -48,13 +48,13 @@ const size = (ext, b) => {
 // checked by cleanScheme, or null; a row that exists keeps the scheme it has
 // unless it had none
 export async function storeUpload(env, file, scheme, alt) {
-  if (!env.MEDIA) return { error: 'Pildihoidla ei ole ühendatud (R2 sidumine MEDIA puudub).' };
-  if (file.size > MAX_BYTES) return { error: `Pilt on ${Math.round(file.size / 1048576)} MB, suurim lubatud on 10 MB.` };
+  if (!env.MEDIA) return { error: 'Picture storage is not connected (the R2 binding MEDIA is missing).' };
+  if (file.size > MAX_BYTES) return { error: `The picture is ${Math.round(file.size / 1048576)} MB, the most allowed is 10 MB.` };
   const bytes = new Uint8Array(await file.arrayBuffer());
   const ext = sniff(bytes);
-  if (!ext) return { error: 'See fail ei ole JPEG, PNG, WebP ega GIF.' };
+  if (!ext) return { error: 'This file is not a JPEG, PNG, WebP or GIF.' };
   const dims = size(ext, bytes);
-  if (!dims || !dims.width || !dims.height) return { error: 'Pildi mõõte ei õnnestunud failist lugeda.' };
+  if (!dims || !dims.width || !dims.height) return { error: 'Could not read the picture size from the file.' };
   const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map((x) => x.toString(16).padStart(2, '0')).join('');
   const key = `media/${hash}.${ext}`;
   if (!(await env.MEDIA.head(key))) await env.MEDIA.put(key, bytes, { httpMetadata: { contentType: TYPES[ext], cacheControl: 'public, max-age=31536000, immutable' } });

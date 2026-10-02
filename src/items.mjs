@@ -162,10 +162,10 @@ const readForm = async (request) => {
   const f = Object.fromEntries([...(await request.formData())].map(([k, v]) => [k, String(v).trim()]));
   f.title ??= ''; f.body ??= ''; f.url ??= ''; f.publish_at ??= '';
   const errors = [];
-  if (!f.title) errors.push({ field: 'title', msg: 'Pealkiri on puudu.' });
-  if (f.title.length > 120) errors.push({ field: 'title', msg: 'Pealkiri on pikem kui 120 märki.' });
-  if (f.url && !/^(https?:\/\/\S+|\/\S*)$/.test(f.url)) errors.push({ field: 'url', msg: 'Link algab https:// või kaldkriipsuga.' });
-  if (f.publish_at && !LOCAL.test(f.publish_at)) errors.push({ field: 'publish_at', msg: 'Aeg on vigane.' });
+  if (!f.title) errors.push({ field: 'title', msg: 'The title is missing.' });
+  if (f.title.length > 120) errors.push({ field: 'title', msg: 'The title is longer than 120 characters.' });
+  if (f.url && !/^(https?:\/\/\S+|\/\S*)$/.test(f.url)) errors.push({ field: 'url', msg: 'A link starts with https:// or a slash.' });
+  if (f.publish_at && !LOCAL.test(f.publish_at)) errors.push({ field: 'publish_at', msg: 'The time is not valid.' });
   return { f, errors };
 };
 const back = () => new Response(null, { status: 303, headers: { ...HEAD, location: '/items' } });
@@ -184,7 +184,7 @@ async function one(request, env, id) {
   const out = await ask(env, '/edit', { id, title: f.title, body: f.body, url: f.url, ...(waiting ? { publish_at: f.publish_at ? tallinnMs(f.publish_at) : Date.now() } : {}) });
   if (out.error === 'published') {
     const { item } = await ask(env, '/get', { id });
-    return new Response(renderItemEdit({ it: item, form: f, errors: [{ field: 'publish_at', msg: 'Teade ilmus vahepeal, seda enam muuta ei saa.' }] }), { status: 409, headers: HEAD });
+    return new Response(renderItemEdit({ it: item, form: f, errors: [{ field: 'publish_at', msg: 'The notice was published meanwhile and its time can no longer change.' }] }), { status: 409, headers: HEAD });
   }
   return back();
 }

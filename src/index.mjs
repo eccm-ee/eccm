@@ -32,7 +32,7 @@ import { renderIcs } from './render/ics.mjs';
 import { itemsRoute } from './items.mjs';
 import { renderStation } from './render/station.mjs';
 import { renderAdmin } from './render/admin.mjs';
-import { renderRadioPlan } from './render/radio-plan.mjs';
+import { renderResearch, renderRadioResearch } from './render/research.mjs';
 import { newsletter, drain } from './newsletter.mjs';
 import { ogRoute } from './og/route.mjs';
 import { radioShows, wakeRadio, serveShow } from './radio.mjs';
@@ -148,12 +148,15 @@ export default {
     // the radio, positron's station in this site's chrome (src/render/station.mjs), since 2026-10-01
     // the radio, at /radio since 2026-10-01 ("rename station to radio"); /station answers with the way there
     if (p === '/radio') return reply(renderStation(await radioShows(env)));
-    // the programming page as a sketch that saves nothing (src/render/radio-plan.mjs), since 2026-10-02
-    if (p === '/radio/kava') return new Response(String(renderRadioPlan()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
+    // the programming sketch of the morning became the radio tools research the same afternoon (src/render/research.mjs)
+    if (p === '/radio/kava') return new Response(null, { status: 301, headers: { location: '/admin/research/radio' } });
     // a kept live show (src/radio.mjs), since 2026-10-02
     if (p.startsWith('/radio/')) { const out = await serveShow(request, env, p); if (out) return out; }
     if (p === '/station') return new Response(null, { status: 301, headers: { location: `/radio${url.search}` } });
     // the tools, one card each (src/render/admin.mjs), since 2026-10-01
+    // research, a card per study (src/render/research.mjs), since 2026-10-02
+    if (p === '/admin/research') return new Response(String(renderResearch()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
+    if (p === '/admin/research/radio') return new Response(String(renderRadioResearch()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';

@@ -75,7 +75,7 @@ export const fromRows = (ev, texts, credits) => ({
   })),
 });
 // the credits that exist and nothing more, one blank block only when there are none; another is added by the
-// Lisa tegija button, through the add-credit action below with no script and in place with one (asked
+// Add credit button, through the add-credit action below with no script and in place with one (asked
 // 2026-09-28: "credits: create component that shows first but allows add more items")
 const padded = (v) => ({ ...v, credits: v.credits.length ? v.credits : [BLANK_CREDIT()] });
 
@@ -102,45 +102,45 @@ export const parse = (fd, before) => {
 export async function validate(v, db, roles, media) {
   const errors = [];
   const bad = (field, msg) => errors.push({ field, msg });
-  if (!v.starts_at) bad('starts_at', 'Algus on tühi.');
-  else if (!isLocal(v.starts_at)) bad('starts_at', 'Algus ei ole kuupäev ja kellaaeg.');
-  if (v.ends_at && !isLocal(v.ends_at)) bad('ends_at', 'Lõpp ei ole kuupäev ja kellaaeg.');
-  else if (v.ends_at && v.starts_at && v.ends_at <= v.starts_at) bad('ends_at', 'Lõpp on enne algust.');
-  if (v.duration_min !== '' && !(/^\d+$/.test(v.duration_min) && +v.duration_min >= 1 && +v.duration_min <= 1440)) bad('duration_min', 'Kestus on täisarv minuteid, 1 kuni 1440.');
-  if (v.ticket_url && !URLISH.test(v.ticket_url)) bad('ticket_url', 'Piletilink algab https:// või http://.');
-  if (v.website_url && !URLISH.test(v.website_url)) bad('website_url', 'Veebilehe aadress algab https:// või http://.');
-  if (!CATEGORIES.some(([k]) => k === v.category)) bad('category', 'Sari on valimata.');
-  if (!STATUSES.some(([k]) => k === v.status)) bad('status', 'Olek on valimata.');
+  if (!v.starts_at) bad('starts_at', 'Start is empty.');
+  else if (!isLocal(v.starts_at)) bad('starts_at', 'Start is not a date and time.');
+  if (v.ends_at && !isLocal(v.ends_at)) bad('ends_at', 'End is not a date and time.');
+  else if (v.ends_at && v.starts_at && v.ends_at <= v.starts_at) bad('ends_at', 'End is before the start.');
+  if (v.duration_min !== '' && !(/^\d+$/.test(v.duration_min) && +v.duration_min >= 1 && +v.duration_min <= 1440)) bad('duration_min', 'Duration is a whole number of minutes, 1 to 1440.');
+  if (v.ticket_url && !URLISH.test(v.ticket_url)) bad('ticket_url', 'The ticket link starts with https:// or http://.');
+  if (v.website_url && !URLISH.test(v.website_url)) bad('website_url', 'The website address starts with https:// or http://.');
+  if (!CATEGORIES.some(([k]) => k === v.category)) bad('category', 'No series chosen.');
+  if (!STATUSES.some(([k]) => k === v.status)) bad('status', 'No status chosen.');
   // the typed file name becomes the media row's id, or a sentence naming the files that exist
   if (v.image_key !== undefined) {
     const m = v.image_key ? media.find((m) => m.key === v.image_key) : null;
-    if (v.image_key && !m) bad('image_key', `Sellist pilti ei ole. Olemas: ${media.map((m) => m.key).join(', ') || 'mitte ükski'}.`);
+    if (v.image_key && !m) bad('image_key', `No such picture. There are: ${media.map((m) => m.key).join(', ') || 'none'}.`);
     v.image_id = m ? String(m.id) : '';
-  } else if (v.image_id && !media.some((m) => String(m.id) === v.image_id)) bad('image_id', 'Sellist pilti ei ole.');
-  if (v.publish_at && !isLocal(v.publish_at)) bad('publish_at', 'Avaldamise aeg ei ole kuupäev ja kellaaeg.');
+  } else if (v.image_id && !media.some((m) => String(m.id) === v.image_id)) bad('image_id', 'No such picture.');
+  if (v.publish_at && !isLocal(v.publish_at)) bad('publish_at', 'Publish from is not a date and time.');
   // the texts: Estonian is required, English is optional but cannot be
   // emptied once it exists, because its row carries the Joomla id
   for (const lang of ['et', 'en']) {
     const t = v[lang];
-    const name = lang === 'et' ? 'Eestikeelne' : 'Ingliskeelne';
+    const name = lang === 'et' ? 'Estonian' : 'English';
     if (!t.title) {
-      if (lang === 'et') bad('title_et', 'Eestikeelne pealkiri on tühi.');
-      else if (t.exists) bad('title_en', 'Ingliskeelne pealkiri on tühi, aga ingliskeelne tekst on olemas ja seda ei saa siit kustutada.');
-      else if (t.slug || t.body) bad('title_en', 'Ingliskeelne pealkiri on tühi, aga slug või kirjeldus on täidetud.');
+      if (lang === 'et') bad('title_et', 'Estonian title is empty.');
+      else if (t.exists) bad('title_en', 'English title is empty, but the English text exists and cannot be removed here.');
+      else if (t.slug || t.body) bad('title_en', 'English title is empty, but the slug or description is filled in.');
       continue;
     }
     const derived = !t.slug;
     if (derived) t.slug = slugify(t.title);
-    if (!SLUG.test(t.slug)) { bad(`slug_${lang}`, `${name} slug tohib sisaldada ainult väikesi tähti a kuni z, numbreid ja sidekriipse.`); continue; }
+    if (!SLUG.test(t.slug)) { bad(`slug_${lang}`, `${name} slug may hold only lowercase a to z, digits and hyphens.`); continue; }
     const taken = await db.prepare('SELECT event_id FROM event_text WHERE lang = ? AND slug = ? AND event_id != ?').bind(lang, t.slug, v.id ?? 0).first();
     if (taken && derived && v.starts_at) t.slug = slugify(`${t.slug}-${v.starts_at.slice(0, 10)}`);
-    else if (taken) bad(`slug_${lang}`, `${name} slug ${t.slug} on juba teisel sündmusel kasutusel.`);
+    else if (taken) bad(`slug_${lang}`, `${name} slug ${t.slug} is already used by another event.`);
   }
   v.credits.forEach((c, i) => {
     c.empty = !c.people && !c.orgs_et && !c.orgs_en;
     if (c.empty) return;
-    if (c.role_key && !roles.some((r) => r.key === c.role_key)) bad(`c${i}_role`, `Tegija ${i + 1}: sellist rolli ei ole.`);
-    if (!c.role_key && !c.label_et) bad(`c${i}_role`, `Tegija ${i + 1}: vali roll või kirjuta vaba rolli nimetus.`);
+    if (c.role_key && !roles.some((r) => r.key === c.role_key)) bad(`c${i}_role`, `Credit ${i + 1}: no such role.`);
+    if (!c.role_key && !c.label_et) bad(`c${i}_role`, `Credit ${i + 1}: choose a role or name a free one.`);
   });
   return errors;
 }
@@ -218,31 +218,31 @@ const RESERVED = { et: ['sundmused'], en: ['events'] };
 export async function validatePage(v, db) {
   const errors = [];
   const bad = (field, msg) => errors.push({ field, msg });
-  if (!STATUSES.some(([k]) => k === v.status)) bad('status', 'Olek on valimata.');
-  if (v.publish_at && !isLocal(v.publish_at)) bad('publish_at', 'Avaldamise aeg ei ole kuupäev ja kellaaeg.');
+  if (!STATUSES.some(([k]) => k === v.status)) bad('status', 'No status chosen.');
+  if (v.publish_at && !isLocal(v.publish_at)) bad('publish_at', 'Publish from is not a date and time.');
   // the texts: either language may be missing, since on eccm.ee NAN and
   // Ulysses are English only and Tallinn 1965 is Estonian only, but not
   // both, and a language cannot be emptied once it exists, because its row
   // carries the eccm.ee path
-  if (!v.et.title && !v.en.title) bad('title_et', 'Pealkiri on tühi mõlemas keeles. Vähemalt üks keel peab olema täidetud.');
+  if (!v.et.title && !v.en.title) bad('title_et', 'The title is empty in both languages. At least one language must be filled in.');
   for (const lang of ['et', 'en']) {
     const t = v[lang];
-    const name = lang === 'et' ? 'Eestikeelne' : 'Ingliskeelne';
+    const name = lang === 'et' ? 'Estonian' : 'English';
     if (!t.title) {
-      if (t.exists) bad(`title_${lang}`, `${name} pealkiri on tühi, aga ${name.toLowerCase()} tekst on olemas ja seda ei saa siit kustutada.`);
-      else if (t.slug || t.body) bad(`title_${lang}`, `${name} pealkiri on tühi, aga slug või tekst on täidetud.`);
+      if (t.exists) bad(`title_${lang}`, `${name} title is empty, but the ${name} text exists and cannot be removed here.`);
+      else if (t.slug || t.body) bad(`title_${lang}`, `${name} title is empty, but the slug or text is filled in.`);
       continue;
     }
     if (!t.slug) t.slug = slugify(t.title);
-    if (!SLUG.test(t.slug)) { bad(`slug_${lang}`, `${name} slug tohib sisaldada ainult väikesi tähti a kuni z, numbreid ja sidekriipse.`); continue; }
-    if (RESERVED[lang].includes(t.slug)) { bad(`slug_${lang}`, `${name} slug ${t.slug} on sündmuste nimekirja aadress.`); continue; }
+    if (!SLUG.test(t.slug)) { bad(`slug_${lang}`, `${name} slug may hold only lowercase a to z, digits and hyphens.`); continue; }
+    if (RESERVED[lang].includes(t.slug)) { bad(`slug_${lang}`, `${name} slug ${t.slug} is the address of the events list.`); continue; }
     const taken = await db.prepare('SELECT page_id FROM page_text WHERE lang = ? AND slug = ? AND page_id != ?').bind(lang, t.slug, v.id ?? 0).first();
-    if (taken) bad(`slug_${lang}`, `${name} slug ${t.slug} on juba teisel lehel kasutusel.`);
+    if (taken) bad(`slug_${lang}`, `${name} slug ${t.slug} is already used by another page.`);
   }
   // a new page's key is its first slug, Estonian before English
   if (!v.id && !errors.length) {
     v.key = v.et.slug || v.en.slug;
-    if (await db.prepare('SELECT id FROM page WHERE key = ?').bind(v.key).first()) bad(v.et.slug ? 'slug_et' : 'slug_en', `Lehe võti ${v.key} on juba teisel lehel kasutusel. Vali teine slug.`);
+    if (await db.prepare('SELECT id FROM page WHERE key = ?').bind(v.key).first()) bad(v.et.slug ? 'slug_et' : 'slug_en', `The page key ${v.key} is already used by another page. Choose another slug.`);
   }
   return errors;
 }
@@ -270,7 +270,7 @@ function previewPage(v, lang, url) {
   const text = { page_id: v.id, lang, slug: v[lang].slug, title: v[lang].title, body: v[lang].body };
   const other = OTHER[lang];
   const twin = v[other].title ? { lang: other, slug: v[other].slug } : null;
-  const notice = lang === 'et' ? 'Eelvaade. Midagi ei ole salvestatud; sulge see vahekaart ja salvesta vormilt.' : 'Preview. Nothing is saved; close this tab and save from the form.';
+  const notice = 'Preview. Nothing is saved. Close this tab and save from the form.';
   return reply(renderPage({ lang, text, fallback: false, twin, origin: url.origin, path: pagePath(lang, text.slug), notice, editHref: v.id ? `/edit/pages/${v.id}` : '/edit/pages/new' }));
 }
 
@@ -281,7 +281,7 @@ async function loadPage(db, id) {
   return { pg, texts, values: pageFromRows(pg, texts) };
 }
 
-// where a page's Loobu goes: the page itself, Estonian first; and where a
+// where a page's Cancel goes: the page itself, Estonian first; and where a
 // save lands: the page when it is published, else the form again, since a
 // draft has no public page. The saved line and the public links left the
 // form 2026-09-28 (asked as "rm Avalik leht: ET EN / Salvestatud kell 13.30."
@@ -302,7 +302,7 @@ async function pageRoute(request, env, url, id) {
   if (errors.length) return reply(pageForm({ v, errors, cancel }), 422);
   if (action.startsWith('preview')) return previewPage(v, action.endsWith('en') ? 'en' : 'et', url);
   const out = await savePage(db, v);
-  if (out.stale) return reply(pageForm({ v, errors: [{ field: 'rev', msg: 'Keegi teine salvestas selle lehe vahepeal. Ava leht uues vahekaardis, võrdle ja tee muudatus uuesti.' }], cancel }), 409);
+  if (out.stale) return reply(pageForm({ v, errors: [{ field: 'rev', msg: 'Someone else saved this page in the meantime. Open it in a new tab, compare, and make the change again.' }], cancel }), 409);
   return redirect(landing(v, pagePath) || `/edit/pages/${out.id}`);
 }
 
@@ -330,7 +330,7 @@ async function preview(db, v, lang, before, roles, media, url) {
   const next = (await db.prepare(`SELECT e.starts_at, e.venue, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et'
     WHERE e.status = 'published' AND e.starts_at > ? AND e.id != ? ORDER BY e.starts_at LIMIT 3`).bind(lang, ev.starts_at, v.id ?? 0).all()).results;
-  const notice = lang === 'et' ? 'Eelvaade. Midagi ei ole salvestatud; sulge see vahekaart ja salvesta vormilt.' : 'Preview. Nothing is saved; close this tab and save from the form.';
+  const notice = 'Preview. Nothing is saved. Close this tab and save from the form.';
   return reply(renderEvent({ lang, text, fallback: false, ev, media: pic, credits, twin, next, origin: url.origin, path: eventPath(lang, text.slug), notice, editHref: v.id ? `/edit/events/${v.id}` : '/edit/events/new' }));
 }
 
@@ -339,7 +339,7 @@ async function form(request, env, url, id) {
   const before = await load(db, +id);
   if (!before) return reply(errorPage({ status: 404 }), 404);
   const { roles, media } = await lookups(db);
-  // where Loobu goes: the event itself, Estonian first
+  // where Cancel goes: the event itself, Estonian first
   const home = before.texts.find((x) => x.lang === 'et') || before.texts.find((x) => x.lang === 'en');
   const cancel = home ? eventPath(home.lang, home.slug) : '/et/sundmused';
   if (request.method !== 'POST') return reply(editorForm({ v: padded(before.values), roles, media, cancel }));
@@ -362,7 +362,7 @@ async function form(request, env, url, id) {
   if (errors.length) return reply(editorForm({ v: padded(v), errors, roles, media, cancel }), 422);
   if (action.startsWith('preview')) return preview(db, v, action.endsWith('en') ? 'en' : 'et', before, roles, media, url);
   const out = await save(db, v, before);
-  if (out.stale) return reply(editorForm({ v: padded(v), errors: [{ field: 'rev', msg: 'Keegi teine salvestas selle sündmuse vahepeal. Ava leht uues vahekaardis, võrdle ja tee muudatus uuesti.' }], roles, media, cancel }), 409);
+  if (out.stale) return reply(editorForm({ v: padded(v), errors: [{ field: 'rev', msg: 'Someone else saved this event in the meantime. Open it in a new tab, compare, and make the change again.' }], roles, media, cancel }), 409);
   // the event page when it is published, else the form again, as a page save lands
   return redirect(landing(v, eventPath) || `/edit/events/${out.id}`);
 }

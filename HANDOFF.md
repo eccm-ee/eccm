@@ -28,7 +28,15 @@ command when this was written; count again before building on one.
   `live.mjs --realtime` into a temporary slot on `live-test` came back as
   five chunks joined into one 45.000 s MP3 (720,978 bytes) that ffmpeg
   decodes without an error; the channel's running order was put back after.
-- **/radio/kava is a sketch of the programming page** (`src/render/radio-plan.mjs`,
+- **The admin pages are English only** (asked: "convert all admin pages to
+  english only"): /admin, the editor, the newsletter editor and its outbox,
+  /items, /radio and /type; the crumb reads Admin. The public newsletter pages,
+  the letters and the stored values stay as they were. /admin has a Research
+  card leading to /admin/research, with Typography (/type) and Radio tools
+  (/admin/research/radio): the common structure, views and tools across the
+  providers, then only their links. /radio/kava answers 301 there; the sketch
+  below is gone from the code (in git at ea94cc6).
+- **/radio/kava was a sketch of the programming page** (`src/render/radio-plan.mjs`,
   asked: "do a page with radio ui, does not have to work. also put radio ui
   links below"): the channels, a week of typed slots (loop, live, replay,
   file) told apart by their left edge, the Friday live slot opened as a form

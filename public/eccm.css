@@ -585,44 +585,13 @@
   .station-kept { margin-block-start: var(--eccm-s-16); }
   .station-kept h2 { font-size: var(--eccm-t-l); margin-block-end: var(--eccm-s-6); }
   .station-kept .btn-sm { inline-size: 4.5rem; justify-content: center; }
-  /* the programming page, a sketch (src/render/radio-plan.mjs). The channels and the week sit on one row
-     with two ends; the week is seven day columns on a desk and a scroller of 9rem days on a phone, the third
-     day cut so it reads as more to the right. A day runs 12.00 to 24.00 filled end to end and a slot is as
-     tall as its hours, so the days line up hour for hour. A slot's kind is its left edge, never a colour:
-     the loop a hairline in the second ink, a live show the ink at 3px, a replay dashed, a file the ink at
-     1px; the slot opened below is ruled all round */
-  .rk-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: var(--eccm-s-3) var(--eccm-s-8); margin-block-end: var(--eccm-s-6); }
-  .rk-chans, .rk-weeknav { display: flex; flex-wrap: wrap; gap: var(--eccm-s-6); }
-  .rk-chans a, .rk-weeknav a { color: var(--eccm-ink); text-decoration-line: none; }
-  .rk-chans a:hover, .rk-weeknav a:hover { text-decoration-line: underline; }
-  .rk-chans [aria-current] { text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 0.3em; }
-  .rk-weeknav span { color: var(--eccm-ink-2); }
-  .rk-week { --hour: 3.5rem; display: grid; grid-template-columns: repeat(7, minmax(9rem, 1fr)); column-gap: var(--eccm-s-2); overflow-x: auto; overscroll-behavior-x: contain; padding-block-end: var(--eccm-s-2); }
-  .rk-day h3 { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); font-weight: 400; color: var(--eccm-ink-2); padding-block-end: var(--eccm-s-2); border-block-end: 1px solid var(--eccm-ink); }
-  .rk-day h3 span { color: var(--eccm-ink); }
-  .rk-day ol { display: grid; }
-  .rk-slot { display: flex; flex-direction: column; gap: var(--eccm-s-1); block-size: calc(var(--h) * var(--hour)); overflow: hidden; padding: var(--eccm-s-2) var(--eccm-s-2) var(--eccm-s-2) var(--eccm-s-3); border-block-end: 1px solid var(--eccm-rule); border-inline-start: 1px solid var(--eccm-rule); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
-  .rk-loop { color: var(--eccm-ink-2); }
-  .rk-live { border-inline-start: 3px solid var(--eccm-ink); }
-  .rk-rerun { border-inline-start: 1px dashed var(--eccm-ink); }
-  .rk-file { border-inline-start: 1px solid var(--eccm-ink); }
-  .rk-slot[aria-current="true"] { outline: 1px solid var(--eccm-ink); outline-offset: -1px; }
-  .rk-meta { display: flex; flex-wrap: wrap; justify-content: space-between; column-gap: var(--eccm-s-2); color: var(--eccm-ink-2); }
-  .rk-meta > span { white-space: nowrap; }
-  .rk-title { font-weight: 600; overflow-wrap: anywhere; }
-  .rk-loop .rk-title { font-weight: 400; }
-  .rk-who { color: var(--eccm-ink-2); }
-  .rk-warn { margin-block-start: auto; text-decoration: underline 1px; text-underline-offset: 0.3em; }
+  /* the research pages (src/render/research.mjs): a section per part, the page's largest gap between them */
   .rk-part { margin-block-start: var(--eccm-s-16); }
   .rk-part h2 { font-size: var(--eccm-t-l); margin-block-end: var(--eccm-s-6); }
-  .rk-checks { display: grid; gap: var(--eccm-s-3); max-inline-size: var(--eccm-measure); }
-  .rk-checks b { font-weight: 600; margin-inline-end: var(--eccm-s-2); }
-  /* the references: a tool's name beside what to look at in it and its pages, two columns on a desk and
-     name over the rest on a phone, the label and value list of the event page */
+  /* the providers: a name beside its pages, two columns on a desk and name over links on a phone, the label
+     and value list of the event page */
   .rk-refs { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--eccm-s-4) var(--eccm-s-8); max-inline-size: 60rem; }
   .rk-refs > div { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; }
-  .rk-refs dd { display: grid; gap: var(--eccm-s-1); }
-  .rk-ref-what { color: var(--eccm-ink-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
   .rk-ref-links { display: flex; flex-wrap: wrap; gap: var(--eccm-s-1) var(--eccm-s-4); }
   @media (max-width: 40rem) { .rk-refs { grid-template-columns: minmax(0, 1fr); row-gap: var(--eccm-s-6); } .rk-refs > div { gap: var(--eccm-s-1); } }
   /* the newsletter (src/render/newsletter.mjs): the answer to a sign-up in the body's size, the field a
@@ -712,7 +681,7 @@
     .table thead { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
     .table tbody { display: grid; row-gap: var(--eccm-s-4); }
     .table tr { display: flex; flex-wrap: wrap; column-gap: var(--eccm-s-4); row-gap: var(--eccm-s-1); }
-    .table td { display: block; padding: 0; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); text-align: start; }
+    .table td { display: block; padding: 0; white-space: normal; overflow-wrap: anywhere; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); text-align: start; }
     .table tbody tr:first-child > * { padding-block-start: 0; }
     .table td:empty { display: none; }
     .table td[data-label]:not(.main)::before { content: attr(data-label) " "; }

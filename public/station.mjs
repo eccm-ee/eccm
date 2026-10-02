@@ -6,10 +6,10 @@
 // Every channel is a column holding the whole of that station (asked
 // 2026-10-01: "whole stations need to fit so single col. avoid dumplication
 // and vertical jumps"): its name and state, what is on in at most two lines,
-// who, a line showing how far in, one Kuula or Peata, and the running order
+// who, a line showing how far in, one Listen or Stop, and the running order
 // with the row on air marked. Every part of a column keeps its height whatever
 // it says, and each part has a fixed height (public/eccm.css), so
-// nothing moves while somebody is looking. One player serves the page: Kuula
+// nothing moves while somebody is looking. One player serves the page: Listen
 // on a column starts it there and stops it anywhere else.
 //
 // What it reads, all from the station's own origin:
@@ -55,11 +55,11 @@ function column(c) {
   const q = new URLSearchParams(PARAMS); q.set('k', c.name); a.href = `?${q}`;
   const state = el('span', 'station-col-state', '');
   head.append(a, state);
-  const now = el('p', 'station-col-now', 'Eetrist väljas');
+  const now = el('p', 'station-col-now', 'Off air');
   const who = el('p', 'station-col-who', '');
   const bar = el('div', 'station-col-bar'); const fill = el('span'); bar.append(fill);
   const times = el('p', 'station-col-times', '');
-  const btn = el('button', 'btn btn-sm', 'Kuula'); btn.type = 'button';
+  const btn = el('button', 'btn btn-sm', 'Listen'); btn.type = 'button';
   btn.addEventListener('click', () => (playing && current === c.name ? stop() : start(c.name)));
   const order = el('ol', 'station-col-order');
   col.append(head, now, who, bar, times, btn, order);
@@ -75,7 +75,7 @@ function drawOrder(c) {
   o.replaceChildren(...(c.slots || []).filter((x) => !x.missing).map((x) => {
     const li = el('li');
     li.dataset.i = x.i;
-    li.append(el('time', null, x.open ? 'otse' : clock(x.from)), el('span', null, x.title || x.key));
+    li.append(el('time', null, x.open ? 'live' : clock(x.from)), el('span', null, x.title || x.key));
     return li;
   }));
   markOrder(c);
@@ -105,7 +105,7 @@ async function readSchedule(c) {
 function drawNow(c) {
   const p = c.playing || {};
   const u = c.ui;
-  u.now.textContent = p.title || p.programme || 'Eetrist väljas';
+  u.now.textContent = p.title || p.programme || 'Off air';
   u.now.title = u.now.textContent;
   u.who.textContent = p.who || '';
   const slot = (c.slots || []).find((x) => x.i === p.slot);
@@ -115,16 +115,16 @@ function drawNow(c) {
     u.times.textContent = `${mmss(into)} / ${mmss(slot.dur)}`;
   } else {
     u.fill.style.inlineSize = slot && slot.open ? '100%' : '0';
-    u.times.textContent = slot && slot.open ? 'otse' : '';
+    u.times.textContent = slot && slot.open ? 'live' : '';
   }
   const on = playing && current === c.name;
-  u.state.textContent = c.down ? 'ei vasta' : on ? 'kuulad' : p.programme ? 'eetris' : 'ootab';
-  u.btn.textContent = on ? 'Peata' : 'Kuula';
+  u.state.textContent = c.down ? 'not responding' : on ? 'listening' : p.programme ? 'on air' : 'waiting';
+  u.btn.textContent = on ? 'Stop' : 'Listen';
   u.btn.className = on ? 'btn btn-sm btn-pri' : 'btn btn-sm';
   u.btn.setAttribute('aria-pressed', String(on));
   // a channel with nothing on air (a live slot before its first chunk) has no playlist to start
   u.btn.disabled = !on && !p.programme;
-  if (!p.programme) u.now.textContent = c.slots?.some((x) => x.open) ? 'Ootab otseülekannet' : 'Eetrist väljas';
+  if (!p.programme) u.now.textContent = c.slots?.some((x) => x.open) ? 'Waiting for the live broadcast' : 'Off air';
   if (current === c.name) u.col.setAttribute('aria-current', 'true'); else u.col.removeAttribute('aria-current');
 }
 
@@ -136,7 +136,7 @@ async function readChannels() {
   misses = 0;
   DEF = d.default || 'main';
   const list = d.channels || [];
-  if (current && !list.some((c) => c.name === current)) { log(`Kanalit ${current} ei ole.`); current = null; }
+  if (current && !list.some((c) => c.name === current)) { log(`There is no channel ${current}.`); current = null; }
   // a channel the page has not seen gets its column; one the station dropped loses it
   let built = false;
   for (const c of list) {
@@ -167,7 +167,7 @@ function announce() {
   if (!MEDIA_SESSION || !current) return;
   const c = chans.get(current), p = c?.playing || {};
   navigator.mediaSession.metadata = new MediaMetadata({
-    title: p.title || p.programme || 'Raadio', artist: p.who || 'ECCM', album: c?.title || 'Raadio',
+    title: p.title || p.programme || 'Radio', artist: p.who || 'ECCM', album: c?.title || 'Radio',
     artwork: [{ src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' }],
   });
   navigator.mediaSession.playbackState = playing ? 'playing' : 'paused';
@@ -205,9 +205,9 @@ function watchdog() {
   if (audio.currentTime !== lastT) { lastT = audio.currentTime; lastMoveAt = now; return; }
   if (now - lastMoveAt < STUCK_MS || Date.now() - lastRestart < Math.min(1000 * 2 ** restarts, 8000) || restarts >= RESTART_CAP) return;
   lastRestart = Date.now(); restarts++;
-  log(`Heli ei ole ${((now - lastMoveAt) / 1000).toFixed(0)} s liikunud, laadimine algab uuesti (${restarts}. kord).`);
+  log(`The sound has not moved for ${((now - lastMoveAt) / 1000).toFixed(0)} s, loading again (attempt ${restarts}).`);
   try { hls.startLoad(); } catch { /* torn down */ }
-  if (restarts === RESTART_CAP) log('Jaam on liiga kaua kättesaamatu olnud, rohkem ei proovita.');
+  if (restarts === RESTART_CAP) log('The station has been unreachable too long, no more attempts.');
 }
 
 // advance is seconds of audio per second of clock SINCE PLAYBACK BEGAN: a short
@@ -220,7 +220,7 @@ function numbers() {
   if (!rateT && audio.currentTime > 0 && !audio.paused) { rateAt = audio.currentTime; rateT = now; }
   if (rateT && now - rateT >= RATE_WINDOW_MS && Math.round((now - rateT) / POLL_MS) % 15 === 0) {
     const b = behindS();
-    log(`kiirus ${num((audio.currentTime - rateAt) / ((now - rateT) / 1000), 2)} x, otsest maas ${b === null ? '?' : `${num(b)} s`}, saatevahetusi ${crossed}`);
+    log(`rate ${num((audio.currentTime - rateAt) / ((now - rateT) / 1000), 2)} x, behind live ${b === null ? '?' : `${num(b)} s`}, show changes ${crossed}`);
   }
 }
 
@@ -243,7 +243,7 @@ function start(name) {
   const src = route(name, '/station.m3u8');
   restarts = 0;
   if (NATIVE_HLS) {
-    engine = 'Safari oma HLS';
+    engine = "Safari's own HLS";
     audio.disableRemotePlayback = true;   // an AirPlay route would make the numbers describe another device
     audio.src = src;
   } else if (window.Hls && Hls.isSupported()) {
@@ -257,22 +257,22 @@ function start(name) {
     hls.loadSource(src);
     hls.attachMedia(audio);
   } else {
-    log("Selles brauseris ei ole HLS-i ega MediaSource'i, siin seda raadiot kuulata ei saa.");
+    log('This browser has neither HLS nor MediaSource, the radio cannot be played here.');
     return;
   }
   playing = true;
   crossed = 0; rateAt = 0; rateT = 0;
   log(`${chans.get(name)?.title || name}, ${engine}.`);
   // fire and move on: play() waits on a gesture and never rejects usefully
-  audio.play().catch((e) => log(`Mängimine ootab: ${e.name}.`));
+  audio.play().catch((e) => log(`Playback waiting: ${e.name}.`));
   for (const c of chans.values()) drawNow(c);
   announce();
 }
 
 // ── the kept shows ───────────────────────────────────────────────────────────
 // a live show src/radio.mjs kept, played as the plain MP3 it is, with the
-// native element's own seeking; one sound on the page at a time, so Kuula
-// here stops the channel and Kuula on a channel stops this
+// native element's own seeking; one sound on the page at a time, so Listen
+// here stops the channel and Listen on a channel stops this
 const kept = document.createElement('audio');
 kept.preload = 'none';
 document.body.append(kept);
@@ -280,7 +280,7 @@ let keptBtn = null;
 function stopShow() {
   if (!keptBtn) return;
   kept.pause(); kept.removeAttribute('src'); kept.load();
-  keptBtn.textContent = 'Kuula'; keptBtn = null;
+  keptBtn.textContent = 'Listen'; keptBtn = null;
 }
 $('st-kept')?.addEventListener('click', (e) => {
   const b = e.target.closest('button[data-show]');
@@ -288,10 +288,10 @@ $('st-kept')?.addEventListener('click', (e) => {
   if (keptBtn === b) { stopShow(); return; }
   stop(); stopShow();
   kept.src = b.dataset.show;
-  keptBtn = b; b.textContent = 'Peata';
-  log(`salvestus: ${b.dataset.title}.`);
-  kept.play().catch((err) => log(`Mängimine ootab: ${err.name}.`));
-  if (MEDIA_SESSION) navigator.mediaSession.metadata = new MediaMetadata({ title: b.dataset.title, artist: 'ECCM', album: 'Salvestused', artwork: [{ src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' }] });
+  keptBtn = b; b.textContent = 'Stop';
+  log(`recording: ${b.dataset.title}.`);
+  kept.play().catch((err) => log(`Playback waiting: ${err.name}.`));
+  if (MEDIA_SESSION) navigator.mediaSession.metadata = new MediaMetadata({ title: b.dataset.title, artist: 'ECCM', album: 'Recordings', artwork: [{ src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' }] });
 });
 kept.addEventListener('ended', stopShow);
 

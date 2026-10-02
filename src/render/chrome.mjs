@@ -64,7 +64,8 @@ export const page = ({ lang, title, alternate, canonical, alternates, body, noti
   // /admin"): in front of the page's own crumb when it has one, as a crumb of its own when not; /admin
   // itself passes wide: 'root' and gets none
   if (wide === true) {
-    const b = String(body), back = '<a href="/admin">Haldus</a>';
+    // the tool pages are in English since 2026-10-02 ("convert all admin pages to english only")
+    const b = String(body), back = `<a href="/admin">${lang === 'en' ? 'Admin' : 'Haldus'}</a>`;
     body = raw(b.includes('<p class="crumb">') ? b.replace('<p class="crumb">', `<p class="crumb">${back}<span class="crumb-sep" aria-hidden="true">/</span>`) : `  <p class="crumb">${back}</p>\n${b}`);
   }
   return html`<!doctype html>
