@@ -20,7 +20,9 @@
     "directory": "./public",
     // /event serves event.html, the way positron's edge did for /eccm/event
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "none"
+    "not_found_handling": "none",
+    // the site's own files from inside the Worker: the share card's picture layout reads a seeded picture through it
+    "binding": "ASSETS"
   },
   "observability": { "enabled": true },
   // the share images' faces (src/og/render.mjs), bundled as bytes; the

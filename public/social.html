@@ -204,7 +204,7 @@
   </div>
   <h2>Events</h2>
   <div class="prose flow">
-    <p>The image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Roboto Serif or Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
+    <p>Each event twice: the text card, which is what its page names today, and beside it the picture layout, the text in the left half and the picture cropped to fill the right. The text card is the image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Roboto Serif or Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
   </div>
   <div class="ds-og" id="og-cards"><p class="ds-cap">Loading the events.</p></div>
 </main>
@@ -233,15 +233,18 @@ try {
   const far = (a, b) => Math.hypot(...rgb(a).map((v, i) => v - rgb(b)[i])) > 30;
   const cards = [];
   for (const c of all) if (cards.length < 8 && cards.every((k) => k.serif !== c.serif || far(k.ground, c.ground))) cards.push(c);
-  box.replaceChildren(...cards.map((c) => {
+  // each event in both layouts side by side: the text card its page names today, and the picture layout
+  // (asked 2026-10-02: "add alternative layout with image ... left text right cropped image")
+  const fig = (c, src, what) => {
     const f = document.createElement('figure');
     const a = document.createElement('a'); a.href = c.page;
-    const img = document.createElement('img'); img.src = c.image; img.width = 1200; img.height = 630; img.alt = c.title;
+    const img = document.createElement('img'); img.src = src; img.width = 1200; img.height = 630; img.alt = c.title; img.loading = 'lazy';
     a.append(img);
     const cap = document.createElement('figcaption');
-    cap.textContent = `${c.lang.toUpperCase()}, ${c.serif ? 'Roboto Serif' : 'Instrument Sans'} on ${c.ground}`;
+    cap.textContent = `${what}: ${c.lang.toUpperCase()}, ${c.serif ? 'Roboto Serif' : 'Instrument Sans'} on ${c.ground}`;
     f.append(a, cap); return f;
-  }));
+  };
+  box.replaceChildren(...cards.flatMap((c) => [fig(c, c.image, 'Text'), ...(c.picture ? [fig(c, c.picture, 'Picture')] : [])]));
   if (!cards.length) box.innerHTML = '<p class="ds-cap">No published events.</p>';
 } catch (e) {
   box.innerHTML = '<p class="ds-cap">The list did not load. It comes from the Worker, so this page shows it only where the Worker runs.</p>';

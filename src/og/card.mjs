@@ -14,7 +14,7 @@ import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
-export const TEMPLATE_V = 6;
+export const TEMPLATE_V = 7;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
@@ -23,7 +23,10 @@ const PAD = 64;
 // each line one pixel; the letters E to M are then 162 px, the block every
 // alignment is taken from (eccm-ui, the mark). It was 7 / 7.375, 283 px, until
 // asked 2026-10-01: "make logo smaller and rm long noodijooned"
-const K = 4 / 7.375;
+// The mark is 6 / 7.375 since 2026-10-02 ("just make logo smaller" ran the
+// other way that day: "just make logo bigger in social cards"), the stave's
+// pitch a whole 6 px and the letters E to M 243 px, half as large again.
+const K = 6 / 7.375;
 const E_LEFT = 35, E_TOP = 29, E_BOTTOM = 122;
 const MARK_H = (E_BOTTOM - E_TOP) * K;
 const MARK_TOP = Math.round(H - PAD - MARK_H);
@@ -32,16 +35,28 @@ const AIR = 48;
 // the title at one size on every card (asked 2026-10-02: "lock social images
 // title size (find most average size)"). It stepped 96, 76, 60, 48 before, the
 // largest that fit, and the 50 live cards took 96 (38) or 76 (12): mean 91.2.
-// An average size cuts the long titles: MEASURED the same day over those 50,
-// with the venue on its own row, 72 and 70 cut 4 with an ellipsis and 68 cuts
-// none, setting the longest, 104 characters, on four lines. So 68, the largest
-// every title holds at; a longer one still ends in an ellipsis.
-const STEPS = [68];
+// An average size cuts the long titles with an ellipsis, so the size is the
+// largest every live title holds at, MEASURED over the 50 each time the room
+// changed: 68 with the venue on its own row (72 and 70 cut 4), then 62 once the
+// mark grew to 6 / 7.375 (68 and 64 cut 3), the longest, 104 characters, on
+// four lines. A longer title still ends in an ellipsis.
+const STEPS = [62];
 const TITLE_LH = 1.12;
 const META = 30, META_LH = 1.4, META_GAP = 32;
 // title to meta: the title's descent and then --eccm-s-8, the gap within the group
 const GROUP = 32;
 const MEASURE = W - 2 * PAD;
+// The picture layout (asked 2026-10-02: "add alternative layout with image
+// where you split card into equal cols, left text right cropped image. title
+// smaller than textonly one"): the card in two equal columns, the text in the
+// left with its own measure, the picture filling the right, cropped to cover.
+// Its title is one step under the text card's, set at the size measured below.
+const HALF = W / 2;
+const PIC_MEASURE = HALF - PAD - AIR;
+// MEASURED the same way in the 488 px column: 40 cuts none, the longest on five
+// lines; 44 cuts 2, 48 cuts 4, 52 cuts 9
+const PIC_TITLE = 40;
+const PIC_STEPS = [PIC_TITLE];
 
 const SITE = { ground: '#ffffff', ink: '#1a1a1a', ink2: '#555555' };
 const HEX = /^#[0-9a-f]{6}$/;
@@ -96,18 +111,18 @@ const room = (fs, face, metaN) => {
 // 2026-10-01: "same font size to sans serif"; Roboto Serif sets wider, and
 // fitting it on its own widths put its titles a step smaller). The serif then
 // wraps at that size and steps down only when it truly does not fit.
-function fitTitle(title, face, metaN) {
+function fitTitle(title, face, metaN, steps = STEPS, measure = MEASURE) {
   const raw = pieces(title);
-  const fits = (f, fs) => wrapAt(fitPieces(raw, f, fs, MEASURE), f, fs, MEASURE).length <= room(fs, f, metaN);
-  const start = face === 'sans' ? 0 : Math.max(0, STEPS.findIndex((fs) => fits('sans', fs)));
-  for (const fs of STEPS.slice(start)) {
-    const ps = fitPieces(raw, face, fs, MEASURE);
-    if (wrapAt(ps, face, fs, MEASURE).length <= room(fs, face, metaN)) return { fs, lines: balance(ps, face, fs, MEASURE) };
+  const fits = (f, fs) => wrapAt(fitPieces(raw, f, fs, measure), f, fs, measure).length <= room(fs, f, metaN);
+  const start = face === 'sans' ? 0 : Math.max(0, steps.findIndex((fs) => fits('sans', fs)));
+  for (const fs of steps.slice(start)) {
+    const ps = fitPieces(raw, face, fs, measure);
+    if (wrapAt(ps, face, fs, measure).length <= room(fs, face, metaN)) return { fs, lines: balance(ps, face, fs, measure) };
   }
-  const fs = STEPS[STEPS.length - 1], max = room(fs, face, metaN);
-  const lines = wrapAt(fitPieces(raw, face, fs, MEASURE), face, fs, MEASURE).slice(0, max);
+  const fs = steps[steps.length - 1], max = room(fs, face, metaN);
+  const lines = wrapAt(fitPieces(raw, face, fs, measure), face, fs, measure).slice(0, max);
   let last = lines[max - 1] + '…';
-  while (last.length > 2 && width(last, face, fs) > MEASURE) last = last.slice(0, -2).trimEnd() + '…';
+  while (last.length > 2 && width(last, face, fs) > measure) last = last.slice(0, -2).trimEnd() + '…';
   lines[max - 1] = last;
   return { fs, lines };
 }
@@ -117,7 +132,7 @@ function fitTitle(title, face, metaN) {
 // the venue, and from the picture's scheme the ground, the two inks and
 // whether the title is the serif. Everything visible is here, so its hash is
 // the card's version.
-export const cardInput = ({ lang, title, ev, scheme }) => {
+export const cardInput = ({ lang, title, ev, scheme, pic }) => {
   let s = null;
   if (scheme) { try { s = JSON.parse(scheme); } catch { s = null; } }
   const ok = s && HEX.test(s.ground) && HEX.test(s.ink) && HEX.test(s.ink2);
@@ -127,6 +142,8 @@ export const cardInput = ({ lang, title, ev, scheme }) => {
     meta: [`${dateLong(ev.starts_at, lang)} ${at} ${clock(ev.starts_at, lang)}`, ev.venue].filter(Boolean),
     ground: ok ? s.ground : SITE.ground, ink: ok ? s.ink : SITE.ink, ink2: ok ? s.ink2 : SITE.ink2,
     serif: !!(ok && (s.serif || s.titleFace)),
+    // the picture's key for the picture layout, a JPEG or PNG resvg can draw; the bytes are read at render
+    ...(pic && /\.(jpe?g|png)$/i.test(pic) ? { pic } : {}),
   };
 };
 
@@ -137,6 +154,9 @@ export const cardVersion = (input) => {
   return h.toString(16).padStart(8, '0');
 };
 export const cardPath = (id, lang, v) => `/og/e/${id}-${lang}-${v}.png`;
+// the picture layout has its own address and version, so either can be what a page names
+export const picVersion = (input) => cardVersion({ ...input, layout: 'picture' });
+export const picPath = (id, lang, v) => `/og/p/${id}-${lang}-${v}.png`;
 
 // the mark from the site's own symbol (src/render/mark.mjs), the letters as
 // they are drawn and the stave apart from them, so the two can be placed apart
@@ -175,11 +195,12 @@ const markSvg = (ink) => {
   return letters + `<g shape-rendering="crispEdges">${lines}</g>`;
 };
 
-export const cardSvg = (input) => {
+// picture: the picture as a data URI for the picture layout, or nothing for the text card
+export const cardSvg = (input, picture = null) => {
   const face = input.serif ? 'serif' : 'sans';
   const metaFace = input.serif ? 'serifText' : 'sans';
   const meta = metaLines(input.meta);
-  const { fs, lines } = fitTitle(input.title, face, meta.length);
+  const { fs, lines } = picture ? fitTitle(input.title, face, meta.length, PIC_STEPS, PIC_MEASURE) : fitTitle(input.title, face, meta.length);
   const out = [];
   // the title's first cap on the top margin: the ink, not the line box
   let y = PAD + M[face].cap * fs;
@@ -191,7 +212,9 @@ export const cardSvg = (input) => {
     y += META_LH * META;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`
-    + `<rect width="${W}" height="${H}" fill="${input.ground}"/>${out.join('')}${markSvg(input.ink)}${input.plate === false ? '' : plateSvg(input.ink, input.lang)}</svg>`;
+    + `<rect width="${W}" height="${H}" fill="${input.ground}"/>${out.join('')}${markSvg(input.ink)}${input.plate === false ? '' : plateSvg(input.ink, input.lang)}`
+    + (picture ? `<image x="${HALF}" y="0" width="${HALF}" height="${H}" preserveAspectRatio="xMidYMid slice" href="${picture}"/>` : '')
+    + '</svg>';
 };
 
 // the words a reader of the card's alt hears: the title, then the meta line
