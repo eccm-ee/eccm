@@ -393,7 +393,9 @@
      article, so the ground meets the header and the footer */
   .event[data-scheme] {
     --eccm-ground: var(--ev-ground); --eccm-ink: var(--ev-ink); --eccm-ink-2: var(--ev-ink2);
-    --eccm-accent: var(--ev-accent, var(--ev-ink)); --eccm-rule-strong: var(--ev-accent, var(--ev-ink2));
+    /* underlines, hover and focus in the text's own colour, never the accent (asked 2026-10-02: "no need for
+       accent underlines in events. use text color.") */
+    --eccm-accent: var(--ev-ink); --eccm-rule-strong: var(--ev-ink);
     --eccm-rule: color-mix(in srgb, var(--ev-ink2) 45%, var(--ev-ground));
     background: var(--ev-ground); color: var(--ev-ink);
     box-shadow: 0 0 0 100vmax var(--ev-ground); clip-path: inset(0 -100vmax);
