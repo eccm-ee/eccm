@@ -231,16 +231,19 @@ export const cardAlt = (input) => [input.title, ...input.meta].join(', ');
 // ground, with white ink, so a shared page reads as ECCM's own at a glance.
 const SITE_CARD = { ground: '#1b2746', ink: '#ffffff', ink2: '#c9c9c9' };
 const SITE_NAME = { et: 'Eesti Nüüdismuusika Keskus', en: 'Estonian Centre of Contemporary Music' };
-export const SITE_V = 2;   // the site card's own version, in its R2 key
+export const SITE_V = 3;   // the site card's own version, in its R2 key
 export const siteSvg = (lang) => {
   const l = lang === 'en' ? 'en' : 'et';
   // the mark alone at its foot: the title is already the centre's name, which the nameplate would say twice
   return cardSvg({ lang: l, title: SITE_NAME[l], meta: ['Pühavaimu 9, Tallinn'], ...SITE_CARD, serif: false, plate: false });
 };
-// the radio's own card, the same shape on a deep wine, so a link to /radio is
+// the radio's own card, the same shape in the wine, so a link to /radio is
 // told from the site's card at a glance (asked 2026-10-01: "rename station to
-// radio and make a social card for it")
-const RADIO_CARD = { ground: '#3b1d2b', ink: '#ffffff', ink2: '#d9c8d0' };
+// radio and make a social card for it"). On a pale wine ground with the wine
+// as its ink since 2026-10-02, when the deep wine ground read as a dark mode
+// ("raadio has dark mode bg", "social radio bg not fixed"); the ink is 12.96 : 1
+// on the ground and the second ink 6.57 : 1
+const RADIO_CARD = { ground: '#f4ecf0', ink: '#3b1d2b', ink2: '#6b4a5b' };
 const RADIO_NAME = { et: 'Raadio', en: 'Radio' };
 export const radioSvg = (lang) => {
   const l = lang === 'en' ? 'en' : 'et';
