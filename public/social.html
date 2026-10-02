@@ -91,6 +91,15 @@
     .og-share { max-inline-size: 28rem; }
     .og-ig { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 28rem); column-gap: var(--eccm-s-4); align-items: start; }
     .og-pair { display: grid; grid-template-columns: 1fr 1fr; column-gap: 0; }
+    /* on a phone the Instagram cards are a carousel as Instagram shows them: each card the column's full width, a
+       swipe to the next, snapping a card at a time, the picture's two halves meeting with no gap so the swipe
+       shows it whole (asked 2026-10-02: "In mibile show full ig w and make carousel with 3 images") */
+    @media (max-width: 48rem) {
+      .og-ig { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; column-gap: 0; scrollbar-width: none; }
+      .og-ig::-webkit-scrollbar { display: none; }
+      .og-ig > figure, .og-pair > figure { flex: 0 0 100%; scroll-snap-align: start; }
+      .og-pair { display: contents; }
+    }
     /* the icon's square shows on hover, since a positive mark on white has no edge (asked 2026-09-27) */
     /* the figures compared: three candidates side by side on a desk and one under another on a phone, each a
        column of start times beside a column of lengths ending on one x, then an id and the small register */
@@ -246,13 +255,14 @@ try {
   const cards = [];
   for (const c of all) if (cards.length < 8 && cards.every((k) => k.serif !== c.serif || far(k.ground, c.ground))) cards.push(c);
   // the share card each event page names; its wide picture layout went the same evening ("rm horz og image variants")
-  const fig = (c, src, what, w = 1200, h = 630) => {
+  const fig = (c, src, what, w = 1200, h = 630, short = false) => {
     const f = document.createElement('figure');
     const a = document.createElement('a'); a.href = c.page;
     const img = document.createElement('img'); img.src = src; img.width = w; img.height = h; img.alt = c.title; img.loading = 'lazy';
     a.append(img);
     const cap = document.createElement('figcaption');
-    cap.textContent = `${what}: ${c.lang.toUpperCase()}, ${c.serif ? 'Roboto Serif' : 'Instrument Sans'} on ${c.ground}`;
+    // the Instagram cards say only where they sit in the carousel; the share card above says the rest
+    cap.textContent = short ? what : `${what}: ${c.lang.toUpperCase()}, ${c.serif ? 'Roboto Serif' : 'Instrument Sans'} on ${c.ground}`;
     f.append(a, cap); return f;
   };
   // the pages, each its share card and its Instagram text card, in the events' own shape
@@ -269,7 +279,7 @@ try {
       const at = { page: c.page, title: c.title, lang: c.lang, serif: false, ground: c.ground };
       const share = fig(at, c.image, `${c.title}, share card`); share.classList.add('og-share');
       const ig = document.createElement('div'); ig.className = 'og-ig';
-      ig.append(fig(at, c.tall, `${c.title}, Instagram`, 1080, 1350));
+      ig.append(fig(at, c.tall, 'Instagram', 1080, 1350, true));
       row.append(share, ig);
       return row;
     }));
@@ -279,10 +289,11 @@ try {
     const row = document.createElement('div'); row.className = 'og-row';
     const share = fig(c, c.image, 'Share card'); share.classList.add('og-share');
     const ig = document.createElement('div'); ig.className = 'og-ig';
-    ig.append(fig(c, c.tall, 'Instagram, text', 1080, 1350));
+    const n = c.tallPictures ? 3 : 1;
+    ig.append(fig(c, c.tall, `Instagram 1/${n}, text`, 1080, 1350, true));
     if (c.tallPictures) {
       const pair = document.createElement('div'); pair.className = 'og-pair';
-      c.tallPictures.forEach((src, i) => pair.append(fig(c, src, `Instagram, picture ${i + 1} of 2`, 1080, 1350)));
+      c.tallPictures.forEach((src, i) => pair.append(fig(c, src, `Instagram ${i + 2}/3, picture`, 1080, 1350, true)));
       ig.append(pair);
     }
     row.append(share, ig);
