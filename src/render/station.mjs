@@ -2,11 +2,11 @@
 // pages to english only") and in the site's chrome
 // (asked 2026-10-01: "when station is done, copy its content with
 // functonality to the eccm page \"/station\", use eccm components (add table
-// one)"). The station is positron's: its Worker is workers/station/worker.mjs,
-// deployed as positron-station, with any number of channels. This module
-// draws the page's bones and public/station.mjs fills them, since everything
-// on it is the station's state, read from the station's own origin in the
-// browser (it answers access-control-allow-origin * on every route).
+// one)"). The station is this site's own since 2026-10-02, src/station/station.mjs
+// at /stream, moved from positron's workers/station, with any number of
+// channels. This module draws the page's bones and public/station.mjs fills
+// them, since everything on it is the station's state, read from /stream in the
+// browser.
 //
 // Each channel is a column holding the whole of that station, and nothing is
 // said twice (asked 2026-10-01: "whole stations need to fit so single col.
@@ -41,7 +41,7 @@ const kept = (shows) => {
       const act = x.status === 'done'
         ? html`<button class="btn btn-sm" type="button" data-show="/radio/${x.id}.mp3" data-title="${x.title}">Listen</button>`
         : x.status === 'rec' ? 'on air' : 'processing';
-      return [`${dayMonth(at, 'et')} ${clock(at, 'et')}`, x.title, length(x.dur), act];
+      return [`${dayMonth(at, 'en')} ${clock(at, 'en')}`, x.title, length(x.dur), act];
     }),
   });
 };

@@ -10,6 +10,31 @@ token found"). The owner runs `gh auth login -h github.com` as
 same: 74 commits on its `origin/main`, local too. Numbers here were counted with a
 command when this was written; count again before building on one.
 
+## 2026-10-02, afternoon: the station is eccm's
+
+- **The radio station moved into this Worker** (asked: "do the station. when
+  working, discard the positron one"). `src/station/station.mjs` is positron's
+  `workers/station/worker.mjs` with four changes listed in its header; it
+  answers under `/stream`, its bucket is `eccm-station-staging` (`STATION_MEDIA`),
+  its objects are `Schedule` and `Library` (migration `v3`), its sweep runs on
+  the cron, now every five minutes, and writes need `STATION_TOKEN` (a new
+  secret, not positron's; locally in `.dev.vars`). `tools/live.mjs` broadcasts
+  into it. /radio and the recorder read it in process.
+- MOVED: 17 programme files, 18 records and the three channels with their
+  clocks, so staging plays what positron played at the same moment (COMPARED
+  on all three channels). The playlist decodes in ffmpeg; toonid prints one
+  "Header missing" at its 44.1 to 22 kHz change, and positron's did the same.
+- MEASURED on staging: a 45 s show broadcast with `tools/live.mjs` was kept as
+  a 45.000 s MP3. The first try was missed: the recorder's 2 min idle pace
+  saw the slot only after it closed and passed the chunks over; a closed slot
+  whose chunks still have bytes is kept now. `GET /radio/state.json` shows the
+  recorder's alarm and rows. The test show is in staging's Recordings list.
+- NOT DONE, waiting on the owner: discarding positron-station. Its bucket
+  also holds about 1.8 GB that is not the station's (`mimproject/`,
+  `mimproject-images/`, `kristjanjansen/`), which positron's resources pages
+  and its `pub` container load through positron-station's `/media` route, so
+  deleting the Worker breaks them and deleting the bucket destroys them.
+
 ## 2026-10-02: live shows kept for replay
 
 - **Every live show on the station is recorded by eccm** (`src/radio.mjs`,

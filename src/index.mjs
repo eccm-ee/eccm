@@ -35,9 +35,11 @@ import { renderAdmin } from './render/admin.mjs';
 import { renderResearch, renderRadioResearch } from './render/research.mjs';
 import { newsletter, drain } from './newsletter.mjs';
 import { ogRoute } from './og/route.mjs';
-import { radioShows, wakeRadio, serveShow } from './radio.mjs';
+import { radioShows, wakeRadio, serveShow, radioState } from './radio.mjs';
 export { Items } from './items.mjs';
 export { Radio } from './radio.mjs';
+import { station, STREAM_BASE } from './station/station.mjs';
+export { Schedule, Library } from './station/station.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
 const EVENT = { et: /^\/et\/sundmused\/([a-z0-9-]+)$/, en: /^\/en\/events\/([a-z0-9-]+)$/ };
@@ -120,6 +122,12 @@ export default {
     const p = url.pathname;
     useTransforms(env.IMAGE_TRANSFORMS);
     useOrigin(url.origin);
+    // the radio station itself, under /stream since 2026-10-02 (src/station/station.mjs): the prefix comes off
+    // here and the station answers as it did on its own Worker, method, headers and body unchanged
+    if (p === STREAM_BASE || p.startsWith(STREAM_BASE + '/')) {
+      const inner = new URL(url); inner.pathname = p.slice(STREAM_BASE.length) || '/';
+      return station.fetch(new Request(inner, request), env, ctx);
+    }
     // the uploaded pictures from R2, /media/{sha256}.{ext} (src/media.mjs)
     if (p.startsWith('/media/')) { const out = await serveMedia(env, p); if (out) return out; }
     // the event share images and their list for /ds (src/og/route.mjs), since 2026-10-01
@@ -150,6 +158,7 @@ export default {
     if (p === '/radio') return reply(renderStation(await radioShows(env)));
     // the programming sketch of the morning became the radio tools research the same afternoon (src/render/research.mjs)
     if (p === '/radio/kava') return new Response(null, { status: 301, headers: { location: '/admin/research/radio' } });
+    if (p === '/radio/state.json') return radioState(env);
     // a kept live show (src/radio.mjs), since 2026-10-02
     if (p.startsWith('/radio/')) { const out = await serveShow(request, env, p); if (out) return out; }
     if (p === '/station') return new Response(null, { status: 301, headers: { location: `/radio${url.search}` } });
@@ -162,7 +171,8 @@ export default {
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
   },
-  // the cron of wrangler.jsonc: the outbox's retry, every ten minutes (src/mail.mjs),
-  // and the radio's recorder woken if its alarm ever stopped (src/radio.mjs)
-  async scheduled(event, env, ctx) { ctx.waitUntil(drain(env)); ctx.waitUntil(wakeRadio(env)); },
+  // the cron of wrangler.jsonc, every five minutes since the station came (it was ten): the outbox's retry
+  // (src/mail.mjs), the radio's recorder woken if its alarm ever stopped (src/radio.mjs), and the station's
+  // sweep of live chunks heard and gone (src/station/station.mjs), which wants five
+  async scheduled(event, env, ctx) { ctx.waitUntil(drain(env)); ctx.waitUntil(wakeRadio(env)); await station.scheduled(event, env, ctx); },
 };

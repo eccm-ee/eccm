@@ -1,20 +1,21 @@
 // radio.mjs: the live shows kept, so a show heard on /radio can be heard
 // again later (asked 2026-10-02: "how to save live input radio to be replayed
-// later?", then "2. do it in eccm"). The station is positron's and throws a
+// later?", then "2. do it in eccm"). The station is this site's since the same
+// afternoon (src/station/station.mjs, moved from positron), and it throws a
 // live show away as it plays: a recorder posts one MP3 chunk of about ten
 // seconds at a time, and the station's five-minute sweep keeps only the last
-// 24 of a slot as bytes (KEEP_SEGS in positron's workers/station/worker.mjs),
-// so four minutes after it was heard a chunk is gone. Nothing in positron
-// changed for this. Its GET /schedule is public and lists every live slot,
-// whether it is open, and every chunk it was sent, so this object reads that
-// and copies each chunk it has not seen into this site's bucket before the
-// sweep can reach it.
+// 24 of a slot as bytes (KEEP_SEGS in src/station/station.mjs), so four
+// minutes after it was heard a chunk is gone. The station's GET /schedule lists
+// every live slot, whether it is open, and every chunk it was sent, so this
+// object asks it that, in process and not over the network, and copies each
+// chunk it has not seen from the station's bucket into MEDIA before the sweep
+// can reach it.
 //
 // One Durable Object, `Radio`, owns it. Its alarm reads the station every
 // 30 s while a live slot is open or a show is being kept, and every 2 min
 // otherwise; a chunk lives at least 240 s, so neither pace can miss one. A
-// show begins when an open live slot has a chunk this object has not seen,
-// and ends when the slot closes or leaves the running order. Then its chunks
+// show begins when a live slot has a chunk this object has not seen, open or
+// already closed, and ends when the slot closes or leaves the running order. Then its chunks
 // are joined into one MP3, radio/{id}.mp3, with an R2 multipart upload in
 // parts of 5 MB, so an hour (about 58 MB) is never held at once. A chunk is
 // the encoder's own frames cut on frame boundaries, so chunks set end to end
@@ -23,13 +24,14 @@
 //   GET /radio/{id}.mp3   a kept show, with ranges so a player can seek
 //
 // Not done: putting a kept show back into a channel's running order, which
-// is a write to the station and needs positron's token.
-export const STATION = 'https://positron-station.kristjan-jansen.workers.dev';
+// is a write to the station's running order (PUT /stream/c/{channel}/schedule).
+import { station } from './station/station.mjs';
 const FAST = 30_000, SLOW = 120_000;
 const PART = 5 * 1024 * 1024;   // R2's smallest multipart part, the last excepted
 const JSON_HEAD = { 'content-type': 'application/json', 'cache-control': 'no-store' };
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: JSON_HEAD });
-const get = async (url) => { const r = await fetch(url, { headers: { accept: 'application/json' } }); if (!r.ok) throw new Error(`${url} answered ${r.status}`); return r.json(); };
+// the station's routes called in process: no subrequest to this Worker's own address
+const NO_CTX = { waitUntil() {} };
 
 export class Radio {
   constructor(ctx, env) {
@@ -43,8 +45,8 @@ export class Radio {
       chunks INTEGER NOT NULL DEFAULT 0, missed INTEGER NOT NULL DEFAULT 0, dur REAL NOT NULL DEFAULT 0, bytes INTEGER
     )`);
     // every chunk URI the station has listed and this object has decided on: copied
-    // into a show (show set), or passed over, as the chunks of a show that closed
-    // before this object was watching, so a slot opened again never takes them
+    // into a show (show set), or passed over, as the chunks of a show whose bytes
+    // were gone before this object looked, so a slot opened again never takes them
     this.sql.exec(`CREATE TABLE IF NOT EXISTS seen (
       uri TEXT PRIMARY KEY, show TEXT, n INTEGER, dur REAL, bytes INTEGER
     )`);
@@ -60,12 +62,13 @@ export class Radio {
   }
 
   async tick() {
-    const { channels = [] } = await get(`${STATION}/channels.json`);
+    const get = async (path) => { const r = await station.fetch(new Request(`https://station${path}`), this.env, NO_CTX); if (!r.ok) throw new Error(`${path} answered ${r.status}`); return r.json(); };
+    const { channels = [] } = await get('/channels.json');
     const listed = new Set(), open = new Set(), unanswered = new Set();
     for (const c of channels) {
       const pre = c.default ? '' : `/c/${encodeURIComponent(c.name)}`;
       let s;
-      try { s = await get(`${STATION}${pre}/schedule`); } catch (e) { console.log(`radio: ${e.message}`); unanswered.add(c.name); continue; }
+      try { s = await get(`${pre}/schedule`); } catch (e) { console.log(`radio: ${e.message}`); unanswered.add(c.name); continue; }
       for (const slot of s.slots || []) {
         if (slot.kind !== 'live') continue;
         listed.add(`${c.name}/${slot.key}`);
@@ -88,7 +91,10 @@ export class Radio {
     const fresh = list.filter((e) => ![...this.sql.exec(`SELECT 1 FROM seen WHERE uri = ?`, e.u)].length);
     if (!fresh.length) return;
     let show = [...this.sql.exec(`SELECT * FROM shows WHERE channel = ? AND slot = ? AND status = 'rec'`, channel, slot.key)][0];
-    if (!show && !slot.open) {
+    // a closed slot with chunks this object has not seen is a show that began and ended between two looks
+    // (MEASURED 2026-10-02 on staging: a 50 s show inside the 2 min idle pace was passed over), kept like any
+    // other while its chunks still have their bytes; only a list whose every chunk is gone is passed over
+    if (!show && !slot.open && fresh.every((e) => e.x)) {
       for (const e of fresh) this.sql.exec(`INSERT INTO seen (uri) VALUES (?)`, e.u);
       return;
     }
@@ -101,11 +107,10 @@ export class Radio {
     // in the station's order, which is the order they were heard in
     for (const e of fresh) {
       if (e.x) { this.sql.exec(`INSERT INTO seen (uri, show) VALUES (?, ?)`, e.u, show.id); this.sql.exec(`UPDATE shows SET missed = missed + 1 WHERE id = ?`, show.id); continue; }
-      const r = await fetch(`${STATION}${e.u}`);
-      // a chunk the sweep took in the moment between the list and the fetch is a gap, said in the row
-      if (r.status === 404) { this.sql.exec(`INSERT INTO seen (uri, show) VALUES (?, ?)`, e.u, show.id); this.sql.exec(`UPDATE shows SET missed = missed + 1 WHERE id = ?`, show.id); continue; }
-      if (!r.ok) throw new Error(`${e.u} answered ${r.status}`);   // tried again on the next tick
-      const bytes = await r.arrayBuffer();
+      const obj = await this.env.STATION_MEDIA.get(e.u.replace(/^\/media\//, ''));
+      // a chunk the sweep took in the moment between the list and the read is a gap, said in the row
+      if (!obj) { this.sql.exec(`INSERT INTO seen (uri, show) VALUES (?, ?)`, e.u, show.id); this.sql.exec(`UPDATE shows SET missed = missed + 1 WHERE id = ?`, show.id); continue; }
+      const bytes = await obj.arrayBuffer();
       const n = Number([...this.sql.exec(`SELECT chunks FROM shows WHERE id = ?`, show.id)][0].chunks);
       await this.env.MEDIA.put(partKey(show.id, n), bytes, { httpMetadata: { contentType: 'audio/mpeg' } });
       this.sql.exec(`INSERT INTO seen (uri, show, n, dur, bytes) VALUES (?, ?, ?, ?, ?)`, e.u, show.id, n, Number(e.d) || 0, bytes.byteLength);
@@ -150,6 +155,8 @@ export class Radio {
     if ((await this.ctx.storage.getAlarm()) == null) await this.ctx.storage.setAlarm(Date.now() + 1000);
     if (path === '/list') return json({ shows: [...this.sql.exec(`SELECT * FROM shows ORDER BY started_at DESC LIMIT 100`)] });
     if (path === '/tick') return json({ busy: await this.tick() });
+    // what the recorder is doing, for /radio/state.json: its alarm, its shows, how many chunks it has decided on
+    if (path === '/state') return json({ alarm: await this.ctx.storage.getAlarm(), now: Date.now(), shows: [...this.sql.exec(`SELECT * FROM shows ORDER BY started_at DESC LIMIT 20`)], seen: Number([...this.sql.exec(`SELECT COUNT(*) AS n FROM seen`)][0].n), last: [...this.sql.exec(`SELECT uri, show, n FROM seen ORDER BY rowid DESC LIMIT 8`)] });
     return json({ ok: true });
   }
 }
@@ -165,6 +172,12 @@ export async function radioShows(env) {
   if (!env.RADIO) return [];
   const r = await radio(env).fetch('https://radio/list').catch(() => null);
   return r && r.ok ? (await r.json()).shows : [];
+}
+
+// GET /radio/state.json, the recorder's own account of itself
+export async function radioState(env) {
+  const r = await radio(env).fetch('https://radio/state');
+  return new Response(r.body, { headers: JSON_HEAD });
 }
 
 // the cron's nudge, so the alarm runs even if nobody opens /radio

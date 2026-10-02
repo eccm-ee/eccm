@@ -27,7 +27,7 @@
   // resvg wasm needs no rule, a .wasm import is a compiled module by default
   "rules": [{ "type": "Data", "globs": ["**/*.ttf"], "fallthrough": true }],
   // SQLite-backed, the shape positron's workers/items proved
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Items"] }, { "tag": "v2", "new_sqlite_classes": ["Radio"] }],
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Items"] }, { "tag": "v2", "new_sqlite_classes": ["Radio"] }, { "tag": "v3", "new_sqlite_classes": ["Schedule", "Library"] }],
   "env": {
     "staging": {
       "name": "eccm-staging",
@@ -40,14 +40,19 @@
       "d1_databases": [{ "binding": "DB", "database_name": "eccm-staging", "database_id": "3be30799-baa1-4844-937c-b4c6858fc915", "migrations_dir": "migrations" }],
       // the uploaded pictures, one original per sha256 (src/media.mjs), created
       // 2026-09-30 with wrangler r2 bucket create eccm-media-staging
-      "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "eccm-media-staging" }],
+      "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "eccm-media-staging" },
+        // the radio station's programmes and live chunks (src/station/station.mjs), its own bucket because
+        // its sweep deletes by prefix; created 2026-10-02 when the station left positron
+        { "binding": "STATION_MEDIA", "bucket_name": "eccm-station-staging" }],
       // Image Transformations are on for positron.studio since 2026-09-30
       // (dashboard, Images, Transformations, "This zone only"); "off" makes
       // src/render/pic.mjs draw the originals, as a zone without them needs
       // the notices of /items (src/items.mjs), one Durable Object holding
       // the list, its alarm and the browsers' subscriptions, since 2026-10-01
       // and the live shows kept from the station (src/radio.mjs), since 2026-10-02
-      "durable_objects": { "bindings": [{ "name": "ITEMS", "class_name": "Items" }, { "name": "RADIO", "class_name": "Radio" }] },
+      "durable_objects": { "bindings": [{ "name": "ITEMS", "class_name": "Items" }, { "name": "RADIO", "class_name": "Radio" },
+        // the station's running order per channel and its library of programme records (src/station/station.mjs)
+        { "name": "SCHEDULE", "class_name": "Schedule" }, { "name": "LIBRARY", "class_name": "Library" }] },
       // VAPID_PUBLIC is the public half of the key Web Push is signed with
       // (src/push.mjs) and VAPID_SUB the contact a push service sees; the
       // private half is the secret VAPID_JWK (wrangler secret put VAPID_JWK
@@ -57,7 +62,7 @@
       // owner onboarded 2026-10-01 (Email Sending, Enabled, 1,000 a day), and
       // the cron that drains what did not go at once.
       "send_email": [{ "name": "EMAIL" }],
-      "triggers": { "crons": ["*/10 * * * *"] },
+      "triggers": { "crons": ["*/5 * * * *"] },
       "vars": { "IMAGE_TRANSFORMS": "on", "MAIL_FROM": "ECCM <uudiskiri@eccm.positron.studio>", "VAPID_PUBLIC": "BMFK4ASgBxY0RNxBPRoJTUHFf3pTkyx9lR3jIYG_miJdtrc7a_moyVkig2QlFVBr5d5BuacnyV6skIeaxvTGHM4", "VAPID_SUB": "https://eccm.positron.studio/" }
     },
     "production": {

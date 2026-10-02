@@ -20,7 +20,8 @@
 
 const PARAMS = new URLSearchParams(location.search);
 // `?base=` points the page at another copy of the station, as with wrangler dev
-const STATION = (PARAMS.get('base') || 'https://positron-station.kristjan-jansen.workers.dev').replace(/\/+$/, '');
+// the station is this site's own since 2026-10-02 (src/station/station.mjs), at /stream on whatever origin served the page
+const STATION = (PARAMS.get('base') || `${location.origin}/stream`).replace(/\/+$/, '');
 const POLL_MS = 2000;          // how often what is on is re-read, and how often the numbers move
 const RATE_WINDOW_MS = 4000;   // how long `advance` waits before it says anything
 
