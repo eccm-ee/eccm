@@ -47,7 +47,11 @@ const hex4 = (b) => [...b.slice(0, 4)].map((x) => x.toString(16).padStart(2, '0'
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 
 // constant-time-ish, as vain's tierOf: a length check, then every character
+// OPEN_UPLOADS "on" lets anyone write, the key unasked (asked 2026-10-02: "allow uploads for all for now
+// we will fix it later"); the caps are the only fence while it is on
+export const openUploads = (env) => env.OPEN_UPLOADS === 'on';
 export function admitted(request, env) {
+  if (openUploads(env)) return true;
   const secret = env.FILES_TOKEN, auth = request.headers.get('authorization') || '';
   if (!secret || !auth.startsWith('Bearer ')) return false;
   const given = auth.slice(7);
@@ -114,7 +118,7 @@ export default {
     const desk = env.UPLOADS.get(env.UPLOADS.idFromName('uploads'));
     const ask = async (op, body) => { const r = await desk.fetch(`https://uploads${op}`, { method: 'POST', body: JSON.stringify(body) }); return [r.status, await r.json()]; };
 
-    if (p === '/limits') return json({ pieceBytes: PIECE, ...CAPS, formats: Object.keys(FORMATS) });
+    if (p === '/limits') return json({ pieceBytes: PIECE, ...CAPS, formats: Object.keys(FORMATS), open: openUploads(env) });
     if (!admitted(request, env)) return json({ error: env.FILES_TOKEN ? 'the upload key is wrong' : 'no FILES_TOKEN is set' }, env.FILES_TOKEN ? 401 : 503);
 
     if (p === '/open' && request.method === 'POST') {

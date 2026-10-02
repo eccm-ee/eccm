@@ -16,7 +16,7 @@
 // the page asks for it once. The station is called in process with its own
 // token, as the recorder does.
 import { station } from './station/station.mjs';
-import { admitted } from '../workers/files/worker.mjs';
+import { admitted, openUploads } from '../workers/files/worker.mjs';
 import { renderFiles } from './render/files.mjs';
 
 export const DIRS = { uploads: 'uploads/', recordings: 'recordings/' };
@@ -71,7 +71,7 @@ export async function filesRoute(request, env, url) {
     const dir = DIRS[url.searchParams.get('dir')] ? url.searchParams.get('dir') : 'uploads';
     const counts = {};
     for (const d of Object.keys(DIRS)) { const l = await env.STATION_MEDIA.list({ prefix: DIRS[d] }); counts[d] = l.objects.length + (l.truncated ? '+' : ''); }
-    return new Response(String(renderFiles({ dir, counts, ...(await listing(env, dir)) })), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
+    return new Response(String(renderFiles({ dir, counts, open: openUploads(env), ...(await listing(env, dir)) })), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
   }
   if (request.method !== 'POST') return null;
   if (!admitted(request, env)) return json({ error: env.FILES_TOKEN ? 'the upload key is wrong' : 'no FILES_TOKEN is set' }, env.FILES_TOKEN ? 401 : 503);

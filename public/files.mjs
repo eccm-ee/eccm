@@ -12,7 +12,10 @@ const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls)
 const mb = (b) => `${(b / 1048576).toFixed(1)} MB`;
 
 const keyBox = $('file-key'), keyIn = $('file-key-in');
+// open while the site says so (OPEN_UPLOADS): no key asked and none sent
+const OPEN = !!document.querySelector('script[src="/files.mjs"][data-open]');
 function token() {
+  if (OPEN) return '';
   const t = store.get(KEY) || keyIn?.value.trim();
   if (!t && keyBox) { keyBox.hidden = false; keyIn.focus(); }
   return t || null;
@@ -20,8 +23,8 @@ function token() {
 keyIn?.addEventListener('change', () => { if (keyIn.value.trim()) store.set(KEY, keyIn.value.trim()); });
 const call = async (path, init = {}) => {
   const t = token();
-  if (!t) throw new Error('enter the upload key first');
-  const r = await fetch(path, { ...init, headers: { authorization: `Bearer ${t}`, ...(init.headers || {}) } });
+  if (t === null) throw new Error('enter the upload key first');
+  const r = await fetch(path, { ...init, headers: { ...(t ? { authorization: `Bearer ${t}` } : {}), ...(init.headers || {}) } });
   const j = await r.json().catch(() => ({}));
   if (r.status === 401) { store.del(KEY); if (keyBox) keyBox.hidden = false; }
   if (!r.ok) throw new Error(j.error || `${r.status}`);
@@ -67,7 +70,7 @@ async function upload(file) {
 }
 const pick = $('file-pick');
 pick?.addEventListener('change', async () => {
-  if (!token()) return;
+  if (token() === null) return;
   for (const f of pick.files) await upload(f);
   pick.value = '';
   if ([...document.querySelectorAll('.file-up')].every((x) => x.dataset.done)) location.reload();

@@ -18,7 +18,9 @@
       // one bucket for the site's audio: uploads/ from here, recordings/ from the recorder, live/ and
       // index/ the station's; created 2026-10-02
       "r2_buckets": [{ "binding": "FILES", "bucket_name": "eccm-files-staging" }],
-      "durable_objects": { "bindings": [{ "name": "UPLOADS", "class_name": "Uploads" }] }
+      "durable_objects": { "bindings": [{ "name": "UPLOADS", "class_name": "Uploads" }] },
+      // anyone may upload, the key unasked, until the gate is decided (worker.mjs, openUploads)
+      "vars": { "OPEN_UPLOADS": "on" }
     },
     "production": {
       "name": "eccm-files"

@@ -38,7 +38,7 @@ const row = (f, channels) => {
     html`<button class="btn btn-sm" type="button" data-listen="/stream/media/${f.key}" data-title="${f.title || f.name}">Listen</button>`];
 };
 
-export const renderFiles = ({ dir, counts, files, total, channels }) => page({
+export const renderFiles = ({ dir, counts, files, total, channels, open }) => page({
   wide: true, lang: 'en', title: 'Files.',
   body: html`  <h1>Files</h1>
   <nav class="file-tabs" aria-label="Directories">${TABS.map(([d, label]) => (d === dir ? html`<span aria-current="true">${label} ${counts[d]}</span>` : html`<a href="/admin/files?dir=${d}">${label} ${counts[d]}</a>`))}</nav>
@@ -53,5 +53,5 @@ export const renderFiles = ({ dir, counts, files, total, channels }) => page({
     <div class="field file-key" id="file-key" hidden><label for="file-key-in">Upload key</label><input id="file-key-in" type="password" autocomplete="off"><p class="hint">Asked once and kept in this browser. Without it nothing uploads or changes.</p></div>
   </div>` : ''}
   ${files.length ? table({ label: 'Files', cols: [{ label: 'Name', cls: 'main' }, { label: 'Length', cls: 'num' }, { label: 'Size', cls: 'num' }, { label: 'Added' }, { label: 'On' }, { label: '' }], rows: files.map((f) => row(f, channels)) }) : html`<p class="small">Nothing here yet.</p>`}
-  <script type="module" src="/files.mjs"></script>`,
+  <script type="module" src="/files.mjs"${open ? html` data-open="1"` : ''}></script>`,
 });
