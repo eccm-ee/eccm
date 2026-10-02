@@ -121,7 +121,10 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const p = url.pathname;
-    useTransforms(env.IMAGE_TRANSFORMS);
+    // /cdn-cgi/image/ exists on the zone (positron.studio) and not on workers.dev, which this laptop has to use
+    // since its DNS filter blocked the custom domain (2026-10-02, asked: "images broken in .../en/"), so a
+    // workers.dev host draws the originals, as wrangler dev does
+    useTransforms(url.hostname.endsWith('.workers.dev') ? 'off' : env.IMAGE_TRANSFORMS);
     useOrigin(url.origin);
     // the radio station itself, under /stream since 2026-10-02 (src/station/station.mjs): the prefix comes off
     // here and the station answers as it did on its own Worker, method, headers and body unchanged
