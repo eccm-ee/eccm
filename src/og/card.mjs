@@ -14,7 +14,7 @@ import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
-export const TEMPLATE_V = 10;
+export const TEMPLATE_V = 12;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
@@ -60,14 +60,16 @@ export const TALL_W = 1080, TALL_H = 1350;
 // the date and venue at 52 since the same evening ("make ig subtext bigger
 // too"), 44 for an hour before and the share card's 30 before that
 const TALL_META = 52;
-// the mark a third larger than on the share card, 8 / 7.375, the stave's pitch
-// a whole 8 px and the letters E to M 323 px (asked the same evening: "ig cards
-// logos too small"); the nameplate grows with it
-const TALL_K = 8 / 7.375;
+// the mark half as large again as on the share card, 9 / 7.375, the stave's
+// pitch a whole 9 px and the letters E to M 364 px (asked the same evening: "ig
+// cards logos too small", at 8 / 7.375, then "ig logo bigger a bit"); the
+// nameplate grows with it
+const TALL_K = 9 / 7.375;
 const TALL_MARK_H = (E_BOTTOM - E_TOP) * TALL_K;
-// MEASURED over the 50 live titles: the title at 104 cuts none with the date
-// and venue at 52, the longest on eight lines, where at 56 it cuts 1
-const TALL_TITLE = 104;
+// MEASURED over the 50 live titles: the title at 104 cut none with the date
+// and venue at 52 and the mark at 8 / 7.375; with the mark at 9 / 7.375 it cuts
+// 1, so 100, which cuts none, the longest on eight lines
+const TALL_TITLE = 100;
 
 // where everything goes on the two cards with text: the text's top, the mark's
 // top and scale, the measure, the title size and the date and venue's size
@@ -178,9 +180,9 @@ export const cardVersion = (input) => {
   return h.toString(16).padStart(8, '0');
 };
 export const cardPath = (id, lang, v) => `/og/e/${id}-${lang}-${v}.png`;
-// the tall cards, /og/t/ the text one and /og/tp/ the picture one
-export const tallVersion = (input, pic = false) => cardVersion({ ...input, layout: pic ? 'tallPicture' : 'tall' });
-export const tallPath = (id, lang, v, pic = false) => `/og/${pic ? 'tp' : 't'}/${id}-${lang}-${v}.png`;
+// the tall cards, /og/t/ the text one and /og/tp1/ and /og/tp2/ the picture's two halves
+export const tallVersion = (input, part = 0) => cardVersion({ ...input, layout: part ? `tallPicture${part}` : 'tall' });
+export const tallPath = (id, lang, v, part = 0) => `/og/${part ? `tp${part}` : 't'}/${id}-${lang}-${v}.png`;
 
 // the mark from the site's own symbol (src/render/mark.mjs), the letters as
 // they are drawn and the stave apart from them, so the two can be placed apart
@@ -222,14 +224,16 @@ const markSvg = (ink, markTop = MARK_TOP, k = K) => {
   return letters + `<g shape-rendering="crispEdges">${lines}</g>`;
 };
 
-// picture: the picture as a data URI for the tall picture card; tall: the 4:5 card.
-// The tall picture card is the picture alone, cropped to fill the frame, made to
-// sit beside the tall text card as a carousel's two slides (asked 2026-10-02:
-// "make text card and image only card next to each other"); for an hour it had
-// the picture across the top at 2 : 1 and the text under it.
-export const cardSvg = (input, picture = null, tall = false) => {
+// picture: the picture as a data URI for a tall picture card; tall: the 4:5 card;
+// part: which half of the picture, 1 or 2. The picture is cropped to two tall
+// cards side by side, 2160 by 1350, and each card is one half, so a carousel
+// of the two reads as one picture across the swipe (asked 2026-10-02: "split
+// image into 2 cards"). Before that the same evening it was one card of the
+// picture alone ("make text card and image only card next to each other"), and
+// for an hour before that the picture across the top with the text under it.
+export const cardSvg = (input, picture = null, tall = false, part = 1) => {
   if (tall && picture) return `<svg xmlns="http://www.w3.org/2000/svg" width="${TALL_W}" height="${TALL_H}" viewBox="0 0 ${TALL_W} ${TALL_H}">`
-    + `<rect width="${TALL_W}" height="${TALL_H}" fill="${input.ground}"/><image x="0" y="0" width="${TALL_W}" height="${TALL_H}" preserveAspectRatio="xMidYMid slice" href="${picture}"/></svg>`;
+    + `<rect width="${TALL_W}" height="${TALL_H}" fill="${input.ground}"/><image x="${(1 - part) * TALL_W}" y="0" width="${2 * TALL_W}" height="${TALL_H}" preserveAspectRatio="xMidYMid slice" href="${picture}"/></svg>`;
   const L = tall ? LAYOUTS.tall : LAYOUTS.wide;
   const face = input.serif ? 'serif' : 'sans';
   const metaFace = input.serif ? 'serifText' : 'sans';

@@ -78,16 +78,19 @@
     .ds-og figure { margin: 0; }
     .ds-og img { display: block; inline-size: 100%; block-size: auto; max-inline-size: 600px; outline: 1px solid var(--eccm-rule); }
     .ds-og figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-    /* one event to a row: its share card, then its two Instagram cards, the three at one height, so the
-       columns are in the inverse of each card's height to width (630 / 1200 and 1350 / 1080); on a phone
-       the share card takes the row and the two tall ones share the next (asked 2026-10-02: "i do not see
-       smaller card sizes next to og cards") */
-    .og-rows { display: grid; gap: var(--eccm-s-12); margin-block: var(--eccm-s-8); }
-    .og-row { display: grid; grid-template-columns: 1.905fr 0.8fr 0.8fr; gap: var(--eccm-s-4); align-items: start; }
+    /* one event to a block: its share card drawn small on a line of its own, then its Instagram cards on the
+       next, the text card and the picture's two halves, the halves with no gap so they read as the one picture
+       they are (asked 2026-10-02: "make share cards smaller. ig cards in their own line. split image into 2
+       cards"); on a phone the three tall cards still share a row */
+    .og-rows { display: grid; gap: var(--eccm-s-16); margin-block: var(--eccm-s-8); }
+    .og-row { display: grid; gap: var(--eccm-s-4); }
     .og-row figure { margin: 0; }
     .og-row img { display: block; inline-size: 100%; block-size: auto; outline: 1px solid var(--eccm-rule); }
     .og-row figcaption { margin-block-start: var(--eccm-s-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-    @media (max-width: 48rem) { .og-row { grid-template-columns: 1fr 1fr; } .og-row > :first-child { grid-column: 1 / -1; } }
+    .og-share { max-inline-size: 28rem; }
+    .og-ig { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 28rem); column-gap: var(--eccm-s-4); align-items: start; }
+    .og-pair { display: grid; grid-template-columns: 1fr 1fr; column-gap: 0; }
+    .og-pair img { outline: none; }
     /* the icon's square shows on hover, since a positive mark on white has no edge (asked 2026-09-27) */
     /* the figures compared: three candidates side by side on a desk and one under another on a phone, each a
        column of start times beside a column of lengths ending on one x, then an id and the small register */
@@ -214,7 +217,7 @@
   </div>
   <h2>Events</h2>
   <div class="prose flow">
-    <p>Each event on a row: its share card, and beside it the two Instagram cards at 1080 by 1350, Instagram's 4:5, the text card and the picture alone beside it, a carousel's two slides, the text card's type larger than the share card's since a feed is read on a phone. The share card is the image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Roboto Serif or Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
+    <p>Each event on a row: its share card, and beside it the two Instagram cards at 1080 by 1350, Instagram's 4:5, the text card and the picture split across two cards, so a carousel's swipe shows it whole, the text card's type larger than the share card's since a feed is read on a phone. The share card is the image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Roboto Serif or Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
   </div>
   <div class="ds-og" id="og-cards"><p class="ds-cap">Loading the events.</p></div>
 
@@ -257,7 +260,15 @@ try {
   box.className = 'og-rows';
   box.replaceChildren(...cards.map((c) => {
     const row = document.createElement('div'); row.className = 'og-row';
-    row.append(fig(c, c.image, 'Share card'), fig(c, c.tall, 'Instagram, text', 1080, 1350), ...(c.tallPicture ? [fig(c, c.tallPicture, 'Instagram, picture only', 1080, 1350)] : []));
+    const share = fig(c, c.image, 'Share card'); share.classList.add('og-share');
+    const ig = document.createElement('div'); ig.className = 'og-ig';
+    ig.append(fig(c, c.tall, 'Instagram, text', 1080, 1350));
+    if (c.tallPictures) {
+      const pair = document.createElement('div'); pair.className = 'og-pair';
+      c.tallPictures.forEach((src, i) => pair.append(fig(c, src, `Instagram, picture ${i + 1} of 2`, 1080, 1350)));
+      ig.append(pair);
+    }
+    row.append(share, ig);
     return row;
   }));
   if (!cards.length) box.innerHTML = '<p class="ds-cap">No published events.</p>';

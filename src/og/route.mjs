@@ -16,9 +16,11 @@ const png = (body, from) => new Response(body, { headers: { 'content-type': 'ima
 const none = (status, headers = {}) => new Response(null, { status, headers: { 'cache-control': 'no-store', ...headers } });
 // /og/e/ the share card, /og/t/ and /og/tp/ the tall 4:5 pair for Instagram
 // (2026-10-02); /og/p/, a wide picture layout, came and went the same day
-const CARD = /^\/og\/(e|t|tp)\/(\d+)-(et|en)-([0-9a-f]{8})\.png$/;
-const VERSION = { e: cardVersion, t: (i) => tallVersion(i), tp: (i) => tallVersion(i, true) };
-const PATH = { e: cardPath, t: (id, l, v) => tallPath(id, l, v), tp: (id, l, v) => tallPath(id, l, v, true) };
+// and /og/tp1/ and /og/tp2/ the picture's two halves since the same evening
+const CARD = /^\/og\/(e|t|tp1|tp2)\/(\d+)-(et|en)-([0-9a-f]{8})\.png$/;
+const PART = { e: 0, t: 0, tp1: 1, tp2: 2 };
+const VERSION = (kind, i) => (kind === 'e' ? cardVersion(i) : tallVersion(i, PART[kind]));
+const PATH = (kind, id, l, v) => (kind === 'e' ? cardPath(id, l, v) : tallPath(id, l, v, PART[kind]));
 
 // the card's rows for one event in one language, the queries the event page
 // makes: its text in that language or the Estonian one, the picture's scheme
@@ -62,13 +64,13 @@ export async function ogRoute(request, env, url, ctx) {
   }
   const input = await rows(env.DB, Number(id), lang);
   if (!input) return none(404);
-  const withPic = kind === 'tp', tall = kind !== 'e';
+  const withPic = PART[kind] > 0, tall = kind !== 'e';
   if (withPic && !input.pic) return none(404);
-  const now = VERSION[kind](input);
-  if (now !== v) return none(302, { location: PATH[kind](id, lang, now) });
+  const now = VERSION(kind, input);
+  if (now !== v) return none(302, { location: PATH(kind, id, lang, now) });
   const picture = withPic ? await pictureUri(env, url, input.pic) : null;
   if (withPic && !picture) return none(404);
-  const bytes = await renderPng(cardSvg(input, picture, tall), tall ? TALL_W : W);
+  const bytes = await renderPng(cardSvg(input, picture, tall, PART[kind] || 1), tall ? TALL_W : W);
   // after the response, and a failure said in the log rather than dropped (trip's lib/bg.ts)
   const keep = (what, p) => ctx.waitUntil(p.catch((e) => console.error(JSON.stringify({ msg: 'og-keep-failed', what, key, err: String(e) }))));
   if (env.MEDIA) keep('r2', env.MEDIA.put(key, bytes, { httpMetadata: { contentType: 'image/png', cacheControl: CC } }));
@@ -105,7 +107,7 @@ async function list(env, url) {
       id: r.id, lang: r.lang, title: input.title, serif: input.serif, ground: input.ground,
       page: r.lang === 'et' ? `/et/sundmused/${r.slug}` : `/en/events/${r.slug}`,
       image: cardPath(r.id, r.lang, cardVersion(input)), tall: tallPath(r.id, r.lang, tallVersion(input)),
-      ...(input.pic ? { tallPicture: tallPath(r.id, r.lang, tallVersion(input, true), true) } : {}),
+      ...(input.pic ? { tallPictures: [1, 2].map((n) => tallPath(r.id, r.lang, tallVersion(input, n), n)) } : {}),
     };
   });
   return new Response(JSON.stringify(out), { headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=60' } });
