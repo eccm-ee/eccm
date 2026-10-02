@@ -48,6 +48,10 @@ export const T = {
     fallback: 'This page has no English version yet. The Estonian text follows.',
   },
 };
+// the stored theme onto <html> before the stylesheet arrives, so a page kept Dark never paints white first:
+// tunniplaan's head line with eccm's key, the same in every static page under public/. Nothing stored is Auto,
+// the system's own setting (public/site.mjs, asked 2026-10-02: "do dark mode in bg. see ../tunniplaan etc")
+export const THEME_HEAD = '<script>try{var t=localStorage.getItem("eccm:theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>';
 export const OTHER = { et: 'en', en: 'et' };
 export const LABEL = { et: 'ET', en: 'EN' };
 
@@ -84,6 +88,10 @@ ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflan
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ECCM">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+${raw(THEME_HEAD)}
 <link rel="stylesheet" href="/eccm.css">
 <link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 ${head || ''}

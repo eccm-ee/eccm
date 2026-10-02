@@ -30,6 +30,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ECCM">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+<script>try{var t=localStorage.getItem("eccm:theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="stylesheet" href="./eccm.css">
 <link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -83,6 +87,20 @@
     .ds-fig-rows > [aria-current="true"] { font-weight: 600; }
     .ds-fig-meta { margin-block-start: var(--eccm-s-4); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
     /* Geist Mono at 0.96 of the size, since its x-height is 53 per 100 against Instrument Sans's 51 (MEASURED 2026-10-02) */
+    /* the table shown twice, the body face's tabular figures beside Geist Mono (asked 2026-10-02: "put figures
+       before table. use figures in table. to ligatuer and geist variant"), the same rows in each. Two tables
+       side by side are each under the component's 36rem, where it turns into its narrow form, so on a desk the
+       pair stops being the table's container and keeps the wide form, a specimen's choice and not the
+       component's; under 64rem they stack and each asks its own width again */
+    .ds-tables { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--eccm-s-12) var(--eccm-s-8); }
+    @media (min-width: 64rem) { .ds-tables { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ds-tables .table { container-type: normal; } }
+    .ds-mono-table td:nth-child(-n+3) { font-family: 'Geist Mono', ui-monospace, Menlo, monospace; font-size: 0.96em; }
+    /* the two themes side by side, each a panel whose color-scheme picks the light-dark() half of every token
+       inside it, so the dark one is the site's own dark mode on any page theme; its ground is the content */
+    .ds-themes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--eccm-s-6); margin-block: var(--eccm-s-8) var(--eccm-s-12); }
+    .ds-theme { padding: var(--eccm-s-8); background: var(--eccm-ground); color: var(--eccm-ink); border: 1px solid var(--eccm-rule); }
+    .ds-theme .ev-title { margin-block-end: var(--eccm-s-4); }
+    .ds-theme-text { margin-block-end: var(--eccm-s-6); }
     .ds-mono { font-family: 'Geist Mono', ui-monospace, Menlo, monospace; font-size: 0.96em; }
     .ds-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--eccm-s-2); max-inline-size: var(--eccm-measure); }
     /* artist bios, plans/plan-eccm-bios.md section 3: no box, no tint, no
@@ -180,8 +198,8 @@
 <header class="site-head">
   <div class="frame">
     <a class="mark" href="./" aria-label="Estonian Centre of Contemporary Music"><svg class="beside" aria-hidden="true" viewBox="35 27 601.5 96.5" style="--k: 1.940;"><use href="#mark" x="35" y="27" width="310" height="96.5"></use><text class="tag-is" font-size="37.00" fill="currentColor" x="373.0" y="68.9" text-anchor="start">estonian centre of</text><text class="tag-is" font-size="37.00" fill="currentColor" x="373.0" y="104.0" text-anchor="start">contemporary music</text></svg><svg class="under" aria-hidden="true" viewBox="35 27 310 183" style="--k: 1.000;"><use href="#mark" x="35" y="27" width="310" height="96.5"></use><text class="tag-is" font-size="40.00" fill="currentColor" x="35.0" y="162.0" text-anchor="start">estonian centre of</text><text class="tag-is" font-size="40.00" fill="currentColor" x="35.0" y="200.0" text-anchor="start">contemporary music</text></svg></a>
-    <span class="sw"><span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span><button class="menu-btn" type="button" aria-expanded="false" aria-label="Menu"><svg viewBox="0 0 20 15" aria-hidden="true"><rect y="0" width="20" height="1"/><rect y="7" width="20" height="1"/><rect y="14" width="20" height="1"/></svg></button></span>
-    <ul class="nav"><li><a href="./">Events</a></li><li><a href="/en/eccm">ECCM</a></li><li><a href="/en/tallinn-1965">Tallinn 1965</a></li><li><a href="/en/nan">NAN</a></li><li><a href="/en/ulysses">Ulysses</a></li><li><a href="/en/open-calls">Open calls</a></li><li class="lang-in"><span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span></li></ul>
+    <span class="sw"><span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span><button class="theme-btn" type="button" data-theme-cycle><span class="vh">Theme: </span><span data-t="auto">Auto</span><span data-t="light">Light</span><span data-t="dark">Dark</span></button><button class="menu-btn" type="button" aria-expanded="false" aria-label="Menu"><svg viewBox="0 0 20 15" aria-hidden="true"><rect y="0" width="20" height="1"/><rect y="7" width="20" height="1"/><rect y="14" width="20" height="1"/></svg></button></span>
+    <ul class="nav"><li><a href="./">Events</a></li><li><a href="/en/eccm">ECCM</a></li><li><a href="/en/tallinn-1965">Tallinn 1965</a></li><li><a href="/en/nan">NAN</a></li><li><a href="/en/ulysses">Ulysses</a></li><li><a href="/en/open-calls">Open calls</a></li><li class="lang-in"><span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span><button class="theme-btn" type="button" data-theme-cycle><span class="vh">Theme: </span><span data-t="auto">Auto</span><span data-t="light">Light</span><span data-t="dark">Dark</span></button></li></ul>
   </div>
 </header>
 
@@ -296,47 +314,52 @@
     </div>
   </div>
 
-  <h2>Figures</h2>
-  <div class="prose flow">
-    <p>Every time, date, length, count and id on the admin pages is set in the body face's tabular figures, <code>font-variant-numeric: tabular-nums</code>, which <code>main.admin</code> gives its times, its table cells, the radio's progress and the date and time fields, and <code>.fig</code> gives anything else. Instrument Sans draws every digit the same width there and leaves the full stop and the colon narrow, so a column of times lines up and 11.10 still reads as one word; a monospace lines up too, but draws the stop and the space a digit wide and so spells the times out. The public pages keep proportional figures.</p>
-  </div>
-  <div class="ds-figs">
-    <div>
-      <p class="ds-cap">Proportional: the public pages</p>
-      <div class="ds-fig-rows"><span>2 Oct 20.00</span><span>1:58:40</span><span aria-current="true">2 Oct 21.10</span><span aria-current="true">0:45</span><span>11 Oct 9.05</span><span>40:12</span><span>11 Oct 11.11</span><span>10:00</span></div>
-      <p class="ds-fig-meta">rec-test-muqmsnh9<br>0:45 / 1:58:40, sent to 148 devices, 11 refused</p>
-    </div>
-    <div class="fig">
-      <p class="ds-cap">Tabular: the admin pages, chosen</p>
-      <div class="ds-fig-rows"><span>2 Oct 20.00</span><span>1:58:40</span><span aria-current="true">2 Oct 21.10</span><span aria-current="true">0:45</span><span>11 Oct 9.05</span><span>40:12</span><span>11 Oct 11.11</span><span>10:00</span></div>
-      <p class="ds-fig-meta">rec-test-muqmsnh9<br>0:45 / 1:58:40, sent to 148 devices, 11 refused</p>
-    </div>
-    <div>
-      <p class="ds-cap">Geist Mono: weighed, not chosen</p>
-      <div class="ds-fig-rows ds-mono"><span>2 Oct 20.00</span><span>1:58:40</span><span aria-current="true">2 Oct 21.10</span><span aria-current="true">0:45</span><span>11 Oct 9.05</span><span>40:12</span><span>11 Oct 11.11</span><span>10:00</span></div>
-      <p class="ds-fig-meta"><span class="ds-mono">rec-test-muqmsnh9</span><br><span class="ds-mono">0:45 / 1:58:40</span>, sent to <span class="ds-mono">148</span> devices, <span class="ds-mono">11</span> refused</p>
-    </div>
-  </div>
-  <div class="ds-tokens" aria-label="Figures, measured">
-    <span>digit</span><span>60 / 100</span><span>Instrument Sans tabular; 39 for a 1 and 53 to 67 for the others proportional</span>
-    <span>full stop, colon</span><span>26 / 100</span><span>Instrument Sans in both, so 10.30 does not read spaced; Schibsted Grotesk's tabular set them 63</span>
-    <span>1:58:40</span><span>351 / 420</span><span>Instrument Sans tabular against a monospace, per 100 px of size</span>
-  </div>
-
   <h2>Color</h2>
   <div class="prose flow">
-    <p>White is the material and type is the object. Every pair is computed against white and color is never the only cue: the accent sits only on an underline under the pointer and on the focus ring.</p>
+    <p>White is the material and type is the object. Every pair is computed against its ground and color is never the only cue: the accent sits only on an underline under the pointer and on the focus ring.</p>
   </div>
   <div class="ds-swatches">
-    <div class="ds-swatch white"><i style="background: #ffffff"></i><code>--eccm-ground</code><br>#ffffff</div>
-    <div class="ds-swatch"><i style="background: #1a1a1a"></i><code>--eccm-ink</code><br>#1a1a1a, 17.40:1</div>
-    <div class="ds-swatch"><i style="background: #555555"></i><code>--eccm-ink-2</code><br>#555555, 7.46:1</div>
-    <div class="ds-swatch"><i style="background: #d9d9d9"></i><code>--eccm-rule</code><br>#d9d9d9</div>
-    <div class="ds-swatch"><i style="background: #999999"></i><code>--eccm-rule-strong</code><br>#999999, the link's line</div>
+    <div class="ds-swatch white"><i style="background: var(--eccm-ground)"></i><code>--eccm-ground</code><br>#ffffff, dark #121212</div>
+    <div class="ds-swatch"><i style="background: var(--eccm-ink)"></i><code>--eccm-ink</code><br>#1a1a1a, dark #f7f7f7</div>
+    <div class="ds-swatch"><i style="background: var(--eccm-ink-2)"></i><code>--eccm-ink-2</code><br>#555555, dark #a8a8a8</div>
+    <div class="ds-swatch"><i style="background: var(--eccm-rule)"></i><code>--eccm-rule</code><br>#d9d9d9, dark #383838</div>
+    <div class="ds-swatch"><i style="background: var(--eccm-rule-strong)"></i><code>--eccm-rule-strong</code><br>#999999, dark #6e6e6e, the link's line</div>
     <div class="ds-swatch"><i style="background: var(--eccm-accent)"></i><code>--eccm-accent</code><br>the ink, no accent since 2026-09-28</div>
   </div>
   <div class="prose flow">
     <p class="small">A page derived from its picture sets the same roles with its own tokens: <code>--ev-ground</code>, <code>--ev-ink</code>, <code>--ev-ink2</code>, <code>--ev-accent</code>, <code>--ev-btn-fill</code>, <code>--ev-on-btn</code>, <code>--ev-title-face</code>, <code>--ev-title-weight</code>, <code>--ev-body-face</code>. The examples are on the <a href="./derive.html">design from a picture</a> page.</p>
+  </div>
+
+  <h2>Dark mode</h2>
+  <div class="prose flow">
+    <p>The system's setting by default, and a word in the header beside the language switch that cycles Auto, Light and Dark, kept in this browser. Every color token carries both values in <code>light-dark()</code>, so the two panels below are the same markup with <code>color-scheme</code> set light and dark, drawn from the site's own tokens whichever theme this page is in. Body text is at least as strong in the dark as on white. The mark follows the ink, the partners' marks are inverted to their white form, and an event whose picture gives it a scheme keeps that scheme in both, since the scheme is the picture's own palette.</p>
+  </div>
+  <div class="ds-themes" lang="et">
+    <div class="ds-theme" style="color-scheme: light">
+      <p class="ds-cap" lang="en">Light</p>
+      <p class="ev-kicker"><time>30. september 2026</time><time>19.00</time><span>ECCM saal</span></p>
+      <p class="ev-title">Gestuurid/situatsioonid</p>
+      <p class="prose ds-theme-text">Tööprotsessi viimane hetk, võimalus olla <a href="#">tunnistajaks</a> kolme osaleja koosmõjus tekkinud olukorrale.</p>
+      <p class="ds-btns"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a></p>
+    </div>
+    <div class="ds-theme" style="color-scheme: dark">
+      <p class="ds-cap" lang="en">Dark</p>
+      <p class="ev-kicker"><time>30. september 2026</time><time>19.00</time><span>ECCM saal</span></p>
+      <p class="ev-title">Gestuurid/situatsioonid</p>
+      <p class="prose ds-theme-text">Tööprotsessi viimane hetk, võimalus olla <a href="#">tunnistajaks</a> kolme osaleja koosmõjus tekkinud olukorrale.</p>
+      <p class="ds-btns"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a></p>
+    </div>
+  </div>
+  <div class="table fig">
+    <table>
+      <thead><tr><th scope="col" class="main">Token</th><th scope="col">Light</th><th scope="col" class="num">on #ffffff</th><th scope="col">Dark</th><th scope="col" class="num">on #121212</th></tr></thead>
+      <tbody>
+        <tr><td data-label="Token" class="main"><code>--eccm-ink</code>, the text</td><td data-label="Light">#1a1a1a</td><td data-label="on #ffffff" class="num">17.40:1</td><td data-label="Dark">#f7f7f7</td><td data-label="on #121212" class="num">17.49:1</td></tr>
+        <tr><td data-label="Token" class="main"><code>--eccm-ink-2</code>, meta, labels, the footer</td><td data-label="Light">#555555</td><td data-label="on #ffffff" class="num">7.46:1</td><td data-label="Dark">#a8a8a8</td><td data-label="on #121212" class="num">7.88:1</td></tr>
+        <tr><td data-label="Token" class="main"><code>--eccm-rule-strong</code>, a link's line, a field's edge</td><td data-label="Light">#999999</td><td data-label="on #ffffff" class="num">2.85:1</td><td data-label="Dark">#6e6e6e</td><td data-label="on #121212" class="num">3.67:1</td></tr>
+        <tr><td data-label="Token" class="main"><code>--eccm-rule</code>, the hairlines</td><td data-label="Light">#d9d9d9</td><td data-label="on #ffffff" class="num">1.41:1</td><td data-label="Dark">#383838</td><td data-label="on #121212" class="num">1.60:1</td></tr>
+      </tbody>
+    </table>
   </div>
 
   <h2>Space</h2>
@@ -366,7 +389,7 @@
     <p>A word in a 3rem box ruled in ink, no radius, no shadow, always in the system face. Two modes: regular, ruled, and inversed, filled, each with a disabled state at 45 per cent that takes no pointer. On a page derived from its picture the button reads that scheme's tokens, with the page's own as the fallback.</p>
   </div>
   <div class="ds-ground">
-    <p class="ds-cap">On white, then disabled</p>
+    <p class="ds-cap">On the page's ground, white or the dark, then disabled</p>
     <p class="ds-btns" lang="et"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a><a class="btn" href="#">Muuda</a><a class="btn btn-pri" aria-disabled="true">Osta pilet</a><a class="btn" aria-disabled="true">Lisa kalendrisse</a></p>
   </div>
   <div class="ds-ground">
@@ -382,25 +405,64 @@
     <p class="ds-btns" lang="et"><a class="btn btn-pri" href="#">Osta pilet</a><a class="btn" href="#">Lisa kalendrisse</a><a class="btn btn-pri" aria-disabled="true">Osta pilet</a><a class="btn" aria-disabled="true">Lisa kalendrisse</a></p>
   </div>
 
+  <h2>Figures</h2>
+  <div class="prose flow">
+    <p>Every time, date, length, count and id on the admin pages is set in the body face's tabular figures, <code>font-variant-numeric: tabular-nums</code>, which <code>main.admin</code> gives its times, its table cells, the radio's progress and the date and time fields, and <code>.fig</code> gives anything else. Instrument Sans draws every digit the same width there and leaves the full stop and the colon narrow, so a column of times lines up and 11.10 still reads as one word; a monospace lines up too, but draws the stop and the space a digit wide and so spells the times out. The public pages keep proportional figures.</p>
+  </div>
+  <div class="ds-figs">
+    <div>
+      <p class="ds-cap">Proportional: the public pages</p>
+      <div class="ds-fig-rows"><span>2 Oct 20.00</span><span>1:58:40</span><span aria-current="true">2 Oct 21.10</span><span aria-current="true">0:45</span><span>11 Oct 9.05</span><span>40:12</span><span>11 Oct 11.11</span><span>10:00</span></div>
+      <p class="ds-fig-meta">rec-test-muqmsnh9<br>0:45 / 1:58:40, sent to 148 devices, 11 refused</p>
+    </div>
+    <div class="fig">
+      <p class="ds-cap">Tabular: the admin pages, chosen</p>
+      <div class="ds-fig-rows"><span>2 Oct 20.00</span><span>1:58:40</span><span aria-current="true">2 Oct 21.10</span><span aria-current="true">0:45</span><span>11 Oct 9.05</span><span>40:12</span><span>11 Oct 11.11</span><span>10:00</span></div>
+      <p class="ds-fig-meta">rec-test-muqmsnh9<br>0:45 / 1:58:40, sent to 148 devices, 11 refused</p>
+    </div>
+    <div>
+      <p class="ds-cap">Geist Mono: weighed, not chosen</p>
+      <div class="ds-fig-rows ds-mono"><span>2 Oct 20.00</span><span>1:58:40</span><span aria-current="true">2 Oct 21.10</span><span aria-current="true">0:45</span><span>11 Oct 9.05</span><span>40:12</span><span>11 Oct 11.11</span><span>10:00</span></div>
+      <p class="ds-fig-meta"><span class="ds-mono">rec-test-muqmsnh9</span><br><span class="ds-mono">0:45 / 1:58:40</span>, sent to <span class="ds-mono">148</span> devices, <span class="ds-mono">11</span> refused</p>
+    </div>
+  </div>
+  <div class="ds-tokens" aria-label="Figures, measured">
+    <span>digit</span><span>60 / 100</span><span>Instrument Sans tabular; 39 for a 1 and 53 to 67 for the others proportional</span>
+    <span>full stop, colon</span><span>26 / 100</span><span>Instrument Sans in both, so 10.30 does not read spaced; Schibsted Grotesk's tabular set them 63</span>
+    <span>1:58:40</span><span>351 / 420</span><span>Instrument Sans tabular against a monospace, per 100 px of size</span>
+  </div>
+
   <h2>Table</h2>
   <div class="prose flow">
     <p>Rows whose cells are compared down a column: no box, no tint and no rule between rows, one hairline under the head. Times align on their left edge, in proportional figures on a public page and tabular ones on the admin pages (Figures, above), amounts on their right, and the main column takes what is left and wraps. The current row is marked by weight and by <code>aria-current</code>. Under 36rem of its own width a row becomes its main cell over the others in the small register, each led by its column's name. Used on <a href="/radio">/radio</a>, and on the notices and the newsletter.</p>
   </div>
   <div class="ds-spec">
     <div>
-      <p class="ds-cap"><code>.table</code> around a <code>table</code>, <code>.num</code> and <code>.main</code> on the cells, <code>data-label</code> on each cell for the narrow form</p>
-      <div lang="et">
-      <div class="table">
-        <table>
-          <thead><tr><th scope="col">Algus</th><th scope="col">Lõpp</th><th scope="col" class="num">Kestus</th><th scope="col" class="main">Saade</th><th scope="col">Liik</th></tr></thead>
-          <tbody><tr><td data-label="Algus">19.00.00</td><td data-label="Lõpp">19.40.12</td><td data-label="Kestus" class="num">40:12</td><td data-label="Saade" class="main">Ludens: Grisey ja Riley, salvestis kontserdilt</td><td data-label="Liik">salvestis</td></tr><tr aria-current="true"><td data-label="Algus">19.40.12</td><td data-label="Lõpp">19.50.12</td><td data-label="Kestus" class="num">10:00</td><td data-label="Saade" class="main">ERR Klassikaraadio otse</td><td data-label="Liik">ülekanne</td></tr><tr><td data-label="Algus">19.50.12</td><td data-label="Lõpp">20.31.40</td><td data-label="Kestus" class="num">41:28</td><td data-label="Saade" class="main">Morton Feldman, For Philip Guston, esimene osa</td><td data-label="Liik">salvestis</td></tr><tr><td data-label="Algus">20.31.40</td><td data-label="Lõpp">lahtine</td><td data-label="Kestus" class="num"></td><td data-label="Saade" class="main">Stuudiost otse</td><td data-label="Liik">otse</td></tr></tbody>
-        </table>
-      </div>
+      <p class="ds-cap"><code>.table</code> around a <code>table</code>, <code>.num</code> and <code>.main</code> on the cells, <code>data-label</code> on each cell for the narrow form; the same rows in the two figures weighed above</p>
+      <div class="ds-tables" lang="et">
+        <div>
+          <p class="ds-cap">Tabular, the body face: the admin pages, chosen</p>
+          <div class="table fig">
+            <table>
+              <thead><tr><th scope="col">Algus</th><th scope="col">Lõpp</th><th scope="col" class="num">Kestus</th><th scope="col" class="main">Saade</th><th scope="col">Liik</th></tr></thead>
+              <tbody><tr><td data-label="Algus">19.00.00</td><td data-label="Lõpp">19.40.12</td><td data-label="Kestus" class="num">40:12</td><td data-label="Saade" class="main">Ludens: Grisey ja Riley, salvestis kontserdilt</td><td data-label="Liik">salvestis</td></tr><tr aria-current="true"><td data-label="Algus">19.40.12</td><td data-label="Lõpp">19.50.12</td><td data-label="Kestus" class="num">10:00</td><td data-label="Saade" class="main">ERR Klassikaraadio otse</td><td data-label="Liik">ülekanne</td></tr><tr><td data-label="Algus">19.50.12</td><td data-label="Lõpp">20.31.40</td><td data-label="Kestus" class="num">41:28</td><td data-label="Saade" class="main">Morton Feldman, For Philip Guston, esimene osa</td><td data-label="Liik">salvestis</td></tr><tr><td data-label="Algus">20.31.40</td><td data-label="Lõpp">lahtine</td><td data-label="Kestus" class="num"></td><td data-label="Saade" class="main">Stuudiost otse</td><td data-label="Liik">otse</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <p class="ds-cap">Geist Mono: weighed, not chosen</p>
+          <div class="table ds-mono-table">
+            <table>
+              <thead><tr><th scope="col">Algus</th><th scope="col">Lõpp</th><th scope="col" class="num">Kestus</th><th scope="col" class="main">Saade</th><th scope="col">Liik</th></tr></thead>
+              <tbody><tr><td data-label="Algus">19.00.00</td><td data-label="Lõpp">19.40.12</td><td data-label="Kestus" class="num">40:12</td><td data-label="Saade" class="main">Ludens: Grisey ja Riley, salvestis kontserdilt</td><td data-label="Liik">salvestis</td></tr><tr aria-current="true"><td data-label="Algus">19.40.12</td><td data-label="Lõpp">19.50.12</td><td data-label="Kestus" class="num">10:00</td><td data-label="Saade" class="main">ERR Klassikaraadio otse</td><td data-label="Liik">ülekanne</td></tr><tr><td data-label="Algus">19.50.12</td><td data-label="Lõpp">20.31.40</td><td data-label="Kestus" class="num">41:28</td><td data-label="Saade" class="main">Morton Feldman, For Philip Guston, esimene osa</td><td data-label="Liik">salvestis</td></tr><tr><td data-label="Algus">20.31.40</td><td data-label="Lõpp">lahtine</td><td data-label="Kestus" class="num"></td><td data-label="Saade" class="main">Stuudiost otse</td><td data-label="Liik">otse</td></tr></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
     <div>
-      <p class="ds-cap">The same table in a 20rem column, as a phone draws it</p>
-      <div lang="et" style="max-inline-size: 20rem">
+      <p class="ds-cap">The same table in a 20rem column, as a phone draws it, in the tabular figures</p>
+      <div class="fig" lang="et" style="max-inline-size: 20rem">
       <div class="table">
         <table>
           <thead><tr><th scope="col">Algus</th><th scope="col">Lõpp</th><th scope="col" class="num">Kestus</th><th scope="col" class="main">Saade</th><th scope="col">Liik</th></tr></thead>

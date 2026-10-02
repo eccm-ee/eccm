@@ -3,7 +3,7 @@
 // copy is the original and a fix to one is carried to the other by hand
 // (plans/plan-eccm-setup.md section 7). Takes a full URL as its target as well as a
 // slug against --base, which defaults to wrangler dev's port.
-// demo/shot.mjs — LOOK AT A PAGE AT A WIDTH. One command, one picture per width.
+// demo/shot.mjs: LOOK AT A PAGE AT A WIDTH. One command, one picture per width.
 //
 //   node demo/shot.mjs kit                      # 375, 768 and 1280: an iPhone mini, an iPad, the desk
 //   node demo/shot.mjs kit 375                  # just the phone
@@ -82,7 +82,7 @@ const flag = (name, fallback = null) => {
 };
 // ⚠️ A NUMBER AFTER A FLAG IS THAT FLAG'S VALUE, NOT A WIDTH. The first run of
 // this file took `--clip 2600` as a fourth width and shot the page at 2600 px.
-const bare = argv.filter((a, i) => !a.startsWith('--') && !(argv[i - 1] || '').startsWith('--'));
+const bare = argv.filter((a, i) => !a.startsWith('--') && !(argv[i - 1] || '').startsWith('--') || /^--dark$/.test(argv[i - 1] || '') && !a.startsWith('--'));
 const slug = bare.find((a) => !/^\d+$/.test(a));
 const widths = bare.filter((a) => /^\d+$/.test(a)).map(Number);
 const BASE = flag('base', process.env.ECCM_BASE || 'http://127.0.0.1:8787');
@@ -91,9 +91,12 @@ const CLIP = Number(flag('clip', 0)) || 0;
 const FROM = Number(flag('from', 0)) || 0; // start the capture this many px down, for a page taller than one capture (added in eccm, 2026-09-27)
 const WAIT = Number(flag('wait', 2500));
 const OUT = flag('out', 'tmp/shots');
+// --dark emulates prefers-color-scheme: dark, the system setting the site's dark mode follows when nothing is
+// stored, and names the file -dark (added in eccm, 2026-10-02, for the dark mode)
+const DARK = argv.includes('--dark');
 
 if (!slug) {
-  console.error('usage: node tools/shot.mjs <URL or slug> [width ...] [--base URL] [--hash id] [--clip px] [--from px] [--wait ms] [--out dir]');
+  console.error('usage: node tools/shot.mjs <URL or slug> [width ...] [--base URL] [--hash id] [--clip px] [--from px] [--wait ms] [--out dir] [--dark]');
   process.exit(2);
 }
 
@@ -150,6 +153,7 @@ const { sessionId } = await send('Target.attachToTarget', { targetId, flatten: t
 const S = (m, p) => send(m, p, sessionId);
 await S('Page.enable');
 await S('Runtime.enable');
+if (DARK) await S('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'dark' }] });
 
 await mkdir(OUT, { recursive: true });
 const shots = [];
@@ -215,7 +219,7 @@ for (const w of (widths.length ? widths : WIDTHS)) {
     clip: { x: 0, y: page.top, width: w, height, scale: 1 },
   });
   const name = /^https?:/.test(slug) ? (new URL(slug).pathname.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'index') : slug;
-  const file = join(OUT, `${name}-${w}${HASH ? `-${HASH}` : ''}${FROM && !HASH ? `-from${FROM}` : ''}.png`);
+  const file = join(OUT, `${name}-${w}${HASH ? `-${HASH}` : ''}${FROM && !HASH ? `-from${FROM}` : ''}${DARK ? '-dark' : ''}.png`);
   await writeFile(file, Buffer.from(data, 'base64'));
   shots.push({ w, file, page, height });
 

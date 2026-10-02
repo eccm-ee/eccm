@@ -14,3 +14,21 @@ if (navigator.standalone === true || matchMedia('(display-mode: standalone)').ma
   btn.addEventListener('click', () => { btn.disabled = true; enable().then((r) => { if (r === 'on' || r === 'refused') bar.remove(); else { say.textContent = (en ? 'It did not work: ' : 'Ei õnnestunud: ') + r; btn.disabled = false; } }); });
   document.querySelector('.site-head')?.after(bar);
 });
+// The theme, tunniplaan's way (asked 2026-10-02: "do dark mode in bg. see ../tunniplaan etc"): the header's word cycles Auto,
+// Light, Dark. Auto is the absence of data-theme and of the stored key, never a stored "auto", which would go stale the moment
+// the system's setting changed; the head's one line puts a stored choice back before the stylesheet. The theme-color metas are
+// media-scoped for a page with no script, and once a theme is forced that is the wrong question, so both take the ground the
+// page resolved to, or an installed app shows a dark page under a light status bar.
+const THEMES = ['auto', 'light', 'dark'], THEME_KEY = 'eccm:theme';
+const themeNow = () => document.documentElement.getAttribute('data-theme') || 'auto';
+const themeSync = () => { const bg = getComputedStyle(document.documentElement).backgroundColor; document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', bg)); };
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('[data-theme-cycle]')) return;
+  const next = THEMES[(THEMES.indexOf(themeNow()) + 1) % THEMES.length];
+  try { if (next === 'auto') localStorage.removeItem(THEME_KEY); else localStorage.setItem(THEME_KEY, next); } catch { /* private window: the choice lasts the page */ }
+  if (next === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', next);
+  themeSync();
+});
+// a forced theme survives the system flipping underneath it, Auto follows it
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', themeSync);
+themeSync();

@@ -86,12 +86,25 @@
     --eccm-s-16: 4rem;
     --eccm-s-24: 6rem;
     --eccm-gutter: var(--eccm-s-4);
-    /* colour: ink on white, one accent, every pair computed against the ground */
-    --eccm-ground: #ffffff;
-    --eccm-ink: #1a1a1a;
-    --eccm-ink-2: #555555;
-    --eccm-rule: #d9d9d9;
-    --eccm-rule-strong: #999999;
+    /* colour: ink on white, one accent, every pair computed against the ground.
+       Each token carries its dark value beside its light one in light-dark(), so a colour is still one
+       declaration in one place, and :root's color-scheme picks the half (below). The dark mode, asked
+       2026-10-02 as "do dark mode in bg. see ../tunniplaan etc": a neutral near-black ground with no hue,
+       because tunniplaan's README found that a trace of chroma which reads as a tint on white reads as
+       dirt in the dark. Every pair computed against its own ground (WCAG 2 relative luminance), and the
+       body text kept at least as strong as the light theme's:
+         ink         #1a1a1a on #ffffff 17.40:1    #f7f7f7 on #121212 17.49:1
+         ink-2       #555555 on #ffffff  7.46:1    #a8a8a8 on #121212  7.88:1
+         rule        #d9d9d9 on #ffffff  1.41:1    #383838 on #121212  1.60:1
+         rule-strong #999999 on #ffffff  2.85:1    #6e6e6e on #121212  3.67:1
+       The ink is not pure white, which blooms round the letters on a dark screen, and 17.49 is the
+       palest grey that still clears 17.40; the two rules are a step stronger than their light values,
+       since a hairline on black is lost sooner than one on white */
+    --eccm-ground: light-dark(#ffffff, #121212);
+    --eccm-ink: light-dark(#1a1a1a, #f7f7f7);
+    --eccm-ink-2: light-dark(#555555, #a8a8a8);
+    --eccm-rule: light-dark(#d9d9d9, #383838);
+    --eccm-rule-strong: light-dark(#999999, #6e6e6e);
     /* no accent: the one that was eccm.ee's orange darkened is the ink since 2026-09-28 ("none. keep it black inc outlines"), so a hovered underline, a focus ring and an error read in the ink */
     --eccm-accent: var(--eccm-ink);
     /* the picture column is the thumbnail's own width: eccm.ee makes them 300
@@ -106,6 +119,23 @@
     --eccm-mark-w: 10rem;
   }
   @media (min-width: 48rem) { :root { --eccm-gutter: var(--eccm-s-8); } }
+
+  /* the theme, tunniplaan's way (its README, "Dark mode is a choice, not just a system reading"): the
+     system setting by default, and a word in the header that cycles Auto, Light and Dark. Auto is the
+     ABSENCE of data-theme, so it follows the system as it changes through the day; Light and Dark set the
+     attribute, which a one-line script in every page's head reads from localStorage before the stylesheet,
+     so a stored Dark never flashes white. color-scheme does the rest: it picks every light-dark() above
+     and turns the browser's own furniture dark too, the scrollbars, the date picker and the overscroll */
+  :root { color-scheme: light dark; }
+  :root[data-theme="light"] { color-scheme: light; }
+  :root[data-theme="dark"] { color-scheme: dark; }
+  /* what a colour function cannot reach, set once per condition: the select's caret, a data URI that is
+     its own document with the ink written out, and the partners' marks, files in black as their owners
+     publish them. Inverted they are the white files: the City of Tallinn's white file is the same paths
+     filled #fff, and its rule allows white ("Logo kasutatakse valgena või Tallinna sinisena") */
+  :root { --eccm-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 8' fill='none' stroke='%231a1a1a' stroke-width='1'%3E%3Cpath d='M1 1.5 7 6.5 13 1.5'/%3E%3C/svg%3E"); --eccm-mark-filter: none; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --eccm-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 8' fill='none' stroke='%23f7f7f7' stroke-width='1'%3E%3Cpath d='M1 1.5 7 6.5 13 1.5'/%3E%3C/svg%3E"); --eccm-mark-filter: invert(1); } }
+  :root[data-theme="dark"] { --eccm-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 8' fill='none' stroke='%23f7f7f7' stroke-width='1'%3E%3Cpath d='M1 1.5 7 6.5 13 1.5'/%3E%3C/svg%3E"); --eccm-mark-filter: invert(1); }
 
   html { background: var(--eccm-ground); color: var(--eccm-ink); }
   body {
@@ -176,6 +206,16 @@
   .nav { display: flex; flex-wrap: wrap; column-gap: var(--eccm-s-8); row-gap: var(--eccm-s-2); }
   .lang { display: flex; column-gap: var(--eccm-s-3); }
   .lang-in { display: none; }
+  /* the theme switch, beside the language switch and in its language: one word at the menu's size in the
+     ink, naming the state the page is in and moving to the next on a press, Auto, then Light, then Dark
+     (tunniplaan's footer word, asked 2026-10-02: "do dark mode in bg. see ../tunniplaan etc"). No box and
+     no line until hovered, as the other language is drawn; the step between it and ET EN is the row's
+     own, wider than the one inside the pair, so it reads as a second thing. All three words are in the
+     markup and the attribute the head script set shows one, so the right word is there on first paint */
+  .theme-btn { padding: 0; margin: 0; border: 0; background: none; color: var(--eccm-ink); font-size: 1rem; line-height: var(--eccm-lh-meta); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .theme-btn:hover { text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+  .theme-btn > [data-t] { display: none; }
+  :root:not([data-theme]) .theme-btn > [data-t="auto"], :root[data-theme="light"] .theme-btn > [data-t="light"], :root[data-theme="dark"] .theme-btn > [data-t="dark"] { display: inline; }
   /* the phone menu button: three 1px lines in a 3rem box (asked 2026-09-28:
      "Do hamburger menu 3 lines in square", in place of the five stave lines).
      The box's own 1px rule went 2026-09-29 ("rm border around hamburger
@@ -187,12 +227,13 @@
     .site-head .mark svg.beside { display: none; }
     .site-head .mark svg.under { display: block; }
     .site-head .sw { margin-inline-start: auto; align-self: flex-start; }
-    .site-head .sw .lang { display: none; }
+    .site-head .sw .lang, .site-head .sw .theme-btn { display: none; }
     .menu-btn { display: grid; align-self: flex-start; }
     .site-head .nav { display: none; }
     .site-head[data-open] .nav { display: grid; order: 3; flex-basis: 100%; margin-block-start: 1lh; justify-content: start; }
     .site-head[data-open] .nav a { display: inline-block; padding-block: var(--eccm-s-2); }
-    .site-head[data-open] .lang-in { display: block; margin-block-start: var(--eccm-s-4); }
+    .site-head[data-open] .lang-in { display: flex; align-items: baseline; column-gap: var(--eccm-s-6); margin-block-start: var(--eccm-s-4); }
+    .site-head[data-open] .lang-in .theme-btn { padding-block: var(--eccm-s-2); }
     .site-head[data-open] .lang-in .lang { display: flex; align-items: baseline; }
     .site-head[data-open] .lang-in .lang > * { display: inline-block; padding-block: var(--eccm-s-2); }
   }
@@ -229,7 +270,7 @@
      margin here moves this mark's centre by the same half, and the two inks share one middle line */
   .site-foot .partner.partner-uly { --pw: 4.5rem; margin: 0; margin-block-start: calc(4rem * -0.1355); }
   .site-foot .partner { --pw: 4rem; display: block; inline-size: var(--pw); margin-block-start: calc(var(--pw) * -0.1355); margin-inline-end: calc(var(--pw) * -0.136); }
-  .site-foot .partner img { display: block; inline-size: 100%; block-size: auto; }
+  .site-foot .partner img { display: block; inline-size: 100%; block-size: auto; filter: var(--eccm-mark-filter); }
   @media (max-width: 48rem) {
     .site-foot .cols { grid-template-columns: minmax(0, 1fr); }
     .site-foot .end { justify-self: start; }
@@ -349,6 +390,11 @@
     padding-block: var(--eccm-s-8) var(--eccm-s-16);
   }
   main:has(> .event[data-scheme]) { padding-block: 0; }
+  /* the scheme is the picture's own palette, so it stays in the dark mode too (2026-10-02): an article on a
+     light scheme is a light article on a dark page, and its color-scheme says so, so every light-dark() it
+     does not redefine and the browser's own controls inside it take the light half */
+  .event[data-scheme="light"] { color-scheme: light; }
+  .event[data-scheme="dark"] { color-scheme: dark; }
   /* the faces: the title and the facts' values in the serif when the picture's
      type read as one, the body only where the scheme says so (a ground near
      white); labels stay in the sans, as on the derive page */
@@ -450,8 +496,8 @@
      1px)"). It sits in from the edge by the field's own inset, so it lines up with the text on the left,
      and the stroke is 1 unit of a 14 unit box drawn at 14 px, so it is 1 px. The ink is written out
      because a data URI is its own document and neither var() nor currentColor reaches into it: the value
-     is --eccm-ink and the two move together */
-  .form select { --caret: 0.875rem; appearance: none; -webkit-appearance: none; padding-inline-end: calc(var(--eccm-s-4) * 2 + var(--caret)); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 8' fill='none' stroke='%231a1a1a' stroke-width='1'%3E%3Cpath d='M1 1.5 7 6.5 13 1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right var(--eccm-s-4) center; background-size: var(--caret) auto; }
+     is --eccm-ink and the two move together, so the URI is a token at :root with one copy per theme */
+  .form select { --caret: 0.875rem; appearance: none; -webkit-appearance: none; padding-inline-end: calc(var(--eccm-s-4) * 2 + var(--caret)); background-image: var(--eccm-caret); background-repeat: no-repeat; background-position: right var(--eccm-s-4) center; background-size: var(--caret) auto; }
   .form textarea { line-height: var(--eccm-lh-body); resize: vertical; }
   .hint { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
   /* a choice of a few as native radio buttons in a row, each with its label,
