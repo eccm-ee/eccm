@@ -560,6 +560,9 @@
   .table tbody tr:first-child > * { padding-block-start: var(--eccm-s-3); }
   .table .num { text-align: end; }
   .table .main { inline-size: 100%; white-space: normal; overflow-wrap: anywhere; }
+  /* a second column of sentences beside the main one wraps too, at a measure of its own, so neither runs
+     the row past the frame (the radio research's Why, asked 2026-10-02) */
+  .table .wrap { white-space: normal; min-inline-size: 16rem; max-inline-size: 28rem; }
   .table tr[aria-current="true"] > * { font-weight: 600; }
   /* figures on the admin pages: every time, date, length, count and the date and time fields in the body
      face's tabular figures (asked 2026-10-02: "intruduce style for all numbers, timestaps etc under admin.
