@@ -467,6 +467,20 @@
      does not set its height; the same edge and the same inward hover */
   .btn-sm { block-size: 2rem; padding-inline: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: 1; }
   .table td .btn-sm { vertical-align: middle; }
+  /* the play button (asked 2026-10-02: "design universal play / stop / pause button. look for icones a icon set
+     with 1px style tht suites us"): a .btn made square, as tall as it is wide whichever size it is, so .btn-sm
+     gives a 2rem square and .btn a 3rem one, with the same 1px edge, the same inward hover and the disabled
+     state. The glyph is half the square, 16 px in the small one and 24 in the large, drawn from Feather
+     (public/vendor/icons/feather/sprite.svg, MIT) in a 1px stroke that the sprite keeps one CSS pixel at
+     every size, with mitred corners, since nothing on the site is round. data-state names the glyph shown,
+     play, pause or stop, and the label is in a .vh span beside it; aria-pressed="true" fills it as /radio
+     fills its Stop today. Shown on /icons, used nowhere yet: the owner chooses first */
+  .play-btn { aspect-ratio: 1; padding-inline: 0; justify-content: center; }
+  .play-btn > svg { inline-size: 50%; block-size: 50%; fill: none; stroke: currentColor; stroke-width: 1; stroke-linejoin: miter; stroke-linecap: butt; }
+  .play-btn > svg > use { display: none; }
+  .play-btn[data-state="play"] .i-play, .play-btn[data-state="pause"] .i-pause, .play-btn[data-state="stop"] .i-stop { display: inline; }
+  .play-btn[aria-pressed="true"], .play-btn:active { background: var(--ev-btn-fill, var(--eccm-ink)); color: var(--ev-on-btn, var(--eccm-ground)); border-color: transparent; }
+  .play-btn[aria-pressed="true"]:hover { outline-color: var(--ev-on-btn, var(--eccm-ground)); }
   /* the form: one column at the measure, a visible label above each field,
      fields a finger tall, ruled in the strong hairline, ink on white */
   .note { color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-8); max-inline-size: var(--eccm-measure); }

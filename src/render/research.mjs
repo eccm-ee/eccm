@@ -19,6 +19,9 @@ export const renderResearch = () => page({
   ${cards([
     ['/type', 'Typography', 'The faces compared at the page’s own sizes.'],
     ['/admin/research/radio', 'Radio tools', 'How radio programming tools lay out channels, schedules, live shows and the archive.'],
+    // asked 2026-10-02: "design universal play / stop / pause button. look for icones a icon set with 1px style tht
+    // suites us", then "make icons test page", and "icons: its research", so its card is here and not on /admin
+    ['/icons', 'Icons', 'Open icon sets compared at one pixel of stroke, and the play button drawn from the one chosen.'],
   ])}`,
 });
 
