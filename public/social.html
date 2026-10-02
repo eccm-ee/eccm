@@ -207,7 +207,7 @@
   <h1 class="list-label">Social</h1>
   <h2>Pages</h2>
   <div class="prose flow">
-    <p>Every page that is not an event has a card made as an event's is: the page's title, the hall's address, the nameplate at the foot, on the site's white, and its Instagram text card under it.</p>
+    <p>Every page that is not an event has a card made as an event's is: the page's title, the hall's address, the nameplate at the foot, on the site card's deep blue (the radio on its pale wine), and its Instagram text card under it.</p>
   </div>
   <div id="og-pages"><p class="ds-cap">Loading the pages.</p></div>
   <h2>Events</h2>
@@ -262,7 +262,7 @@ try {
     pagesBox.className = 'og-rows';
     pagesBox.replaceChildren(...pages.map((c) => {
       const row = document.createElement('div'); row.className = 'og-row';
-      const at = { page: c.page, title: c.title, lang: c.lang, serif: false, ground: '#ffffff' };
+      const at = { page: c.page, title: c.title, lang: c.lang, serif: false, ground: c.key === 'radio' ? '#f4ecf0' : '#1b2746' };
       const share = fig(at, c.image, `${c.title}, share card`); share.classList.add('og-share');
       const ig = document.createElement('div'); ig.className = 'og-ig';
       ig.append(fig(at, c.tall, `${c.title}, Instagram`, 1080, 1350));

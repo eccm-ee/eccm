@@ -295,7 +295,7 @@ export const radioPath = (lang) => `/og/radio-${lang === 'en' ? 'en' : 'et'}.png
 // ── a card for each page ─────────────────────────────────────────────────────
 // Every page that is not an event has a card of its own, made as an event's is
 // (asked 2026-10-02: "pages og cards same as event og cards"): the page's title,
-// the hall's address under it, the nameplate at the foot, on the site's white,
+// the hall's address under it, the nameplate at the foot, on the site card's ground,
 // at an address with its version, and its Instagram text card beside it. The
 // site and radio cards above stay at their addresses for whatever still names
 // them. A page is a key: a fixed one below, or a text page's slug.
@@ -305,7 +305,9 @@ export const PAGE_TITLES = {
   radio: RADIO_NAME,
   newsletter: { et: 'Uudiskiri', en: 'Newsletter' },
 };
-export const pageInput = (key, lang, title) => ({ lang, title, meta: ['Pühavaimu 9, Tallinn'], ...SITE, serif: false, page: key });
+// on the site card's deep blue with white ink, the radio on its pale wine: on the site's white they were white
+// cards on a white page, and with /social's frames gone they vanished (2026-10-02: "you lost all backgroinds")
+export const pageInput = (key, lang, title) => ({ lang, title, meta: ['Pühavaimu 9, Tallinn'], ...(key === 'radio' ? RADIO_CARD : SITE_CARD), serif: false, page: key });
 export const pagePath = (key, lang, v, tall = false) => `/og/${tall ? 'gt' : 'g'}/${key}-${lang}-${v}.png`;
 export const pageVersion = (input, tall = false) => cardVersion(tall ? { ...input, layout: 'tall' } : input);
 export const sitePath = (lang) => `/og/site-${lang === 'en' ? 'en' : 'et'}.png`;
