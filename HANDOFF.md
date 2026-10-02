@@ -2,13 +2,30 @@
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
 committed on `main` of **https://github.com/kristjanjansen/eccm**, private.
-**Not pushed:** 43 commits sit on `origin/main` (count with `git log --oneline
+**Not pushed:** 45 commits sit on `origin/main` (count with `git log --oneline
 origin/main..HEAD`), because `kristjanjansen`, the account that owns the
 repository, has no valid token on this machine (`gh auth switch` answers "no
 token found"). The owner runs `gh auth login -h github.com` as
 `kristjanjansen`; then push per CLAUDE.md and switch back. positron has the
 same: 74 commits on its `origin/main`, local too. Numbers here were counted with a
 command when this was written; count again before building on one.
+
+## 2026-10-01, last: /radio and the two cards
+
+- **The station page is /radio** (https://eccm.positron.studio/radio),
+  rendered by the same `renderStation`; `/station` answers 301 to it with its
+  query (`?k=`), and /admin and /ds link to it. The files keep the station's
+  name (`src/render/station.mjs`, `public/station.mjs`); only the address moved.
+- **Share cards, as they stand** (`src/og/card.mjs`, `src/og/route.mjs`):
+  events take their picture's colours; the **site card** (`/og/site-et.png`,
+  `/og/site-en.png`) is an event card on deep blue `#1b2746`, the centre's name
+  as title, "Pühavaimu 9, Tallinn" as meta, the mark at the foot; the **radio
+  card** (`/og/radio-et.png`) the same shape on wine `#3b1d2b`, "Raadio" over the
+  centre's name, named in /radio's own head. Both are served with an hour's
+  `max-age`, their bytes kept in R2 under `TEMPLATE_V` and `SITE_V`; bump
+  `SITE_V` after changing either. The earlier logo-only site card was replaced
+  the same evening (asked: "default og should have event card style, pick a bg,
+  put logo to bottom left").
 
 ## 2026-10-01, late: the station page, UbuWeb, the share cards
 
@@ -27,7 +44,7 @@ command when this was written; count again before building on one.
   about a 20 minute loop (Lucier clipped to 5 minutes). The ERR relay left it.
   UbuWeb's fair-use stance is not a licence: settle rights before anything
   public. **Otse proov** (`live-test`) is only the live slot "Proovisaade" now.
-- **The site has a share card:** `/og/site-et.png` and `/og/site-en.png`, the
+- **The site had a share card**, replaced by the entry above: `/og/site-et.png` and `/og/site-en.png`, the
   original logo alone on white (the header's lockup, Instrument Sans Condensed
   for the tagline), named by `page()` for every page with no image of its own
   (`useOrigin` in `src/render/chrome.mjs`, set per request in `src/index.mjs`)
