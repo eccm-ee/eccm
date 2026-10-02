@@ -1,14 +1,63 @@
-# Handoff, 2026-10-01, the fifth day of the eccm repository
+# Handoff, 2026-10-02, the sixth day of the eccm repository
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
 committed on `main` of **https://github.com/kristjanjansen/eccm**, private.
-**Not pushed:** 45 commits sit on `origin/main` (count with `git log --oneline
+**Not pushed:** 58 commits ahead of `origin/main` (count with `git log --oneline
 origin/main..HEAD`), because `kristjanjansen`, the account that owns the
-repository, has no valid token on this machine (`gh auth switch` answers "no
-token found"). The owner runs `gh auth login -h github.com` as
-`kristjanjansen`; then push per CLAUDE.md and switch back. positron has the
-same: 74 commits on its `origin/main`, local too. Numbers here were counted with a
-command when this was written; count again before building on one.
+repository, has no token on this machine (`gh auth switch` answers "no token
+found"). The owner runs `gh auth login -h github.com` as `kristjanjansen`;
+then push per CLAUDE.md and switch back. positron is 77 ahead for the same
+reason. Numbers here were counted with a command when this was written; count
+again before building on one.
+
+**This laptop cannot reach `eccm.positron.studio` or `positron.studio` since
+2026-10-02**: its DNS filter (Fortinet) answers with a "Fortiguard SDNS Blocked
+Page" certificate, so curl says `self signed certificate` and a browser shows a
+block page. Everything below was checked through
+**https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker) and
+https://elektron-view.kristjan-jansen.workers.dev/ (positron's site). The
+custom domains themselves are fine for anyone else.
+
+## 2026-10-02, the night: where it stands
+
+What is true now, each one checkable on the workers.dev address:
+
+- **/admin** (English) has seven cards: Events, Notices, Radio, Files,
+  Newsletter, Design system, Research.
+- **/radio** plays three channels from eccm's own station at `/stream`
+  (UbuWeb, Toonid, Otse proov) and lists the kept live shows under Recordings.
+- **/admin/files** has Uploads (17, the programmes the channels play) and
+  Recordings (1, a 45 s test show). **Uploads are open to anyone** (asked:
+  "allow uploads for all for now we will fix it later"): `OPEN_UPLOADS: "on"`
+  in both `wrangler.jsonc` and `workers/files/wrangler.jsonc`. Set it off and
+  redeploy both, and the page asks for `FILES_TOKEN` again (in `.dev.vars`);
+  the caps, 500 MB a file and 4 GB and 40 uploads an hour, hold either way.
+  The gate the owner has not chosen: Cloudflare Access on `/admin*` and
+  `/files*`, the token, or open.
+- **/admin/research/radio**: common structure, then views and tools with who
+  is best at each as links to the page that shows it and a Why column, then
+  the providers' pages.
+- **/ds** has a Figures section: admin figures are the body face's tabular
+  figures, Geist Mono weighed beside them and not used.
+- **Pictures on a workers.dev host are the originals**, since
+  `/cdn-cgi/image/` exists only on the zone (`src/index.mjs`, `useTransforms`).
+  On `eccm.positron.studio` they are resized as before.
+- **Buckets on this account**: `eccm-media-staging` (pictures, and the
+  recorder's parts under `radio/parts/` while a show is joined),
+  `eccm-files-staging` (`uploads/`, `recordings/`, `live/`, `index/`).
+  `eccm-station-staging` and positron's `vain-archive` are deleted.
+- **Workers**: `eccm-staging` (the site, the station, the recorder),
+  `eccm-files-staging` (uploads, reached at `/files/*`). positron's
+  `positron-station` serves only `GET /media/` for the MIM and kristjanjansen
+  media left in its bucket; `positron-vain` is deleted.
+- **positron** is deployed at build `fdc5677-081701-752c`: crate is gone
+  (`/crate/` 404), the station row links to eccm's /radio, click and und sit
+  under timeline. Its build tree is committed (0bbbbcc).
+
+To check after a change here: `/stream/channels.json` names what each channel
+plays, `/radio/state.json` is the recorder's alarm and rows, and
+`node tools/upload.mjs` with `FILES_BASE` set puts a file through the whole
+upload.
 
 ## 2026-10-02, evening: /admin/files and eccm-files
 
@@ -16,15 +65,14 @@ command when this was written; count again before building on one.
   audio in two directories, Uploads and Recordings, with which channel plays
   each file as a column. Files go up through **eccm-files**
   (`workers/files`), positron's vain protocol in 16 MiB pieces, reached at
-  `/files/*` through a service binding. Writes need `FILES_TOKEN`, asked once
-  on the page; the owner has not chosen the gate (Access, token or open), so
-  it is the token until then. `plans/plan-eccm-files.md` section 10 has the
+  `/files/*` through a service binding. Writes needed `FILES_TOKEN`, asked once
+  on the page, until the same night opened them to anyone (above). `plans/plan-eccm-files.md` section 10 has the
   detail and the measurements.
 - **The station and the recorder use the files bucket** `eccm-files-staging`:
   programmes are `uploads/...` keys, kept shows `recordings/...`.
 - **positron's crate and vain are retired**: row out of the manifest, files in
   positron's `archive/`, Worker and bucket deleted.
-- Left: `eccm-station-staging`, unbound, still holds old copies.
+- `eccm-station-staging` was emptied of its 34 old copies and deleted the same night.
 - After a deploy the service binding answered 404 for a minute.
 
 ## 2026-10-02, afternoon: the station is eccm's
@@ -46,7 +94,10 @@ command when this was written; count again before building on one.
   saw the slot only after it closed and passed the chunks over; a closed slot
   whose chunks still have bytes is kept now. `GET /radio/state.json` shows the
   recorder's alarm and rows. The test show is in staging's Recordings list.
-- NOT DONE, waiting on the owner: discarding positron-station. Its bucket
+- DONE the same evening, the owner choosing "strip to media only":
+  positron-station keeps only `GET /media/`, its objects deleted, its 34
+  station files left in its bucket after the owner stopped their deletion.
+  Before: discarding positron-station waited on the owner. Its bucket
   also holds about 1.8 GB that is not the station's (`mimproject/`,
   `mimproject-images/`, `kristjanjansen/`), which positron's resources pages
   and its `pub` container load through positron-station's `/media` route, so
@@ -556,6 +607,10 @@ ornament; both lines of a tagline pair are centred or both start on the E.
 - **An event can only be made in the database.** Asked for, and worth saying
   out loud: with `/edit/events/new` gone there is no way to add an event from
   the site. `data/seed-step4.sql` is the pattern for adding one by hand.
+- **The gate for /admin and /files.** Uploads are open to anyone by the
+  owner's word, until Access, the token or open is chosen (the first section).
+- **positron-station's bucket still holds the station's 17 old files and
+  their indexes** (the owner stopped that deletion); nothing reads them.
 - **The editor is open on a public hostname.** Noindex everywhere, and an
   address nobody is given, but anyone who finds `/edit/events/1` can save over
   an event. That is what was asked for; the Access application is the way back.
@@ -592,6 +647,13 @@ the workerd of wrangler 4.141 exits 137 and wrangler reports it as
 supports. Every local D1 and dev command depends on this. Deploy with
 `env -u CF_API_TOKEN -u CLOUDFLARE_API_TOKEN npx wrangler deploy --env staging`
 and migrate the remote database before deploying code that needs a column.
+`eccm-files` deploys on its own with `-c workers/files/wrangler.jsonc --env
+staging`, and both run locally with `npx wrangler dev -c wrangler.jsonc -c
+workers/files/wrangler.jsonc --env staging`. positron's `.env` carries a
+`CF_API_TOKEN` without access to these Workers, so a positron Worker is
+deployed from this directory with `-c <its wrangler.jsonc>`. This wrangler has
+no `r2 object list`; the API answers it with the OAuth token in
+`~/Library/Preferences/.wrangler/config/default.toml`.
 Safari and Chrome measure a variable font's width axis differently unless it
 is set with `font-variation-settings`; the two pages that carried both, the
 tagline ones, went 2026-09-29, so the next page that sets a width axis has to
@@ -603,7 +665,7 @@ centre, so use `1 0` for the top of a page.
 
 ## How to go on
 
-`BACKLOG.md` has every ask of all four days verbatim with what was measured,
+Push first. Then `BACKLOG.md`, which has every ask of the earlier days verbatim with what was measured,
 the open ones at the top. The first candidates: the Estonian front page from
 D1, the `tuma` key, the website field on the event page, and today's open
 list above (push first). Agents report and do not commit; the
