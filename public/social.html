@@ -78,6 +78,9 @@
     .ds-og figure { margin: 0; }
     .ds-og img { display: block; inline-size: 100%; block-size: auto; max-inline-size: 600px; outline: 1px solid var(--eccm-rule); }
     .ds-og figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+    /* the tall 4:5 cards, four to a row on a desk, each a phone's width at most */
+    .ds-og-tall { grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); }
+    .ds-og-tall img { max-inline-size: 360px; }
     /* the icon's square shows on hover, since a positive mark on white has no edge (asked 2026-09-27) */
     /* the figures compared: three candidates side by side on a desk and one under another on a phone, each a
        column of start times beside a column of lengths ending on one x, then an id and the small register */
@@ -207,6 +210,11 @@
     <p>Each event twice: the text card, which is what its page names today, and beside it the picture layout, the text in the left half and the picture cropped to fill the right. The text card is the image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Roboto Serif or Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
   </div>
   <div class="ds-og" id="og-cards"><p class="ds-cap">Loading the events.</p></div>
+  <h2>Instagram</h2>
+  <div class="prose flow">
+    <p>The same events at 1080 by 1350, Instagram's 4:5: the text card at its own size, and the picture across the top at its 3:2 with the text under it, eccm.ee's posts having the picture across the frame.</p>
+  </div>
+  <div class="ds-og ds-og-tall" id="og-tall"></div>
 </main>
 
 <footer class="site-foot" lang="en">
@@ -235,16 +243,19 @@ try {
   for (const c of all) if (cards.length < 8 && cards.every((k) => k.serif !== c.serif || far(k.ground, c.ground))) cards.push(c);
   // each event in both layouts side by side: the text card its page names today, and the picture layout
   // (asked 2026-10-02: "add alternative layout with image ... left text right cropped image")
-  const fig = (c, src, what) => {
+  const fig = (c, src, what, w = 1200, h = 630) => {
     const f = document.createElement('figure');
     const a = document.createElement('a'); a.href = c.page;
-    const img = document.createElement('img'); img.src = src; img.width = 1200; img.height = 630; img.alt = c.title; img.loading = 'lazy';
+    const img = document.createElement('img'); img.src = src; img.width = w; img.height = h; img.alt = c.title; img.loading = 'lazy';
     a.append(img);
     const cap = document.createElement('figcaption');
     cap.textContent = `${what}: ${c.lang.toUpperCase()}, ${c.serif ? 'Roboto Serif' : 'Instrument Sans'} on ${c.ground}`;
     f.append(a, cap); return f;
   };
   box.replaceChildren(...cards.flatMap((c) => [fig(c, c.image, 'Text'), ...(c.picture ? [fig(c, c.picture, 'Picture')] : [])]));
+  // the tall 4:5 pair for Instagram, in a row of their own under the wide ones
+  const tall = document.getElementById('og-tall');
+  if (tall) tall.replaceChildren(...cards.flatMap((c) => [fig(c, c.tall, 'Tall text', 1080, 1350), ...(c.tallPicture ? [fig(c, c.tallPicture, 'Tall picture', 1080, 1350)] : [])]));
   if (!cards.length) box.innerHTML = '<p class="ds-cap">No published events.</p>';
 } catch (e) {
   box.innerHTML = '<p class="ds-cap">The list did not load. It comes from the Worker, so this page shows it only where the Worker runs.</p>';

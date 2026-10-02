@@ -58,6 +58,32 @@ const PIC_MEASURE = HALF - PAD - AIR;
 const PIC_TITLE = 40;
 const PIC_STEPS = [PIC_TITLE];
 
+// The tall cards, 1080 by 1350, Instagram's 4:5 feed shape (asked 2026-10-02:
+// "do also vertical (instagram) layouts, see ../trip", then "see also eccm ig
+// style"): trip's portrait sibling of its share card, one renderer and its own
+// address (trip/astro-prod/src/lib/og-offer.ts), and eccm.ee's own posts on
+// Instagram, which are 4:5 with the picture across the frame. The tall text
+// card is the wide one at its own size; the tall picture card has the picture
+// across the top at the shape it arrives in, 3 : 2, and the text under it.
+export const TALL_W = 1080, TALL_H = 1350;
+const TALL_PIC_H = 720;
+// MEASURED over the 50 live titles: the tall text card has room for any size
+// up to 96 without a cut, but the longest then runs to eight lines, so its size
+// is the largest that keeps every title within five, 80 (88 makes six). The
+// tall picture card has less room: 60 cuts none and 64 cuts 4. Its title is
+// the smaller of the two, as on the wide pair
+const TALL_TITLE = 80;
+const TALL_PIC_TITLE = 60;
+
+// where everything goes on each of the four cards: the text's top, the mark's
+// top, the measure, the title size and the picture's box
+const LAYOUTS = {
+  wide: { w: W, h: H, top: PAD, markTop: MARK_TOP, measure: MEASURE, steps: STEPS },
+  widePic: { w: W, h: H, top: PAD, markTop: MARK_TOP, measure: PIC_MEASURE, steps: PIC_STEPS, pic: { x: HALF, y: 0, w: HALF, h: H } },
+  tall: { w: TALL_W, h: TALL_H, top: PAD, markTop: Math.round(TALL_H - PAD - MARK_H), measure: TALL_W - 2 * PAD, steps: [TALL_TITLE] },
+  tallPic: { w: TALL_W, h: TALL_H, top: TALL_PIC_H + PAD, markTop: Math.round(TALL_H - PAD - MARK_H), measure: TALL_W - 2 * PAD, steps: [TALL_PIC_TITLE], pic: { x: 0, y: 0, w: TALL_W, h: TALL_PIC_H } },
+};
+
 const SITE = { ground: '#ffffff', ink: '#1a1a1a', ink2: '#555555' };
 const HEX = /^#[0-9a-f]{6}$/;
 
@@ -99,10 +125,10 @@ function balance(ps, face, fs, maxW) {
 const metaLines = (cells) => cells.filter(Boolean).map((c) => [c]);
 
 // the lines of title the room above the mark holds at a size, given the meta's lines
-const room = (fs, face, metaN) => {
+const room = (fs, face, metaN, L = LAYOUTS.wide) => {
   const cap = M[face].cap * fs;
   const metaBlock = 0.25 * fs + GROUP + M[face === 'serif' ? 'serifText' : 'sans'].cap * META + (metaN - 1) * META_LH * META + 0.25 * META;
-  const avail = MARK_TOP - AIR - PAD - cap - metaBlock;
+  const avail = L.markTop - AIR - L.top - cap - metaBlock;
   return 1 + Math.floor(avail / (TITLE_LH * fs));
 };
 
@@ -111,15 +137,16 @@ const room = (fs, face, metaN) => {
 // 2026-10-01: "same font size to sans serif"; Roboto Serif sets wider, and
 // fitting it on its own widths put its titles a step smaller). The serif then
 // wraps at that size and steps down only when it truly does not fit.
-function fitTitle(title, face, metaN, steps = STEPS, measure = MEASURE) {
+function fitTitle(title, face, metaN, L = LAYOUTS.wide) {
+  const steps = L.steps, measure = L.measure;
   const raw = pieces(title);
-  const fits = (f, fs) => wrapAt(fitPieces(raw, f, fs, measure), f, fs, measure).length <= room(fs, f, metaN);
+  const fits = (f, fs) => wrapAt(fitPieces(raw, f, fs, measure), f, fs, measure).length <= room(fs, f, metaN, L);
   const start = face === 'sans' ? 0 : Math.max(0, steps.findIndex((fs) => fits('sans', fs)));
   for (const fs of steps.slice(start)) {
     const ps = fitPieces(raw, face, fs, measure);
-    if (wrapAt(ps, face, fs, measure).length <= room(fs, face, metaN)) return { fs, lines: balance(ps, face, fs, measure) };
+    if (wrapAt(ps, face, fs, measure).length <= room(fs, face, metaN, L)) return { fs, lines: balance(ps, face, fs, measure) };
   }
-  const fs = steps[steps.length - 1], max = room(fs, face, metaN);
+  const fs = steps[steps.length - 1], max = room(fs, face, metaN, L);
   const lines = wrapAt(fitPieces(raw, face, fs, measure), face, fs, measure).slice(0, max);
   let last = lines[max - 1] + '…';
   while (last.length > 2 && width(last, face, fs) > measure) last = last.slice(0, -2).trimEnd() + '…';
@@ -157,6 +184,9 @@ export const cardPath = (id, lang, v) => `/og/e/${id}-${lang}-${v}.png`;
 // the picture layout has its own address and version, so either can be what a page names
 export const picVersion = (input) => cardVersion({ ...input, layout: 'picture' });
 export const picPath = (id, lang, v) => `/og/p/${id}-${lang}-${v}.png`;
+// the tall cards, /og/t/ the text one and /og/tp/ the picture one
+export const tallVersion = (input, pic = false) => cardVersion({ ...input, layout: pic ? 'tallPicture' : 'tall' });
+export const tallPath = (id, lang, v, pic = false) => `/og/${pic ? 'tp' : 't'}/${id}-${lang}-${v}.png`;
 
 // the mark from the site's own symbol (src/render/mark.mjs), the letters as
 // they are drawn and the stave apart from them, so the two can be placed apart
@@ -179,12 +209,12 @@ const PLATE = Object.fromEntries(['et', 'en'].map((l) => {
   const inner = svg.slice(svg.indexOf('>') + 1, svg.indexOf('</svg>'));
   return [l, inner.replace(/<use[^>]*><\/use>|<use[^>]*\/>/g, '').replace(/ class="tag-is"/g, ` font-family="${M.tag.family}"`)];
 }));
-const plateSvg = (ink, lang) => {
-  const tx = PAD - E_LEFT * K, ty = MARK_TOP - E_TOP * K;
+const plateSvg = (ink, lang, markTop = MARK_TOP) => {
+  const tx = PAD - E_LEFT * K, ty = markTop - E_TOP * K;
   return `<g transform="translate(${tx} ${ty}) scale(${K})" fill="${ink}">${(PLATE[lang] || PLATE.et).replace(/currentColor/g, ink)}</g>`;
 };
-const markSvg = (ink) => {
-  const tx = PAD - E_LEFT * K, ty = MARK_TOP - E_TOP * K;
+const markSvg = (ink, markTop = MARK_TOP) => {
+  const tx = PAD - E_LEFT * K, ty = markTop - E_TOP * K;
   const letters = `<g transform="translate(${tx} ${ty}) scale(${K})" fill="${ink}">${LETTERS.replace(/INK/g, ink)}</g>`;
   const lines = LINES.map(([x, y, w]) => {
     const top = Math.round(ty + y * K);
@@ -195,15 +225,16 @@ const markSvg = (ink) => {
   return letters + `<g shape-rendering="crispEdges">${lines}</g>`;
 };
 
-// picture: the picture as a data URI for the picture layout, or nothing for the text card
-export const cardSvg = (input, picture = null) => {
+// picture: the picture as a data URI for a picture layout, or nothing for a text card; tall: the 4:5 card
+export const cardSvg = (input, picture = null, tall = false) => {
+  const L = LAYOUTS[(tall ? 'tall' : 'wide') + (picture ? 'Pic' : '')];
   const face = input.serif ? 'serif' : 'sans';
   const metaFace = input.serif ? 'serifText' : 'sans';
   const meta = metaLines(input.meta);
-  const { fs, lines } = picture ? fitTitle(input.title, face, meta.length, PIC_STEPS, PIC_MEASURE) : fitTitle(input.title, face, meta.length);
+  const { fs, lines } = fitTitle(input.title, face, meta.length, L);
   const out = [];
   // the title's first cap on the top margin: the ink, not the line box
-  let y = PAD + M[face].cap * fs;
+  let y = L.top + M[face].cap * fs;
   for (const l of lines) { out.push(`<text x="${PAD}" y="${y.toFixed(1)}" font-family="${M[face].family}" font-size="${fs}" fill="${input.ink}">${xml(l)}</text>`); y += TITLE_LH * fs; }
   y += -TITLE_LH * fs + 0.25 * fs + GROUP + M[metaFace].cap * META;
   for (const row of meta) {
@@ -211,9 +242,9 @@ export const cardSvg = (input, picture = null) => {
     for (const cell of row) { out.push(`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-family="${M[metaFace].family}" font-size="${META}" fill="${input.ink2}">${xml(cell)}</text>`); x += width(cell, metaFace, META) + META_GAP; }
     y += META_LH * META;
   }
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`
-    + `<rect width="${W}" height="${H}" fill="${input.ground}"/>${out.join('')}${markSvg(input.ink)}${input.plate === false ? '' : plateSvg(input.ink, input.lang)}`
-    + (picture ? `<image x="${HALF}" y="0" width="${HALF}" height="${H}" preserveAspectRatio="xMidYMid slice" href="${picture}"/>` : '')
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${L.w}" height="${L.h}" viewBox="0 0 ${L.w} ${L.h}">`
+    + `<rect width="${L.w}" height="${L.h}" fill="${input.ground}"/>${out.join('')}${markSvg(input.ink, L.markTop)}${input.plate === false ? '' : plateSvg(input.ink, input.lang, L.markTop)}`
+    + (picture ? `<image x="${L.pic.x}" y="${L.pic.y}" width="${L.pic.w}" height="${L.pic.h}" preserveAspectRatio="xMidYMid slice" href="${picture}"/>` : '')
     + '</svg>';
 };
 
