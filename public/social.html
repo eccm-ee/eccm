@@ -89,7 +89,8 @@
     .og-row img { display: block; inline-size: 100%; block-size: auto; }
     .og-row figcaption { margin-block-start: var(--eccm-s-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
     .og-share { max-inline-size: 28rem; }
-    .og-ig { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 28rem); column-gap: var(--eccm-s-4); align-items: start; }
+    /* no gap between the three on a desk either: the picture runs from the text card's edge into the other two */
+    .og-ig { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 28rem); column-gap: 0; align-items: start; }
     .og-pair { display: grid; grid-template-columns: 1fr 1fr; column-gap: 0; }
     /* on a phone the Instagram cards are a carousel as Instagram shows them: each card the column's full width, a
        swipe to the next, snapping a card at a time, the picture's two halves meeting with no gap so the swipe

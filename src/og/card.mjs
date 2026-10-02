@@ -14,7 +14,7 @@ import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
-export const TEMPLATE_V = 15;
+export const TEMPLATE_V = 16;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
@@ -79,9 +79,16 @@ const TALL_TITLE = 100;
 
 // where everything goes on the two cards with text: the text's top, the mark's
 // top and scale, the measure, the title size and the date and venue's size
+// the picture as one panorama across a carousel's three cards (asked 2026-10-02: "For first insta vard ahow
+// around 10 pecent of image left side and make it work in carousel"): the text card shows the picture's first
+// 108 px, a tenth of its width, at its right edge, and the two picture cards the rest, so a swipe from the
+// text card carries on into the same picture. MEASURED: the title still holds at 100 in the narrower column
+const STRIP = 108;
+const PANO_W = 2 * TALL_W + STRIP;
 const LAYOUTS = {
   wide: { w: W, h: H, top: PAD, markTop: MARK_TOP, measure: MEASURE, steps: STEPS },
   tall: { w: TALL_W, h: TALL_H, top: PAD, markTop: Math.round(TALL_H - PAD - TALL_MARK_H), k: TALL_K, measure: TALL_W - 2 * PAD, steps: [TALL_TITLE], meta: TALL_META },
+  tallStrip: { w: TALL_W, h: TALL_H, top: PAD, markTop: Math.round(TALL_H - PAD - TALL_MARK_H), k: TALL_K, measure: TALL_W - 2 * PAD - STRIP, steps: [TALL_TITLE], meta: TALL_META, strip: true },
 };
 
 const SITE = { ground: '#ffffff', ink: '#1a1a1a', ink2: '#555555' };
@@ -237,10 +244,12 @@ const markSvg = (ink, markTop = MARK_TOP, k = K) => {
 // image into 2 cards"). Before that the same evening it was one card of the
 // picture alone ("make text card and image only card next to each other"), and
 // for an hour before that the picture across the top with the text under it.
+// part 0 with a picture is the text card with the panorama's first strip at its right edge
+const pano = (picture, x) => `<image x="${x}" y="0" width="${PANO_W}" height="${TALL_H}" preserveAspectRatio="xMidYMid slice" href="${picture}"/>`;
 export const cardSvg = (input, picture = null, tall = false, part = 1) => {
-  if (tall && picture) return `<svg xmlns="http://www.w3.org/2000/svg" width="${TALL_W}" height="${TALL_H}" viewBox="0 0 ${TALL_W} ${TALL_H}">`
-    + `<rect width="${TALL_W}" height="${TALL_H}" fill="${input.ground}"/><image x="${(1 - part) * TALL_W}" y="0" width="${2 * TALL_W}" height="${TALL_H}" preserveAspectRatio="xMidYMid slice" href="${picture}"/></svg>`;
-  let L = tall ? LAYOUTS.tall : LAYOUTS.wide;
+  if (tall && picture && part > 0) return `<svg xmlns="http://www.w3.org/2000/svg" width="${TALL_W}" height="${TALL_H}" viewBox="0 0 ${TALL_W} ${TALL_H}">`
+    + `<rect width="${TALL_W}" height="${TALL_H}" fill="${input.ground}"/>${pano(picture, -STRIP - (part - 1) * TALL_W)}</svg>`;
+  let L = tall ? (picture ? LAYOUTS.tallStrip : LAYOUTS.tall) : LAYOUTS.wide;
   // a card may set its line under the title larger than the date and venue's size, a page card's sentence
   if (input.metaScale) L = { ...L, meta: Math.round((L.meta || META) * input.metaScale) };
   const face = input.serif ? 'serif' : 'sans';
@@ -261,7 +270,7 @@ export const cardSvg = (input, picture = null, tall = false, part = 1) => {
     y += META_LH * metaFs;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${L.w}" height="${L.h}" viewBox="0 0 ${L.w} ${L.h}">`
-    + `<rect width="${L.w}" height="${L.h}" fill="${input.ground}"/>${out.join('')}${markSvg(input.ink, L.markTop, L.k)}${input.plate === false ? '' : plateSvg(input.ink, input.lang, L.markTop, L.k)}`
+    + `<rect width="${L.w}" height="${L.h}" fill="${input.ground}"/>${L.strip ? pano(picture, TALL_W - STRIP) : ''}${out.join('')}${markSvg(input.ink, L.markTop, L.k)}${input.plate === false ? '' : plateSvg(input.ink, input.lang, L.markTop, L.k)}`
     + '</svg>';
 };
 

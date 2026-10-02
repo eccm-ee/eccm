@@ -119,11 +119,13 @@ export async function ogRoute(request, env, url, ctx) {
   if (!input) return none(404);
   const withPic = PART[kind] > 0, tall = kind !== 'e';
   if (withPic && !input.pic) return none(404);
+  // the tall text card of an event with a picture carries the panorama's first strip
+  const strip = kind === 't' && !!input.pic;
   const now = VERSION(kind, input);
   if (now !== v) return none(302, { location: PATH(kind, id, lang, now) });
-  const picture = withPic ? await pictureUri(env, url, input.pic) : null;
+  const picture = withPic || strip ? await pictureUri(env, url, input.pic) : null;
   if (withPic && !picture) return none(404);
-  const bytes = await renderPng(cardSvg(input, picture, tall, PART[kind] || 1), tall ? TALL_W : W);
+  const bytes = await renderPng(cardSvg(input, picture, tall, strip ? 0 : PART[kind] || 1), tall ? TALL_W : W);
   // after the response, and a failure said in the log rather than dropped (trip's lib/bg.ts)
   const keep = (what, p) => ctx.waitUntil(p.catch((e) => console.error(JSON.stringify({ msg: 'og-keep-failed', what, key, err: String(e) }))));
   if (env.MEDIA) keep('r2', env.MEDIA.put(key, bytes, { httpMetadata: { contentType: 'image/png', cacheControl: CC } }));
