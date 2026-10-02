@@ -318,24 +318,45 @@ export const PAGE_TITLES = {
 // another page has it, so no two pages share one (MEASURED that evening: with
 // near twins merged six colours were left and four pages fell on one brown).
 // The list changes as events do, and the pages' colours with it.
+// hue 0 to 360, saturation and lightness 0 to 1, of a #rrggbb
+const hsl = (hex) => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
+  let h = 0;
+  if (d) h = ((mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4) * 60 + 360) % 360;
+  return { h, s: d ? d / (1 - Math.abs(2 * l - 1)) : 0, l };
+};
+// no browns (asked the same evening: "avioid browns, nudge the decretion to nicer colors"): a dark ground of a
+// warm hue is left out, which takes the four browns and the brown wine of the events read so far, and near
+// twins closer than 8 are merged (at 24 the light pastels, close in RGB and apart in hue, fell to four colours)
+const brown = (hex) => { const c = hsl(hex); return c.l < 0.35 && c.s > 0.1 && (c.h < 45 || c.h > 330); };
+const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+const near = (a, b) => Math.hypot(...rgb(a).map((v, i) => v - rgb(b)[i])) < 8;
 export const schemeColors = (schemes) => {
-  const out = new Map();
+  const out = [];
   for (const raw of schemes) {
     let s = null;
     try { s = JSON.parse(raw); } catch { continue; }
-    if (!s || !HEX.test(s.ground) || !HEX.test(s.ink) || !HEX.test(s.ink2) || s.ground === '#ffffff') continue;
-    if (!out.has(s.ground)) out.set(s.ground, { ground: s.ground, ink: s.ink, ink2: s.ink2 });
+    if (!s || !HEX.test(s.ground) || !HEX.test(s.ink) || !HEX.test(s.ink2) || s.ground === '#ffffff' || brown(s.ground)) continue;
+    if (!out.some((c) => near(c.ground, s.ground))) out.push({ ground: s.ground, ink: s.ink, ink2: s.ink2 });
   }
-  return [...out.values()].sort((a, b) => a.ground.localeCompare(b.ground));
+  return out.sort((a, b) => a.ground.localeCompare(b.ground));
 };
+// the front page on the events' lightest grey, whatever the hash says (asked the same evening: "frontpage is
+// light gray"): the least saturated of the light grounds, the lightest of those
+export const homeColor = (colors) => colors.filter((c) => hsl(c.ground).l > 0.85).sort((a, b) => hsl(a.ground).s - hsl(b.ground).s || hsl(b.ground).l - hsl(a.ground).l)[0];
 const fnv = (str) => { let h = 0x811c9dc5; for (const b of new TextEncoder().encode(str)) { h ^= b; h = Math.imul(h, 0x01000193) >>> 0; } return h; };
 // every page's colour at once, keys in a fixed order so the stepping is the same on every request
 export const pageColorMap = (keys, colors) => {
   const map = new Map(), taken = new Set();
   if (!colors.length) return map;
+  const home = homeColor(colors);
+  if (home && keys.includes('home')) { map.set('home', home); taken.add(colors.indexOf(home)); }
   for (const k of [...keys].sort()) {
+    if (map.has(k)) continue;
     let i = fnv(k) % colors.length;
     for (let n = 0; taken.has(i) && n < colors.length; n++) i = (i + 1) % colors.length;
+    if (taken.size >= colors.length) taken.clear();
     taken.add(i); map.set(k, colors[i]);
   }
   return map;
