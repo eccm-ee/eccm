@@ -16,7 +16,7 @@
 // otherwise; a chunk lives at least 240 s, so neither pace can miss one. A
 // show begins when a live slot has a chunk this object has not seen, open or
 // already closed, and ends when the slot closes or leaves the running order. Then its chunks
-// are joined into one MP3, radio/{id}.mp3, with an R2 multipart upload in
+// are joined into one MP3, recordings/{id}.mp3 in the files bucket, with an R2 multipart upload in
 // parts of 5 MB, so an hour (about 58 MB) is never held at once. A chunk is
 // the encoder's own frames cut on frame boundaries, so chunks set end to end
 // are a valid MP3 and nothing is re-encoded. The chunks are deleted after.
@@ -25,7 +25,7 @@
 //
 // Not done: putting a kept show back into a channel's running order, which
 // is a write to the station's running order (PUT /stream/c/{channel}/schedule).
-import { station } from './station/station.mjs';
+import { station, buildIndex } from './station/station.mjs';
 const FAST = 30_000, SLOW = 120_000;
 const PART = 5 * 1024 * 1024;   // R2's smallest multipart part, the last excepted
 const JSON_HEAD = { 'content-type': 'application/json', 'cache-control': 'no-store' };
@@ -64,7 +64,7 @@ export class Radio {
   async tick() {
     const get = async (path) => { const r = await station.fetch(new Request(`https://station${path}`), this.env, NO_CTX); if (!r.ok) throw new Error(`${path} answered ${r.status}`); return r.json(); };
     const { channels = [] } = await get('/channels.json');
-    const listed = new Set(), open = new Set(), unanswered = new Set();
+    const listed = new Set(), open = new Set(), unanswered = new Set();   // channel/slot
     for (const c of channels) {
       const pre = c.default ? '' : `/c/${encodeURIComponent(c.name)}`;
       let s;
@@ -81,6 +81,7 @@ export class Radio {
     for (const show of [...this.sql.exec(`SELECT * FROM shows WHERE status IN ('rec', 'join')`)]) {
       const k = `${show.channel}/${show.slot}`;
       if (show.status === 'rec' && (open.has(k) || unanswered.has(show.channel))) continue;
+      if (show.status === 'rec' && !listed.has(k)) await this.leftover(show);
       await this.join(show);
     }
     return open.size > 0 || unanswered.size > 0;
@@ -118,6 +119,29 @@ export class Radio {
     }
   }
 
+  // A slot taken out of the running order right after its show stops being
+  // listed, chunks and all, though its chunks are still in the bucket for a
+  // sweep or two (MEASURED 2026-10-02: a 45 s show kept as 30 s when its slot
+  // was swapped out at once). So the bucket is read for them directly, in the
+  // order of their names, which is the order they were sent in.
+  async leftover(show) {
+    const prefix = `live/${show.channel === 'main' ? '' : `${show.channel}/`}${show.slot}/`;
+    const keys = [];
+    let cursor;
+    do { const l = await this.env.STATION_MEDIA.list({ prefix, cursor }); keys.push(...l.objects.map((o) => o.key)); cursor = l.truncated ? l.cursor : undefined; } while (cursor);
+    const list = keys.sort().map((key) => ({ u: `/media/${key}` })).filter((e) => ![...this.sql.exec(`SELECT 1 FROM seen WHERE uri = ?`, e.u)].length);
+    for (const e of list) {
+      const obj = await this.env.STATION_MEDIA.get(e.u.replace(/^\/media\//, ''));
+      if (!obj) continue;
+      const bytes = await obj.arrayBuffer();
+      e.d = buildIndex(bytes, 1e9).dur;
+      const n = Number([...this.sql.exec(`SELECT chunks FROM shows WHERE id = ?`, show.id)][0].chunks);
+      await this.env.MEDIA.put(partKey(show.id, n), bytes, { httpMetadata: { contentType: 'audio/mpeg' } });
+      this.sql.exec(`INSERT INTO seen (uri, show, n, dur, bytes) VALUES (?, ?, ?, ?, ?)`, e.u, show.id, n, e.d, bytes.byteLength);
+      this.sql.exec(`UPDATE shows SET chunks = chunks + 1, dur = dur + ? WHERE id = ?`, e.d, show.id);
+    }
+  }
+
   // the chunks end to end into radio/{id}.mp3, then the chunks deleted; a failure
   // leaves the show at 'join' and the next tick starts the upload again
   async join(show) {
@@ -129,7 +153,7 @@ export class Radio {
     const read = async (k) => { const o = await this.env.MEDIA.get(k); return o ? new Uint8Array(await o.arrayBuffer()) : new Uint8Array(0); };
     const cat = (list) => { const out = new Uint8Array(list.reduce((a, b) => a + b.length, 0)); let i = 0; for (const b of list) { out.set(b, i); i += b.length; } return out; };
     let total = 0;
-    const upload = await this.env.MEDIA.createMultipartUpload(key, meta);
+    const upload = await this.env.STATION_MEDIA.createMultipartUpload(key, meta);
     try {
       const done = [];
       let held = [], size = 0;
@@ -146,6 +170,9 @@ export class Radio {
     }
     for (let i = 0; i < parts.length; i += 1000) await this.env.MEDIA.delete(parts.slice(i, i + 1000));
     this.sql.exec(`UPDATE shows SET status = 'done', bytes = ? WHERE id = ?`, total, show.id);
+    // the station's record of it, so /admin/files names it and it can be put on a channel as a replay
+    const q = new URLSearchParams({ title: show.title, source: 'recorded live' });
+    await station.fetch(new Request(`https://station/ingest/${encodeURIComponent(key)}?${q}`, { method: 'POST', headers: { authorization: `Bearer ${this.env.STATION_TOKEN}` } }), this.env, NO_CTX).catch((e) => console.log(`radio: ingest ${key}: ${e.message}`));
     console.log(`radio: ${show.id} kept, ${parts.length} chunks, ${total} bytes`);
   }
 
@@ -162,7 +189,8 @@ export class Radio {
 }
 
 const partKey = (id, n) => `radio/parts/${id}/${String(n).padStart(6, '0')}.mp3`;
-const fileKey = (id) => `radio/${id}.mp3`;
+// the kept file, in the files bucket's recordings/ since 2026-10-02 (plans/plan-eccm-files.md)
+const fileKey = (id) => `recordings/${id}.mp3`;
 const ID = /^\/radio\/([a-z0-9-]+)\.mp3$/;
 
 const radio = (env) => env.RADIO.get(env.RADIO.idFromName('radio'));
@@ -186,9 +214,9 @@ export const wakeRadio = (env) => (env.RADIO ? radio(env).fetch('https://radio/w
 // GET /radio/{id}.mp3, with Range, since a player seeks by asking for bytes
 export async function serveShow(request, env, path) {
   const m = ID.exec(path);
-  if (!m || !env.MEDIA) return null;
+  if (!m || !env.STATION_MEDIA) return null;
   const ranged = request.headers.has('range');
-  const obj = await env.MEDIA.get(fileKey(m[1]), ranged ? { range: request.headers } : {});
+  const obj = await env.STATION_MEDIA.get(fileKey(m[1]), ranged ? { range: request.headers } : {});
   if (!obj) return new Response('Not found', { status: 404, headers: { 'cache-control': 'no-store' } });
   const h = new Headers();
   obj.writeHttpMetadata(h);

@@ -2,7 +2,9 @@
 
 Asked 2026-10-02: *"what about creating a eccm-files worker and admin/files
 paeg and mimick crate/vain. staton files should be a subdir there? plan first.
-when implenented discard crate/vain"*. Nothing here is built yet.
+when implenented discard crate/vain"*, then *"split audio into 2?"* and *"yes
+and implement"*. BUILT the same day; section 10 says what was built where it
+differs from the sections above, and those win where they disagree.
 
 The model is positron's `workers/vain` (the Worker, `positron-vain`) and
 `demo/crate` (its page), read on 2026-10-02 with `plans/plan-vain-upload.md`
@@ -27,34 +29,26 @@ one directory each.
   so the page and the API share an origin. No CORS, no second certificate, and
   the gate in section 5 sees the site's own requests.
 
-## 2. One bucket, a directory each
+## 2. One bucket, two directories a person sees
 
-`eccm-files-staging` (and `eccm-files` at cutover). Each top-level directory
-is named for what is in it, one word, nothing nested (asked 2026-10-02: *"make
-bucket subdir names simpler / more obvious"*):
+`eccm-files-staging` (and `eccm-files` at cutover). Split by where a file came
+from, which never changes (asked 2026-10-02: *"i do no get differentce
+programmers recordins uploads difference"*, then *"split audio into 2?"*):
 
-| directory | what is in it | written by | deleted by |
+| directory | what is in it | written by | shown |
 | --- | --- | --- | --- |
-| `programmes/` | the files the channels play | an upload, then the station's ingest | a person, refused while a running order names it |
-| `recordings/` | the live shows kept for replay, one MP3 each | the recorder (`src/radio.mjs`), which writes to `MEDIA` under `radio/` today | a person |
-| `uploads/` | anything else an editor puts here: a concert recording, a master, a file for a later programme | /admin/files | a person |
-| `live/` | the chunks of a show while it is on air | the station's `/live/<key>/append` | the station's sweep, minutes later |
-| `index/` | the frame index of each programme, made by the machine | the station's ingest | with its programme |
+| `uploads/` | files a person put there: concert recordings, masters, works, and the 17 the channels played when this was built | eccm-files, in pieces | yes, a tab |
+| `recordings/` | the live shows the station recorded itself | the recorder (`src/radio.mjs`) | yes, a tab |
+| `live/` | the chunks of a show while it is on air | the station's `/live/<key>/append` | no; the sweep deletes them |
+| `index/` | the frame index of each file a channel can play | the station's ingest | no |
 
-The first three are what a person looks at and are the tabs on /admin/files.
-`live/` and `index/` are the station's working files and are not shown.
+Nothing moves between directories. Whether a channel plays a file is a
+column, On, and any file in either directory can be added to a channel; a
+recording put on a channel is a replay and stays in `recordings/`.
 
-**The station keeps its own key names through a mapping binding.** The station
-code reads and writes by bare keys (`ubu-ball-karawane.mp3`, `index/...`,
-`live/...`), and slot keys are those same names. A small wrapper gives it an
-object with the same `get`, `head`, `put`, `delete`, `list` and
-`createMultipartUpload`, which maps a key going in: `live/...` and `index/...`
-stay as they are, and any other key becomes `programmes/<key>`. Coming out it
-maps back. So `src/station/station.mjs` keeps its keys, its sweep lists
-`live/` and nothing else, and no key the station can form lands in
-`recordings/` or `uploads/`. ⚠️ positron-station's config warned against two
-Workers sharing a bucket where one runs a cron that deletes by prefix. That is
-still true, and the wrapper is the fence.
+**The station reads the bucket by full key, with no wrapper.** A slot's key is
+the file's key (`uploads/ubu-ball-karawane.mp3`), so the station's playlist
+asks `/stream/media/uploads/...` and its sweep lists `live/` and nothing else.
 
 **Pictures stay where they are.** `MEDIA` (`eccm-media-staging`) holds the
 editor's pictures keyed by hash, with rows in D1 and renditions through
@@ -191,3 +185,36 @@ origin check, and its page held no token. The options:
    blocked page since 2026-10-02, so every check from here goes through
    `eccm-staging.kristjan-jansen.workers.dev`, and the service binding means
    the files Worker needs no hostname of its own.
+
+## 10. What was built, 2026-10-02
+
+- `workers/files/worker.mjs` and its `wrangler.jsonc`: `eccm-files-staging`, the
+  upload protocol of section 3, its `Uploads` object, writes behind the bearer
+  token `FILES_TOKEN`. The gate of section 5 was not chosen by the owner, so it
+  is option 2, the token, until it is; the page asks for it once.
+- No `meta.json`. A file's title, who and length are the station's record of
+  it (its Library), written by `/admin/files/ingest` after a close from the
+  file's tags, and by the recorder for a recording, so there is one place a
+  title lives.
+- No read route in eccm-files: `/stream/media/<key>` already answers ranges.
+- `src/files.mjs` and `src/render/files.mjs`, `public/files.mjs`: /admin/files
+  with its two tabs, the drop zone, a line per upload, the table, and a row's
+  Edit with Save, Add to channel and Delete (refused while a channel plays it).
+- `buildIndexFrom` in `src/station/station.mjs`: the frame walk over 2 MB
+  ranges, identical to the whole-file walk on all 17 programmes (COMPARED), and
+  the station's `/ingest/<key>` built on it.
+- `tools/upload.mjs`: the same protocol from the command line, with
+  `--stop-after` and `--resume`.
+- MEASURED on staging: a 43,201,140 byte file in three pieces read back
+  byte for byte, and deleted. Locally: a resume after one piece; a text file
+  named .mp3 refused with its first four bytes; a 45 s show swapped out of the
+  running order the moment it closed kept whole (it was kept as 30 s before
+  the recorder learned to read leftover chunks from the bucket).
+- Moved: the 17 programmes uploaded through the protocol, their records and the
+  three running orders rewritten to `uploads/` keys with their clocks, and
+  staging's one recording copied to `recordings/`.
+- Discarded: positron's crate and vain (positron fdc5677), the Worker
+  `positron-vain` and the bucket `vain-archive` deleted.
+- Left: the bucket `eccm-station-staging`, which nothing binds any more, still
+  holds the 17 files, their indexes and some live chunks; wrangler here has no
+  object listing to empty it with.

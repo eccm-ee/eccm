@@ -204,6 +204,59 @@ export function buildIndex(bytes, target = SEG_TARGET) {
 
 const round6 = (n) => Math.round(n * 1e6) / 1e6;
 
+// The same walk over an object already in the bucket, read a range at a time,
+// so a file far larger than a Worker's memory is indexed without holding it
+// (eccm 2026-10-02, plans/plan-eccm-files.md section 6: a 500 MB upload read
+// whole would not survive 128 MB). A frame that runs past the end of a range
+// is carried into the next, and the result is the one buildIndex gives.
+const WALK_STEP = 2 * 1024 * 1024;
+export async function buildIndexFrom(bucket, key, target = SEG_TARGET) {
+	const head = await bucket.head(key);
+	if (!head) return null;
+	const size = head.size;
+	const read = async (offset, length) => new Uint8Array(await (await bucket.get(key, { range: { offset, length } })).arrayBuffer());
+	let p = skipId3(await read(0, Math.min(10, size)));
+	let base = p, b = new Uint8Array(0);
+	const more = async () => {
+		const at = base + b.length;
+		if (at >= size) return false;
+		const next = await read(at, Math.min(WALK_STEP, size - at));
+		const keep = b.subarray(p - base);
+		const joined = new Uint8Array(keep.length + next.length);
+		joined.set(keep); joined.set(next, keep.length);
+		base = p; b = joined;
+		return true;
+	};
+	const seg = [];
+	let off = -1, len = 0, dur = 0, frames = 0, total = 0;
+	let rate = 0, ch = 0, kbps = 0, first = true, resync = 0;
+	for (;;) {
+		if (p - base + 4 > b.length && !(await more())) break;
+		const i = p - base;
+		const f = frameAt(b, i);
+		if (!f) { p++; resync++; continue; }
+		if (i + f.len > b.length) { if (await more()) continue; break; }
+		if (first) {
+			first = false;
+			rate = f.rate; ch = f.ch; kbps = f.kbps;
+			if (isXing(b, i, f.len)) { p += f.len; continue; }
+		}
+		if (off < 0) { off = p; len = 0; dur = 0; }
+		len += f.len; dur += f.dur; total += f.dur; frames++; p += f.len;
+		if (dur >= target) { seg.push({ o: off, l: len, d: round6(dur) }); off = -1; }
+	}
+	if (off >= 0 && len > 0) {
+		if (seg.length && dur < target / 2) {
+			const prev = seg[seg.length - 1];
+			prev.l += len;
+			prev.d = round6(prev.d + dur);
+		} else {
+			seg.push({ o: off, l: len, d: round6(dur) });
+		}
+	}
+	return { bytes: size, rate, ch, kbps, frames, resync, dur: round6(total), fmt: `${rate}/${ch}`, seg };
+}
+
 // ------------------------------------------------------------------- ID3 tags
 //
 // A programme's own words about itself, read once at ingest: the ID3v2 tag at
@@ -1578,6 +1631,29 @@ export const station = {
 			for (const f of ['title', 'who']) if (url.searchParams.has(f)) asked[f] = url.searchParams.get(f).trim().slice(0, 200) || null;
 			if (Object.keys(asked).length) [, record] = await writeRecord(env, key, asked, 'edit');
 			return json({ key, ...idx, seg: idx.seg.length, record });
+		}
+
+		// A file that is already in the bucket, put there by eccm-files in pieces:
+		// its index from a walk over ranges and its record from its tags, the same
+		// two things /programme/ writes for bytes sent whole (eccm 2026-10-02).
+		// `?source=` and `?title=` go into the record as given.
+		if (p.startsWith('/ingest/') && req.method === 'POST') {
+			const key = decodeURIComponent(p.slice('/ingest/'.length));
+			const idx = await buildIndexFrom(env.STATION_MEDIA, key);
+			if (!idx) return json({ error: 'no such object', key }, 404);
+			const playable = idx.frames > 0;
+			if (playable) {
+				await env.STATION_MEDIA.put(`index/${key}.json`, JSON.stringify(idx), { httpMetadata: { contentType: 'application/json' } });
+				indexCache.delete(key);
+			}
+			let id3 = null;
+			try { id3 = await id3Of(env, key); } catch { /* a head that does not parse is a record without tags */ }
+			let [, record] = await writeRecord(env, key, playable ? fileFields(id3, idx, null) : { kind: 'file' }, 'fill');
+			const asked = {};
+			for (const f of ['title', 'who']) if (url.searchParams.has(f)) asked[f] = url.searchParams.get(f).trim().slice(0, 200) || null;
+			if (url.searchParams.has('source')) asked.meta = { source: url.searchParams.get('source').slice(0, 40) };
+			if (Object.keys(asked).length) [, record] = await writeRecord(env, key, asked, 'edit');
+			return json({ key, playable, dur: idx.dur, frames: idx.frames, seg: idx.seg.length, record });
 		}
 
 		if (p.startsWith('/reindex/') && req.method === 'POST') {

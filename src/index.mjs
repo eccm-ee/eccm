@@ -33,6 +33,7 @@ import { itemsRoute } from './items.mjs';
 import { renderStation } from './render/station.mjs';
 import { renderAdmin } from './render/admin.mjs';
 import { renderResearch, renderRadioResearch } from './render/research.mjs';
+import { filesRoute } from './files.mjs';
 import { newsletter, drain } from './newsletter.mjs';
 import { ogRoute } from './og/route.mjs';
 import { radioShows, wakeRadio, serveShow, radioState } from './radio.mjs';
@@ -128,6 +129,10 @@ export default {
       const inner = new URL(url); inner.pathname = p.slice(STREAM_BASE.length) || '/';
       return station.fetch(new Request(inner, request), env, ctx);
     }
+    // the uploads in pieces, eccm-files through its service binding (workers/files), since 2026-10-02
+    if (p.startsWith('/files/')) return env.FILES_SVC.fetch(request);
+    // /admin/files, the site's audio in two directories (src/files.mjs), since 2026-10-02
+    if (p === '/admin/files' || p.startsWith('/admin/files/')) { const out = await filesRoute(request, env, url); if (out) return out; }
     // the uploaded pictures from R2, /media/{sha256}.{ext} (src/media.mjs)
     if (p.startsWith('/media/')) { const out = await serveMedia(env, p); if (out) return out; }
     // the event share images and their list for /ds (src/og/route.mjs), since 2026-10-01

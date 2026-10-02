@@ -10,6 +10,23 @@ token found"). The owner runs `gh auth login -h github.com` as
 same: 74 commits on its `origin/main`, local too. Numbers here were counted with a
 command when this was written; count again before building on one.
 
+## 2026-10-02, evening: /admin/files and eccm-files
+
+- **/admin/files** (https://eccm.positron.studio/admin/files) holds the site's
+  audio in two directories, Uploads and Recordings, with which channel plays
+  each file as a column. Files go up through **eccm-files**
+  (`workers/files`), positron's vain protocol in 16 MiB pieces, reached at
+  `/files/*` through a service binding. Writes need `FILES_TOKEN`, asked once
+  on the page; the owner has not chosen the gate (Access, token or open), so
+  it is the token until then. `plans/plan-eccm-files.md` section 10 has the
+  detail and the measurements.
+- **The station and the recorder use the files bucket** `eccm-files-staging`:
+  programmes are `uploads/...` keys, kept shows `recordings/...`.
+- **positron's crate and vain are retired**: row out of the manifest, files in
+  positron's `archive/`, Worker and bucket deleted.
+- Left: `eccm-station-staging`, unbound, still holds old copies.
+- After a deploy the service binding answered 404 for a minute.
+
 ## 2026-10-02, afternoon: the station is eccm's
 
 - **The radio station moved into this Worker** (asked: "do the station. when

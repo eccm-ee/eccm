@@ -17,6 +17,7 @@ const TOOLS = [
   ['/et/sundmused', 'Events', 'Every event. Each one is edited from the Edit button on its own page.'],
   ['/items', 'Notices', 'A notice to phones at a set time, and the list of notices.'],
   ['/radio', 'Radio', 'The station\u2019s channels, what is on, and the recorded live shows.'],
+  ['/admin/files', 'Files', 'The site\u2019s audio: uploads and the recorded live shows, and which channel plays each.'],
   ['/edit/uudiskiri', 'Newsletter', 'Issues to subscribers: compose from events, send a test, send to all.'],
   ['/ds', 'Design system', 'Type, colour, logo, components and share images.'],
   ['/admin/research', 'Research', 'Typography and radio programming tools.'],

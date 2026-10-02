@@ -41,9 +41,12 @@
       // the uploaded pictures, one original per sha256 (src/media.mjs), created
       // 2026-09-30 with wrangler r2 bucket create eccm-media-staging
       "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "eccm-media-staging" },
-        // the radio station's programmes and live chunks (src/station/station.mjs), its own bucket because
-        // its sweep deletes by prefix; created 2026-10-02 when the station left positron
-        { "binding": "STATION_MEDIA", "bucket_name": "eccm-station-staging" }],
+        // the site's audio (plans/plan-eccm-files.md), created 2026-10-02: uploads/ from eccm-files,
+        // recordings/ from the recorder, live/ and index/ the station's working files. The station
+        // reads it by full key and its sweep lists live/ and nothing else
+        { "binding": "STATION_MEDIA", "bucket_name": "eccm-files-staging" }],
+      // the upload Worker (workers/files), which /files/* is forwarded to, so the page and it share an origin
+      "services": [{ "binding": "FILES_SVC", "service": "eccm-files-staging" }],
       // Image Transformations are on for positron.studio since 2026-09-30
       // (dashboard, Images, Transformations, "This zone only"); "off" makes
       // src/render/pic.mjs draw the originals, as a zone without them needs

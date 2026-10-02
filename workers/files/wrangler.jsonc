@@ -1,0 +1,28 @@
+{
+  // eccm-files: audio into the files bucket in pieces (worker.mjs, plans/plan-eccm-files.md).
+  // The site Worker reaches it through a service binding and forwards /files/* to it.
+  //   env -u CF_API_TOKEN -u CLOUDFLARE_API_TOKEN npx wrangler deploy -c workers/files/wrangler.jsonc --env staging
+  "name": "eccm-files",
+  "main": "worker.mjs",
+  "account_id": "dc1ee8d72a1fb7da857c46479a8503b8",
+  // the same date and the same pinned wrangler as the site (CLAUDE.md)
+  "compatibility_date": "2026-07-08",
+  "workers_dev": false,
+  "observability": { "enabled": true },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Uploads"] }],
+  "env": {
+    "staging": {
+      "name": "eccm-files-staging",
+      // reachable here too, since this laptop's DNS filter blocks eccm.positron.studio (2026-10-02)
+      "workers_dev": true,
+      // one bucket for the site's audio: uploads/ from here, recordings/ from the recorder, live/ and
+      // index/ the station's; created 2026-10-02
+      "r2_buckets": [{ "binding": "FILES", "bucket_name": "eccm-files-staging" }],
+      "durable_objects": { "bindings": [{ "name": "UPLOADS", "class_name": "Uploads" }] }
+    },
+    "production": {
+      "name": "eccm-files"
+      // ECCM's account_id and its own bucket go here at cutover, beside the site's
+    }
+  }
+}
