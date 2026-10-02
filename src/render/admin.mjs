@@ -22,6 +22,8 @@ const TOOLS = [
   ['/edit/uudiskiri', 'Newsletter', 'Issues to subscribers: compose from events, send a test, send to all.'],
   ['/ds', 'Components', 'Type, figures, colour, space, buttons, tables and cards.'],
   ['/logo', 'Logo', 'The square mark, the wordmark in both languages, and every icon size.'],
+  // the icons left Research once Feather was chosen (asked 2026-10-02: "move icons up one level")
+  ['/icons', 'Icons', 'Feather, every icon the site has, in buttons small and large.'],
   ['/social', 'Social', 'The share image of every published event, as a scraper sees it.'],
   ['/admin/research', 'Research', 'Typography and radio programming tools.'],
 ];
