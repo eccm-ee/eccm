@@ -114,8 +114,8 @@
   <p class="crumb crumb-trail"><a href="/admin">Admin</a><span class="crumb-sep" aria-hidden="true">/</span><span aria-current="page">Icons</span></p>
   <h1>Icons</h1>
   <div class="prose flow">
-    <p>The site’s icons are Feather, 63 of them in one sprite, with every rounded corner made square and a line that stays one CSS pixel at every size, the weight of the site’s rules and of the mark’s stave. An icon is <code>&lt;svg class="ico"&gt;&lt;use href="/vendor/icons/feather/icons.svg#name"/&gt;&lt;/svg&gt;</code> and takes the colour of the text around it. An icon alone in a button is a <code>.btn-ico</code>, with its name in a hidden word beside it.</p>
-    <p>Feather was chosen on 2 October 2026 from seven open sets, because its play, pause and boxes are plain shapes with almost no radius drawn into them. The sprite is written by <code>tools/feather.mjs</code>, which also squares the few corners Feather rounds. Larger curves such as the user’s shoulders, the arrows of repeat or the round shapes of a microphone are the drawing and stay. To add an icon, add its Feather name to the tool and run it.</p>
+    <p>Feather, with square corners and a 1px line.</p>
+    <p><code>&lt;svg class="ico"&gt;&lt;use href="/vendor/icons/feather/icons.svg#name"/&gt;&lt;/svg&gt;</code>, alone in a button <code>.btn-ico</code>. Add an icon in <code>tools/feather.mjs</code>.</p>
   </div>
 
   <h2>In buttons</h2>
@@ -152,7 +152,7 @@
 
   <h2>The play button</h2>
   <div class="prose flow">
-    <p><code>.play-btn</code> is an icon button whose glyph follows <code>data-state</code>, <code>play</code>, <code>pause</code> or <code>stop</code>, with its hidden word changing beside it. <code>aria-pressed="true"</code> fills it while it sounds, as /radio fills its Stop.</p>
+    <p><code>.play-btn</code>: <code>data-state</code> is <code>play</code>, <code>pause</code> or <code>stop</code>, and <code>aria-pressed="true"</code> fills it.</p>
   </div>
   <div class="ds-themes">
     <div class="ds-theme" style="color-scheme: light">
