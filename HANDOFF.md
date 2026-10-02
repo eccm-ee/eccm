@@ -10,6 +10,27 @@ token found"). The owner runs `gh auth login -h github.com` as
 same: 74 commits on its `origin/main`, local too. Numbers here were counted with a
 command when this was written; count again before building on one.
 
+## 2026-10-02: live shows kept for replay
+
+- **Every live show on the station is recorded by eccm** (`src/radio.mjs`,
+  asked: "how to save live input radio to be replayed later?", then "2. do it
+  in eccm"). The Durable Object `Radio` (binding `RADIO`, migration `v2`)
+  reads positron-station's public `GET /c/{channel}/schedule` every 30 s while
+  a live slot is open and every 2 min otherwise, copies each new chunk into
+  `eccm-media-staging` under `radio/parts/`, and when the slot closes joins
+  them into `radio/{id}.mp3` with an R2 multipart upload, then deletes the
+  parts. Nothing in positron changed. The station still lives in positron;
+  eccm only reads it.
+- **/radio lists them** under Salvestused in the table component, newest
+  first, each with Kuula; a show still on air reads "eetris" and one being
+  joined "valmib". `GET /radio/{id}.mp3` serves the file with ranges.
+- MEASURED 2026-10-02 under wrangler dev: a 45 s take streamed with
+  `live.mjs --realtime` into a temporary slot on `live-test` came back as
+  five chunks joined into one 45.000 s MP3 (720,978 bytes) that ffmpeg
+  decodes without an error; the channel's running order was put back after.
+- Not done: putting a kept show back into a channel's running order (a write
+  to the station, positron's token) and an English /radio.
+
 ## 2026-10-01, last: /radio and the two cards
 
 - **The station page is /radio** (https://eccm.positron.studio/radio),

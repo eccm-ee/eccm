@@ -34,7 +34,9 @@ import { renderStation } from './render/station.mjs';
 import { renderAdmin } from './render/admin.mjs';
 import { newsletter, drain } from './newsletter.mjs';
 import { ogRoute } from './og/route.mjs';
+import { radioShows, wakeRadio, serveShow } from './radio.mjs';
 export { Items } from './items.mjs';
+export { Radio } from './radio.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
 const EVENT = { et: /^\/et\/sundmused\/([a-z0-9-]+)$/, en: /^\/en\/events\/([a-z0-9-]+)$/ };
@@ -144,7 +146,9 @@ export default {
     if (p === '/items' || p.startsWith('/items/')) { const out = await itemsRoute(request, env, url); if (out) return out; }
     // the radio, positron's station in this site's chrome (src/render/station.mjs), since 2026-10-01
     // the radio, at /radio since 2026-10-01 ("rename station to radio"); /station answers with the way there
-    if (p === '/radio') return reply(renderStation());
+    if (p === '/radio') return reply(renderStation(await radioShows(env)));
+    // a kept live show (src/radio.mjs), since 2026-10-02
+    if (p.startsWith('/radio/')) { const out = await serveShow(request, env, p); if (out) return out; }
     if (p === '/station') return new Response(null, { status: 301, headers: { location: `/radio${url.search}` } });
     // the tools, one card each (src/render/admin.mjs), since 2026-10-01
     if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
@@ -152,6 +156,7 @@ export default {
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
   },
-  // the cron of wrangler.jsonc: the outbox's retry, every ten minutes (src/mail.mjs)
-  async scheduled(event, env, ctx) { ctx.waitUntil(drain(env)); },
+  // the cron of wrangler.jsonc: the outbox's retry, every ten minutes (src/mail.mjs),
+  // and the radio's recorder woken if its alarm ever stopped (src/radio.mjs)
+  async scheduled(event, env, ctx) { ctx.waitUntil(drain(env)); ctx.waitUntil(wakeRadio(env)); },
 };

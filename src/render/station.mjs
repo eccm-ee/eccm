@@ -19,12 +19,41 @@
 import { html } from './html.mjs';
 import { page, origin } from './chrome.mjs';
 import { radioPath, W as OG_W, H as OG_H } from '../og/card.mjs';
+import { table } from './table.mjs';
+import { dayMonth, clock } from './dates.mjs';
 
-export const renderStation = () => {
+// a moment as Tallinn's wall clock, YYYY-MM-DDTHH:MM, the shape dates.mjs reads
+const LOCAL = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+const local = (ms) => LOCAL.format(new Date(ms)).replace(' ', 'T');
+const length = (s) => { s = Math.round(s); const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = String(s % 60).padStart(2, '0'); return h ? `${h}:${String(m).padStart(2, '0')}:${x}` : `${m}:${x}`; };
+
+// the live shows kept by src/radio.mjs (asked 2026-10-02: "how to save live input
+// radio to be replayed later?"), newest first; one still on air or being joined
+// is listed with what it is doing in place of the button
+const kept = (shows) => {
+  if (!shows.length) return html`<p class="small">Otsesaateid ei ole veel salvestatud. Iga otsesaade salvestub siia, kui see lõpeb.</p>`;
+  return table({
+    label: 'Salvestused',
+    cols: [{ label: 'Algus' }, { label: 'Saade', cls: 'main' }, { label: 'Kestus', cls: 'num' }, { label: '' }],
+    rows: shows.map((x) => {
+      const at = local(x.started_at);
+      const act = x.status === 'done'
+        ? html`<button class="btn btn-sm" type="button" data-show="/radio/${x.id}.mp3" data-title="${x.title}">Kuula</button>`
+        : x.status === 'rec' ? 'eetris' : 'valmib';
+      return [`${dayMonth(at, 'et')} ${clock(at, 'et')}`, x.title, length(x.dur), act];
+    }),
+  });
+};
+
+export const renderStation = (shows = []) => {
   const body = html`  <h1>Raadio</h1>
   <div class="station-cols" id="st-channels" role="group" aria-label="Kanalid">
     <p class="small" id="st-loading">Jaama loetakse.</p>
   </div>
+  <section class="station-kept" id="st-kept">
+    <h2>Salvestused</h2>
+    ${kept(shows)}
+  </section>
   <script src="/vendor/hls-1.7.1.min.js"></script>
   <script type="module" src="/station.mjs"></script>`;
   // its own share card, the radio's (src/og/card.mjs), in place of the site's

@@ -237,6 +237,7 @@ function stop() {
 
 function start(name) {
   if (playing) stop();
+  stopShow();
   current = name;
   const q = new URLSearchParams(PARAMS); q.set('k', name); history.replaceState(null, '', `?${q}`);
   const src = route(name, '/station.m3u8');
@@ -267,6 +268,32 @@ function start(name) {
   for (const c of chans.values()) drawNow(c);
   announce();
 }
+
+// ── the kept shows ───────────────────────────────────────────────────────────
+// a live show src/radio.mjs kept, played as the plain MP3 it is, with the
+// native element's own seeking; one sound on the page at a time, so Kuula
+// here stops the channel and Kuula on a channel stops this
+const kept = document.createElement('audio');
+kept.preload = 'none';
+document.body.append(kept);
+let keptBtn = null;
+function stopShow() {
+  if (!keptBtn) return;
+  kept.pause(); kept.removeAttribute('src'); kept.load();
+  keptBtn.textContent = 'Kuula'; keptBtn = null;
+}
+$('st-kept')?.addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-show]');
+  if (!b) return;
+  if (keptBtn === b) { stopShow(); return; }
+  stop(); stopShow();
+  kept.src = b.dataset.show;
+  keptBtn = b; b.textContent = 'Peata';
+  log(`salvestus: ${b.dataset.title}.`);
+  kept.play().catch((err) => log(`Mängimine ootab: ${err.name}.`));
+  if (MEDIA_SESSION) navigator.mediaSession.metadata = new MediaMetadata({ title: b.dataset.title, artist: 'ECCM', album: 'Salvestused', artwork: [{ src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' }] });
+});
+kept.addEventListener('ended', stopShow);
 
 // the bar between polls: the clock moves it, the poll corrects it
 setInterval(() => { for (const c of chans.values()) drawNow(c); }, 1000);
