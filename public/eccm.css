@@ -468,9 +468,9 @@
   .btn-sm { block-size: 2rem; padding-inline: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: 1; }
   .table td .btn-sm { vertical-align: middle; }
   /* icons (asked 2026-10-02: "pick feather and implement"): Feather, from one sprite,
-     public/vendor/icons/feather/sprite.svg, written by tools/feather.mjs with every corner square and a stroke
+     public/vendor/icons/feather/icons.svg, written by tools/feather.mjs with every corner square and a stroke
      that stays one CSS pixel at any size, the weight of the site's rules. An icon is <svg class="ico"><use
-     href="/vendor/icons/feather/sprite.svg#name"/></svg>, as tall as the text beside it unless sized, in the
+     href="/vendor/icons/feather/icons.svg#name"/></svg>, as tall as the text beside it unless sized, in the
      ink of its text; /icons shows every name. Mitred joins and butt caps, since nothing on the site is round */
   .ico { display: inline-block; flex: none; inline-size: 1.25em; block-size: 1.25em; fill: none; stroke: currentColor; stroke-width: 1; stroke-linejoin: miter; stroke-linecap: butt; }
   /* an icon beside a word in a button: 16 px in the small one, 20 in the large, the button's own small gap */

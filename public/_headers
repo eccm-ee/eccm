@@ -9,3 +9,11 @@
 # swithes"). A changed font gets a new file name.
 /vendor/*
   Cache-Control: public, max-age=31536000, immutable
+
+# the icons are one sprite that grows as icons are added (tools/feather.mjs), so unlike a font it changes
+# under its name: a browser asks again each time and gets a 304 when nothing changed. Under the year-long
+# rule above, the sprite of 2026-10-02 afternoon stayed in a browser with four icons after the evening's 63
+# were deployed (reported with a crop: "most icons missign"), which is why it was renamed icons.svg
+/vendor/icons/*
+  ! Cache-Control
+  Cache-Control: public, max-age=0, must-revalidate

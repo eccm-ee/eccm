@@ -1,4 +1,4 @@
-// tools/feather.mjs: writes public/vendor/icons/feather/sprite.svg, the site's icons, from Feather 4.29.2
+// tools/feather.mjs: writes public/vendor/icons/feather/icons.svg, the site's icons, from Feather 4.29.2
 // (MIT, LICENSE beside the sprite), asked 2026-10-02: "pick feather and implement". Each icon is fetched from
 // jsDelivr as published and changed in four ways only, because the site has no radius and a 1px line:
 //   - stroke width, caps and joins come off, so the page sets them (eccm.css .ico and .btn-ico);
@@ -89,8 +89,8 @@ for (const [, icons] of GROUPS) for (const [id, name] of icons) {
   symbols.push(`  <symbol id="${id}" viewBox="0 0 24 24"><!-- ${name} -->${els.map(shape).join('')}</symbol>`);
 }
 
-writeFileSync(new URL('../public/vendor/icons/feather/sprite.svg', import.meta.url), `<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
-  <!-- public/vendor/icons/feather/sprite.svg, the site's icons, written by tools/feather.mjs from Feather 4.29.2
+writeFileSync(new URL('../public/vendor/icons/feather/icons.svg', import.meta.url), `<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
+  <!-- public/vendor/icons/feather/icons.svg, the site's icons, written by tools/feather.mjs from Feather 4.29.2
        (MIT, LICENSE beside it), each symbol's comment its Feather name. What changed from the published files
        is in the tool's header: no stroke width, caps or joins, a non-scaling stroke, corners square, and crisp
        edges on rects and straight lines. Do not edit by hand; add a name to the tool and run it. -->

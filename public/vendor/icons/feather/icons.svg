@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
-  <!-- public/vendor/icons/feather/sprite.svg, the site's icons, written by tools/feather.mjs from Feather 4.29.2
+  <!-- public/vendor/icons/feather/icons.svg, the site's icons, written by tools/feather.mjs from Feather 4.29.2
        (MIT, LICENSE beside it), each symbol's comment its Feather name. What changed from the published files
        is in the tool's header: no stroke width, caps or joins, a non-scaling stroke, corners square, and crisp
        edges on rects and straight lines. Do not edit by hand; add a name to the tool and run it. -->
