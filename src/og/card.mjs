@@ -8,13 +8,13 @@
 // Every colour is a literal from the picture's scheme, since resvg has no
 // cascade and a var() never resolves (plans/plan-eccm-social-images.md
 // section 3); an event without one takes the site's own white and ink.
-import { SYMBOL } from '../render/mark.mjs';
+import { SYMBOL, HEADER } from '../render/mark.mjs';
 import { dateLong, clock } from '../render/dates.mjs';
 import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
-export const TEMPLATE_V = 5;
+export const TEMPLATE_V = 6;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
@@ -29,10 +29,14 @@ const MARK_H = (E_BOTTOM - E_TOP) * K;
 const MARK_TOP = Math.round(H - PAD - MARK_H);
 // the least air between the text and the mark, --eccm-s-12; it is usually far more
 const AIR = 48;
-// the title steps, about 1.26 apart, and the meta line under them: four sizes
-// and one, the large contrast of eccm-ui section 2. The largest that holds the
-// whole title in the room above the mark wins; under the last, an ellipsis.
-const STEPS = [96, 76, 60, 48];
+// the title at one size on every card (asked 2026-10-02: "lock social images
+// title size (find most average size)"). It stepped 96, 76, 60, 48 before, the
+// largest that fit, and the 50 live cards took 96 (38) or 76 (12): mean 91.2.
+// An average size cuts the long titles: MEASURED the same day over those 50,
+// with the venue on its own row, 72 and 70 cut 4 with an ellipsis and 68 cuts
+// none, setting the longest, 104 characters, on four lines. So 68, the largest
+// every title holds at; a longer one still ends in an ellipsis.
+const STEPS = [68];
 const TITLE_LH = 1.12;
 const META = 30, META_LH = 1.4, META_GAP = 32;
 // title to meta: the title's descent and then --eccm-s-8, the gap within the group
@@ -74,13 +78,10 @@ function balance(ps, face, fs, maxW) {
   return wrapAt(ps, face, fs, hi);
 }
 
-// the meta line: the date and time, then the venue, set apart by space and
-// no glyph; on two lines when the two do not fit on one
-const metaLines = (cells, face) => {
-  const [a, b] = cells;
-  if (!b) return [[a]];
-  return width(a, face, META) + META_GAP + width(b, face, META) <= MEASURE ? [[a, b]] : [[a], [b]];
-};
+// the meta: the date and time, and the venue on a row of its own under it
+// (asked 2026-10-02: "put location to its own row"); it shared the line when
+// the two fitted until then
+const metaLines = (cells) => cells.filter(Boolean).map((c) => [c]);
 
 // the lines of title the room above the mark holds at a size, given the meta's lines
 const room = (fs, face, metaN) => {
@@ -148,6 +149,20 @@ const LINES = [...SRC.slice(SRC.indexOf('<g class="lines">')).matchAll(/<rect x=
 // mark's own short ends past the M (they ran to the card's edge until
 // 2026-10-01), one pixel each, snapped rather than scaled (eccm-ui, hairlines
 // in a raster), and the three joins between the letters drawn the same way
+// the nameplate at the foot, the header's own lockup with the tagline beside
+// the mark (asked 2026-10-02: "use eccm nameplate on social card footer"):
+// its two lines and the hyphen drawn as a rule, lifted from the header's
+// svg.beside in the card's language and set at the mark's scale in the
+// tagline's face, Instrument Sans at width 75 and weight 500 (og-fonts.py)
+const PLATE = Object.fromEntries(['et', 'en'].map((l) => {
+  const svg = HEADER[l].slice(HEADER[l].indexOf('<svg class="beside"'));
+  const inner = svg.slice(svg.indexOf('>') + 1, svg.indexOf('</svg>'));
+  return [l, inner.replace(/<use[^>]*><\/use>|<use[^>]*\/>/g, '').replace(/ class="tag-is"/g, ` font-family="${M.tag.family}"`)];
+}));
+const plateSvg = (ink, lang) => {
+  const tx = PAD - E_LEFT * K, ty = MARK_TOP - E_TOP * K;
+  return `<g transform="translate(${tx} ${ty}) scale(${K})" fill="${ink}">${(PLATE[lang] || PLATE.et).replace(/currentColor/g, ink)}</g>`;
+};
 const markSvg = (ink) => {
   const tx = PAD - E_LEFT * K, ty = MARK_TOP - E_TOP * K;
   const letters = `<g transform="translate(${tx} ${ty}) scale(${K})" fill="${ink}">${LETTERS.replace(/INK/g, ink)}</g>`;
@@ -163,7 +178,7 @@ const markSvg = (ink) => {
 export const cardSvg = (input) => {
   const face = input.serif ? 'serif' : 'sans';
   const metaFace = input.serif ? 'serifText' : 'sans';
-  const meta = metaLines(input.meta, metaFace);
+  const meta = metaLines(input.meta);
   const { fs, lines } = fitTitle(input.title, face, meta.length);
   const out = [];
   // the title's first cap on the top margin: the ink, not the line box
@@ -176,7 +191,7 @@ export const cardSvg = (input) => {
     y += META_LH * META;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`
-    + `<rect width="${W}" height="${H}" fill="${input.ground}"/>${out.join('')}${markSvg(input.ink)}</svg>`;
+    + `<rect width="${W}" height="${H}" fill="${input.ground}"/>${out.join('')}${markSvg(input.ink)}${input.plate === false ? '' : plateSvg(input.ink, input.lang)}</svg>`;
 };
 
 // the words a reader of the card's alt hears: the title, then the meta line
@@ -196,7 +211,8 @@ const SITE_NAME = { et: 'Eesti Nüüdismuusika Keskus', en: 'Estonian Centre of 
 export const SITE_V = 2;   // the site card's own version, in its R2 key
 export const siteSvg = (lang) => {
   const l = lang === 'en' ? 'en' : 'et';
-  return cardSvg({ lang: l, title: SITE_NAME[l], meta: ['Pühavaimu 9, Tallinn'], ...SITE_CARD, serif: false });
+  // the mark alone at its foot: the title is already the centre's name, which the nameplate would say twice
+  return cardSvg({ lang: l, title: SITE_NAME[l], meta: ['Pühavaimu 9, Tallinn'], ...SITE_CARD, serif: false, plate: false });
 };
 // the radio's own card, the same shape on a deep wine, so a link to /radio is
 // told from the site's card at a glance (asked 2026-10-01: "rename station to
@@ -205,7 +221,7 @@ const RADIO_CARD = { ground: '#3b1d2b', ink: '#ffffff', ink2: '#d9c8d0' };
 const RADIO_NAME = { et: 'Raadio', en: 'Radio' };
 export const radioSvg = (lang) => {
   const l = lang === 'en' ? 'en' : 'et';
-  return cardSvg({ lang: l, title: RADIO_NAME[l], meta: [SITE_NAME[l]], ...RADIO_CARD, serif: false });
+  return cardSvg({ lang: l, title: RADIO_NAME[l], meta: [SITE_NAME[l]], ...RADIO_CARD, serif: false, plate: false });
 };
 export const radioPath = (lang) => `/og/radio-${lang === 'en' ? 'en' : 'et'}.png`;
 export const sitePath = (lang) => `/og/site-${lang === 'en' ? 'en' : 'et'}.png`;

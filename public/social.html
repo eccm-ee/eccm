@@ -192,7 +192,17 @@
 <main class="frame ds">
   <p class="crumb"><a href="/admin">Admin</a></p>
   <h1 class="list-label">Social</h1>
-  <h2>Event share images</h2>
+  <h2>Pages</h2>
+  <div class="prose flow">
+    <p>Every page that is not an event names one of these. The site card is the centre's name on deep blue, in the page's language; the radio has its own on wine.</p>
+  </div>
+  <div class="ds-og">
+    <figure><img src="/og/site-et.png" width="1200" height="630" alt="Eesti Nüüdismuusika Keskus, Pühavaimu 9, Tallinn"><figcaption>Site card, ET: the front page, Sündmused, the text pages (ECCM, Tallinn 1965, NAN, Ulysses, Konkursid), the newsletter and its archive</figcaption></figure>
+    <figure><img src="/og/site-en.png" width="1200" height="630" alt="Estonian Centre of Contemporary Music, Pühavaimu 9, Tallinn"><figcaption>Site card, EN: /en/, Events, the English text pages and the newsletter</figcaption></figure>
+    <figure><img src="/og/radio-et.png" width="1200" height="630" alt="Raadio, Eesti Nüüdismuusika Keskus"><figcaption>Radio card, ET</figcaption></figure>
+    <figure><img src="/og/radio-en.png" width="1200" height="630" alt="Radio, Estonian Centre of Contemporary Music"><figcaption>Radio card, EN: /radio</figcaption></figure>
+  </div>
+  <h2>Events</h2>
   <div class="prose flow">
     <p>The image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Roboto Serif or Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
   </div>
@@ -213,7 +223,16 @@
 // URL its event page carries, so what shows here is what a scraper fetches
 const box = document.getElementById('og-cards');
 try {
-  const cards = await (await fetch('/og/e.json')).json();
+  // one card per scheme, its ground and face, and at most eight (asked 2026-10-02: "too many social images,
+  // use ones with unique theme and not too many (6? 8?)"); the list is newest first, so each is the latest of its kind
+  // "unique" by eye, not by hex: four browns a few steps apart are one theme, so a card is kept only when its
+  // ground is far from every ground already kept, or its face differs (MEASURED 2026-10-02: 19 exact grounds
+  // among 50 cards, about half of them near twins; at 30 apart seven remain)
+  const all = await (await fetch('/og/e.json')).json();
+  const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const far = (a, b) => Math.hypot(...rgb(a).map((v, i) => v - rgb(b)[i])) > 30;
+  const cards = [];
+  for (const c of all) if (cards.length < 8 && cards.every((k) => k.serif !== c.serif || far(k.ground, c.ground))) cards.push(c);
   box.replaceChildren(...cards.map((c) => {
     const f = document.createElement('figure');
     const a = document.createElement('a'); a.href = c.page;
