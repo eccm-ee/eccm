@@ -206,13 +206,12 @@
   .nav { display: flex; flex-wrap: wrap; column-gap: var(--eccm-s-8); row-gap: var(--eccm-s-2); }
   .lang { display: flex; column-gap: var(--eccm-s-3); }
   .lang-in { display: none; }
-  /* the theme switch, beside the language switch and in its language: one word at the menu's size in the
-     ink, naming the state the page is in and moving to the next on a press, Auto, then Light, then Dark
-     (tunniplaan's footer word, asked 2026-10-02: "do dark mode in bg. see ../tunniplaan etc"). No box and
-     no line until hovered, as the other language is drawn; the step between it and ET EN is the row's
-     own, wider than the one inside the pair, so it reads as a second thing. All three words are in the
-     markup and the attribute the head script set shows one, so the right word is there on first paint */
-  .theme-btn { padding: 0; margin: 0; border: 0; background: none; color: var(--eccm-ink); font-size: 1rem; line-height: var(--eccm-lh-meta); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  /* the theme switch, in the footer under the copyright since 2026-10-02 ("move theme selector to footer"),
+     where tunniplaan has its own (asked the same day: "do dark mode in bg. see ../tunniplaan etc"): one word
+     in the footer's size and second ink, as its links are, naming the state the page is in and moving to the
+     next on a press, Auto, then Light, then Dark. No box and no line until hovered. All three words are in
+     the markup and the attribute the head script set shows one, so the right word is there on first paint */
+  .theme-btn { padding: 0; margin: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .theme-btn:hover { text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
   .theme-btn > [data-t] { display: none; }
   :root:not([data-theme]) .theme-btn > [data-t="auto"], :root[data-theme="light"] .theme-btn > [data-t="light"], :root[data-theme="dark"] .theme-btn > [data-t="dark"] { display: inline; }
@@ -227,13 +226,12 @@
     .site-head .mark svg.beside { display: none; }
     .site-head .mark svg.under { display: block; }
     .site-head .sw { margin-inline-start: auto; align-self: flex-start; }
-    .site-head .sw .lang, .site-head .sw .theme-btn { display: none; }
+    .site-head .sw .lang { display: none; }
     .menu-btn { display: grid; align-self: flex-start; }
     .site-head .nav { display: none; }
     .site-head[data-open] .nav { display: grid; order: 3; flex-basis: 100%; margin-block-start: 1lh; justify-content: start; }
     .site-head[data-open] .nav a { display: inline-block; padding-block: var(--eccm-s-2); }
     .site-head[data-open] .lang-in { display: flex; align-items: baseline; column-gap: var(--eccm-s-6); margin-block-start: var(--eccm-s-4); }
-    .site-head[data-open] .lang-in .theme-btn { padding-block: var(--eccm-s-2); }
     .site-head[data-open] .lang-in .lang { display: flex; align-items: baseline; }
     .site-head[data-open] .lang-in .lang > * { display: inline-block; padding-block: var(--eccm-s-2); }
   }
@@ -256,6 +254,7 @@
   .site-foot .mk { display: block; color: var(--eccm-ink); }
   .site-foot .mk svg { display: block; inline-size: 6rem; }
   .site-foot .copy { margin-block-start: var(--eccm-s-6); }
+  .site-foot .theme { margin-block-start: var(--eccm-s-3); }
   /* four content columns and the partner mark: the mark and the copyright, the menu in two, the two
      addresses, and the phone with the three links, which got their own column 2026-09-29 (asked as
      "move Telefon ... to separate col, like page links in footer") */
