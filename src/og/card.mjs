@@ -14,7 +14,7 @@ import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
-export const TEMPLATE_V = 14;
+export const TEMPLATE_V = 15;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
@@ -26,7 +26,9 @@ const PAD = 64;
 // The mark is 6 / 7.375 since 2026-10-02 ("just make logo smaller" ran the
 // other way that day: "just make logo bigger in social cards"), the stave's
 // pitch a whole 6 px and the letters E to M 243 px, half as large again.
-const K = 6 / 7.375;
+// 8 / 7.375 since the same evening, the letters E to M 323 px, a third larger again, when the card read too
+// small on a phone (asked 2026-10-02: "Make texts and logo bigger hard to read", with a phone's screenshot)
+const K = 8 / 7.375;
 const E_LEFT = 35, E_TOP = 29, E_BOTTOM = 122;
 const MARK_H = (E_BOTTOM - E_TOP) * K;
 const MARK_TOP = Math.round(H - PAD - MARK_H);
@@ -40,9 +42,12 @@ const AIR = 48;
 // changed: 68 with the venue on its own row (72 and 70 cut 4), then 62 once the
 // mark grew to 6 / 7.375 (68 and 64 cut 3), the longest, 104 characters, on
 // four lines. A longer title still ends in an ellipsis.
-const STEPS = [62];
+// Two steps since the same evening ("Make texts and logo bigger hard to read"): with the mark at 8 / 7.375
+// and the date and venue at 40 one size held every title only at 56, smaller than before, so a title takes
+// 80 when it fits and 56 when it does not; MEASURED over the 50 live cards, 34 at 80, 16 at 56, none cut
+const STEPS = [80, 56];
 const TITLE_LH = 1.12;
-const META = 30, META_LH = 1.4, META_GAP = 32;
+const META = 40, META_LH = 1.4, META_GAP = 32;   // 30 until the same evening
 // title to meta: the title's descent and then --eccm-s-8, the gap within the group
 const GROUP = 32;
 const MEASURE = W - 2 * PAD;
