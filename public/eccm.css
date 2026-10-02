@@ -541,7 +541,8 @@
      2026-10-01 as "admin pages full w"; a note above them keeps the measure, since it is still read */
   main.admin :is(.items, .form, .table, .cards, .fields, .langs) { max-inline-size: none; }
   .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: var(--eccm-s-6); }
-  @media (min-width: 64rem) { .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  /* four to a row on a desk since 2026-10-02 ("4 col cards"), three before */
+  @media (min-width: 64rem) { .cards { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .card { display: flex; flex-direction: column; justify-content: flex-start; gap: var(--eccm-s-2); aspect-ratio: 16 / 9; padding: var(--eccm-s-6); border: 1px solid var(--eccm-ink); color: var(--eccm-ink); text-decoration: none; min-inline-size: 0; }
   /* a pointer lightens the card, its edge and its words easing to the lighter greys (asked 2026-10-01: "make it
      lighen and animate on hover, rm double border"); the keyboard's focus keeps the site's own ring outside */

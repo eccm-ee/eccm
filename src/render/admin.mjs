@@ -12,14 +12,17 @@ import { html } from './html.mjs';
 import { page } from './chrome.mjs';
 
 // in English since 2026-10-02 ("convert all admin pages to english only"), and the type study moved under
-// Research the same day with the radio tools ("in admin page to reseach card link")
+// Research the same day with the radio tools ("in admin page to reseach card link"), and the design system is
+// three cards since that evening ("split ds into components logo and social, separate cards in admin. 4 col cards")
 const TOOLS = [
   ['/et/sundmused', 'Events', 'Every event. Each one is edited from the Edit button on its own page.'],
   ['/items', 'Notices', 'A notice to phones at a set time, and the list of notices.'],
   ['/radio', 'Radio', 'The station\u2019s channels, what is on, and the recorded live shows.'],
   ['/admin/files', 'Files', 'The site\u2019s audio: uploads and the recorded live shows, and which channel plays each.'],
   ['/edit/uudiskiri', 'Newsletter', 'Issues to subscribers: compose from events, send a test, send to all.'],
-  ['/ds', 'Design system', 'Type, colour, logo, components and share images.'],
+  ['/ds', 'Components', 'Type, figures, colour, space, buttons, tables and cards.'],
+  ['/logo', 'Logo', 'The square mark, the wordmark in both languages, and every icon size.'],
+  ['/social', 'Social images', 'The share image of every published event, as a scraper sees it.'],
   ['/admin/research', 'Research', 'Typography and radio programming tools.'],
 ];
 

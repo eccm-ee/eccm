@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>ECCM: logo</title>
+<!-- the site's share card, the logo; absolute on the staging host, to change at cutover with the rest -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ECCM">
+<meta property="og:title" content="ECCM: logo">
+<meta property="og:image" content="https://eccm.positron.studio/og/site-et.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="ECCM, Eesti Nüüdismuusika Keskus">
+<meta name="twitter:card" content="summary_large_image">
+<!-- split from ds.html on 2026-10-02 (asked: "split ds into components logo and social, separate cards in admin"): ds.html the components at /ds, logo.html the mark, wordmark and icons at /logo, social.html the share images at /social (asked: "logo.html / social.html"). Each has its own card on /admin. -->
+<!-- public/ds.html: the design system on one page, asked 2026-09-27 ("make
+     /ds page for design system elements. typography, buttons, logo"). Every
+     value here is eccm.css's own, read through the same classes the site's
+     pages use, so a change to the stylesheet shows here first; nothing is
+     copied. The three logos are ./logo-et.svg, ./logo-en.svg and the two
+     language ./logo.svg, and the header of every page takes the one of its
+     language. Rules: .claude/skills/eccm-ui and positron-compose. -->
+<link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
+<link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ECCM">
+<link rel="stylesheet" href="./eccm.css">
+<link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* the page's own layout for tables of tokens, swatches and specimens; the
+     type in them is the site's small register, and the only painted grounds
+     are the ones whose color is the content */
+  @layer page {
+    .ds h2 { margin-block: var(--eccm-s-24) var(--eccm-s-8); font-size: var(--eccm-t-l); }
+    .ds h2:first-of-type { margin-block-start: var(--eccm-s-4); }
+    .ds-tokens { display: grid; grid-template-columns: max-content max-content minmax(0, 1fr); column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); max-inline-size: 48rem; margin-block: var(--eccm-s-6); }
+    .ds-tokens > code { font-family: ui-monospace, Menlo, monospace; font-size: 0.8125rem; }
+    .ds-tokens > span:nth-child(3n) { color: var(--eccm-ink-2); }
+    .ds-spec { display: grid; row-gap: var(--eccm-s-16); margin-block: var(--eccm-s-8); }
+    .ds-cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-3); }
+    .ds-swatches { display: flex; flex-wrap: wrap; gap: var(--eccm-s-6); margin-block: var(--eccm-s-6); }
+    .ds-swatch { inline-size: 9rem; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
+    .ds-swatch i { display: block; block-size: 4rem; margin-block-end: var(--eccm-s-2); }
+    .ds-swatch.white i { border: 1px solid var(--eccm-rule); }   /* white has no other edge */
+    .ds-space { display: grid; row-gap: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); margin-block: var(--eccm-s-6); max-inline-size: var(--eccm-measure); }
+    .ds-space > div { display: grid; grid-template-columns: 7rem minmax(0, 1fr); align-items: center; column-gap: var(--eccm-s-4); }
+    .ds-space i { display: block; block-size: var(--eccm-s-3); background: var(--eccm-ink); }
+    .ds-ground { padding: var(--eccm-s-8); background: var(--ev-ground, var(--eccm-ground)); color: var(--ev-ink, var(--eccm-ink)); }
+    .ds-ground + .ds-ground { margin-block-start: var(--eccm-s-6); }
+    .ds-ground .facts dt, .ds-ground .credits dt, .ds-ground .small { color: var(--ev-ink2, var(--eccm-ink-2)); }
+    /* the faces a derived page sets, as derive.html applies them */
+    .ds-serif h1, .ds-serif h2 { font-family: var(--ev-title-face, inherit); font-weight: var(--ev-title-weight, 400); }
+    .ds-serif .facts dd, .ds-serif .credits dd { font-family: var(--ev-title-face, inherit); }
+    .ds-serif .prose { font-family: var(--ev-body-face, inherit); }
+    .ds-ground .ds-cap { color: inherit; opacity: 0.7; }
+    .ds-btns { display: flex; flex-wrap: wrap; gap: var(--eccm-s-4); }
+    .ds-squares { display: flex; flex-wrap: wrap; gap: var(--eccm-s-8); margin-block: var(--eccm-s-8); }
+    .ds-squares figure { margin: 0; }
+    .ds-squares img { display: block; inline-size: 8rem; block-size: 8rem; }
+    .ds-sizes { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--eccm-s-6); margin-block: var(--eccm-s-8); }
+    .ds-sizes figure { margin: 0; }
+    /* a negative icon carries its own black square; the row stays on the page (asked 2026-09-27: "put black to back to each icon not whole block") */
+    .ds-neg img { background: #1a1a1a; }
+    .ds-sizes img { display: block; }
+    /* the share images, each at half its 1200 px where two fit and the column's width where one does, so a pair is clearly
+       equal; a 1 px rule in the page's own colour around every one, since a ground near white has no other edge */
+    .ds-og { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(30rem, 100%), 1fr)); gap: var(--eccm-s-12) var(--eccm-s-8); margin-block: var(--eccm-s-8); }
+    .ds-og figure { margin: 0; }
+    .ds-og img { display: block; inline-size: 100%; block-size: auto; max-inline-size: 600px; outline: 1px solid var(--eccm-rule); }
+    .ds-og figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+    /* the icon's square shows on hover, since a positive mark on white has no edge (asked 2026-09-27) */
+    /* the figures compared: three candidates side by side on a desk and one under another on a phone, each a
+       column of start times beside a column of lengths ending on one x, then an id and the small register */
+    .ds-figs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); gap: var(--eccm-s-12) var(--eccm-s-8); margin-block: var(--eccm-s-8); }
+    .ds-fig-rows { display: grid; grid-template-columns: max-content max-content; column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-2); }
+    .ds-fig-rows > :nth-child(2n) { text-align: end; }
+    .ds-fig-rows > [aria-current="true"] { font-weight: 600; }
+    .ds-fig-meta { margin-block-start: var(--eccm-s-4); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+    /* Geist Mono at 0.96 of the size, since its x-height is 53 per 100 against Instrument Sans's 51 (MEASURED 2026-10-02) */
+    .ds-mono { font-family: 'Geist Mono', ui-monospace, Menlo, monospace; font-size: 0.96em; }
+    .ds-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--eccm-s-2); max-inline-size: var(--eccm-measure); }
+    /* artist bios, plans/plan-eccm-bios.md section 3: no box, no tint, no
+       rule, the name an h2 in the prose register, s-12 between bios against
+       s-4 within, a square photo at 5.5rem when a row has one */
+    .bios { display: grid; row-gap: var(--eccm-s-12); max-inline-size: var(--eccm-measure); }
+    /* the picture and the text start on one line (asked 2026-09-28 with a crop: "align text and image to top") */
+    .bio { display: grid; row-gap: var(--eccm-s-4); align-items: start; }
+    .bio:has(.bio-photo) { grid-template-columns: 5.5rem minmax(0, 1fr); column-gap: var(--eccm-s-6); }
+    .bio:has(.bio-photo) > :not(.bio-photo) { grid-column: 2; }
+    .bio-photo { inline-size: 5.5rem; block-size: 5.5rem; object-fit: cover; grid-row: 1 / span 3; }
+    .bio h2 { font-size: var(--eccm-t-l); margin: 0; margin-block-start: 0; line-height: 1; }   /* the flow rhythm sets the logical margin, which a physical shorthand does not reach */
+    .bio-link { margin: 0; }   /* the paragraphs keep the flow rhythm */
+    /* under 40rem the token table stacks, since two max-content columns
+       beside a third do not fit a phone (MEASURED: 90 px of sideways
+       overflow at 375) */
+    @media (max-width: 40rem) {
+      .ds-tokens { grid-template-columns: minmax(0, 1fr); row-gap: var(--eccm-s-1); }
+      .ds-tokens > span:nth-child(3n) { margin-block-end: var(--eccm-s-3); }
+      .ds-space > div { grid-template-columns: 6rem minmax(0, 1fr); }
+      .bio:has(.bio-photo) { grid-template-columns: minmax(0, 1fr); }
+      .bio:has(.bio-photo) > * { grid-column: 1; }
+      .bio-photo { grid-row: auto; }
+    }
+  }
+  /* the wordmark studies, moved here from wordmark.html on 2026-09-28 ("integrate wordmark into bottom on ds page and rm wordmark") */
+  @layer page {
+    .wm h3 { margin-block: var(--eccm-s-24) var(--eccm-s-8); font-size: var(--eccm-t-l); }
+    .wm h3:first-of-type { margin-block-start: var(--eccm-s-8); }
+    .intro { max-inline-size: var(--eccm-measure); }
+    .cell { display: grid; row-gap: var(--eccm-s-6); margin-block-end: var(--eccm-s-16); }
+    .cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin: 0; }
+    .locks { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--eccm-s-12); }
+    /* the beside lockups as a grid of two columns, plain and white on black, and three rows, English, Estonian and both (asked 2026-09-28 with a crop: "put them to 2x3 grid") */
+    #beside .locks, #under .locks { display: grid; grid-template-columns: repeat(2, max-content); align-items: start; }
+    /* one column on a phone: the pair side by side is 466 px and dragged the whole page sideways at 375, which
+       zoomed the phone out and drew everything on /ds small, the share images with it (2026-10-01) */
+    @media (max-width: 48rem) { #beside .locks, #under .locks { grid-template-columns: minmax(0, 1fr); } .locks svg { max-inline-size: 100%; block-size: auto; } }
+    .locks figure { margin: 0; }
+    .locks svg { display: block; overflow: visible; }
+    .w20 { inline-size: 20rem; } .w11 { inline-size: 11rem; }
+    .locks svg[data-w] { inline-size: calc(var(--rem) * var(--k)); }
+    /* a lockup in a frame: the border is a CSS pixel whatever the scale, and the inverted one is the ink's own box with no line round it */
+    /* the plain lockup carries a transparent border that turns ink on hover, so a hover moves nothing (asked 2026-09-28: "rm white bg black border examples. show border on hover. no hover: transparent but present border to avoid jump") */
+    .locks svg.plain { border: 1px solid transparent; }
+    .locks svg.plain:hover { border-color: var(--eccm-ink); }
+    .locks svg.inv { background: var(--eccm-ink); color: var(--eccm-ground); }
+    .locks figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+  }
+  @layer page {
+  }
+  /* unlayered on purpose: the bio heading's top margin comes from a heading rule the layers cannot outrank, and the name has to sit on the picture's top */
+  .bio h2 { margin-block-start: 0; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="mark" viewBox="35 27 310 96.5"><!-- the box is the ink, 27 to 123.5: the C's stroke reaches 2 over the E and M's top at 29 and 1.5 under their bottom at 122, the round letter's overshoot, and a box of 29 to 122 cut both (reported 2026-09-27, "C ups and downs are cut off") --><g fill="currentColor"><g class="letters"><!-- E: a 14 stem, two 38 bars and a 31 bar; the bottom bar starts at
+         row 108, where the raster's join to the C runs along its top edge -->
+    <rect x="35" y="29" width="14" height="93"></rect>
+    <rect x="35" y="29" width="38" height="13"></rect>
+    <rect x="35" y="67" width="31" height="13"></rect>
+    <rect x="35" y="108" width="38" height="14"></rect>
+    <!-- C and C: a stadium 44 wide and 97 tall, stroke 14, open on the right
+         between y 60 and y 88; the second is the first moved 81 to the right -->
+    <path d="M146 60 V49 A15 15 0 0 0 116 49 V101.5 A15 15 0 0 0 146 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"></path>
+    <path d="M227 60 V49 A15 15 0 0 0 197 49 V101.5 A15 15 0 0 0 227 101.5 V88" fill="none" stroke="currentColor" stroke-width="14"></path>
+    <!-- M: two 14 stems and a V whose arms are 10 wide horizontally, start
+         inside the stems at the top and meet on the baseline -->
+    <rect x="273" y="29" width="14" height="93"></rect>
+    <rect x="319" y="29" width="14" height="93"></rect>
+    <polygon points="283,29 293,29 302.5,84 312,29 322,29 306,122 299,122"></polygon>
+    <!-- the stave: five hairlines past the M on a 7.375 pitch, and three joins
+         between the letters. Every join runs FLUSH along an edge of the letter
+         it meets, which is how the raster draws them (rows 58 and 59 are the
+         second C's upper terminal's last two rows, 88 and 89 the first C's
+         lower terminal's first two, 108 and 109 the E's bottom bar's first
+         two), so the first line sits on the terminal's bottom edge at 60 and
+         the fifth on the terminal's top edge at 88. Reported 2026-09-26 as
+         "left and center thin line does not line up with typeface" when they
+         were centred on their rows instead -->
+    <!-- the tagline: x-height 14, baselines at 153 and 174, each line squeezed
+         to the width the raster measures, 311 and 221. DIN Condensed first
+       because its natural width for the first line is 329 px against the
+       picture's 311, a 5 per cent squeeze, where Helvetica Neue Condensed
+       Bold needs 26 and Arial Narrow 25 (MEASURED on ./logo.html, 2026-09-26) -->
+    <g font-family="'DIN Condensed', 'Helvetica Neue', 'Arial Narrow', sans-serif" font-stretch="condensed" font-weight="700" font-size="27" lengthAdjust="spacingAndGlyphs">
+      <text x="34" y="153" textLength="311">estonian centre of contemporary music</text></g><g class="lines"><rect x="333" y="58.5" width="12" height="1.5"></rect>
+        <rect x="333" y="65.875" width="12" height="1.5"></rect>
+        <rect x="333" y="73.25" width="12" height="1.5"></rect>
+        <rect x="333" y="80.625" width="12" height="1.5"></rect>
+        <rect x="333" y="88" width="12" height="1.5"></rect>
+        <rect x="234" y="58.5" width="39" height="1.5"></rect>
+        <rect x="153" y="88" width="37" height="1.5"></rect>
+        <rect x="73" y="108" width="36" height="1.5"></rect></g></g></g></symbol></svg>
+<header class="site-head">
+  <div class="frame">
+    <a class="mark" href="./" aria-label="Estonian Centre of Contemporary Music"><svg class="beside" aria-hidden="true" viewBox="35 27 601.5 96.5" style="--k: 1.940;"><use href="#mark" x="35" y="27" width="310" height="96.5"></use><text class="tag-is" font-size="37.00" fill="currentColor" x="373.0" y="68.9" text-anchor="start">estonian centre of</text><text class="tag-is" font-size="37.00" fill="currentColor" x="373.0" y="104.0" text-anchor="start">contemporary music</text></svg><svg class="under" aria-hidden="true" viewBox="35 27 310 183" style="--k: 1.000;"><use href="#mark" x="35" y="27" width="310" height="96.5"></use><text class="tag-is" font-size="40.00" fill="currentColor" x="35.0" y="162.0" text-anchor="start">estonian centre of</text><text class="tag-is" font-size="40.00" fill="currentColor" x="35.0" y="200.0" text-anchor="start">contemporary music</text></svg></a>
+    <span class="sw"><span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span><button class="menu-btn" type="button" aria-expanded="false" aria-label="Menu"><svg viewBox="0 0 20 15" aria-hidden="true"><rect y="0" width="20" height="1"/><rect y="7" width="20" height="1"/><rect y="14" width="20" height="1"/></svg></button></span>
+    <ul class="nav"><li><a href="./">Events</a></li><li><a href="/en/eccm">ECCM</a></li><li><a href="/en/tallinn-1965">Tallinn 1965</a></li><li><a href="/en/nan">NAN</a></li><li><a href="/en/ulysses">Ulysses</a></li><li><a href="/en/open-calls">Open calls</a></li><li class="lang-in"><span class="lang"><a href="./" lang="et">ET</a><span aria-current="page" lang="en">EN</span></span></li></ul>
+  </div>
+</header>
+
+<main class="frame ds">
+  <p class="crumb"><a href="/admin">Admin</a></p>
+  <h1 class="list-label">Logo</h1>
+  <h2>Square mark</h2>
+  <div class="prose flow">
+    <p>The square mark, no tagline, for icons and avatars, positive and negative; the outlined, plain and bold variants are files under icons/.</p>
+  </div>
+  <div class="ds-squares">
+    <figure><img src="./icons/logo-square.svg" width="354" height="354" alt=""></figure>
+    <figure><img src="./icons/logo-square-neg.svg" width="354" height="354" alt=""></figure>
+  </div>
+  <h2>Wordmark</h2>
+  <div class="wm">
+    <p class="ds-cap">Instrument Sans medium at width 75, lowercase, two lines a language, starting on the E, both languages at one size: under the mark at 40 units, one language or both, and beside the mark at 37 units after 28 units of air, one language or both side by side; each lockup plain, in a bordered frame and white on black, at 11rem of mark width.</p>
+    <div id="wm-cells"></div>
+  </div>
+  <h2>Icons</h2>
+  <div class="prose flow">
+    <p>The icon sizes: 16, 32, 48, 64, 128, 180, 192, 256 and 512 (the 256 not shown here), and a favicon.ico holding 16, 32 and 48. From 128 up each size is its own drawing with the hairlines snapped to whole pixels on an integer pitch, which is what keeps five stave lines one shade; at 48 and 64 the hairlines are dropped and the M is 12 units wider with its arms a stem wide, so its counters open; at 16 and 32 the letters are the bold set, stems of 20 units, the way eccm.ee's own favicon fills its square. At 16 a stem is 0.6 px and the letters are still four blobs; a true 16 px mark with whole-pixel strokes is a decision not taken here.</p>
+  </div>
+  <div class="ds-sizes">
+    <figure><img src="./icons/icon-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+    <figure><img src="./icons/icon-32.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+    <figure><img src="./icons/icon-48.png" width="48" height="48" alt=""><figcaption>48</figcaption></figure>
+    <figure><img src="./icons/icon-64.png" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+    <figure><img src="./icons/icon-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
+    <figure><img src="./icons/icon-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
+  </div>
+  <div class="ds-sizes ds-neg">
+    <figure><img src="./icons/icon-neg-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+    <figure><img src="./icons/icon-neg-32.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+    <figure><img src="./icons/icon-neg-48.png" width="48" height="48" alt=""><figcaption>48</figcaption></figure>
+    <figure><img src="./icons/icon-neg-64.png" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+    <figure><img src="./icons/icon-neg-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
+    <figure><img src="./icons/icon-neg-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
+  </div>
+  <div class="ds-sizes">
+    <figure><img src="./icons/stack-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+    <figure><img src="./icons/stack-32.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+    <figure><img src="./icons/stack-48.png" width="48" height="48" alt=""><figcaption>48</figcaption></figure>
+    <figure><img src="./icons/stack-64.png" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+    <figure><img src="./icons/stack-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
+    <figure><img src="./icons/stack-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
+  </div>
+  <div class="ds-sizes ds-neg">
+    <figure><img src="./icons/stack-neg-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+    <figure><img src="./icons/stack-neg-32.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+    <figure><img src="./icons/stack-neg-48.png" width="48" height="48" alt=""><figcaption>48</figcaption></figure>
+    <figure><img src="./icons/stack-neg-64.png" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+    <figure><img src="./icons/stack-neg-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
+    <figure><img src="./icons/stack-neg-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
+  </div>
+</main>
+
+<footer class="site-foot" lang="en">
+  <div class="frame"><div class="cols">
+    <div><a class="mk" href="./" aria-label="Estonian Centre of Contemporary Music"><svg viewBox="35 27 310 96.5" aria-hidden="true"><use href="#mark" x="35" y="27" width="310" height="96.5"/></svg></a><p class="copy">© 2026 Estonian Centre of Contemporary Music</p></div>
+    <div><ul class="two"><li><a href="./">Events</a></li><li><a href="/en/eccm">ECCM</a></li><li><a href="/en/tallinn-1965">Tallinn 1965</a></li><li><a href="/en/nan">NAN</a></li><li><a href="/en/ulysses">Ulysses</a></li><li><a href="/en/open-calls">Open calls</a></li></ul></div>
+    <div class="contact"><p>Hall<br>Pühavaimu 9, Tallinn</p><p>Postal address<br>Herne 11A, 10135 Tallinn</p></div><div class="contact"><p>Phone<br><a href="tel:+3725162103">+372 516 2103</a></p><p><a href="https://eccm.ee/index.php/et/eccm/kontakt">Write to us</a></p><p><a href="https://www.instagram.com/eccm.ee/">Instagram</a></p><p><a href="https://www.facebook.com/eestinyydismuusikakeskus">Facebook</a></p></div>
+    <div class="end"><a class="partner partner-uly" href="https://ulysses-platform.eu/"><img src="/partners/ulysses-platform-black.svg" alt="ULYSSES Platform"></a><a class="partner" href="https://muusikalinntallinn.ee/eng/"><img src="./partners/tallinn-cityofmusic-black_RGB.svg" alt="Tallinn, UNESCO City of Music"></a></div>
+  </div></div>
+</footer>
+<script type="module" src="./site.mjs"></script>
+<script type="module">
+const EN = 'estonian centre of contemporary music', ET = 'eesti nüüdismuusika keskus';
+const BLOCK = 298, LEFT = 35, TOP = 29, BOTTOM = 122, GAP = 12, CAP = 0.7, XH = 0.53, EBAR = 73.5, STAVE_END = 345, LH = 0.95;
+// the air after the stave, 18 until 2026-09-27 ("add more space between ECCM and beside wordmark"), and the air between two blocks set side by side
+const BESIDE_GAP = 28;
+// the two sizes, in units of the mark's 310, asked 2026-09-27: 40 under the mark, 37 beside it
+const UNDER = 40, BESIDE = 37;
+// a frame's margin from the ink, the square marks' 28 (asked 2026-09-27: "make versions inside square, 1px black border and white on black bg. for side titles a rectangle")
+const FRAME = 28;
+const NS = 'http://www.w3.org/2000/svg';
+const meter = document.createElementNS(NS, 'svg'); meter.setAttribute('width', '0'); meter.setAttribute('height', '0'); meter.style.position = 'absolute'; document.body.append(meter);
+const mt = document.createElementNS(NS, 'text'); mt.setAttribute('class', 'tag-is'); mt.setAttribute('font-size', '100'); meter.append(mt);
+// the meter takes the class of the text it measures for, so a line is measured in the face and width it is drawn in
+const widthOf = (s, cls = 'tag-is') => { mt.setAttribute('class', cls); mt.textContent = s; return mt.getComputedTextLength(); };
+const split2 = (s) => { const et = s.match(/^(.*nüüdis)(muusika keskus)$/i); if (et) return [et[1] + '-', et[2]]; const w = s.split(' '); let best = null; for (let i = 1; i < w.length; i++) { const a = w.slice(0, i).join(' '), b = w.slice(i).join(' '); const m = Math.max(a.length, b.length); if (!best || m < best.m) best = { a, b, m }; } return [best.a, best.b]; };
+const fitSize = (lines, cls) => 100 * BLOCK / Math.max(...lines.map((l) => widthOf(l, cls)));
+const blockWidth = (lines, size, cls) => Math.max(...lines.map((l) => widthOf(l, cls))) * size / 100;
+// one lockup of one or two languages: layout 'under' or 'beside', a size in units, the svg's width in rem;
+// 'columns' sets two languages side by side rather than one under the other
+// 'above' puts the first language over the mark and the rest under it
+const lockup = (texts, { layout, size, rem, columns = false, above = false, face = 'is' }) => {
+  const cls = 'tag-' + face;
+  const blocks = texts.map(split2);
+  const pitch = LH * size;
+  // from one block's last baseline to the next block's first: the descent, the same air the mark and the first line have, and a cap
+  const air = 0.25 * size + GAP + CAP * size;
+  const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('aria-hidden', 'true');
+  const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '27'); use.setAttribute('width', '310'); use.setAttribute('height', '96.5'); svg.append(use);
+  const placed = []; // [x, baseline, line]
+  const stack = (x, y, list = blocks) => { for (const lines of list) { lines.forEach((l, i) => placed.push([x, y + i * pitch, l])); y += (lines.length - 1) * pitch + air; } };
+  const centred = (lines) => EBAR - (CAP * size + (lines.length - 1) * pitch) / 2 + CAP * size; // the first baseline of a block centred on the E's middle bar
+  let vb;
+  if (layout === 'under') {
+    if (above) {
+      // the air is read at the x-height on both sides: under the mark the 12 units reach the cap line and a lowercase line's
+      // bulk sits (CAP - XH) lower, so over the mark, where the line sits on its baseline, the baseline keeps that much more
+      // (reported 2026-09-27: "estonian needs mor space under it cause typography")
+      const [first, ...rest] = blocks;
+      const y1 = TOP - GAP - (CAP - XH) * size - (first.length - 1) * pitch;
+      first.forEach((l, i) => placed.push([LEFT, y1 + i * pitch, l]));
+      stack(LEFT, BOTTOM + GAP + CAP * size, rest);
+    } else stack(LEFT, BOTTOM + GAP + CAP * size);
+    const top = Math.min(27, Math.min(...placed.map(([, y]) => y)) - CAP * size - 2);
+    vb = [35, top, 310, placed[placed.length - 1][1] + 0.25 * size - top];
+  } else if (columns) {
+    let x = STAVE_END + BESIDE_GAP;
+    for (const lines of blocks) { const y1 = centred(lines); lines.forEach((l, i) => placed.push([x, y1 + i * pitch, l])); x += blockWidth(lines, size, cls) + BESIDE_GAP; }
+  } else {
+    // one block of lines, centred on the E's middle bar
+    stack(STAVE_END + BESIDE_GAP, centred(blocks.flat()));
+  }
+  if (!vb) {
+    const right = Math.max(...placed.map(([x, , l]) => x + widthOf(l, cls) * size / 100));
+    const top = Math.min(27, Math.min(...placed.map(([, y]) => y)) - CAP * size - 2);
+    const bottom = Math.max(123.5, Math.max(...placed.map(([, y]) => y)) + 0.25 * size);
+    vb = [35, top, right - 35, bottom - top];
+  }
+  svg.setAttribute('viewBox', vb.map((v) => +v.toFixed(1)).join(' '));
+  // the mark keeps one width: the svg is as many rem as its viewBox is wide against the mark's 310
+  svg.dataset.w = rem; svg.style.setProperty('--rem', rem + 'rem'); svg.style.setProperty('--k', (vb[2] / 310).toFixed(3));
+  // the lockup sits in the document while its lines are laid, since a detached text measures as zero
+  document.body.append(svg);
+  for (const [x, y, l] of placed) {
+    const t = document.createElementNS(NS, 'text'); t.setAttribute('class', cls); t.setAttribute('font-size', size.toFixed(2)); t.setAttribute('fill', 'currentColor'); t.setAttribute('x', x.toFixed(1)); t.setAttribute('y', y.toFixed(1)); t.setAttribute('text-anchor', 'start');
+    const hy = /-$/.test(l); t.textContent = hy ? l.slice(0, -1) : l; svg.append(t);
+    if (hy) {
+      // from the drawn line itself, so a browser that measures the face at another width still puts the dash after the s
+      const wText = t.getComputedTextLength(), len = size * 0.3, mid = y - XH * 0.5 * size;
+      const dash = document.createElementNS(NS, 'rect'); dash.setAttribute('x', (x + wText + size * 0.08).toFixed(1)); dash.setAttribute('y', (mid - 0.75).toFixed(2)); dash.setAttribute('width', len.toFixed(1)); dash.setAttribute('height', '1.5'); dash.setAttribute('fill', 'currentColor'); svg.append(dash);
+    }
+  }
+  svg.remove();
+  svg.dataset.box = vb.map((v) => +v.toFixed(1)).join(' ');
+  svg.dataset.size = size; svg.dataset.above = above ? '1' : ''; svg.dataset.face = face;
+  return svg;
+};
+// the same lockup in a frame: a square for the under layout, centred on the letters (35 to 333) so the stave reaches 12 units into
+// the margin as in the square marks; a rectangle round the whole ink for the beside layout. 'inv' draws it white on black
+// 'plain' gives the lockup the frame's box with no line round it, so the three of a set sit on one y (asked 2026-09-28: "similar samples: equal paddings just first has invisible border")
+const framed = (svg, { square, inv, plain = false }) => {
+  const f = svg.cloneNode(true);
+  const [x, y, w, h] = svg.dataset.box.split(' ').map(Number);
+  const ink = square ? { x: 35, y, w: 298, h } : { x, y, w, h };
+  const fw = square ? Math.max(ink.w, ink.h) + 2 * FRAME : ink.w + 2 * FRAME;
+  const fh = square ? fw : ink.h + 2 * FRAME;
+  const spread = square && svg.dataset.above;
+  // a square with a language over the mark and one under it is centred on the letters, and the two languages sit at the
+  // margin, 28 units from the edge as the letters are at the sides (asked 2026-09-27: "in square move eng up and est down
+  // so they have same y padding as they have x padding"); any other frame is centred on the lockup's box
+  const fy = spread ? (TOP + BOTTOM) / 2 - fh / 2 : ink.y + ink.h / 2 - fh / 2;
+  const box = [ink.x + ink.w / 2 - fw / 2, fy, fw, fh].map((v) => +v.toFixed(1));
+  if (spread) {
+    const size = +svg.dataset.size, runs = [...f.querySelectorAll('text, rect')].map((el) => [el, +el.getAttribute('y')]);
+    const over = runs.filter(([, yy]) => yy < TOP), under = runs.filter(([, yy]) => yy > BOTTOM);
+    const capTop = Math.min(...over.filter(([el]) => el.tagName === 'text').map(([, yy]) => yy)) - CAP * size;
+    const descent = Math.max(...under.filter(([el]) => el.tagName === 'text').map(([, yy]) => yy)) + 0.25 * size;
+    const up = capTop - (fy + FRAME), down = (fy + fh - FRAME) - descent;
+    for (const [el, yy] of over) el.setAttribute('y', (yy - up).toFixed(1));
+    for (const [el, yy] of under) el.setAttribute('y', (yy + down).toFixed(1));
+  }
+  f.setAttribute('viewBox', box.join(' ')); f.dataset.box = box.join(' ');
+  f.style.setProperty('--k', (fw / 310).toFixed(3));
+  f.classList.add(inv ? 'inv' : plain ? 'plain' : 'frame');
+  return f;
+};
+// a cell: a caption, then each set of languages at 20rem and 11rem, each plain, in a frame, and white on black; 'frames: false' keeps the plain one alone
+const cellOf = (id, capText, opts, sets, { frames = true } = {}) => {
+  const cell = document.createElement('div'); cell.className = 'cell'; cell.id = id;
+  const p = document.createElement('p'); p.className = 'cap'; p.textContent = capText;
+  const locks = document.createElement('div'); locks.className = 'locks';
+  const square = opts.layout === 'under', shape = square ? 'square' : 'rectangle';
+  const fig = (svg, text) => { const f = document.createElement('figure'); const fc = document.createElement('figcaption'); fc.textContent = text; f.append(svg, fc); locks.append(f); };
+  for (const set of sets) for (const rem of [11]) {
+    const svg = lockup(Array.isArray(set) ? set : set.texts, { ...opts, ...(Array.isArray(set) ? {} : set.opts), rem });
+    fig(framed(svg, { square, plain: true }), 'Black on white');
+    if (!frames) continue;
+    fig(framed(svg, { square, inv: true }), 'White on black');
+  }
+  cell.append(p, locks); return cell;
+};
+const draw = async () => {
+  // every face at once, and a face that fails to load leaves the page drawing in its fallback rather than not drawing
+  await document.fonts.load('500 100px "Instrument Sans"');
+  const cells = document.getElementById('wm-cells'); cells.replaceChildren();
+  const enFit = fitSize(split2(EN)), etFit = fitSize(split2(ET));
+  const px = (s) => `${s.toFixed(1)} units, ${(s * 176 / 310).toFixed(1)} px at 11rem`;
+  const section = (title) => { const h2 = document.createElement('h3'); h2.textContent = title; cells.append(h2); };
+  const ONE = [[EN], [ET]], BOTH = [[EN, ET]];
+  section('Under the mark');
+  cells.append(cellOf('under', `${px(UNDER)}, line height ${LH}: one language under the mark, then the English over the mark and the Estonian under it with the same air`, { layout: 'under', size: UNDER }, [[EN], [ET], { texts: [EN, ET], opts: { above: true } }]));
+  section('Beside the mark');
+  cells.append(cellOf('beside', `${px(BESIDE)}, line height ${LH}, 28 units after the stave, centred on the E's middle bar: one language, then both side by side 28 units apart`, { layout: 'beside', size: BESIDE, columns: true }, [[EN], [ET], [EN, ET]]));
+  // every 20rem lockup's box, in units, and the widest line of each language at each size against the letters' 298
+  const boxes = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="11"]:not(.frame):not(.inv)')].map((v) => v.dataset.box)]));
+  // in each bilingual square at 20rem, the air over the top language and under the bottom one, in units
+  const margins = Object.fromEntries([...cells.querySelectorAll('.cell')].filter((c) => c.querySelector('svg[data-above="1"]')).map((c) => {
+    const f = c.querySelector('svg[data-w="11"].plain'); const [, fy, , fh] = f.dataset.box.split(' ').map(Number); const size = +f.dataset.size;
+    const ys = [...f.querySelectorAll('text')].map((t) => +t.getAttribute('y'));
+    return [c.id, [+(Math.min(...ys) - CAP * size - fy).toFixed(1), +(fy + fh - Math.max(...ys) - 0.25 * size).toFixed(1)]];
+  }));
+  const frames = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="11"].plain')].map((v) => v.dataset.box)]));
+  window.__wordmark = { count: cells.querySelectorAll('.cell').length, under: UNDER, beside: BESIDE, gap: BESIDE_GAP, enFit: +enFit.toFixed(1), etFit: +etFit.toFixed(1), enUnder: +blockWidth(split2(EN), UNDER).toFixed(1), etUnder: +blockWidth(split2(ET), UNDER).toFixed(1), enBeside: +blockWidth(split2(EN), BESIDE).toFixed(1), etBeside: +blockWidth(split2(ET), BESIDE).toFixed(1), boxes, frames, margins, instrument: document.fonts.check('500 100px "Instrument Sans"') };
+};
+draw();
+</script>
+</body>
+</html>
