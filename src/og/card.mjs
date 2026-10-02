@@ -235,7 +235,9 @@ const markSvg = (ink, markTop = MARK_TOP, k = K) => {
 export const cardSvg = (input, picture = null, tall = false, part = 1) => {
   if (tall && picture) return `<svg xmlns="http://www.w3.org/2000/svg" width="${TALL_W}" height="${TALL_H}" viewBox="0 0 ${TALL_W} ${TALL_H}">`
     + `<rect width="${TALL_W}" height="${TALL_H}" fill="${input.ground}"/><image x="${(1 - part) * TALL_W}" y="0" width="${2 * TALL_W}" height="${TALL_H}" preserveAspectRatio="xMidYMid slice" href="${picture}"/></svg>`;
-  const L = tall ? LAYOUTS.tall : LAYOUTS.wide;
+  let L = tall ? LAYOUTS.tall : LAYOUTS.wide;
+  // a card may set its line under the title larger than the date and venue's size, a page card's sentence
+  if (input.metaScale) L = { ...L, meta: Math.round((L.meta || META) * input.metaScale) };
   const face = input.serif ? 'serif' : 'sans';
   // the date and venue in the sans on every card, a serif title's too (asked 2026-10-02: "in serif social
   // cards use sans serif for meta info. same for event pages"); it was the serif's text cut under a serif title
@@ -340,7 +342,9 @@ export const firstSentence = (md) => {
   const one = (/^(.+?[.!?])(\s|$)/.exec(plain) || [, plain])[1];
   return one.length <= 120 ? one : one.slice(0, 120).replace(/\s+\S*$/, '') + '…';
 };
-export const pageInput = (key, lang, title, desc) => ({ lang, title, meta: [desc].filter(Boolean), ...(PAGE_COLORS[key] || SITE_CARD), serif: false, page: key });
+// its sentence a third larger than an event's date and venue, 40 to share and 69 on Instagram (asked
+// 2026-10-02: "make descs bigger")
+export const pageInput = (key, lang, title, desc) => ({ lang, title, meta: [desc].filter(Boolean), ...(PAGE_COLORS[key] || SITE_CARD), serif: false, page: key, metaScale: 4 / 3 });
 // one address per page and language, read fresh: the card follows the page's words when they are edited,
 // and its bytes are kept under its version (src/og/route.mjs)
 export const pagePath = (key, lang, tall = false) => `/og/${tall ? 'gt' : 'g'}/${key}-${lang}.png`;
