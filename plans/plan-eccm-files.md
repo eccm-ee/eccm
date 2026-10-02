@@ -29,27 +29,32 @@ one directory each.
 
 ## 2. One bucket, a directory each
 
-`eccm-files-staging` (and `eccm-files` at cutover), laid out by what owns each
-directory:
+`eccm-files-staging` (and `eccm-files` at cutover). Each top-level directory
+is named for what is in it, one word, nothing nested (asked 2026-10-02: *"make
+bucket subdir names simpler / more obvious"*):
 
-| directory | what | written by | deleted by |
+| directory | what is in it | written by | deleted by |
 | --- | --- | --- | --- |
-| `station/` | the programmes a channel plays, and their frame indexes under `station/index/` | an upload into this directory, then the station's ingest | a person, on /admin/files, refused while a running order names it |
-| `station/live/` | live chunks while a show is on air | the station's `/live/<key>/append` | the station's sweep, as now |
-| `recordings/` | the kept live shows, one MP3 each | the recorder (`src/radio.mjs`), which writes to `MEDIA` under `radio/` today | a person |
+| `programmes/` | the files the channels play | an upload, then the station's ingest | a person, refused while a running order names it |
+| `recordings/` | the live shows kept for replay, one MP3 each | the recorder (`src/radio.mjs`), which writes to `MEDIA` under `radio/` today | a person |
 | `uploads/` | anything else an editor puts here: a concert recording, a master, a file for a later programme | /admin/files | a person |
+| `live/` | the chunks of a show while it is on air | the station's `/live/<key>/append` | the station's sweep, minutes later |
+| `index/` | the frame index of each programme, made by the machine | the station's ingest | with its programme |
 
-**Station files as a subdirectory: yes, through a prefixed binding rather than
-by renaming keys.** The station code reads and writes its bucket by bare keys
-(`ubu-ball-karawane.mp3`, `index/...`, `live/...`) and slot keys are those same
-names. A small wrapper, `prefixed(bucket, 'station/')`, gives the station an
+The first three are what a person looks at and are the tabs on /admin/files.
+`live/` and `index/` are the station's working files and are not shown.
+
+**The station keeps its own key names through a mapping binding.** The station
+code reads and writes by bare keys (`ubu-ball-karawane.mp3`, `index/...`,
+`live/...`), and slot keys are those same names. A small wrapper gives it an
 object with the same `get`, `head`, `put`, `delete`, `list` and
-`createMultipartUpload` that adds the prefix going in and strips it coming out.
-So `src/station/station.mjs` keeps its keys, its sweep lists `station/live/`
-without knowing it, and nothing it does can reach `recordings/` or `uploads/`.
-⚠️ positron-station's config warned against two Workers sharing a bucket where
-one runs a cron that deletes by prefix. That is still true. Here the sweep's
-prefix is fenced by the wrapper, which is the reason for the wrapper.
+`createMultipartUpload`, which maps a key going in: `live/...` and `index/...`
+stay as they are, and any other key becomes `programmes/<key>`. Coming out it
+maps back. So `src/station/station.mjs` keeps its keys, its sweep lists
+`live/` and nothing else, and no key the station can form lands in
+`recordings/` or `uploads/`. ⚠️ positron-station's config warned against two
+Workers sharing a bucket where one runs a cron that deletes by prefix. That is
+still true, and the wrapper is the fence.
 
 **Pictures stay where they are.** `MEDIA` (`eccm-media-staging`) holds the
 editor's pictures keyed by hash, with rows in D1 and renditions through
@@ -94,7 +99,7 @@ minutes of a 48 kHz 24-bit stereo master), 4 GB an hour, 40 uploads an hour.
 
 An admin page in English, in the site's chrome and components, `wide: true`:
 
-- **The three directories as a row of links** (Station, Recordings, Uploads),
+- **The three directories as a row of links** (Programmes, Recordings, Uploads),
   the current one underlined, as the menu does it, and its size and count.
 - **A drop zone** at the top of each directory ("Drop audio files here or
   choose"), taking several at once. Each file gets a row that fills as pieces
@@ -105,9 +110,10 @@ An admin page in English, in the site's chrome and components, `wide: true`:
   uploaded, and a Listen button playing the file with the native player's
   scrub. The figures are the admin's tabular ones.
 - **One file opened**: title, who and note editable, and the actions its
-  directory allows. In Station that is "Add to channel", appending a slot to
-  the chosen running order. In Recordings it is "Move to Station", so a kept
-  show can be scheduled as a replay. Delete is everywhere, and in Station it
+  directory allows. In Programmes that is "Add to channel", appending a slot to
+  the chosen running order. In Recordings and Uploads it is "Move to
+  Programmes", so a kept show or an uploaded concert can be scheduled. Delete
+  is everywhere, and in Programmes it
   is refused while a running order names the file.
 
 ## 5. The gate, which is the owner's decision
@@ -133,10 +139,11 @@ origin check, and its page held no token. The options:
    generated 40 MB file (three pieces, the last short) and a 120 MB one (eight
    pieces), each read back with a Range request.
 2. **The site's service binding** and `/files/*` forwarding.
-3. **The station on the files bucket**: the `prefixed()` wrapper,
-   `STATION_MEDIA` pointed at `eccm-files-staging` with prefix `station/`, the
-   17 programmes and their indexes copied in, and the three channels still
-   playing what they played (compared, as in today's move).
+3. **The station on the files bucket**: the mapping wrapper, `STATION_MEDIA`
+   pointed at `eccm-files-staging`, the 17 programmes copied into `programmes/`
+   and their indexes into `index/`, and the three channels still playing what
+   they played (compared, as in today's move). `eccm-station-staging` is then
+   emptied and deleted.
 4. **The station's ingest from a stored file.** `buildIndex` reads a whole
    file into memory today, which a 500 MB upload would not survive in a
    Worker's 128 MB. It becomes a walk over ranges: read 1 MB at a time, find
@@ -165,8 +172,8 @@ origin check, and its page held no token. The options:
   with a progress line that moves per piece, plays, and scrubs to its last
   minute.
 - A closed tab halfway through resumes from the pieces that landed.
-- A file moved into Station is added to a channel and heard on /radio.
-- A live show lands in Recordings and moves to Station as a replay.
+- A file moved into Programmes is added to a channel and heard on /radio.
+- A live show lands in Recordings and moves to Programmes as a replay.
 - The three channels play what they played before the bucket changed.
 - positron-vain and vain-archive are gone, and positron's front page has no
   crate row.
@@ -178,7 +185,7 @@ origin check, and its page held no token. The options:
    successful upload.
 2. **The wrapper is the only fence** between the sweep and everything else in
    the bucket. It gets an assert: a sweep run against a bucket holding
-   `uploads/x` and `recordings/y` deletes neither.
+   `uploads/x`, `recordings/y` and `programmes/z` deletes none of them.
 3. **The gate.** Built without one, the page is an open 4 GB an hour upload.
 4. **This laptop's DNS filter** answers for `eccm.positron.studio` with a
    blocked page since 2026-10-02, so every check from here goes through
