@@ -37,6 +37,12 @@
    line, 11.01 per cent wider at 18 px, its box 93 over 24 per 100 px */
 @font-face { font-family: 'Roboto Serif Fallback'; src: local('Georgia'); size-adjust: 111.01%; ascent-override: 83.78%; descent-override: 21.62%; line-gap-override: 0%; }
 @font-face { font-family: 'Newsreader Fallback'; src: local('Georgia'); size-adjust: 91.38%; ascent-override: 80.98%; descent-override: 28.45%; line-gap-override: 0%; }
+/* Geist Mono, the true monospace weighed for the admin's figures on ds.html's Figures section (asked
+   2026-10-02: "either use monotype-style numbers on body font or introduce true monotype font", then "add
+   that to ds first"). Declared so the comparison draws it from its own subsets, SIL OFL beside them in
+   ./vendor/; not chosen, so no page but ds.html names it and a browser fetches it nowhere else */
+@font-face { font-family: 'Geist Mono'; font-weight: 400 700; font-display: swap; src: url('./vendor/geist-mono-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Geist Mono'; font-weight: 400 700; font-display: swap; src: url('./vendor/geist-mono-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 /* the serif a derived page may set (plans/plan-eccm-design-from-image.md),
    declared here rather than in derive.html so it is declared once: Newsreader
    since 2026-09-28 ("use newsreader in derive"), with Literata and Roboto
@@ -555,6 +561,16 @@
   .table .num { text-align: end; }
   .table .main { inline-size: 100%; white-space: normal; overflow-wrap: anywhere; }
   .table tr[aria-current="true"] > * { font-weight: 600; }
+  /* figures on the admin pages: every time, date, length, count and the date and time fields in the body
+     face's tabular figures (asked 2026-10-02: "intruduce style for all numbers, timestaps etc under admin.
+     either use monotype-style numbers on body font or introduce true monotype font", then "add that to ds
+     first", ds.html's Figures). Instrument Sans's tnum sets every digit 60 per 100 and leaves the full stop,
+     the colon and the comma at their own 26 (MEASURED 2026-10-02 in headless Chrome), so 11.10 and 20.00 are
+     one width and still read as one word; Schibsted Grotesk's set them 63, which is why the rule below the
+     list's dates says proportional, and the public pages keep it. A monospace draws every character 60,
+     so 1:58:40 ran 20 per cent wider and "2 Oct" took two spaces. .fig is the same for a figure CSS cannot
+     reach through structure, and a container of figures */
+  .fig, main.admin :is(time, .table td:not(.main), .station-col-times, .form input:is([type="date"], [type="time"], [type="datetime-local"], [type="number"])) { font-variant-numeric: tabular-nums; }
   /* the radio, /station (src/render/station.mjs, public/station.mjs): every channel a column holding the whole
      of that station, nothing said twice (asked 2026-10-01: "whole stations need to fit so single col. avoid
      dumplication and vertical jumps"), the shape NTS gives its two live channels. No box: a rule on top, ink on

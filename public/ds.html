@@ -74,6 +74,15 @@
     .ds-og img { display: block; inline-size: 100%; block-size: auto; max-inline-size: 600px; outline: 1px solid var(--eccm-rule); }
     .ds-og figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
     /* the icon's square shows on hover, since a positive mark on white has no edge (asked 2026-09-27) */
+    /* the figures compared: three candidates side by side on a desk and one under another on a phone, each a
+       column of start times beside a column of lengths ending on one x, then an id and the small register */
+    .ds-figs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); gap: var(--eccm-s-12) var(--eccm-s-8); margin-block: var(--eccm-s-8); }
+    .ds-fig-rows { display: grid; grid-template-columns: max-content max-content; column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-2); }
+    .ds-fig-rows > :nth-child(2n) { text-align: end; }
+    .ds-fig-rows > [aria-current="true"] { font-weight: 600; }
+    .ds-fig-meta { margin-block-start: var(--eccm-s-4); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+    /* Geist Mono at 0.96 of the size, since its x-height is 53 per 100 against Instrument Sans's 51 (MEASURED 2026-10-02) */
+    .ds-mono { font-family: 'Geist Mono', ui-monospace, Menlo, monospace; font-size: 0.96em; }
     .ds-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--eccm-s-2); max-inline-size: var(--eccm-measure); }
     /* artist bios, plans/plan-eccm-bios.md section 3: no box, no tint, no
        rule, the name an h2 in the prose register, s-12 between bios against
@@ -286,6 +295,33 @@
     </div>
   </div>
 
+  <h2>Figures</h2>
+  <div class="prose flow">
+    <p>Every time, date, length, count and id on the admin pages is set in the body face's tabular figures, <code>font-variant-numeric: tabular-nums</code>, which <code>main.admin</code> gives its times, its table cells, the radio's progress and the date and time fields, and <code>.fig</code> gives anything else. Instrument Sans draws every digit the same width there and leaves the full stop and the colon narrow, so a column of times lines up and 11.10 still reads as one word; a monospace lines up too, but draws the stop and the space a digit wide and so spells the times out. The public pages keep proportional figures.</p>
+  </div>
+  <div class="ds-figs">
+    <div>
+      <p class="ds-cap">Proportional: the public pages</p>
+      <div class="ds-fig-rows"><span>2 Oct 20.00</span><span>1:58:40</span><span aria-current="true">2 Oct 21.10</span><span aria-current="true">0:45</span><span>11 Oct 9.05</span><span>40:12</span><span>11 Oct 11.11</span><span>10:00</span></div>
+      <p class="ds-fig-meta">rec-test-muqmsnh9<br>0:45 / 1:58:40, sent to 148 devices, 11 refused</p>
+    </div>
+    <div class="fig">
+      <p class="ds-cap">Tabular: the admin pages, chosen</p>
+      <div class="ds-fig-rows"><span>2 Oct 20.00</span><span>1:58:40</span><span aria-current="true">2 Oct 21.10</span><span aria-current="true">0:45</span><span>11 Oct 9.05</span><span>40:12</span><span>11 Oct 11.11</span><span>10:00</span></div>
+      <p class="ds-fig-meta">rec-test-muqmsnh9<br>0:45 / 1:58:40, sent to 148 devices, 11 refused</p>
+    </div>
+    <div>
+      <p class="ds-cap">Geist Mono: weighed, not chosen</p>
+      <div class="ds-fig-rows ds-mono"><span>2 Oct 20.00</span><span>1:58:40</span><span aria-current="true">2 Oct 21.10</span><span aria-current="true">0:45</span><span>11 Oct 9.05</span><span>40:12</span><span>11 Oct 11.11</span><span>10:00</span></div>
+      <p class="ds-fig-meta"><span class="ds-mono">rec-test-muqmsnh9</span><br><span class="ds-mono">0:45 / 1:58:40</span>, sent to <span class="ds-mono">148</span> devices, <span class="ds-mono">11</span> refused</p>
+    </div>
+  </div>
+  <div class="ds-tokens" aria-label="Figures, measured">
+    <span>digit</span><span>60 / 100</span><span>Instrument Sans tabular; 39 for a 1 and 53 to 67 for the others proportional</span>
+    <span>full stop, colon</span><span>26 / 100</span><span>Instrument Sans in both, so 10.30 does not read spaced; Schibsted Grotesk's tabular set them 63</span>
+    <span>1:58:40</span><span>351 / 420</span><span>Instrument Sans tabular against a monospace, per 100 px of size</span>
+  </div>
+
   <h2>Color</h2>
   <div class="prose flow">
     <p>White is the material and type is the object. Every pair is computed against white and color is never the only cue: the accent sits only on an underline under the pointer and on the focus ring.</p>
@@ -347,7 +383,7 @@
 
   <h2>Table</h2>
   <div class="prose flow">
-    <p>Rows whose cells are compared down a column: no box, no tint and no rule between rows, one hairline under the head. Times align on their left edge in proportional figures, amounts on their right, and the main column takes what is left and wraps. The current row is marked by weight and by <code>aria-current</code>. Under 36rem of its own width a row becomes its main cell over the others in the small register, each led by its column's name. Used on <a href="/radio">/radio</a>, and on the notices and the newsletter.</p>
+    <p>Rows whose cells are compared down a column: no box, no tint and no rule between rows, one hairline under the head. Times align on their left edge, in proportional figures on a public page and tabular ones on the admin pages (Figures, above), amounts on their right, and the main column takes what is left and wraps. The current row is marked by weight and by <code>aria-current</code>. Under 36rem of its own width a row becomes its main cell over the others in the small register, each led by its column's name. Used on <a href="/radio">/radio</a>, and on the notices and the newsletter.</p>
   </div>
   <div class="ds-spec">
     <div>
