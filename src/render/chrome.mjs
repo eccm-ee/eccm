@@ -7,7 +7,7 @@
 // static page under public/, changed together.
 import { html, raw } from './html.mjs';
 import { SYMBOL, HEADER, FOOTER } from './mark.mjs';
-import { sitePath, siteAlt, pageInput, pagePath, pageVersion, W as OG_W, H as OG_H } from '../og/card.mjs';
+import { sitePath, siteAlt, pagePath, W as OG_W, H as OG_H } from '../og/card.mjs';
 
 // the request's origin, set once per request by src/index.mjs, for the absolute
 // address a share image needs
@@ -23,7 +23,7 @@ export const origin = () => ORIGIN;
 const siteOg = (lang, title, og) => html`<meta property="og:type" content="website">
 <meta property="og:site_name" content="ECCM">
 <meta property="og:title" content="${title}">
-<meta property="og:image" content="${ORIGIN + (og ? pagePath(og.key, og.lang || lang, pageVersion(pageInput(og.key, og.lang || lang, og.title))) : sitePath(lang))}">
+<meta property="og:image" content="${ORIGIN + (og ? pagePath(og.key, og.lang || lang) : sitePath(lang))}">
 <meta property="og:image:width" content="${OG_W}">
 <meta property="og:image:height" content="${OG_H}">
 <meta property="og:image:type" content="image/png">

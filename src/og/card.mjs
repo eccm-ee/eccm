@@ -305,10 +305,45 @@ export const PAGE_TITLES = {
   radio: RADIO_NAME,
   newsletter: { et: 'Uudiskiri', en: 'Newsletter' },
 };
-// on the site card's deep blue with white ink, the radio on its pale wine: on the site's white they were white
-// cards on a white page, and with /social's frames gone they vanished (2026-10-02: "you lost all backgroinds")
-export const pageInput = (key, lang, title) => ({ lang, title, meta: ['Pühavaimu 9, Tallinn'], ...(key === 'radio' ? RADIO_CARD : SITE_CARD), serif: false, page: key });
-export const pagePath = (key, lang, v, tall = false) => `/og/${tall ? 'gt' : 'g'}/${key}-${lang}-${v}.png`;
+// Each page in a colour of its own and with its own words under the title
+// (asked 2026-10-02: "use different colors per page content og cards. use desc
+// / 1st sencene from the page"): a text page's first sentence, the front page
+// the ECCM page's, the rest a line of their own. Both slugs of a page take its
+// colour. Every pair is at least 12 : 1 for the title and 5.95 : 1 for the
+// line under it (computed 2026-10-02).
+const PAGE_COLORS = {
+  home: { ground: '#1b2746', ink: '#ffffff', ink2: '#c9cfdc' },
+  events: { ground: '#1f3a2e', ink: '#ffffff', ink2: '#c3d4ca' },
+  eccm: { ground: '#2b2b2b', ink: '#ffffff', ink2: '#cfcfcf' },
+  'tallinn-1965': { ground: '#efe6d2', ink: '#2a2418', ink2: '#5e5340' },
+  nan: { ground: '#e1eaf2', ink: '#14263a', ink2: '#46596b' },
+  ulysses: { ground: '#f3e2de', ink: '#3a1612', ink2: '#6b4139' },
+  konkursid: { ground: '#2e2a4a', ink: '#ffffff', ink2: '#cfcbe6' },
+  liikmed: { ground: '#e6eee1', ink: '#1f2e18', ink2: '#4b5c42' },
+  newsletter: { ground: '#3b1d2b', ink: '#ffffff', ink2: '#dcc9d2' },
+  radio: RADIO_CARD,
+};
+PAGE_COLORS['open-calls'] = PAGE_COLORS.konkursid;
+PAGE_COLORS.members = PAGE_COLORS.liikmed;
+// the pages with no text of their own to take a sentence from
+export const PAGE_DESC = {
+  events: { et: 'Tulevased üritused.', en: 'Upcoming events.' },
+  newsletter: { et: 'ECCM-i kava ja uudised e-postiga.', en: 'The ECCM programme and news by email.' },
+  radio: { et: 'Kolm kanalit ja salvestatud otsesaated.', en: 'Three channels and the recorded live shows.' },
+};
+// the first sentence of a page's Markdown, as plain text: links to their words, emphasis and heading marks
+// gone, a list's items joined with commas, cut at a word near 120 characters
+export const firstSentence = (md) => {
+  const text = String(md || '').split(/\n\s*\n/).map((block) => block.split('\n').map((l) => l.replace(/^\s*(#+|[-*]|\d+\.)\s+/, '').trim()).filter(Boolean).join(', '))
+    .find(Boolean) || '';
+  const plain = text.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/[*_`]+/g, '').replace(/\s+/g, ' ').trim();
+  const one = (/^(.+?[.!?])(\s|$)/.exec(plain) || [, plain])[1];
+  return one.length <= 120 ? one : one.slice(0, 120).replace(/\s+\S*$/, '') + '…';
+};
+export const pageInput = (key, lang, title, desc) => ({ lang, title, meta: [desc].filter(Boolean), ...(PAGE_COLORS[key] || SITE_CARD), serif: false, page: key });
+// one address per page and language, read fresh: the card follows the page's words when they are edited,
+// and its bytes are kept under its version (src/og/route.mjs)
+export const pagePath = (key, lang, tall = false) => `/og/${tall ? 'gt' : 'g'}/${key}-${lang}.png`;
 export const pageVersion = (input, tall = false) => cardVersion(tall ? { ...input, layout: 'tall' } : input);
 export const sitePath = (lang) => `/og/site-${lang === 'en' ? 'en' : 'et'}.png`;
 export const siteAlt = (lang) => (lang === 'en' ? 'ECCM, Estonian Centre of Contemporary Music' : 'ECCM, Eesti Nüüdismuusika Keskus');

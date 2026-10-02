@@ -207,7 +207,7 @@
   <h1 class="list-label">Social</h1>
   <h2>Pages</h2>
   <div class="prose flow">
-    <p>Every page that is not an event has a card made as an event's is, shown here once for each kind of page, in Estonian: the page's title, the hall's address, the nameplate at the foot, on the site card's deep blue (the radio on its pale wine), and its Instagram text card under it.</p>
+    <p>Every page that is not an event has a card made as an event's is, shown here once for each kind of page, in Estonian: the page's title in a colour of its own, the first sentence of its text under it (the front page the ECCM page's), the nameplate at the foot, and its Instagram text card under it.</p>
   </div>
   <div id="og-pages"><p class="ds-cap">Loading the pages.</p></div>
   <h2>Events</h2>
@@ -261,12 +261,12 @@ try {
     // one card per kind of page, in Estonian, so nothing shows twice (asked 2026-10-02: "its messed up ... so
     // many dupes"): the list had every page in both languages, and the ECCM page's title is the centre's name,
     // the front page's own; every page still has its card, this shows the kinds
-    const SHOW = ['home', 'events', 'tallinn-1965', 'newsletter', 'radio'];
+    const SHOW = ['home', 'events', 'tallinn-1965', 'konkursid', 'liikmed', 'newsletter', 'radio'];
     const pages = (await (await fetch('/og/g.json')).json()).filter((c) => c.lang === 'et' && SHOW.includes(c.key)).sort((a, b) => SHOW.indexOf(a.key) - SHOW.indexOf(b.key));
     pagesBox.className = 'og-rows';
     pagesBox.replaceChildren(...pages.map((c) => {
       const row = document.createElement('div'); row.className = 'og-row';
-      const at = { page: c.page, title: c.title, lang: c.lang, serif: false, ground: c.key === 'radio' ? '#f4ecf0' : '#1b2746' };
+      const at = { page: c.page, title: c.title, lang: c.lang, serif: false, ground: c.ground };
       const share = fig(at, c.image, `${c.title}, share card`); share.classList.add('og-share');
       const ig = document.createElement('div'); ig.className = 'og-ig';
       ig.append(fig(at, c.tall, `${c.title}, Instagram`, 1080, 1350));
