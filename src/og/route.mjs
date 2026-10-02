@@ -8,17 +8,17 @@
 // og/e/, and a render that fills both after the response. A stale v answers
 // 302 to the current card and a missing event 404, both no-store, so a
 // fetch made before the content exists cannot poison the URL.
-import { cardInput, cardVersion, cardPath, picVersion, picPath, tallVersion, tallPath, cardSvg, siteSvg, radioSvg, TEMPLATE_V, SITE_V, W, TALL_W } from './card.mjs';
+import { cardInput, cardVersion, cardPath, tallVersion, tallPath, cardSvg, siteSvg, radioSvg, TEMPLATE_V, SITE_V, W, TALL_W } from './card.mjs';
 import { renderPng } from './render.mjs';
 
 const CC = 'public, max-age=31536000, immutable';
 const png = (body, from) => new Response(body, { headers: { 'content-type': 'image/png', 'cache-control': CC, 'x-og': from } });
 const none = (status, headers = {}) => new Response(null, { status, headers: { 'cache-control': 'no-store', ...headers } });
-// /og/e/ the text card, /og/p/ the picture layout of the same event, /og/t/ and
-// /og/tp/ the tall 4:5 pair (all 2026-10-02 but the first)
-const CARD = /^\/og\/(e|p|t|tp)\/(\d+)-(et|en)-([0-9a-f]{8})\.png$/;
-const VERSION = { e: cardVersion, p: picVersion, t: (i) => tallVersion(i), tp: (i) => tallVersion(i, true) };
-const PATH = { e: cardPath, p: picPath, t: (id, l, v) => tallPath(id, l, v), tp: (id, l, v) => tallPath(id, l, v, true) };
+// /og/e/ the share card, /og/t/ and /og/tp/ the tall 4:5 pair for Instagram
+// (2026-10-02); /og/p/, a wide picture layout, came and went the same day
+const CARD = /^\/og\/(e|t|tp)\/(\d+)-(et|en)-([0-9a-f]{8})\.png$/;
+const VERSION = { e: cardVersion, t: (i) => tallVersion(i), tp: (i) => tallVersion(i, true) };
+const PATH = { e: cardPath, t: (id, l, v) => tallPath(id, l, v), tp: (id, l, v) => tallPath(id, l, v, true) };
 
 // the card's rows for one event in one language, the queries the event page
 // makes: its text in that language or the Estonian one, the picture's scheme
@@ -62,7 +62,7 @@ export async function ogRoute(request, env, url, ctx) {
   }
   const input = await rows(env.DB, Number(id), lang);
   if (!input) return none(404);
-  const withPic = kind === 'p' || kind === 'tp', tall = kind === 't' || kind === 'tp';
+  const withPic = kind === 'tp', tall = kind !== 'e';
   if (withPic && !input.pic) return none(404);
   const now = VERSION[kind](input);
   if (now !== v) return none(302, { location: PATH[kind](id, lang, now) });
@@ -100,7 +100,7 @@ async function list(env, url) {
   for (const r of all) {
     const input = await rows(env.DB, r.id, r.lang);
     if (!input) continue;
-    out.push({ id: r.id, lang: r.lang, title: input.title, serif: input.serif, ground: input.ground, page: r.lang === 'et' ? `/et/sundmused/${r.slug}` : `/en/events/${r.slug}`, image: cardPath(r.id, r.lang, cardVersion(input)), tall: tallPath(r.id, r.lang, tallVersion(input)), ...(input.pic ? { picture: picPath(r.id, r.lang, picVersion(input)), tallPicture: tallPath(r.id, r.lang, tallVersion(input, true), true) } : {}) });
+    out.push({ id: r.id, lang: r.lang, title: input.title, serif: input.serif, ground: input.ground, page: r.lang === 'et' ? `/et/sundmused/${r.slug}` : `/en/events/${r.slug}`, image: cardPath(r.id, r.lang, cardVersion(input)), tall: tallPath(r.id, r.lang, tallVersion(input)), ...(input.pic ? { tallPicture: tallPath(r.id, r.lang, tallVersion(input, true), true) } : {}) });
   }
   return new Response(JSON.stringify(out), { headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=60' } });
 }

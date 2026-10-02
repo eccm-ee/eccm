@@ -14,7 +14,7 @@ import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
-export const TEMPLATE_V = 7;
+export const TEMPLATE_V = 8;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
@@ -46,42 +46,35 @@ const META = 30, META_LH = 1.4, META_GAP = 32;
 // title to meta: the title's descent and then --eccm-s-8, the gap within the group
 const GROUP = 32;
 const MEASURE = W - 2 * PAD;
-// The picture layout (asked 2026-10-02: "add alternative layout with image
-// where you split card into equal cols, left text right cropped image. title
-// smaller than textonly one"): the card in two equal columns, the text in the
-// left with its own measure, the picture filling the right, cropped to cover.
-// Its title is one step under the text card's, set at the size measured below.
-const HALF = W / 2;
-const PIC_MEASURE = HALF - PAD - AIR;
-// MEASURED the same way in the 488 px column: 40 cuts none, the longest on five
-// lines; 44 cuts 2, 48 cuts 4, 52 cuts 9
-const PIC_TITLE = 40;
-const PIC_STEPS = [PIC_TITLE];
-
+// The wide picture layout, text left and the picture right at /og/p/, was made
+// and removed on 2026-10-02 ("rm horz og image variants"); the tall picture
+// card below is the one with a picture.
 // The tall cards, 1080 by 1350, Instagram's 4:5 feed shape (asked 2026-10-02:
 // "do also vertical (instagram) layouts, see ../trip", then "see also eccm ig
 // style"): trip's portrait sibling of its share card, one renderer and its own
 // address (trip/astro-prod/src/lib/og-offer.ts), and eccm.ee's own posts on
 // Instagram, which are 4:5 with the picture across the frame. The tall text
 // card is the wide one at its own size; the tall picture card has the picture
-// across the top at the shape it arrives in, 3 : 2, and the text under it.
+// across the top and the text under it.
 export const TALL_W = 1080, TALL_H = 1350;
-const TALL_PIC_H = 720;
-// MEASURED over the 50 live titles: the tall text card has room for any size
-// up to 96 without a cut, but the longest then runs to eight lines, so its size
-// is the largest that keeps every title within five, 80 (88 makes six). The
-// tall picture card has less room: 60 cuts none and 64 cuts 4. Its title is
-// the smaller of the two, as on the wide pair
-const TALL_TITLE = 80;
-const TALL_PIC_TITLE = 60;
+// the picture across the top at 2 : 1 since the same evening, cut from 3 : 2
+// to give the bigger type room (asked: "for ig cards make text bigger and font
+// too"), and the date and venue at 44, half as large again as the wide card's 30
+const TALL_PIC_H = 540;
+const TALL_META = 44;
+// MEASURED over the 50 live titles with the meta at 44: the tall text card's
+// title at 104 cuts none (112 cuts 4), the longest on eight lines; the tall
+// picture card's at 76 cuts none under a 540 px picture, the longest on five,
+// where under the 720 px one 64 already cut 4. They were 80 and 60 for an hour.
+const TALL_TITLE = 104;
+const TALL_PIC_TITLE = 76;
 
 // where everything goes on each of the four cards: the text's top, the mark's
 // top, the measure, the title size and the picture's box
 const LAYOUTS = {
   wide: { w: W, h: H, top: PAD, markTop: MARK_TOP, measure: MEASURE, steps: STEPS },
-  widePic: { w: W, h: H, top: PAD, markTop: MARK_TOP, measure: PIC_MEASURE, steps: PIC_STEPS, pic: { x: HALF, y: 0, w: HALF, h: H } },
-  tall: { w: TALL_W, h: TALL_H, top: PAD, markTop: Math.round(TALL_H - PAD - MARK_H), measure: TALL_W - 2 * PAD, steps: [TALL_TITLE] },
-  tallPic: { w: TALL_W, h: TALL_H, top: TALL_PIC_H + PAD, markTop: Math.round(TALL_H - PAD - MARK_H), measure: TALL_W - 2 * PAD, steps: [TALL_PIC_TITLE], pic: { x: 0, y: 0, w: TALL_W, h: TALL_PIC_H } },
+  tall: { w: TALL_W, h: TALL_H, top: PAD, markTop: Math.round(TALL_H - PAD - MARK_H), measure: TALL_W - 2 * PAD, steps: [TALL_TITLE], meta: TALL_META },
+  tallPic: { w: TALL_W, h: TALL_H, top: TALL_PIC_H + PAD, markTop: Math.round(TALL_H - PAD - MARK_H), measure: TALL_W - 2 * PAD, steps: [TALL_PIC_TITLE], meta: TALL_META, pic: { x: 0, y: 0, w: TALL_W, h: TALL_PIC_H } },
 };
 
 const SITE = { ground: '#ffffff', ink: '#1a1a1a', ink2: '#555555' };
@@ -127,7 +120,8 @@ const metaLines = (cells) => cells.filter(Boolean).map((c) => [c]);
 // the lines of title the room above the mark holds at a size, given the meta's lines
 const room = (fs, face, metaN, L = LAYOUTS.wide) => {
   const cap = M[face].cap * fs;
-  const metaBlock = 0.25 * fs + GROUP + M[face === 'serif' ? 'serifText' : 'sans'].cap * META + (metaN - 1) * META_LH * META + 0.25 * META;
+  const meta = L.meta || META;
+  const metaBlock = 0.25 * fs + GROUP + M[face === 'serif' ? 'serifText' : 'sans'].cap * meta + (metaN - 1) * META_LH * meta + 0.25 * meta;
   const avail = L.markTop - AIR - L.top - cap - metaBlock;
   return 1 + Math.floor(avail / (TITLE_LH * fs));
 };
@@ -181,9 +175,6 @@ export const cardVersion = (input) => {
   return h.toString(16).padStart(8, '0');
 };
 export const cardPath = (id, lang, v) => `/og/e/${id}-${lang}-${v}.png`;
-// the picture layout has its own address and version, so either can be what a page names
-export const picVersion = (input) => cardVersion({ ...input, layout: 'picture' });
-export const picPath = (id, lang, v) => `/og/p/${id}-${lang}-${v}.png`;
 // the tall cards, /og/t/ the text one and /og/tp/ the picture one
 export const tallVersion = (input, pic = false) => cardVersion({ ...input, layout: pic ? 'tallPicture' : 'tall' });
 export const tallPath = (id, lang, v, pic = false) => `/og/${pic ? 'tp' : 't'}/${id}-${lang}-${v}.png`;
@@ -225,9 +216,9 @@ const markSvg = (ink, markTop = MARK_TOP) => {
   return letters + `<g shape-rendering="crispEdges">${lines}</g>`;
 };
 
-// picture: the picture as a data URI for a picture layout, or nothing for a text card; tall: the 4:5 card
+// picture: the picture as a data URI for the tall picture card; tall: the 4:5 card
 export const cardSvg = (input, picture = null, tall = false) => {
-  const L = LAYOUTS[(tall ? 'tall' : 'wide') + (picture ? 'Pic' : '')];
+  const L = tall ? (picture ? LAYOUTS.tallPic : LAYOUTS.tall) : LAYOUTS.wide;
   const face = input.serif ? 'serif' : 'sans';
   const metaFace = input.serif ? 'serifText' : 'sans';
   const meta = metaLines(input.meta);
@@ -236,11 +227,12 @@ export const cardSvg = (input, picture = null, tall = false) => {
   // the title's first cap on the top margin: the ink, not the line box
   let y = L.top + M[face].cap * fs;
   for (const l of lines) { out.push(`<text x="${PAD}" y="${y.toFixed(1)}" font-family="${M[face].family}" font-size="${fs}" fill="${input.ink}">${xml(l)}</text>`); y += TITLE_LH * fs; }
-  y += -TITLE_LH * fs + 0.25 * fs + GROUP + M[metaFace].cap * META;
+  const metaFs = L.meta || META;
+  y += -TITLE_LH * fs + 0.25 * fs + GROUP + M[metaFace].cap * metaFs;
   for (const row of meta) {
     let x = PAD;
-    for (const cell of row) { out.push(`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-family="${M[metaFace].family}" font-size="${META}" fill="${input.ink2}">${xml(cell)}</text>`); x += width(cell, metaFace, META) + META_GAP; }
-    y += META_LH * META;
+    for (const cell of row) { out.push(`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-family="${M[metaFace].family}" font-size="${metaFs}" fill="${input.ink2}">${xml(cell)}</text>`); x += width(cell, metaFace, metaFs) + META_GAP; }
+    y += META_LH * metaFs;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${L.w}" height="${L.h}" viewBox="0 0 ${L.w} ${L.h}">`
     + `<rect width="${L.w}" height="${L.h}" fill="${input.ground}"/>${out.join('')}${markSvg(input.ink, L.markTop)}${input.plate === false ? '' : plateSvg(input.ink, input.lang, L.markTop)}`
