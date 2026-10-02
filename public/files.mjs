@@ -86,6 +86,17 @@ audio.addEventListener('ended', stopAll);
 
 // ── a row's actions ───────────────────────────────────────────────────────────
 document.addEventListener('click', async (e) => {
+  // Edit opens the row's form under its name and closes it again; the button says which it will do
+  const edit = e.target.closest('button[data-edit]');
+  if (edit) {
+    const box = document.getElementById(edit.dataset.edit);
+    const open = box.hidden;
+    box.hidden = !open;
+    edit.setAttribute('aria-expanded', String(open));
+    edit.textContent = open ? 'Close' : 'Edit';
+    if (open) box.querySelector('input')?.focus();
+    return;
+  }
   const listen = e.target.closest('button[data-listen]');
   if (listen) {
     if (playing === listen) return stopAll();

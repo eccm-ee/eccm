@@ -17,10 +17,10 @@ const size = (b) => (b >= 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.m
 const length = (s) => { if (s == null) return ''; s = Math.round(s); const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = String(s % 60).padStart(2, '0'); return h ? `${h}:${String(m).padStart(2, '0')}:${x}` : `${m}:${x}`; };
 const TABS = [['uploads', 'Uploads'], ['recordings', 'Recordings']];
 
-const row = (f, channels) => {
+const row = (f, channels, i) => {
+  f = { ...f, id: i };
   const name = html`<span class="file-name">${f.title || f.name}</span>${f.who ? html`<span class="file-who">${f.who}</span>` : ''}
-      <details class="file-edit" data-key="${f.key}">
-        <summary>Edit</summary>
+      <div class="file-edit" id="edit-${f.id}" data-key="${f.key}" hidden>
         <div class="form file-form">
           <p class="small">${f.key}</p>
           <div class="field-row">
@@ -33,9 +33,11 @@ const row = (f, channels) => {
           <div class="actions"><button class="btn btn-sm" type="button" data-act="meta">Save</button><button class="btn btn-sm" type="button" data-act="add">Add to channel</button><button class="btn btn-sm btn-end" type="button" data-act="delete">Delete</button></div>
           <p class="hint file-say" aria-live="polite"></p>
         </div>
-      </details>`;
+      </div>`;
   return [name, length(f.duration), size(f.bytes), when(f.uploaded), f.on.join(', '),
-    html`<button class="btn btn-sm" type="button" data-listen="/stream/media/${f.key}" data-title="${f.title || f.name}">Listen</button>`];
+    // Listen, then Edit, which opens the row's form under its name (asked 2026-10-02: "edit should be button after
+    // listen, that expand editing"); it was a disclosure under the name before
+    html`<span class="file-acts"><button class="btn btn-sm" type="button" data-listen="/stream/media/${f.key}" data-title="${f.title || f.name}">Listen</button><button class="btn btn-sm" type="button" data-edit="edit-${f.id}" aria-expanded="false" aria-controls="edit-${f.id}">Edit</button></span>`];
 };
 
 export const renderFiles = ({ dir, counts, files, total, channels, open }) => page({
@@ -52,6 +54,6 @@ export const renderFiles = ({ dir, counts, files, total, channels, open }) => pa
     <ol class="file-queue" id="file-queue"></ol>
     <div class="field file-key" id="file-key" hidden><label for="file-key-in">Upload key</label><input id="file-key-in" type="password" autocomplete="off"><p class="hint">Asked once and kept in this browser. Without it nothing uploads or changes.</p></div>
   </div>` : ''}
-  ${files.length ? table({ label: 'Files', cols: [{ label: 'Name', cls: 'main' }, { label: 'Length', cls: 'num' }, { label: 'Size', cls: 'num' }, { label: 'Added' }, { label: 'On' }, { label: '' }], rows: files.map((f) => row(f, channels)) }) : html`<p class="small">Nothing here yet.</p>`}
+  ${files.length ? table({ label: 'Files', cols: [{ label: 'Name', cls: 'main' }, { label: 'Length', cls: 'num' }, { label: 'Size', cls: 'num' }, { label: 'Added' }, { label: 'On' }, { label: '' }], rows: files.map((f, i) => row(f, channels, i)) }) : html`<p class="small">Nothing here yet.</p>`}
   <script type="module" src="/files.mjs"${open ? html` data-open="1"` : ''}></script>`,
 });

@@ -681,8 +681,8 @@
   .file-key { max-inline-size: 24rem; }
   .file-name, .file-who { display: block; }
   .file-who { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-  .file-edit summary { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); cursor: pointer; inline-size: fit-content; }
-  .file-edit[open] summary { color: var(--eccm-ink); }
+  .file-acts { display: inline-flex; gap: var(--eccm-s-2); }
+  .file-acts .btn-sm { inline-size: 4.5rem; justify-content: center; }
   .file-form { max-inline-size: 40rem; padding-block: var(--eccm-s-4) var(--eccm-s-6); gap: var(--eccm-s-4); }
   .file-form .small { overflow-wrap: anywhere; }
   /* the research pages (src/render/research.mjs): a section per part, the page's largest gap between them */
