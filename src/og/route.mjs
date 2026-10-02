@@ -94,13 +94,19 @@ async function pictureUri(env, url, key) {
 // start first, for the design system page; the urls are the ones the event
 // pages carry, so /ds shows what a scraper fetches
 async function list(env, url) {
-  const all = (await env.DB.prepare(`SELECT e.id, e.starts_at, t.lang, t.slug FROM event e JOIN event_text t ON t.event_id = e.id
+  // one query for every card, where it was the event page's four per card
+  // (2026-10-02: /social sat on "Loading the events." for seconds over 50)
+  const all = (await env.DB.prepare(`SELECT e.*, t.lang, t.slug, t.title, m.scheme, m.key AS pic_key FROM event e
+    JOIN event_text t ON t.event_id = e.id LEFT JOIN media m ON m.id = e.image_id
     WHERE e.status = 'published' ORDER BY e.starts_at DESC, e.id, t.lang`).all()).results;
-  const out = [];
-  for (const r of all) {
-    const input = await rows(env.DB, r.id, r.lang);
-    if (!input) continue;
-    out.push({ id: r.id, lang: r.lang, title: input.title, serif: input.serif, ground: input.ground, page: r.lang === 'et' ? `/et/sundmused/${r.slug}` : `/en/events/${r.slug}`, image: cardPath(r.id, r.lang, cardVersion(input)), tall: tallPath(r.id, r.lang, tallVersion(input)), ...(input.pic ? { tallPicture: tallPath(r.id, r.lang, tallVersion(input, true), true) } : {}) });
-  }
+  const out = all.map((r) => {
+    const input = cardInput({ lang: r.lang, title: r.title, ev: r, scheme: r.scheme, pic: r.pic_key });
+    return {
+      id: r.id, lang: r.lang, title: input.title, serif: input.serif, ground: input.ground,
+      page: r.lang === 'et' ? `/et/sundmused/${r.slug}` : `/en/events/${r.slug}`,
+      image: cardPath(r.id, r.lang, cardVersion(input)), tall: tallPath(r.id, r.lang, tallVersion(input)),
+      ...(input.pic ? { tallPicture: tallPath(r.id, r.lang, tallVersion(input, true), true) } : {}),
+    };
+  });
   return new Response(JSON.stringify(out), { headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=60' } });
 }

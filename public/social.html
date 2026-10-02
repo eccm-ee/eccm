@@ -78,9 +78,16 @@
     .ds-og figure { margin: 0; }
     .ds-og img { display: block; inline-size: 100%; block-size: auto; max-inline-size: 600px; outline: 1px solid var(--eccm-rule); }
     .ds-og figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-    /* the tall 4:5 cards, four to a row on a desk, each a phone's width at most */
-    .ds-og-tall { grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); }
-    .ds-og-tall img { max-inline-size: 360px; }
+    /* one event to a row: its share card, then its two Instagram cards, the three at one height, so the
+       columns are in the inverse of each card's height to width (630 / 1200 and 1350 / 1080); on a phone
+       the share card takes the row and the two tall ones share the next (asked 2026-10-02: "i do not see
+       smaller card sizes next to og cards") */
+    .og-rows { display: grid; gap: var(--eccm-s-12); margin-block: var(--eccm-s-8); }
+    .og-row { display: grid; grid-template-columns: 1.905fr 0.8fr 0.8fr; gap: var(--eccm-s-4); align-items: start; }
+    .og-row figure { margin: 0; }
+    .og-row img { display: block; inline-size: 100%; block-size: auto; outline: 1px solid var(--eccm-rule); }
+    .og-row figcaption { margin-block-start: var(--eccm-s-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+    @media (max-width: 48rem) { .og-row { grid-template-columns: 1fr 1fr; } .og-row > :first-child { grid-column: 1 / -1; } }
     /* the icon's square shows on hover, since a positive mark on white has no edge (asked 2026-09-27) */
     /* the figures compared: three candidates side by side on a desk and one under another on a phone, each a
        column of start times beside a column of lengths ending on one x, then an id and the small register */
@@ -207,14 +214,10 @@
   </div>
   <h2>Events</h2>
   <div class="prose flow">
-    <p>The image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Roboto Serif or Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
+    <p>Each event on a row: its share card, and beside it the two Instagram cards at 1080 by 1350, Instagram's 4:5, the text card and the picture alone beside it, a carousel's two slides, the text card's type larger than the share card's since a feed is read on a phone. The share card is the image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Roboto Serif or Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
   </div>
   <div class="ds-og" id="og-cards"><p class="ds-cap">Loading the events.</p></div>
-  <h2>Instagram</h2>
-  <div class="prose flow">
-    <p>The same events at 1080 by 1350, Instagram's 4:5: the text card at its own size, and the picture across the top at 2:1 with the text under it, eccm.ee's posts having the picture across the frame. The type is larger than the share card's: a feed is read on a phone.</p>
-  </div>
-  <div class="ds-og ds-og-tall" id="og-tall"></div>
+
 </main>
 
 <footer class="site-foot" lang="en">
@@ -251,10 +254,12 @@ try {
     cap.textContent = `${what}: ${c.lang.toUpperCase()}, ${c.serif ? 'Roboto Serif' : 'Instrument Sans'} on ${c.ground}`;
     f.append(a, cap); return f;
   };
-  box.replaceChildren(...cards.map((c) => fig(c, c.image, 'Share card')));
-  // the tall 4:5 pair for Instagram, in a row of their own under the wide ones
-  const tall = document.getElementById('og-tall');
-  if (tall) tall.replaceChildren(...cards.flatMap((c) => [fig(c, c.tall, 'Tall text', 1080, 1350), ...(c.tallPicture ? [fig(c, c.tallPicture, 'Tall picture', 1080, 1350)] : [])]));
+  box.className = 'og-rows';
+  box.replaceChildren(...cards.map((c) => {
+    const row = document.createElement('div'); row.className = 'og-row';
+    row.append(fig(c, c.image, 'Share card'), fig(c, c.tall, 'Instagram, text', 1080, 1350), ...(c.tallPicture ? [fig(c, c.tallPicture, 'Instagram, picture only', 1080, 1350)] : []));
+    return row;
+  }));
   if (!cards.length) box.innerHTML = '<p class="ds-cap">No published events.</p>';
 } catch (e) {
   box.innerHTML = '<p class="ds-cap">The list did not load. It comes from the Worker, so this page shows it only where the Worker runs.</p>';

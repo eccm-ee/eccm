@@ -14,7 +14,7 @@ import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
-export const TEMPLATE_V = 8;
+export const TEMPLATE_V = 10;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
@@ -54,27 +54,26 @@ const MEASURE = W - 2 * PAD;
 // style"): trip's portrait sibling of its share card, one renderer and its own
 // address (trip/astro-prod/src/lib/og-offer.ts), and eccm.ee's own posts on
 // Instagram, which are 4:5 with the picture across the frame. The tall text
-// card is the wide one at its own size; the tall picture card has the picture
-// across the top and the text under it.
+// card is the wide one at its own size; the tall picture card is the picture
+// alone (cardSvg says when that changed).
 export const TALL_W = 1080, TALL_H = 1350;
-// the picture across the top at 2 : 1 since the same evening, cut from 3 : 2
-// to give the bigger type room (asked: "for ig cards make text bigger and font
-// too"), and the date and venue at 44, half as large again as the wide card's 30
-const TALL_PIC_H = 540;
-const TALL_META = 44;
-// MEASURED over the 50 live titles with the meta at 44: the tall text card's
-// title at 104 cuts none (112 cuts 4), the longest on eight lines; the tall
-// picture card's at 76 cuts none under a 540 px picture, the longest on five,
-// where under the 720 px one 64 already cut 4. They were 80 and 60 for an hour.
+// the date and venue at 52 since the same evening ("make ig subtext bigger
+// too"), 44 for an hour before and the share card's 30 before that
+const TALL_META = 52;
+// the mark a third larger than on the share card, 8 / 7.375, the stave's pitch
+// a whole 8 px and the letters E to M 323 px (asked the same evening: "ig cards
+// logos too small"); the nameplate grows with it
+const TALL_K = 8 / 7.375;
+const TALL_MARK_H = (E_BOTTOM - E_TOP) * TALL_K;
+// MEASURED over the 50 live titles: the title at 104 cuts none with the date
+// and venue at 52, the longest on eight lines, where at 56 it cuts 1
 const TALL_TITLE = 104;
-const TALL_PIC_TITLE = 76;
 
-// where everything goes on each of the four cards: the text's top, the mark's
-// top, the measure, the title size and the picture's box
+// where everything goes on the two cards with text: the text's top, the mark's
+// top and scale, the measure, the title size and the date and venue's size
 const LAYOUTS = {
   wide: { w: W, h: H, top: PAD, markTop: MARK_TOP, measure: MEASURE, steps: STEPS },
-  tall: { w: TALL_W, h: TALL_H, top: PAD, markTop: Math.round(TALL_H - PAD - MARK_H), measure: TALL_W - 2 * PAD, steps: [TALL_TITLE], meta: TALL_META },
-  tallPic: { w: TALL_W, h: TALL_H, top: TALL_PIC_H + PAD, markTop: Math.round(TALL_H - PAD - MARK_H), measure: TALL_W - 2 * PAD, steps: [TALL_PIC_TITLE], meta: TALL_META, pic: { x: 0, y: 0, w: TALL_W, h: TALL_PIC_H } },
+  tall: { w: TALL_W, h: TALL_H, top: PAD, markTop: Math.round(TALL_H - PAD - TALL_MARK_H), k: TALL_K, measure: TALL_W - 2 * PAD, steps: [TALL_TITLE], meta: TALL_META },
 };
 
 const SITE = { ground: '#ffffff', ink: '#1a1a1a', ink2: '#555555' };
@@ -115,7 +114,11 @@ function balance(ps, face, fs, maxW) {
 // the meta: the date and time, and the venue on a row of its own under it
 // (asked 2026-10-02: "put location to its own row"); it shared the line when
 // the two fitted until then
-const metaLines = (cells) => cells.filter(Boolean).map((c) => [c]);
+// A cell wider than the measure wraps onto the rows under it like the title
+// does, since the Instagram card's larger size put the longest venue, "Witold
+// Lutosławski Polish Radio Concert Studio", 1131 px into a 952 px measure
+// (MEASURED 2026-10-02)
+const metaLines = (cells, face, fs, measure) => cells.filter(Boolean).flatMap((c) => wrapAt(fitPieces(pieces(c), face, fs, measure), face, fs, measure).map((l) => [l]));
 
 // the lines of title the room above the mark holds at a size, given the meta's lines
 const room = (fs, face, metaN, L = LAYOUTS.wide) => {
@@ -200,28 +203,37 @@ const PLATE = Object.fromEntries(['et', 'en'].map((l) => {
   const inner = svg.slice(svg.indexOf('>') + 1, svg.indexOf('</svg>'));
   return [l, inner.replace(/<use[^>]*><\/use>|<use[^>]*\/>/g, '').replace(/ class="tag-is"/g, ` font-family="${M.tag.family}"`)];
 }));
-const plateSvg = (ink, lang, markTop = MARK_TOP) => {
-  const tx = PAD - E_LEFT * K, ty = markTop - E_TOP * K;
-  return `<g transform="translate(${tx} ${ty}) scale(${K})" fill="${ink}">${(PLATE[lang] || PLATE.et).replace(/currentColor/g, ink)}</g>`;
+const plateSvg = (ink, lang, markTop = MARK_TOP, k = K) => {
+  const tx = PAD - E_LEFT * k, ty = markTop - E_TOP * k;
+  return `<g transform="translate(${tx} ${ty}) scale(${k})" fill="${ink}">${(PLATE[lang] || PLATE.et).replace(/currentColor/g, ink)}</g>`;
 };
-const markSvg = (ink, markTop = MARK_TOP) => {
-  const tx = PAD - E_LEFT * K, ty = markTop - E_TOP * K;
-  const letters = `<g transform="translate(${tx} ${ty}) scale(${K})" fill="${ink}">${LETTERS.replace(/INK/g, ink)}</g>`;
+// the stave's lines a whole pixel each, two when the mark is drawn large enough
+// that one would read thinner than the letters' own joins
+const markSvg = (ink, markTop = MARK_TOP, k = K) => {
+  const tx = PAD - E_LEFT * k, ty = markTop - E_TOP * k;
+  const letters = `<g transform="translate(${tx} ${ty}) scale(${k})" fill="${ink}">${LETTERS.replace(/INK/g, ink)}</g>`;
+  const lh = Math.max(1, Math.round(1.5 * k));
   const lines = LINES.map(([x, y, w]) => {
-    const top = Math.round(ty + y * K);
-    const x0 = Math.round(tx + x * K);
-    const x1 = Math.max(x0 + 1, Math.round(tx + (x + w) * K));
-    return `<rect x="${x0}" y="${top}" width="${x1 - x0}" height="1" fill="${ink}"/>`;
+    const top = Math.round(ty + y * k);
+    const x0 = Math.round(tx + x * k);
+    const x1 = Math.max(x0 + 1, Math.round(tx + (x + w) * k));
+    return `<rect x="${x0}" y="${top}" width="${x1 - x0}" height="${lh}" fill="${ink}"/>`;
   }).join('');
   return letters + `<g shape-rendering="crispEdges">${lines}</g>`;
 };
 
-// picture: the picture as a data URI for the tall picture card; tall: the 4:5 card
+// picture: the picture as a data URI for the tall picture card; tall: the 4:5 card.
+// The tall picture card is the picture alone, cropped to fill the frame, made to
+// sit beside the tall text card as a carousel's two slides (asked 2026-10-02:
+// "make text card and image only card next to each other"); for an hour it had
+// the picture across the top at 2 : 1 and the text under it.
 export const cardSvg = (input, picture = null, tall = false) => {
-  const L = tall ? (picture ? LAYOUTS.tallPic : LAYOUTS.tall) : LAYOUTS.wide;
+  if (tall && picture) return `<svg xmlns="http://www.w3.org/2000/svg" width="${TALL_W}" height="${TALL_H}" viewBox="0 0 ${TALL_W} ${TALL_H}">`
+    + `<rect width="${TALL_W}" height="${TALL_H}" fill="${input.ground}"/><image x="0" y="0" width="${TALL_W}" height="${TALL_H}" preserveAspectRatio="xMidYMid slice" href="${picture}"/></svg>`;
+  const L = tall ? LAYOUTS.tall : LAYOUTS.wide;
   const face = input.serif ? 'serif' : 'sans';
   const metaFace = input.serif ? 'serifText' : 'sans';
-  const meta = metaLines(input.meta);
+  const meta = metaLines(input.meta, metaFace, L.meta || META, L.measure);
   const { fs, lines } = fitTitle(input.title, face, meta.length, L);
   const out = [];
   // the title's first cap on the top margin: the ink, not the line box
@@ -235,8 +247,7 @@ export const cardSvg = (input, picture = null, tall = false) => {
     y += META_LH * metaFs;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${L.w}" height="${L.h}" viewBox="0 0 ${L.w} ${L.h}">`
-    + `<rect width="${L.w}" height="${L.h}" fill="${input.ground}"/>${out.join('')}${markSvg(input.ink, L.markTop)}${input.plate === false ? '' : plateSvg(input.ink, input.lang, L.markTop)}`
-    + (picture ? `<image x="${L.pic.x}" y="${L.pic.y}" width="${L.pic.w}" height="${L.pic.h}" preserveAspectRatio="xMidYMid slice" href="${picture}"/>` : '')
+    + `<rect width="${L.w}" height="${L.h}" fill="${input.ground}"/>${out.join('')}${markSvg(input.ink, L.markTop, L.k)}${input.plate === false ? '' : plateSvg(input.ink, input.lang, L.markTop, L.k)}`
     + '</svg>';
 };
 
