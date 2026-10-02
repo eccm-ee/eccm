@@ -5,7 +5,7 @@
 // (src/render/page.mjs); Sündmused still points at eccm.ee and moves here
 // when the list does. The same hrefs sit in mark.mjs's strings and in every
 // static page under public/, changed together.
-import { html, raw } from './html.mjs';
+import { html, raw, esc } from './html.mjs';
 import { SYMBOL, HEADER, FOOTER } from './mark.mjs';
 import { sitePath, siteAlt, pagePath, W as OG_W, H as OG_H } from '../og/card.mjs';
 
@@ -71,8 +71,13 @@ export const page = ({ lang, title, alternate, canonical, alternates, body, noti
   // itself passes wide: 'root' and gets none
   if (wide === true) {
     // the tool pages are in English since 2026-10-02 ("convert all admin pages to english only")
-    const b = String(body), back = `<a href="/admin">${lang === 'en' ? 'Admin' : 'Haldus'}</a>`;
-    body = raw(b.includes('<p class="crumb">') ? b.replace('<p class="crumb">', `<p class="crumb">${back}<span class="crumb-sep" aria-hidden="true">/</span>`) : `  <p class="crumb">${back}</p>\n${b}`);
+    // a trail since 2026-10-02 ("make preoper breadcumb ... add more space below it in desktop. make it dark"):
+    // Admin, the page's own parent crumb when it brings one, then the page itself, unlinked and marked current
+    const b = String(body), back = `<a href="/admin">${lang === 'en' ? 'Admin' : 'Haldus'}</a>`, sep = '<span class="crumb-sep" aria-hidden="true">/</span>';
+    const here = `${sep}<span aria-current="page">${esc(String(title).replace(/\.$/, ''))}</span>`;
+    body = raw(b.includes('<p class="crumb">')
+      ? b.replace(/<p class="crumb">([\s\S]*?)<\/p>/, (m, inner) => `<p class="crumb crumb-trail">${back}${sep}${inner}${here}</p>`)
+      : `  <p class="crumb crumb-trail">${back}${here}</p>\n${b}`);
   }
   return html`<!doctype html>
 <html lang="${lang}">

@@ -329,6 +329,17 @@
   /* a crumb above a title: the page this one came from, small, in the muted ink */
   .crumb-sep { padding-inline: var(--eccm-s-2); }
   .crumb { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-4); }
+  /* the admin pages' trail (src/render/chrome.mjs, the design system pages): one line at the menu's size in the
+     ink, each step a link with the text links' thin line under it, the page itself the last step in the ink
+     with no line, the slashes in the second ink between them, and air under it the size of the gap between
+     groups, two steps above the trail's own (asked 2026-10-02: "make preoper breadcumb. use typo composition
+     skills. add more space below it in desktop. make it dark/black i assume, maybe bigger"); the event page's
+     crumb above is a public page's and stays as it was */
+  .crumb-trail { font-size: 1rem; line-height: var(--eccm-lh-meta); color: var(--eccm-ink); margin-block-end: var(--eccm-s-6); }
+  .crumb-trail a { color: var(--eccm-ink); text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; text-decoration-color: var(--eccm-rule-strong); }
+  .crumb-trail a:hover { text-decoration-color: currentColor; }
+  .crumb-trail .crumb-sep { color: var(--eccm-ink-2); }
+  @media (min-width: 48rem) { .crumb-trail { margin-block-end: var(--eccm-s-12); } }
   /* the head of an event page: the title, the facts and the actions in one
      column and the picture beside them at its own size on a desk, the two
      stacked under 60rem of main. arvopart.ee's page for the same concert uses
