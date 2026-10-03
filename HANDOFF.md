@@ -1,22 +1,41 @@
-# Handoff, 2026-10-02, the sixth day of the eccm repository
+# Handoff, 2026-10-03, the seventh day of the eccm repository
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
-committed on `main` of **https://github.com/kristjanjansen/eccm**, private.
-**Not pushed:** 58 commits ahead of `origin/main` (count with `git log --oneline
-origin/main..HEAD`), because `kristjanjansen`, the account that owns the
-repository, has no token on this machine (`gh auth switch` answers "no token
-found"). The owner runs `gh auth login -h github.com` as `kristjanjansen`;
-then push per CLAUDE.md and switch back. positron is 77 ahead for the same
-reason. Numbers here were counted with a command when this was written; count
-again before building on one.
+committed on `main` of **https://github.com/kristjanjansen/eccm**, private,
+pushed (`git log --oneline origin/main..HEAD` counted 0 on 2026-10-03 before
+the day's commit). Push per CLAUDE.md and switch the account back.
 
-**This laptop cannot reach `eccm.positron.studio` or `positron.studio` since
-2026-10-02**: its DNS filter (Fortinet) answers with a "Fortiguard SDNS Blocked
-Page" certificate, so curl says `self signed certificate` and a browser shows a
-block page. Everything below was checked through
-**https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker) and
-https://elektron-view.kristjan-jansen.workers.dev/ (positron's site). The
-custom domains themselves are fine for anyone else.
+**This laptop cannot reach `eccm.positron.studio` or `positron.studio`**: its
+DNS filter (Fortinet) answers with a block page. Check through
+**https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
+
+## 2026-10-03: the Estonian front page, the event page, the seeded rows
+
+Asked: "do estonian front page, eventpage fixes, seederdorw, positron bucket.
+radio is only englih".
+
+- **`/` comes from D1**, the same `renderEvents({ home: true })` as `/en/`:
+  the events to come, no past. `public/index.html` is deleted (in git at
+  5977631).
+- **TUMA is a series** (`migrations/0006_tuma.sql` rebuilds `event` for the
+  CHECK, copying `event_text` and `event_credit` aside around the drop;
+  counts 30, 50, 33 before and after, local and remote). Eight events moved
+  from Koostöö in `data/seed-step7.sql`: 4, 9, 12, 22, 23, 26, 27, 29.
+- **The event page prints Koduleht** from `website_url`, its host as the link
+  text, and the link line the seeds repeated at each body's end is gone.
+- **A start at 00:00 is a day with no hour** (`hasClock`, `whenLine` in
+  `src/render/dates.mjs`), and an event ending on a later day prints the range:
+  the Üle Heli festival is 2026-10-22T00:00 to 2026-10-25T23:59 and reads
+  "22.–25. oktoober 2026". eccm.ee still prints 15:51, its form's default.
+- **The second Gestures slugs** end in `-2026-10-11` (the editor's rule for a
+  taken slug), not `-liisa`. The old addresses 404.
+- **/radio stays English only**, the open question answered.
+- **Not done: positron-station's 12 station files and 12 index files.** Each
+  is in `eccm-files-staging/uploads/` at the same size and nothing in positron
+  names them; the delete was refused by this session's permission check and
+  waits on the owner. The MIM and kristjanjansen media stay.
+- Seen and left: event 5 (the second Gestures evening) carries event 1's
+  ticket link and credits; U:'s 23:42 on 29.12 is still as eccm.ee types it.
 
 ## 2026-10-02, the night: where it stands
 

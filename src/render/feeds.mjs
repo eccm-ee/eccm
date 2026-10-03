@@ -14,7 +14,7 @@
 import { T } from './chrome.mjs';
 import { LIST, HOME } from './events.mjs';
 import { pagePath } from './page.mjs';
-import { dateLong, clock } from './dates.mjs';
+import { whenLine } from './dates.mjs';
 
 const XML_ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' };
 export const xmlEsc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => XML_ESC[c]);
@@ -62,7 +62,7 @@ const rfc822 = (utc) => new Date(utc).toUTCString();
 // media.bytes migration lands separately and length is left out until then
 const item = (origin, lang, r) => {
   const link = origin + eventPath(lang, r.slug);
-  const facts = [`${dateLong(r.starts_at, lang)} ${T[lang].at} ${clock(r.starts_at, lang)}`, r.venue, r.ticket_url && `${T[lang].ticket}: ${r.ticket_url}`].filter(Boolean).join(', ');
+  const facts = [whenLine(r.starts_at, r.ends_at, lang), r.venue, r.ticket_url && `${T[lang].ticket}: ${r.ticket_url}`].filter(Boolean).join(', ');
   const desc = [facts, firstPara(r.body)].filter(Boolean).join('\n\n');
   const type = r.key && TYPE[r.key.split('.').pop().toLowerCase()];
   const enclosure = type ? `<enclosure url="${xmlEsc(origin + '/' + r.key)}" type="${type}"${r.bytes != null ? ` length="${xmlEsc(r.bytes)}"` : ''}/>` : '';

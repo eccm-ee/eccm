@@ -6,7 +6,7 @@ import { darkOf } from '../../public/scheme.mjs';
 import { html, raw, esc } from './html.mjs';
 import { md } from './md.mjs';
 import { T, OTHER, page } from './chrome.mjs';
-import { dateLong, dayMonth, clock, mapsUrl } from './dates.mjs';
+import { dayMonth, whenLine, mapsUrl } from './dates.mjs';
 import { poster } from './pic.mjs';
 import { cardInput, cardVersion, cardPath, cardAlt, W as CARD_W, H as CARD_H } from '../og/card.mjs';
 
@@ -43,7 +43,10 @@ ${desc ? html`<meta name="description" content="${desc}">
 export const CATEGORY = {
   eccm: { et: 'ECCM', en: 'ECCM' }, koostoo: { et: 'Koostöö', en: 'Collaboration' }, improtest: { et: 'Improtest', en: 'Improtest' },
   schoenberg: { et: 'Schönbergi sari', en: 'Schönberg series' }, ulysses: { et: 'Ulysses', en: 'Ulysses' }, u: { et: 'U:', en: 'U:' },
+  tuma: { et: 'TUMA', en: 'TUMA' },
 };
+// 'https://www.ule-heli.ee/' as 'ule-heli.ee', the way the seeded bodies wrote it
+const host = (url) => { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; } };
 const CONTACT = { tel: '+37255655596', telText: '5565 5596', site: 'https://eccm.ee', siteText: 'eccm.ee' };
 
 // the Europe/Tallinn offset at a local time, '+03:00' in summer and '+02:00'
@@ -130,9 +133,10 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
         ${fallback ? html`<p class="small">${t.fallback}</p>` : ''}
         <h1 lang="${textLang}">${title}</h1>
         <dl class="facts">
-          <div><dt>${t.when}</dt><dd><time datetime="${ev.starts_at}${off}">${dateLong(ev.starts_at, lang)} ${t.at} ${clock(ev.starts_at, lang)}</time>${ev.duration_min ? html`, <time datetime="PT${ev.duration_min}M">${ev.duration_min} ${t.min}</time>` : ''}</dd></div>
+          <div><dt>${t.when}</dt><dd><time datetime="${ev.starts_at}${off}">${whenLine(ev.starts_at, ev.ends_at, lang)}</time>${ev.duration_min ? html`, <time datetime="PT${ev.duration_min}M">${ev.duration_min} ${t.min}</time>` : ''}</dd></div>
           <div><dt>${t.where}</dt><dd><a class="place" href="${mapsUrl(where)}">${where}</a></dd></div>
           ${ev.category !== 'eccm' ? html`<div><dt>${t.series}</dt><dd>${CATEGORY[ev.category][lang]}</dd></div>` : ''}
+          ${ev.website_url ? html`<div><dt>${t.website}</dt><dd><a href="${ev.website_url}">${host(ev.website_url)}</a></dd></div>` : ''}
           <div><dt>${t.calendar}</dt><dd><a href="${gcal}">Google</a> <a href="${outlook}">Outlook</a> <a href="${eventPath(textLang, text.slug)}.ics">iCal</a></dd></div>
           <div><dt>${t.ask}</dt><dd><a href="tel:${CONTACT.tel}">${CONTACT.telText}</a>, <a href="${CONTACT.site}">${CONTACT.siteText}</a></dd></div>
         </dl>

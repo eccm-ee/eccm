@@ -23,7 +23,7 @@ import { dateShort, clock } from './dates.mjs';
 // a blank credit block, the one the form shows when an event has none and the one Add credit adds
 export const BLANK_CREDIT = () => ({ role_key: '', label_et: '', label_en: '', people: '', orgs_et: '', orgs_en: '' });
 
-export const CATEGORIES = [['eccm', 'ECCM'], ['koostoo', 'Collaboration'], ['improtest', 'Improtest'], ['schoenberg', 'Schönberg series'], ['ulysses', 'Ulysses'], ['u', 'U:']];
+export const CATEGORIES = [['eccm', 'ECCM'], ['koostoo', 'Collaboration'], ['improtest', 'Improtest'], ['schoenberg', 'Schönberg series'], ['ulysses', 'Ulysses'], ['u', 'U:'], ['tuma', 'TUMA']];
 export const STATUSES = [['draft', 'Draft'], ['published', 'Published']];
 export const eventPath = (lang, slug) => (lang === 'et' ? `/et/sundmused/${slug}` : `/en/events/${slug}`);
 

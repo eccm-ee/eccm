@@ -1,6 +1,6 @@
 // events.mjs: the events list, /et/sundmused and /en/events, the one menu
 // item that still led to eccm.ee until 2026-09-28 (asked as "do main menu
-// pages and make them editable"). The rows are public/index.html's list rows
+// pages and make them editable"). The rows are the static front page's list rows
 // on the same stylesheet rules: the picture, the kicker with the date twice
 // (long and short, the stylesheet shows one), the clock, the place, the
 // series when it is not ECCM's own, the title, the first paragraph.
@@ -12,11 +12,12 @@
 // list is edited; the Add button that led to /edit/events/new went 2026-09-29
 // with that route. With home set it is the English front page at /en/ (asked
 // 2026-09-28 with a picture of /en/ answering the 404): the front page's
-// heading, the events to come, no button and no past.
+// heading, the events to come, no button and no past. The Estonian front
+// page at / is the same since 2026-10-03, in place of public/index.html.
 import { PAGE_TITLES } from '../og/card.mjs';
 import { html, raw } from './html.mjs';
 import { T, OTHER, page } from './chrome.mjs';
-import { dateLong, dateShort, clock, mapsUrl } from './dates.mjs';
+import { dateLong, dateShort, clock, hasClock, mapsUrl } from './dates.mjs';
 import { offsetFor, CATEGORY } from './event.mjs';
 import { listImg } from './pic.mjs';
 
@@ -41,7 +42,7 @@ const row = (e, lang) => {
   return html`<li class="ev">
       ${e.pic ? html`<a class="ev-pic" href="${href}" tabindex="-1" aria-hidden="true">${listImg(e.pic, e.width, e.height)}</a>` : html`<span class="ev-pic ev-blank" aria-hidden="true"></span>`}
       <div class="ev-body">
-        <p class="ev-kicker"><time datetime="${e.starts_at}${offsetFor(e.starts_at)}"><span class="d-long">${dateLong(e.starts_at, lang)}</span><span class="d-short">${dateShort(e.starts_at, lang)}</span></time><time>${clock(e.starts_at, lang)}</time><span><a class="place" href="${mapsUrl(e.venue)}">${e.venue}</a></span>${e.category !== 'eccm' && CATEGORY[e.category] ? html`<span>${CATEGORY[e.category][lang]}</span>` : ''}</p>
+        <p class="ev-kicker"><time datetime="${e.starts_at}${offsetFor(e.starts_at)}"><span class="d-long">${dateLong(e.starts_at, lang)}</span><span class="d-short">${dateShort(e.starts_at, lang)}</span></time>${hasClock(e.starts_at) ? html`<time>${clock(e.starts_at, lang)}</time>` : ''}<span><a class="place" href="${mapsUrl(e.venue)}">${e.venue}</a></span>${e.category !== 'eccm' && CATEGORY[e.category] ? html`<span>${CATEGORY[e.category][lang]}</span>` : ''}</p>
         <h2 class="ev-title"><a href="${href}"${foreign}>${e.title}</a></h2>
         ${summary ? html`<p class="ev-summary prose"${foreign}>${summary}</p>` : ''}
       </div>

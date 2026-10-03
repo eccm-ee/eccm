@@ -9,7 +9,7 @@
 // cascade and a var() never resolves (plans/plan-eccm-social-images.md
 // section 3); an event without one takes the site's own white and ink.
 import { SYMBOL, HEADER } from '../render/mark.mjs';
-import { dateLong, clock } from '../render/dates.mjs';
+import { whenLine } from '../render/dates.mjs';
 import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
@@ -175,10 +175,9 @@ export const cardInput = ({ lang, title, ev, scheme, pic }) => {
   let s = null;
   if (scheme) { try { s = JSON.parse(scheme); } catch { s = null; } }
   const ok = s && HEX.test(s.ground) && HEX.test(s.ink) && HEX.test(s.ink2);
-  const at = lang === 'et' ? 'kell' : 'at';
   return {
     lang, title,
-    meta: [`${dateLong(ev.starts_at, lang)} ${at} ${clock(ev.starts_at, lang)}`, ev.venue].filter(Boolean),
+    meta: [whenLine(ev.starts_at, ev.ends_at, lang), ev.venue].filter(Boolean),
     ground: ok ? s.ground : SITE.ground, ink: ok ? s.ink : SITE.ink, ink2: ok ? s.ink2 : SITE.ink2,
     serif: !!(ok && (s.serif || s.titleFace)),
     // the picture's key for the picture layout, a JPEG or PNG resvg can draw; the bytes are read at render

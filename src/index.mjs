@@ -152,6 +152,8 @@ export default {
       const m = EVENT[lang].exec(p);
       if (m) { const out = await event(env, lang, m[1], url); if (out) return reply(out); break; }
     }
+    // the front pages, both from D1 since 2026-10-03 (asked: "do estonian front page"); public/index.html, the static one, is in git at 5977631
+    if (p === '/') return reply(await eventsList(env, 'et', url, true));
     if (p === '/en' || p === '/en/') return reply(await eventsList(env, 'en', url, true));
     if (p === '/et' || p === '/et/') return new Response(null, { status: 301, headers: { location: '/' } });
     if (LIST_LANG[p]) return reply(await eventsList(env, LIST_LANG[p], url));

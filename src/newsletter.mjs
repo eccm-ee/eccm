@@ -45,7 +45,8 @@ const WEEKDAY = { et: ['Pühapäeval', 'Esmaspäeval', 'Teisipäeval', 'Kolmapä
 const when = (local, venue, lang) => {
   const m = Number(local.slice(5, 7)) - 1, d = Number(local.slice(8, 10)), hm = local.slice(11, 16);
   const wd = WEEKDAY[lang][new Date(`${local.slice(0, 10)}T12:00:00Z`).getUTCDay()];
-  const at = lang === 'et' ? `${wd}, ${d}. ${ADESSIVE[m]} kell ${hm.replace(':', '.')}` : `${wd} ${d} ${MONTH[m]} at ${hm}`;
+  const day = lang === 'et' ? `${wd}, ${d}. ${ADESSIVE[m]}` : `${wd} ${d} ${MONTH[m]}`;
+  const at = hm === '00:00' ? day : lang === 'et' ? `${day} kell ${hm.replace(':', '.')}` : `${day} at ${hm}`;
   return venue ? `${at}, ${venue}` : at;
 };
 const eventUrl = (origin, lang, slug) => `${origin}${lang === 'et' ? '/et/sundmused/' : '/en/events/'}${slug}`;
