@@ -30,10 +30,10 @@ radio is only englih".
 - **The second Gestures slugs** end in `-2026-10-11` (the editor's rule for a
   taken slug), not `-liisa`. The old addresses 404.
 - **/radio stays English only**, the open question answered.
-- **Not done: positron-station's 12 station files and 12 index files.** Each
-  is in `eccm-files-staging/uploads/` at the same size and nothing in positron
-  names them; the delete was refused by this session's permission check and
-  waits on the owner. The MIM and kristjanjansen media stay.
+- **positron-station's bucket holds only other media now**: the owner deleted
+  the 12 station files and their 12 index files (each kept in
+  `eccm-files-staging/uploads/` at the same size), leaving 99 objects, all
+  `mimproject/`, `mimproject-images/` and `kristjanjansen/`.
 - Seen and left: event 5 (the second Gestures evening) carries event 1's
   ticket link and credits; U:'s 23:42 on 29.12 is still as eccm.ee types it.
 
