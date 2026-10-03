@@ -37,12 +37,18 @@ radio is only englih".
 - Seen and left: event 5 (the second Gestures evening) carries event 1's
   ticket link and credits; U:'s 23:42 on 29.12 is still as eccm.ee types it.
 
-## 2026-10-02, the night: where it stands
+## Where it stands, 2026-10-03
 
 What is true now, each one checkable on the workers.dev address:
 
-- **/admin** (English) has seven cards: Events, Notices, Radio, Files,
-  Newsletter, Design system, Research.
+- **/admin** (English) has ten cards, four to a row: Events, Notices, Radio,
+  Files, Newsletter, Components (/ds), Logo, Icons, Social, Research
+  (`TOOLS` in `src/render/admin.mjs`). Admin pages carry a crumb trail:
+  Admin, the parent, the page.
+- **Both front pages come from D1**, `/` and `/en/`, the events to come.
+- **Dark mode** follows the system, with one word in the footer cycling
+  Auto, Light and Dark, kept in the browser and set before the first paint.
+  A light event scheme carries its dark half as `light-dark()` pairs.
 - **/radio** plays three channels from eccm's own station at `/stream`
   (UbuWeb, Toonid, Otse proov) and lists the kept live shows under Recordings.
 - **/admin/files** has Uploads (17, the programmes the channels play) and
@@ -68,7 +74,7 @@ What is true now, each one checkable on the workers.dev address:
 - **Workers**: `eccm-staging` (the site, the station, the recorder),
   `eccm-files-staging` (uploads, reached at `/files/*`). positron's
   `positron-station` serves only `GET /media/` for the MIM and kristjanjansen
-  media left in its bucket; `positron-vain` is deleted.
+  media, all its bucket holds since 2026-10-03; `positron-vain` is deleted.
 - **positron** is deployed at build `fdc5677-081701-752c`: crate is gone
   (`/crate/` 404), the station row links to eccm's /radio, click and und sit
   under timeline. Its build tree is committed (0bbbbcc).
@@ -77,6 +83,33 @@ To check after a change here: `/stream/channels.json` names what each channel
 plays, `/radio/state.json` is the recorder's alarm and rows, and
 `node tools/upload.mjs` with `FILES_BASE` set puts a file through the whole
 upload.
+
+## 2026-10-02, afternoon and night: design pages, share cards, icons, dark mode
+
+Not written down on the day; read back from the commits (61fca86..5977631).
+
+- **The design system is three pages**: /ds the components, /logo the mark,
+  wordmark and icon sizes, /social the share images, each a card on /admin.
+- **Share cards for every page**, not only events: `/og/g/` (share) and
+  `/og/gt/` (Instagram), the page's title and its first sentence on a colour
+  hashed from the events' schemes (no browns, pure white left out, the front
+  page on the events' lightest grey). Every card's date and venue is in the
+  sans.
+- **Instagram cards**, 4 : 5: the text card at `/og/t/`, the picture split
+  across two cards at `/og/tp/` so a carousel reads as one panorama, the text
+  card carrying the picture's first 108 px. Title sizes are each the largest
+  that cuts none of the live titles. /social shows the pages first, then each
+  event's share card and its Instagram carousel, a swipe per card on a phone.
+- **Icons are Feather**: 63 with square corners in one sprite,
+  `public/vendor/icons/feather/icons.svg`, written by `tools/feather.mjs`, and
+  revalidated on every load since /vendor's immutable rule kept an old copy;
+  `.ico`, `.btn-ico` and `.play-btn` in `eccm.css`; /icons shows them. The six
+  other sets weighed on the research page are archived.
+- **/admin/files** has Edit after Listen, opening the row's form in place.
+- **The event list on a phone**: under 36rem the picture is the column's width
+  at 3 : 2 above the text.
+- **Event pages**: underlines, hover and focus in the text colour, not the
+  derived accent.
 
 ## 2026-10-02, evening: /admin/files and eccm-files
 
@@ -417,7 +450,7 @@ eager; an upload has no delete and a replaced picture's row and object stay.
 
 | URL | what |
 | --- | --- |
-| https://eccm.positron.studio/ | the Estonian front page, static, ten rows with kicker, title and summary; since 2026-09-28 every row links to the event's own page from D1 |
+| https://eccm.positron.studio/ | the Estonian front page **from D1** since 2026-10-03, the events to come, as `/en/` |
 | https://eccm.positron.studio/en/ | the English front page **from D1**, the events to come under Upcoming events, no button, no past |
 | https://eccm.positron.studio/et/sundmused | the events list from D1, and `/en/events`: the events to come, then Toimunud when there are any. The Add button went 2026-09-29 with `/edit/events/new` |
 | https://eccm.positron.studio/et/sundmused/surm | an event page from D1, one of ten (`data/seed-step1.sql` to `seed-step4.sql`); `/en/events/{slug}` is its twin where an English row exists (two of ten) and the Estonian text under English chrome with one line saying so where none does |
@@ -425,10 +458,13 @@ eager; an upload has no delete and a replaced picture's row and object stay.
 | https://eccm.positron.studio/edit/events/1 | one event's form, open to anyone who opens it, reached from the Muuda button on the event and from nowhere else. **There is no editor list and no new-event form** |
 | https://eccm.positron.studio/edit/pages/1 | one text page's form, reached from the Muuda/Edit button every text page carries; `/edit/pages/new` still makes one |
 | https://eccm.positron.studio/derive | design from a picture, four sets of six pictures (`?set=1` to `4`), Newsreader as the serif with Literata and Roboto Serif on `?serif=literata` and `?serif=roboto` |
-| https://eccm.positron.studio/ds | the design system, with the wordmark studies at its foot: type specimens, bios, colour (the ink only, no accent since 2026-09-28), space, buttons with a disabled state, the logos, the square marks, the icons |
+| https://eccm.positron.studio/ds | the components: type, figures, colour, space, buttons, tables and cards, in both themes |
+| https://eccm.positron.studio/logo | the square mark, the wordmark in both languages and every icon size |
+| https://eccm.positron.studio/icons | Feather, the site's 63 icons, in buttons small and large on both grounds |
+| https://eccm.positron.studio/social | the share and Instagram cards of every page and event |
 | https://eccm.positron.studio/type | seventeen faces for body and titles, then the six sans and the ten serifs in the derived page's three uses |
 
-Four static pages, `ls public/*.html | wc -l` counting 4 today.
+Six static pages (derive, ds, icons, logo, social, type), `ls public/*.html | wc -l` counting 6 on 2026-10-03.
 
 Gone since 2026-09-27: `/wordmark` (folded into the foot of `/ds`), `/serif`
 and `/sans` (merged into `/type`), `/layout` (its winning header and footer
@@ -472,7 +508,7 @@ which got their own column that day. One column under 48rem as before.
 The Worker's pages take the chrome from `src/render/mark.mjs` (HEADER and
 FOOTER strings, the switch href replaced per page); the static pages carry it
 inline, so a change to the chrome is one edit in `mark.mjs` and one in each of
-the four static pages.
+the six static pages.
 
 Every language switch stays on this site: the D1 pages and events go to their
 twin, the two lists to each other, the Estonian static pages to `/en/`, the
@@ -480,7 +516,7 @@ English ones to `/`, and `/et/` answers 301 to `/`.
 
 ## What the Worker does today
 
-`src/index.mjs` answers from D1: `/en/` (the English front page), `/et/sundmused`
+`src/index.mjs` answers from D1: `/` and `/en/` (the front pages), `/et/sundmused`
 and `/en/events` (the lists, `src/render/events.mjs`), `/et/sundmused/{slug}`
 and `/en/events/{slug}` (`src/render/event.mjs`), `/et/{slug}` and
 `/en/{slug}` (`src/render/page.mjs`, the five text pages; `sundmused` and
@@ -628,26 +664,9 @@ ornament; both lines of a tagline pair are centred or both start on the E.
   the site. `data/seed-step4.sql` is the pattern for adding one by hand.
 - **The gate for /admin and /files.** Uploads are open to anyone by the
   owner's word, until Access, the token or open is chosen (the first section).
-- **positron-station's bucket still holds the station's 17 old files and
-  their indexes** (the owner stopped that deletion); nothing reads them.
 - **The editor is open on a public hostname.** Noindex everywhere, and an
   address nobody is given, but anyone who finds `/edit/events/1` can save over
   an event. That is what was asked for; the Access application is the way back.
-- **The Estonian front page is still static** while the English one comes
-  from D1. Making `/` the list from D1 means removing `public/index.html`
-  (the Worker sees only paths no file answers) and giving the Estonian home
-  the front page's heading; `renderEvents` with `home: true` already does the
-  English one.
-- **TUMA has no category key**, so Scrapyard and Sound Plasma print
-  "Sari: Koostöö". A `tuma` key is a migration (the CHECK constraint) plus
-  `CATEGORY` in `src/render/event.mjs` and `CATEGORIES` in
-  `src/render/editor.mjs`.
-- **The event template stores `website_url` and does not print it**, so the
-  Koduleht link sits as the last body line on every seeded event that has
-  one. A small change in `src/render/event.mjs`.
-- **Two seeded rows want the editor's hand**: the Üle Heli festival carries
-  eccm.ee's own 15:51 to 23:51; the second Gestures event's slug ends in
-  "-liisa" at the 60-character cut.
 - **The language is not remembered** between visits; the switch is per page.
 - **The tagline's face and shape are still unsettled**, and the two pages that
   showed the study, `/tagline` and `/tagline-47`, were asked away 2026-09-29.
@@ -655,6 +674,12 @@ ornament; both lines of a tagline pair are centred or both start on the E.
   section 7. Then the outlines for whichever wins; a true 16 px mark; a
   maskable Android icon; the bios migration when that plan is read.
 - **Konkursid** holds the intro and a link to the full call on eccm.ee.
+- **The second Gestures evening (event 5)** carries event 1's ticket link and
+  credits, copied in seed-step4; its own names are only in its title.
+- **Not done on the radio**: putting a kept show back into a channel's
+  running order. /radio stays English only (answered 2026-10-03).
+- **UbuWeb's fair-use stance is not a licence**: settle the rights before the
+  station plays it anywhere public.
 
 ## The machine
 
@@ -684,9 +709,8 @@ centre, so use `1 0` for the top of a page.
 
 ## How to go on
 
-Push first. Then `BACKLOG.md`, which has every ask of the earlier days verbatim with what was measured,
-the open ones at the top. The first candidates: the Estonian front page from
-D1, the `tuma` key, the website field on the event page, and today's open
-list above (push first). Agents report and do not commit; the
-session commits by path, deploys and pushes, and a deploy ships the working
-tree, so `git status` before every deploy.
+Everything is pushed. `BACKLOG.md` has every ask verbatim with what was
+measured, the open ones at the top. The candidates now: the gate for /admin
+and /files, event 5's ticket and credits, and the open list above. Agents
+report and do not commit; the session commits by path, deploys and pushes,
+and a deploy ships the working tree, so `git status` before every deploy.
