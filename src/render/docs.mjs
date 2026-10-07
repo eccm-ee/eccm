@@ -68,7 +68,7 @@ const cards = (list) => html`<div class="cards">
 const titleOf = (md) => (/^#\s+(.+)$/m.exec(md) || [, 'Doc'])[1].trim();
 
 export const renderDocs = () => page({
-  wide: true, lang: 'en', title: 'Docs.',
+  wide: true, root: 'docs', lang: 'en', title: 'Docs.',
   body: html`  <h1>Docs</h1>
   ${cards([
     ...Object.entries(DOCS).map(([key, d]) => [`/docs/${key}`, titleOf(d.md), d.desc]),
@@ -80,7 +80,7 @@ export const renderDoc = (key) => {
   if (!d) return null;
   const body = d.md.replace(/^#\s+.+\n/m, '');
   return page({
-    wide: true, lang: 'en', title: `${titleOf(d.md)}.`,
+    wide: true, root: 'docs', lang: 'en', title: `${titleOf(d.md)}.`,
     // the same centred column as a text page from D1 (.page-text); the crumb stays where every admin page has it,
     // at the frame's left (asked 2026-10-07: "keep breadcrumbs in the same place")
     body: html`  <p class="crumb"><a href="/docs">Docs</a></p>
