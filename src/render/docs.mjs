@@ -82,6 +82,34 @@ const cards = (list) => html`<div class="cards">
 const collapseDone = (out) => out.replace(/(<h3 id="[^"]*">[\s\S]*?<\/h3>\n)(<p class="doc-task">[\s\S]*?<\/p>\n)([\s\S]*?)(?=<h[23] |$)/g,
   (m, h3, task, rest) => (task.includes('badge-done') ? `<details class="doc-done"><summary>${h3}${task}</summary>${rest}</details>\n` : m));
 
+// the contents, built from the doc itself where it says <!-- contents --> (asked 2026-10-07: "can we unify
+// this... its hard to follow (basically TOC?)"): every ## section a group row, every ### task under it with its
+// who and its state badge from the task's own "**Who:** x. **State:** y." line, done tasks last in their group.
+// One source, so the list cannot disagree with the sections it points at
+const TASK = /^\*\*Who:\*\* (.+?)\. \*\*State:\*\* (.+?)\.?$/;
+const contents = (md) => {
+  const groups = [];
+  const toks = marked.lexer(md);
+  toks.forEach((t, i) => {
+    if (t.type !== 'heading') return;
+    const text = marked.parseInline(t.text);
+    const id = slug(text.replace(/<[^>]+>/g, '').replace(/&[#a-z0-9]+;/gi, ' '));
+    if (t.depth === 2) groups.push({ text, id, tasks: [] });
+    else if (t.depth === 3 && groups.length) {
+      const next = toks.slice(i + 1).find((x) => x.type !== 'space');
+      const m = next && next.type === 'paragraph' && TASK.exec(next.raw.trim());
+      if (m) groups.at(-1).tasks.push({ text, id, who: m[1], state: m[2].split(/, (.*)/s)[0] });
+    }
+  });
+  const cap = (x) => x.replace(/^./, (c) => c.toUpperCase());
+  const row = (k) => `<tr><td class="main" data-label="Task"><a href="#${k.id}">${k.text}</a></td><td data-label="Who">${esc(cap(k.who))}</td><td data-label="State">${badge(raw(marked.parseInline(cap(k.state))))}</td></tr>`;
+  const body = groups.map((g) => {
+    const open = g.tasks.filter((k) => toneOf(k.state) !== 'done'), done = g.tasks.filter((k) => toneOf(k.state) === 'done');
+    return `<tr class="doc-toc-group"><th colspan="3" scope="rowgroup"><a href="#${g.id}">${g.text}</a></th></tr>${[...open, ...done].map(row).join('')}`;
+  }).join('');
+  return `<h2 id="contents">Contents</h2>\n<div class="table doc-toc"><table><thead><tr><th scope="col" class="main">Task</th><th scope="col">Who</th><th scope="col">State</th></tr></thead><tbody>${body}</tbody></table></div>\n`;
+};
+
 // the doc's own # line is its title
 const titleOf = (md) => (/^#\s+(.+)$/m.exec(md) || [, 'Doc'])[1].trim();
 
@@ -103,7 +131,7 @@ export const renderDoc = (key) => {
     // at the frame's left (asked 2026-10-07: "keep breadcrumbs in the same place")
     body: html`  <p class="crumb"><a href="/docs">Docs</a></p>
   <div class="page-text"><h1>${titleOf(d.md)}</h1>
-  <div class="flow doc">${raw(collapseDone(marked.parse(body)))}</div></div>
+  <div class="flow doc">${raw(collapseDone(marked.parse(body)).replace('<!-- contents -->', () => contents(body)))}</div></div>
   ${raw(COPY)}${raw(OPEN)}`,
   });
 };

@@ -13,45 +13,11 @@ Moving eccm.ee onto this site. Measured on 7 October 2026. Each task says who do
 | Events | Everything to the end of 2026 is entered on eccm.ee. A few dates will change. |
 | Admin | Open for now, closed soon. |
 
-## Who does what
-
-| Task | Who | State |
-| --- | --- | --- |
-| [Noindex on every page until cutover](#noindex-on-every-page-until-cutover) | Agent | Done |
-| [Redirects from the old Joomla addresses](#redirects-from-the-old-joomla-addresses) | Agent | Done |
-| [Contact form](#contact-form) | Agent | Done |
-| [Privacy notice](#privacy-notice) | ECCM approves, agent drafted | Draft live |
-| [EU emblem on Ulysses](#eu-emblem-on-ulysses) | Agent | Done |
-| [Search basics](#search-basics) | Agent | Done |
-| [Login on admin and editing](#login-on-admin-and-editing) | Agent, ECCM adds the people | Right after migration |
-| [Backups](#backups) | Agent | Done |
-| [Remove the radio, keep it restorable](#remove-the-radio-keep-it-restorable) | Agent | Done |
-| [Research pages to git history](#research-pages-to-git-history) | Agent | Done |
-| [Missing events, dates and times](#2-content) | ECCM | Ask |
-| [Import the archive](#import-the-archive) | Agent | To do |
-| [Copy /nan/](#copy-nan) | Agent | Later |
-| [Create the Cloudflare account](#create-the-cloudflare-account) | ECCM | Ask |
-| [Set up production](#set-up-production) | Agent | After the account |
-| [Email sending from eccm.ee](#email-sending-from-eccm-ee) | ECCM | After the zone move |
-| [Take a full backup first](#take-a-full-backup-first) | ECCM | Ask |
-| [Move the DNS to Cloudflare](#move-the-dns-to-cloudflare) | ECCM | To do |
-| [Cutover](#cutover) | ECCM, with the agent ready | To do |
-| [After](#after) | ECCM | After |
-| [A feed in his importer's shape](#a-feed-in-his-importer-s-shape) | Agent builds, Tarmo switches | Ask Tarmo |
-| [His files after cutover](#his-files-after-cutover) | Agent, ECCM adds the alias in cPanel | To do |
-
-## Order
-
-1. **Staging:** the site tasks below, on [staging](https://eccm-staging.kristjan-jansen.workers.dev/).
-2. **Content:** the missing events, the archive, the changed dates.
-3. **ECCM's account:** Cloudflare account, Workers Paid, production, data copied.
-4. **Zone move:** eccm.ee's DNS to Cloudflare, every record pointing where it does today. Nobody sees a change.
-5. **Cutover:** eccm.ee and www to the Worker.
-6. **After:** two weeks of watching, admin closed, Joomla hosting cancelled with mail kept.
-
-Every agent prompt assumes the agent reads `CLAUDE.md` first, which has the run, deploy and push commands.
+<!-- contents -->
 
 ## 1. Staging
+
+The site tasks, on [staging](https://eccm-staging.kristjan-jansen.workers.dev/). Every agent prompt assumes the agent reads `CLAUDE.md` first, which has the run, deploy and push commands.
 
 ### Noindex on every page until cutover
 
@@ -301,6 +267,12 @@ tag. Deploy staging, push the tag and the commit.
 
 ## 2. Content
 
+The missing events, the archive, the changed dates.
+
+### Missing events, dates and times
+
+**Who:** ECCM. **State:** ask.
+
 | Problem | Solution | Who | State |
 | --- | --- | --- | --- |
 | TUMA AFEKT festivalil 1.11 17:30 and in Tartu 2.11 19:00 are on eccm.ee, not here. | Add them in the event editor. | ECCM | To do |
@@ -347,6 +319,8 @@ at 375 and 1280 as the original, deploy staging, push.
 
 ## 3. ECCM's account
 
+Cloudflare account, Workers Paid, production, the data copied.
+
 ### Create the Cloudflare account
 
 **Who:** ECCM. **State:** ask.
@@ -391,6 +365,8 @@ phones stay subscribed. Do not deploy routes until ECCM says the zone is active.
 3. Send a test issue to yourself from `/edit/uudiskiri`.
 
 ## 4. Domain and mail
+
+The zone move first: eccm.ee's DNS to Cloudflare with every record pointing where it does today, so nobody sees a change. Then the cutover, eccm.ee and www to the Worker, and two weeks of watching.
 
 eccm.ee is ECCM's (registry code 80603988) until 18.03.2027. Registrar, DNS, hosting and mail are all [Virtuaal.com](https://www.virtuaal.com/): cPanel at 185.169.68.37, mail on its Exim at mail.eccm.ee. DNSSEC is off.
 
