@@ -26,7 +26,6 @@ export const renderDocs = () => page({
   ${cards([
     ['/docs/migration', 'Migration', 'Moving eccm.ee here: decisions, steps, findings and open questions.'],
     ['/docs/presence', 'Web presence', 'The site, tickets, social and listings: what is wrong today and what fixes it.'],
-    ['/logo', 'Logo', 'The mark, the wordmarks in both languages and every icon size, to look at and download.'],
     ['/docs/ici', 'ici on V\u00e4in', 'Albert Saprykin\u2019s ici as a session on V\u00e4in, and who does what.'],
   ])}`,
 });
@@ -71,7 +70,7 @@ const SITE = [
 
 const ADMIN = [
   ['The radio is not wanted on the site for now, but may be needed back fast.', 'Save the channels and schedules as JSON in archive/radio.md, tag radio-last, remove the station, recorder, files Worker and /radio. The 46 MB of audio stays in its bucket. Back: check out the tag, deploy, load the JSON.', 'Kristjan', 'To do'],
-  ['Research and design-study pages (/type, /derive, /icons, /admin/research) are not needed by the site.', 'Remove them. In git at the tag research-last. /logo moves to Docs, /ds and /social stay.', 'Kristjan', 'To do'],
+  ['Research and design-study pages (/type, /derive, /icons, /admin/research) are not needed by the site.', 'Remove them. In git at the tag research-last. /logo, /ds and /social stay in Admin.', 'Kristjan', 'To do'],
 ];
 
 const CONTENT = [
