@@ -48,7 +48,7 @@ export const renderPage = ({ lang, text, fallback, twin, origin, path, notice, e
       </div>
     </header>
     <div class="prose flow" lang="${textLang}">
-      ${raw(md(text.body))}
+      ${raw(md(text.body, { video: true }))}
     </div>
   </article>`;
   return page({ lang, title: text.title, alternate, canonical, alternates, body, notice, og: { key: text.slug, title: text.title, lang: textLang } });

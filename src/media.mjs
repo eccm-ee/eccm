@@ -64,11 +64,34 @@ export async function storeUpload(env, file, scheme, alt) {
   return { row };
 }
 
+// GET /media/yt/{id}.jpg: a YouTube video's picture for the player in
+// src/render/md.mjs, trip's /yt/{id}.jpg (astro-prod/src/pages/yt/[id].jpg.ts,
+// read 2026-10-07). The Worker fetches i.ytimg.com once and keeps the bytes in
+// R2 under yt/{id}.jpg, so a visitor's browser never asks Google for it. The
+// 1280 px picture when YouTube has one (a missing one is a tiny grey stand-in,
+// hence the size floor), else the 480 px one every video has; a miss is a 404
+// that is never cached, so a bad id cannot stick.
+const YT = /^\/media\/yt\/([A-Za-z0-9_-]{11})\.jpg$/;
+const IMMUTABLE = 'public, max-age=31536000, immutable';
+async function ytThumb(env, id) {
+  const key = `yt/${id}.jpg`;
+  const hit = env.MEDIA ? await env.MEDIA.get(key) : null;
+  if (hit) return new Response(hit.body, { headers: { 'content-type': 'image/jpeg', 'cache-control': IMMUTABLE } });
+  let res = await fetch(`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`);
+  if (!res.ok || Number(res.headers.get('content-length') ?? '0') < 2000) res = await fetch(`https://i.ytimg.com/vi/${id}/hqdefault.jpg`);
+  if (!res.ok) return new Response('Not found', { status: 404, headers: { 'cache-control': 'no-store' } });
+  const bytes = new Uint8Array(await res.arrayBuffer());
+  if (env.MEDIA) await env.MEDIA.put(key, bytes, { httpMetadata: { contentType: 'image/jpeg', cacheControl: IMMUTABLE } });
+  return new Response(bytes, { headers: { 'content-type': 'image/jpeg', 'cache-control': IMMUTABLE } });
+}
+
 // GET /media/{sha256}.{ext}: the original from R2, immutable under its hash;
 // a miss is a 404 that is never cached, so a link asked for early does not
 // stay broken (the images plan, section 4, Caching)
 const KEY = /^\/(media\/[0-9a-f]{64}\.(?:jpg|png|webp|gif))$/;
 export async function serveMedia(env, path) {
+  const y = YT.exec(path);
+  if (y) return ytThumb(env, y[1]);
   const m = KEY.exec(path);
   if (!m) return null;
   const obj = env.MEDIA ? await env.MEDIA.get(m[1]) : null;

@@ -18,10 +18,41 @@ const li = (l) => /^\s*[-*]\s+(.+)$/.exec(l);
 const oli = (l) => /^\s*\d+[.)]\s+(.+)$/.exec(l);
 const isHead = (l) => /^#{1,3}\s+/.test(l.trim());
 
-export const md = (text) => {
+// A YouTube video, trip's rule (astro-prod/src/lib/docBlocks.ts, youtubeId and
+// bodyToDoc, read 2026-10-07): a paragraph that is ONE http(s) URL and nothing
+// else, on youtube.com/watch?v=, /embed/, /shorts/, /v/ or youtu.be/, with
+// t= or start= kept as seconds. A URL inside a sentence is never lifted. One
+// step past trip: a paragraph that is only a [text](url) link to a video is
+// lifted too, its text the player's name, because the bodies carried over
+// from eccm.ee write their videos that way (data/seed-step3.sql).
+export const youtubeId = (s) => {
+  const m = /(?:youtube\.com\/(?:watch\?(?:[^\s]*&)?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/.exec(s);
+  if (!m) return null;
+  const t = /[?&](?:t|start)=(\d+)/.exec(s);
+  return t ? { id: m[1], start: +t[1] } : { id: m[1] };
+};
+
+// The player is a facade, trip's: the picture is this site's own copy
+// (/media/yt/{id}.jpg, fetched by the Worker, src/media.mjs) and the link goes
+// to YouTube, so a page loads nothing from YouTube or Google and works without
+// a script; public/site.mjs turns a click into the youtube-nocookie iframe in
+// the same 16:9 box. The id is [A-Za-z0-9_-] and start digits, safe unescaped.
+const ICONS = '/vendor/icons/feather/icons.svg';
+export const video = ({ id, start, name }) => `<div class="yt" data-yt="${id}"${start ? ` data-start="${start}"` : ''}>`
+  + `<a class="yt-face" href="https://www.youtube.com/watch?v=${id}${start ? `&amp;t=${start}` : ''}" rel="noopener">`
+  + `<img src="/media/yt/${id}.jpg" alt="" width="480" height="270" loading="lazy" decoding="async">`
+  + `<span class="btn btn-pri btn-ico"><svg class="ico" aria-hidden="true"><use href="${ICONS}#play"/></svg><span class="vh">${name ? esc(name) : 'YouTube'}</span></span>`
+  + `</a></div>`;
+
+// opts.video: lift a lone YouTube URL into the player, asked for event and
+// page bodies; the newsletter's email keeps the plain text
+export const md = (text, opts = {}) => {
   const out = [];
   for (const block of String(text ?? '').split(/\r?\n\s*\r?\n/)) {
     if (!block.trim()) continue;
+    const lone = opts.video ? /^(?:https?:\/\/\S+|\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\))$/.exec(block.trim()) : null;
+    const yt = lone ? youtubeId(lone[2] ?? lone[0]) : null;
+    if (yt) { out.push(video({ ...yt, name: lone[1] })); continue; }
     const lines = block.split(/\r?\n/);
     let i = 0;
     while (i < lines.length) {

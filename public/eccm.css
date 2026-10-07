@@ -745,6 +745,17 @@
   /* the bar site.mjs puts under the header in the installed app while notifications are off: a row with two ends, the line and its button, which wraps to two left-aligned lines on a narrow phone */
   .push-ask > .frame { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--eccm-s-3) var(--eccm-s-6); }
   .push-ask p { font-size: var(--eccm-t-m); line-height: var(--eccm-lh-body); color: var(--eccm-ink); }
+  /* ── the YouTube player (asked 2026-10-07: "see ../trip for video player and implement. youtube url in
+     content should use it"). A body paragraph that is only a YouTube URL is this box, src/render/md.mjs: 16:9
+     reserved before anything arrives, the site's own copy of the video's picture and the primary icon button
+     at its centre, the one thing drawn over it. A click puts the youtube-nocookie iframe in the same box
+     (public/site.mjs); before that the page has asked YouTube for nothing. ── */
+  .yt { position: relative; aspect-ratio: 16 / 9; background: var(--eccm-rule); }
+  .yt-face { position: absolute; inset: 0; display: grid; place-items: center; text-decoration: none; }
+  .yt-face > img { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; object-fit: cover; }
+  .yt-face > .btn { position: relative; }
+  .yt-face:hover > .btn { outline: 1px solid var(--ev-on-btn, var(--eccm-ground)); outline-offset: -2px; }
+  .yt > iframe { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; border: 0; }
 }
 
 @layer page {

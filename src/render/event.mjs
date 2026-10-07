@@ -152,7 +152,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
     </header>
 
     <div class="prose flow" lang="${textLang}">
-      ${raw(md(text.body))}
+      ${raw(md(text.body, { video: true }))}
       ${credits.length ? html`
       <h2 lang="${lang}">${t.credits}</h2>
       <dl class="credits" lang="${lang}">
