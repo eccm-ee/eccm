@@ -464,7 +464,7 @@ This is a reading of the rules, not legal advice. ECCM approves the privacy text
 ## To ask
 
 - **ECCM:** who holds the Virtuaal login. Whether mail stays at Virtuaal and who runs the mailboxes. A Cloudflare account of their own, and who pays $5 a month. Whether a subscriber list exists and may be imported. Whether Search Console is verified, and by whom. The privacy text. The changed dates, the three times, Kuni kolm.
-- **Tarmo:** what category 47 is. Whether he takes the new feed. Whether old joomla_ ids must keep working. Where his files go. A webhook instead of the poll.
+- **Tarmo:** nothing changes in his code; ECCM ticks Väin on the notices meant for the app. Still to ask: where his `/radio1965` and `/radio/streams` files go, and whether he wants a push on publish instead of the poll.
 
 ## Links
 
