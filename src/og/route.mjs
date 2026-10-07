@@ -8,7 +8,7 @@
 // og/e/, and a render that fills both after the response. A stale v answers
 // 302 to the current card and a missing event 404, both no-store, so a
 // fetch made before the content exists cannot poison the URL.
-import { cardInput, cardVersion, cardPath, tallVersion, tallPath, cardSvg, siteSvg, radioSvg, PAGE_TITLES, schemeColors, pageColorMap, SITE_CARD, pageInput, pagePath, pageVersion, TEMPLATE_V, SITE_V, W, TALL_W } from './card.mjs';
+import { cardInput, cardVersion, cardPath, tallVersion, tallPath, cardSvg, siteSvg, PAGE_TITLES, schemeColors, pageColorMap, SITE_CARD, pageInput, pagePath, pageVersion, TEMPLATE_V, SITE_V, W, TALL_W } from './card.mjs';
 import { renderPng } from './render.mjs';
 
 const CC = 'public, max-age=31536000, immutable';
@@ -65,7 +65,6 @@ async function pageList(env) {
   for (const t of texts) await add(t.slug, t.lang, `/${t.lang}/${t.slug}`);
   for (const lang of ['et', 'en']) {
     await add('newsletter', lang, lang === 'et' ? '/et/uudiskiri' : '/en/newsletter');
-    await add('radio', lang, '/radio');
   }
   return new Response(JSON.stringify(out), { headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=60' } });
 }
@@ -92,13 +91,13 @@ export async function ogRoute(request, env, url, ctx) {
   }
   // the site's own card, the logo: one address per language, kept a day, its
   // bytes in R2 under the template's version so a new template renders anew
-  const site = /^\/og\/(site|radio)-(et|en)\.png$/.exec(p);
+  const site = /^\/og\/(site)-(et|en)\.png$/.exec(p);
   if (site) {
     const key = `og/${site[1]}-${site[2]}-${TEMPLATE_V}-${SITE_V}.png`;
     const day = (body, from) => new Response(body, { headers: { 'content-type': 'image/png', 'cache-control': 'public, max-age=3600', 'x-og': from } });
     const stored = env.MEDIA && await env.MEDIA.get(key);
     if (stored) return day(await stored.arrayBuffer(), 'r2');
-    const bytes = await renderPng((site[1] === 'radio' ? radioSvg : siteSvg)(site[2]), W);
+    const bytes = await renderPng(siteSvg(site[2]), W);
     if (env.MEDIA) ctx.waitUntil(env.MEDIA.put(key, bytes, { httpMetadata: { contentType: 'image/png' } }).catch(() => {}));
     return day(bytes, 'render');
   }

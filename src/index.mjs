@@ -30,18 +30,14 @@ import { serveMedia } from './media.mjs';
 import { useTransforms } from './render/pic.mjs';
 import { renderIcs } from './render/ics.mjs';
 import { itemsRoute } from './items.mjs';
-import { renderStation } from './render/station.mjs';
 import { renderAdmin } from './render/admin.mjs';
-import { renderResearch, renderRadioResearch } from './render/research.mjs';
 import { renderDocs, renderDoc } from './render/docs.mjs';
-import { filesRoute } from './files.mjs';
+import { backup } from './backup.mjs';
 import { newsletter, drain } from './newsletter.mjs';
+import { contact, CONTACT_PATHS } from './contact.mjs';
 import { ogRoute } from './og/route.mjs';
-import { radioShows, wakeRadio, serveShow, radioState } from './radio.mjs';
+import { legacy } from './redirects.mjs';
 export { Items } from './items.mjs';
-export { Radio } from './radio.mjs';
-import { station, STREAM_BASE } from './station/station.mjs';
-export { Schedule, Library } from './station/station.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
 const EVENT = { et: /^\/et\/sundmused\/([a-z0-9-]+)$/, en: /^\/en\/events\/([a-z0-9-]+)$/ };
@@ -90,7 +86,7 @@ async function eventsList(env, lang, url, home = false) {
 // other language's row under this language's chrome and the fallback line
 async function textPage(env, lang, slug, url) {
   const db = env.DB;
-  const q = "SELECT t.* FROM page_text t JOIN page p ON p.id = t.page_id WHERE t.lang = ? AND t.slug = ? AND p.status = 'published'";
+  const q = "SELECT t.*, p.key AS page_key FROM page_text t JOIN page p ON p.id = t.page_id WHERE t.lang = ? AND t.slug = ? AND p.status = 'published'";
   let text = await db.prepare(q).bind(lang, slug).first();
   let fallback = false;
   if (!text) { text = await db.prepare(q).bind(OTHER[lang], slug).first(); fallback = !!text; }
@@ -124,7 +120,7 @@ const robots = () => new Response(`User-agent: *\nAllow: /\n\nSitemap: ${origin(
 
 // x-robots-tag: noindex on every response the Worker returns while NOINDEX is "on" (staging), the one place
 // it is set for the whole site (docs/migration.md, Noindex on every page until cutover). A response with
-// immutable headers (a service binding's, a fetched one) is copied first; a WebSocket upgrade is left alone
+// immutable headers (a fetched one) is copied first; a WebSocket upgrade is left alone
 const noindex = (res) => {
   if (!res || res.webSocket) return res;
   try { res.headers.set('x-robots-tag', 'noindex'); return res; } catch {
@@ -134,82 +130,68 @@ const noindex = (res) => {
 
 export default {
   async fetch(request, env, ctx) {
-    const res = await route(request, env, ctx);
+    const res = await routes.fetch(request, env, ctx);
     return env.NOINDEX === 'on' ? noindex(res) : res;
   },
-  // the cron of wrangler.jsonc, every five minutes since the station came (it was ten): the outbox's retry
-  // (src/mail.mjs), the radio's recorder woken if its alarm ever stopped (src/radio.mjs), and the station's
-  // sweep of live chunks heard and gone (src/station/station.mjs), which wants five
-  async scheduled(event, env, ctx) { ctx.waitUntil(drain(env)); ctx.waitUntil(wakeRadio(env)); await station.scheduled(event, env, ctx); },
+  // the cron of wrangler.jsonc, every five minutes: the outbox's retry (src/mail.mjs) and the daily backup (src/backup.mjs); the radio's recorder
+  // and the station's sweep ran here until 2026-10-07 (archive/radio.md)
+  async scheduled(event, env, ctx) { ctx.waitUntil(backup(env, event.scheduledTime)); ctx.waitUntil(drain(env)); },
 };
 
-async function route(request, env, ctx) {
-  const url = new URL(request.url);
-  const p = url.pathname;
-  // /cdn-cgi/image/ exists on the zone (positron.studio) and not on workers.dev, which this laptop has to use
-  // since its DNS filter blocked the custom domain (2026-10-02, asked: "images broken in .../en/"), so a
-  // workers.dev host draws the originals, as wrangler dev does
-  useTransforms(url.hostname.endsWith('.workers.dev') ? 'off' : env.IMAGE_TRANSFORMS);
-  // the site's own address for canonical, og:url, og:image, the sitemap, the feeds and the calendars:
-  // SITE_ORIGIN from wrangler.jsonc, the request's origin only where it is not set (wrangler dev)
-  useOrigin(env.SITE_ORIGIN || url.origin);
-  if (p === '/robots.txt') return robots();
-  // the radio station itself, under /stream since 2026-10-02 (src/station/station.mjs): the prefix comes off
-  // here and the station answers as it did on its own Worker, method, headers and body unchanged
-  if (p === STREAM_BASE || p.startsWith(STREAM_BASE + '/')) {
-    const inner = new URL(url); inner.pathname = p.slice(STREAM_BASE.length) || '/';
-    return station.fetch(new Request(inner, request), env, ctx);
-  }
-  // the uploads in pieces, eccm-files through its service binding (workers/files), since 2026-10-02
-  if (p.startsWith('/files/')) return env.FILES_SVC.fetch(request);
-  // /admin/files, the site's audio in two directories (src/files.mjs), since 2026-10-02
-  if (p === '/admin/files' || p.startsWith('/admin/files/')) { const out = await filesRoute(request, env, url); if (out) return out; }
-  // the uploaded pictures from R2, /media/{sha256}.{ext} (src/media.mjs)
-  if (p.startsWith('/media/')) { const out = await serveMedia(env, p); if (out) return out; }
-  // the event share images and their list for /ds (src/og/route.mjs), since 2026-10-01
-  if (p.startsWith('/og/')) { const out = await ogRoute(request, env, url, ctx); if (out) return out; }
-  // the sitemap and the feeds (src/render/feeds.mjs), at SITE_ORIGIN; robots.txt names the sitemap
-  if (p === '/sitemap.xml') return new Response(renderSitemap({ origin: origin(), events: (await env.DB.prepare("SELECT e.id, e.updated_at, t.lang, t.slug FROM event e JOIN event_text t ON t.event_id = e.id WHERE e.status = 'published'").all()).results, pages: (await env.DB.prepare("SELECT p.id, p.updated_at, t.lang, t.slug FROM page p JOIN page_text t ON t.page_id = p.id WHERE p.status = 'published'").all()).results }), { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, s-maxage=86400, stale-while-revalidate=86400' } });
-  const fm = /^\/(et|en)\/feed\.xml$/.exec(p);
-  if (fm) return new Response(renderFeed({ origin: origin(), lang: fm[1], rows: (await env.DB.prepare("SELECT m.*, e.*, t.slug, t.title, t.body FROM event e JOIN event_text t ON t.event_id = e.id AND t.lang = ? LEFT JOIN media m ON m.id = e.image_id WHERE e.status = 'published' ORDER BY e.created_at DESC, e.id DESC LIMIT 20").bind(fm[1]).all()).results }), { headers: { 'content-type': 'application/rss+xml; charset=utf-8', 'cache-control': 'public, max-age=60' } });
-  // the calendars (src/render/ics.mjs), session 1's last piece since 2026-10-01: one event at its page's
-  // address plus .ics, and a feed per language at the list's, the coming events and the last ninety days
-  const ic = /^\/(et\/sundmused|en\/events)(?:\/([a-z0-9-]+))?\.ics$/.exec(p);
-  if (ic) { const out = await calendar(env, ic[1] === 'et/sundmused' ? 'et' : 'en', ic[2], url); if (out) return out; }
-  for (const lang of ['et', 'en']) {
-    const m = EVENT[lang].exec(p);
-    if (m) { const out = await event(env, lang, m[1], url); if (out) return reply(out); break; }
-  }
-  // the front pages, both from D1 since 2026-10-03 (asked: "do estonian front page"); public/index.html, the static one, is in git at 5977631
-  if (p === '/') return reply(await eventsList(env, 'et', url, true));
-  if (p === '/en' || p === '/en/') return reply(await eventsList(env, 'en', url, true));
-  if (p === '/et' || p === '/et/') return new Response(null, { status: 301, headers: { location: '/' } });
-  if (LIST_LANG[p]) return reply(await eventsList(env, LIST_LANG[p], url));
-  // the newsletter: sign-up, confirm, leave, the archive and its editor (src/newsletter.mjs), since 2026-10-01
-  if (/^\/(et\/uudiskiri|en\/newsletter|uudiskiri|edit\/uudiskiri)(\/|$)/.test(p)) { const out = await newsletter(request, env, url, ctx); if (out) return out; }
-  const pm = PAGE.exec(p);
-  if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }
-  // the notices and their push subscriptions (src/items.mjs), since 2026-10-01
-  if (p === '/items' || p.startsWith('/items/')) { const out = await itemsRoute(request, env, url); if (out) return out; }
-  // the radio, positron's station in this site's chrome (src/render/station.mjs), since 2026-10-01
-  // the radio, at /radio since 2026-10-01 ("rename station to radio"); /station answers with the way there
-  if (p === '/radio') return reply(renderStation(await radioShows(env)));
-  // the programming sketch of the morning became the radio tools research the same afternoon (src/render/research.mjs)
-  if (p === '/radio/kava') return new Response(null, { status: 301, headers: { location: '/admin/research/radio' } });
-  if (p === '/radio/state.json') return radioState(env);
-  // a kept live show (src/radio.mjs), since 2026-10-02
-  if (p.startsWith('/radio/')) { const out = await serveShow(request, env, p); if (out) return out; }
-  if (p === '/station') return new Response(null, { status: 301, headers: { location: `/radio${url.search}` } });
-  // the tools, one card each (src/render/admin.mjs), since 2026-10-01
-  // research, a card per study (src/render/research.mjs), since 2026-10-02
-  if (p === '/admin/research') return new Response(String(renderResearch()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
-  if (p === '/admin/research/radio') return new Response(String(renderRadioResearch()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
-  // the docs, an index and the plan for moving eccm.ee here (src/render/docs.mjs), since 2026-10-07
-  if (p === '/docs' || p === '/docs/') return new Response(String(renderDocs()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
-  // each doc is a Markdown file under docs/ (src/render/docs.mjs)
-  { const d = /^\/docs\/([a-z0-9-]+)$/.exec(p); const out = d && renderDoc(d[1]); if (out) return new Response(String(out), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } }); }
-  if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
-  if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
-  const lang = p.startsWith('/en') ? 'en' : 'et';
-  return reply(notFound(lang, p), 404);
-}
+// every route, its response sent through fetch above; redirects name the request's own origin in Location
+// (src/redirects.mjs), so a staging host stays on itself
+const routes = {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    const p = url.pathname;
+    // /cdn-cgi/image/ exists on the zone (positron.studio) and not on workers.dev, which this laptop has to use
+    // since its DNS filter blocked the custom domain (2026-10-02, asked: "images broken in .../en/"), so a
+    // workers.dev host draws the originals, as wrangler dev does
+    useTransforms(url.hostname.endsWith('.workers.dev') ? 'off' : env.IMAGE_TRANSFORMS);
+    // the site's own address for canonical, og:url, og:image, the sitemap, the feeds and the calendars:
+    // SITE_ORIGIN from wrangler.jsonc, the request's origin only where it is not set
+    useOrigin(env.SITE_ORIGIN || url.origin);
+    if (p === '/robots.txt') return robots();
+    // eccm.ee's old Joomla addresses: 301, 410, or the 404 with the miss logged (src/redirects.mjs)
+    { const out = await legacy(request, env, url, ctx); if (out) return out; }
+    // the radio (/stream, /files/*, /admin/files, /radio, /station) went 2026-10-07, restorable from the tag radio-last (archive/radio.md)
+    // the uploaded pictures from R2, /media/{sha256}.{ext} (src/media.mjs)
+    if (p.startsWith('/media/')) { const out = await serveMedia(env, p); if (out) return out; }
+    // the event share images and their list for /ds (src/og/route.mjs), since 2026-10-01
+    if (p.startsWith('/og/')) { const out = await ogRoute(request, env, url, ctx); if (out) return out; }
+    // the sitemap and the feeds (src/render/feeds.mjs), at SITE_ORIGIN; robots.txt names the sitemap
+    if (p === '/sitemap.xml') return new Response(renderSitemap({ origin: origin(), events: (await env.DB.prepare("SELECT e.id, e.updated_at, t.lang, t.slug FROM event e JOIN event_text t ON t.event_id = e.id WHERE e.status = 'published'").all()).results, pages: (await env.DB.prepare("SELECT p.id, p.updated_at, t.lang, t.slug FROM page p JOIN page_text t ON t.page_id = p.id WHERE p.status = 'published'").all()).results }), { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, s-maxage=86400, stale-while-revalidate=86400' } });
+    const fm = /^\/(et|en)\/feed\.xml$/.exec(p);
+    if (fm) return new Response(renderFeed({ origin: origin(), lang: fm[1], rows: (await env.DB.prepare("SELECT m.*, e.*, t.slug, t.title, t.body FROM event e JOIN event_text t ON t.event_id = e.id AND t.lang = ? LEFT JOIN media m ON m.id = e.image_id WHERE e.status = 'published' ORDER BY e.created_at DESC, e.id DESC LIMIT 20").bind(fm[1]).all()).results }), { headers: { 'content-type': 'application/rss+xml; charset=utf-8', 'cache-control': 'public, max-age=60' } });
+    // the calendars (src/render/ics.mjs), session 1's last piece since 2026-10-01: one event at its page's
+    // address plus .ics, and a feed per language at the list's, the coming events and the last ninety days
+    const ic = /^\/(et\/sundmused|en\/events)(?:\/([a-z0-9-]+))?\.ics$/.exec(p);
+    if (ic) { const out = await calendar(env, ic[1] === 'et/sundmused' ? 'et' : 'en', ic[2], url); if (out) return out; }
+    for (const lang of ['et', 'en']) {
+      const m = EVENT[lang].exec(p);
+      if (m) { const out = await event(env, lang, m[1], url); if (out) return reply(out); break; }
+    }
+    // the front pages, both from D1 since 2026-10-03 (asked: "do estonian front page"); public/index.html, the static one, is in git at 5977631
+    if (p === '/') return reply(await eventsList(env, 'et', url, true));
+    if (p === '/en' || p === '/en/') return reply(await eventsList(env, 'en', url, true));
+    if (p === '/et' || p === '/et/') return new Response(null, { status: 301, headers: { location: '/' } });
+    if (LIST_LANG[p]) return reply(await eventsList(env, LIST_LANG[p], url));
+    // the newsletter: sign-up, confirm, leave, the archive and its editor (src/newsletter.mjs), since 2026-10-01
+    if (/^\/(et\/uudiskiri|en\/newsletter|uudiskiri|edit\/uudiskiri)(\/|$)/.test(p)) { const out = await newsletter(request, env, url, ctx); if (out) return out; }
+    // the contact form, /et/kontakt and /en/contact (src/contact.mjs), since 2026-10-07; before the text pages, whose pattern it matches
+    if (CONTACT_PATHS.includes(p.replace(/\/$/, ''))) return contact(request, env, url, ctx);
+    const pm = PAGE.exec(p);
+    if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }
+    // the notices and their push subscriptions (src/items.mjs), since 2026-10-01
+    if (p === '/items' || p.startsWith('/items/')) { const out = await itemsRoute(request, env, url); if (out) return out; }
+    // the tools, one card each (src/render/admin.mjs), since 2026-10-01
+    // the docs, an index and the plan for moving eccm.ee here (src/render/docs.mjs), since 2026-10-07
+    if (p === '/docs' || p === '/docs/') return new Response(String(renderDocs()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
+    // each doc is a Markdown file under docs/ (src/render/docs.mjs)
+    { const d = /^\/docs\/([a-z0-9-]+)$/.exec(p); const out = d && renderDoc(d[1]); if (out) return new Response(String(out), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } }); }
+    if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
+    if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
+    const lang = p.startsWith('/en') ? 'en' : 'et';
+    return reply(notFound(lang, p), 404);
+  },
+};

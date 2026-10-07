@@ -356,6 +356,15 @@
   .page-text { max-inline-size: 48rem; margin-inline: auto; }
   .page-text .event-top { grid-template-columns: minmax(0, 1fr); }
   .page-text .prose { max-inline-size: none; }
+  /* the EU emblem under the Ulysses text, a group of its own two lines down, 3rem tall so the flag inside
+     it is over the 1cm the EU's rule sets (public/partners/SOURCE.md); the negative file in the dark theme */
+  .eu-emblem { --eccm-flow: 2lh; }
+  /* the files carry a transparent margin of 7 per cent of their height, pulled back so the flag's ink starts on the text's x */
+  .eu-emblem img { display: block; block-size: 3rem; inline-size: auto; margin-inline-start: calc(3rem * -0.07); }
+  .eu-emblem .eu-neg { display: none; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .eu-emblem .eu-pos { display: none; } :root:not([data-theme="light"]) .eu-emblem .eu-neg { display: block; } }
+  :root[data-theme="dark"] .eu-emblem .eu-pos { display: none; }
+  :root[data-theme="dark"] .eu-emblem .eu-neg { display: block; }
   /* the picture at its own size, its shape reserved from its own pixels so
      nothing moves while it arrives */
   .event-pic { max-inline-size: var(--eccm-measure); }
@@ -485,7 +494,7 @@
   .btn-ico[aria-pressed="true"]:hover { outline-color: var(--ev-on-btn, var(--eccm-ground)); }
   /* the play button (asked 2026-10-02: "design universal play / stop / pause button"): an icon button whose
      svg carries the play, pause and stop glyphs and data-state shows one; the .vh word changes with it, and
-     aria-pressed="true" fills it while it sounds, as /radio fills its Stop */
+     aria-pressed="true" fills it while it sounds */
   .play-btn > .ico > use { display: none; }
   .play-btn[data-state="play"] .i-play, .play-btn[data-state="pause"] .i-pause, .play-btn[data-state="stop"] .i-stop { display: inline; }
   .play-btn:active { background: var(--ev-btn-fill, var(--eccm-ink)); color: var(--ev-on-btn, var(--eccm-ground)); border-color: transparent; }
@@ -603,7 +612,7 @@
   .items h2 { font-size: var(--eccm-t-l); margin-block: 0; }
   .items-list { display: grid; gap: var(--eccm-s-6); }
   /* a table, for rows whose cells are compared down a column (asked 2026-10-01: "use eccm components (add
-     table one)", first for the radio's running order). The wrapper is the container its cells ask about
+     table one)"). The wrapper is the container its cells ask about
      their width, since a table cannot query itself (positron-compose section 6). No box, no zebra tint and no
      rule between rows: the rows are a set, separated by space alone, and the one rule is the hairline under
      the head, which separates the labels from the values (compose section 4). The head is the small register
@@ -642,7 +651,7 @@
   .table .num { text-align: end; }
   .table .main { inline-size: 100%; white-space: normal; overflow-wrap: anywhere; }
   /* a second column of sentences beside the main one wraps too, at a measure of its own, so neither runs
-     the row past the frame (the radio research's Why, asked 2026-10-02) */
+     the row past the frame (asked 2026-10-02) */
   .table .wrap { white-space: normal; min-inline-size: 16rem; max-inline-size: 28rem; }
   .table tr[aria-current="true"] > * { font-weight: 600; }
   /* figures on the admin pages: every time, date, length, count and the date and time fields in the body
@@ -654,76 +663,20 @@
      list's dates says proportional, and the public pages keep it. A monospace draws every character 60,
      so 1:58:40 ran 20 per cent wider and "2 Oct" took two spaces. .fig is the same for a figure CSS cannot
      reach through structure, and a container of figures */
-  .fig, main.admin :is(time, .table td:not(.main), .station-col-times, .form input:is([type="date"], [type="time"], [type="datetime-local"], [type="number"])) { font-variant-numeric: tabular-nums; }
+  .fig, main.admin :is(time, .table td:not(.main), .form input:is([type="date"], [type="time"], [type="datetime-local"], [type="number"])) { font-variant-numeric: tabular-nums; }
   /* tabular figures are drawn a figure-space wide, which reads gappy; pulled together where a cell is figures (asked 2026-10-07: "add negative trackin for monospace-numbers") */
   .fig, .table .num, main.admin time { letter-spacing: -0.03em; }
-  /* the radio, /station (src/render/station.mjs, public/station.mjs): every channel a column holding the whole
-     of that station, nothing said twice (asked 2026-10-01: "whole stations need to fit so single col. avoid
-     dumplication and vertical jumps"), the shape NTS gives its two live channels. No box: a rule on top, ink on
-     the channel being heard. Every part above the running order has a fixed height (the title two lines, who
-     and the times one each, the bar 2 px), so the parts line up across the columns and nothing inside a column
-     moves when its text changes */
-  .station-cols { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); column-gap: var(--eccm-s-8); row-gap: var(--eccm-s-12); }
-  .station-col { display: flex; flex-direction: column; gap: var(--eccm-s-2); padding-block-start: var(--eccm-s-3); border-block-start: 1px solid var(--eccm-rule); min-inline-size: 0; }
-  .station-col[aria-current="true"] { border-block-start-color: var(--eccm-ink); }
-  .station-col-head { display: flex; justify-content: space-between; gap: var(--eccm-s-4); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-  .station-col-head a { color: var(--eccm-ink); text-decoration-line: none; }
-  .station-col-head a:hover { text-decoration-line: underline; }
-  .station-col-now { font-size: var(--eccm-t-l); line-height: var(--eccm-lh-head); block-size: 2lh; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow-wrap: anywhere; }
-  .station-col-who { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); block-size: 1lh; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .station-col-bar { block-size: 2px; background: var(--eccm-rule); margin-block-start: var(--eccm-s-2); }
-  .station-col-bar > span { display: block; block-size: 100%; inline-size: 0; background: var(--eccm-ink); transition: inline-size 1s linear; }
-  .station-col-times { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); block-size: 1lh; }
-  .station-col .btn { align-self: flex-start; margin-block: var(--eccm-s-2); }
-  /* the running order: a start time beside a title, one line each, the row on air in weight */
-  .station-col-order { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--eccm-s-4); row-gap: var(--eccm-s-1); align-content: start; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); padding-block-start: var(--eccm-s-2); border-block-start: 1px solid var(--eccm-rule); }
-  .station-col-order li { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; }
-  .station-col-order time { color: var(--eccm-ink-2); }
-  .station-col-order span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .station-col-order li[aria-current="true"] { font-weight: 600; }
-  @media (prefers-reduced-motion: reduce) { .station-col-bar > span { transition: none; } }
-  /* the kept live shows under the channels (src/radio.mjs), the table component; the gap above is the
-     page's largest, since it is another group from the columns, and the h2 the same step as the news archive's */
-  .station-kept { margin-block-start: var(--eccm-s-16); }
-  .station-kept h2 { font-size: var(--eccm-t-l); margin-block-end: var(--eccm-s-6); }
-  .station-kept .btn-sm { inline-size: 4.5rem; justify-content: center; }
-  /* /admin/files (src/render/files.mjs): the directories as the radio research's row of links, the editor's
-     drop zone, a line per upload that moves as pieces are acknowledged (the radio's progress line), and the
-     table component, a row opening to its title, who and actions under its name */
-  .file-tabs { display: flex; flex-wrap: wrap; gap: var(--eccm-s-1) var(--eccm-s-6); margin-block-end: var(--eccm-s-3); font-variant-numeric: tabular-nums; }
-  .file-tabs a { color: var(--eccm-ink); text-decoration-line: none; }
-  .file-tabs a:hover { text-decoration-line: underline; }
-  .file-tabs [aria-current] { text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 0.3em; }
-  .file-drop { max-inline-size: none; margin-block-end: var(--eccm-s-12); gap: var(--eccm-s-4); }
-  .file-drop .drop-zone { min-block-size: 8rem; }
-  .file-queue { display: grid; gap: var(--eccm-s-4); }
-  .file-queue:empty { display: none; }
-  .file-up { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--eccm-s-1) var(--eccm-s-4); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
-  .file-up-name { overflow-wrap: anywhere; }
-  .file-up-say { color: var(--eccm-ink-2); font-variant-numeric: tabular-nums; }
-  .file-up .station-col-bar { grid-column: 1 / -1; margin: 0; }
-  .file-key { max-inline-size: 24rem; }
-  .file-name, .file-who { display: block; }
-  .file-who { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
-  .file-acts { display: inline-flex; gap: var(--eccm-s-2); }
-  .file-acts .btn-sm { inline-size: 4.5rem; justify-content: center; }
-  .file-form { max-inline-size: 40rem; padding-block: var(--eccm-s-4) var(--eccm-s-6); gap: var(--eccm-s-4); }
-  .file-form .small { overflow-wrap: anywhere; }
-  /* the research pages (src/render/research.mjs): a section per part, the page's largest gap between them */
-  .rk-part { margin-block-start: var(--eccm-s-16); }
-  .rk-part h2 { font-size: var(--eccm-t-l); margin-block-end: var(--eccm-s-6); }
-  /* the providers: a name beside its pages, two columns on a desk and name over links on a phone, the label
-     and value list of the event page */
-  .rk-refs { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--eccm-s-4) var(--eccm-s-8); max-inline-size: 60rem; }
-  .rk-refs > div { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; }
-  .rk-ref-links { display: flex; flex-wrap: wrap; gap: var(--eccm-s-1) var(--eccm-s-4); }
-  @media (max-width: 40rem) { .rk-refs { grid-template-columns: minmax(0, 1fr); row-gap: var(--eccm-s-6); } .rk-refs > div { gap: var(--eccm-s-1); } }
   /* the newsletter (src/render/newsletter.mjs): the answer to a sign-up in the body's size, the field a
      person never sees, the send's one checkbox, and the letter as it arrives drawn in a frame of its width */
   .news-page > * + * { margin-block-start: var(--eccm-s-8); }
   .news-say { font-size: var(--eccm-t-m); line-height: var(--eccm-lh-body); max-inline-size: var(--eccm-measure); }
   .news-past h2 { font-size: var(--eccm-t-l); margin-block-end: var(--eccm-s-6); }
   .hp { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
+  /* the contact page (src/render/contact.mjs): the form and the address and phone beside it when its column has room, under it when not */
+  .contact-wrap { container-type: inline-size; }
+  .contact-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--eccm-s-12); align-items: start; }
+  @container (min-width: 44rem) { .contact-grid { grid-template-columns: minmax(0, 1fr) max-content; } }
+  .contact-ways p + p { margin-block-start: var(--eccm-s-4); }
   .check { display: flex; align-items: center; gap: var(--eccm-s-2); cursor: pointer; }
   .form .check input { inline-size: var(--eccm-s-6); block-size: var(--eccm-s-6); margin: 0; padding: 0; accent-color: var(--eccm-ink); }
   .mail-head { font-size: var(--eccm-t-l); margin-block: var(--eccm-s-16) var(--eccm-s-6); }

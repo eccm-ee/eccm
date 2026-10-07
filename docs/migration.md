@@ -18,15 +18,15 @@ Moving eccm.ee onto this site. Measured on 7 October 2026. Each task says who do
 | Task | Who | State |
 | --- | --- | --- |
 | [Noindex on every page until cutover](#noindex-on-every-page-until-cutover) | Agent | To do |
-| [Redirects from the old Joomla addresses](#redirects-from-the-old-joomla-addresses) | Agent | To do |
-| [Contact form](#contact-form) | Agent | To do |
-| [Privacy notice](#privacy-notice) | ECCM writes, agent builds | To do |
-| [EU emblem on Ulysses](#eu-emblem-on-ulysses) | Agent | To do |
+| [Redirects from the old Joomla addresses](#redirects-from-the-old-joomla-addresses) | Agent | Done |
+| [Contact form](#contact-form) | Agent | Done |
+| [Privacy notice](#privacy-notice) | ECCM approves, agent drafted | Draft live |
+| [EU emblem on Ulysses](#eu-emblem-on-ulysses) | Agent | Done |
 | [Search basics](#search-basics) | Agent | To do |
 | [Login on admin and editing](#login-on-admin-and-editing) | Agent, ECCM adds the people | Before or right after cutover |
-| [Backups](#backups) | Agent | To do |
-| [Remove the radio, keep it restorable](#remove-the-radio-keep-it-restorable) | Agent | To do |
-| [Research pages to git history](#research-pages-to-git-history) | Agent | To do |
+| [Backups](#backups) | Agent | Done |
+| [Remove the radio, keep it restorable](#remove-the-radio-keep-it-restorable) | Agent | Done |
+| [Research pages to git history](#research-pages-to-git-history) | Agent | Done |
 | [Missing events, dates and times](#2-content) | ECCM | Ask |
 | [Import the archive](#import-the-archive) | Agent | To do |
 | [Copy /nan/](#copy-nan) | Agent | To do |
@@ -89,13 +89,13 @@ an event page and /docs, then deploy staging and push.
 
 ### Redirects from the old Joomla addresses
 
-**Who:** agent. **State:** to do.
+**Who:** agent. **State:** done, in `src/redirects.mjs`. Misses are counted in the `redirect_miss` table.
 
 Google has eccm.ee's events under three address shapes, and they all answer 404 here. The old ids are already stored: `event_text.legacy_id` per language, `page_text.legacy_path` per page. The design is in `plans/plan-eccm-urls-sitemap-rss.md` section 3, but its event pattern misses one live shape.
 
 ```js
-// every event shape: /index.php/{lang}/[up to two menu segments/]{id}-{alias}[/{date}]
-const OLD_EVENT = /^\/index\.php\/(et|en)\/(?:[a-z0-9-]+\/){0,2}(\d+)-[^/]*(?:\/\d{4}(?:-\d\d){4})?\/?$/;
+// every event shape: /index.php/{lang}/[up to two menu segments, each starting with a letter/]{id}-{alias}[/{date}]
+const OLD_EVENT = /^\/index\.php\/(et|en)\/(?:[a-z][a-z0-9-]*\/){0,2}(\d+)(?:-[^/]*)?(?:\/\d{4}(?:-\d\d){4})?\/?$/;
 ```
 
 | Old | New |
@@ -166,7 +166,7 @@ The site collects newsletter addresses, contact messages and push subscriptions,
 **Prompt**
 
 ```text
-In eccm, add privacy pages at /et/privaatsus and /en/privacy from the text
+In eccm, add privacy pages at /et/andmekaitse and /en/privacy from the text
 ECCM provides, as D1 pages like the other text pages, link them from the
 footer, and add the registry code 80603988 to the footer's copyright line.
 Check at 375 and 1280, deploy staging, push.
@@ -258,7 +258,7 @@ the local database. Deploy staging, push.
 
 ### Remove the radio, keep it restorable
 
-**Who:** agent. **State:** to do.
+**Who:** agent. **State:** done 7 October 2026, the tag `radio-last`, the restore steps in `archive/radio.md`.
 
 The radio is the station, the recorder, the files Worker and `/radio`. Removing its Durable Objects destroys their state, so the state is saved first. The 46 MB of audio stays in its bucket, free.
 
@@ -286,7 +286,7 @@ and the commit.
 
 ### Research pages to git history
 
-**Who:** agent. **State:** to do.
+**Who:** agent. **State:** done 7 October 2026, the tag `research-last`.
 
 `/type`, `/derive`, `/icons` and `/admin/research` are not needed by the site. `/logo`, `/ds` and `/social` stay in Admin.
 
