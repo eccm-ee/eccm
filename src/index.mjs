@@ -33,6 +33,7 @@ import { itemsRoute } from './items.mjs';
 import { renderAdmin } from './render/admin.mjs';
 import { renderDocs, renderDoc } from './render/docs.mjs';
 import { newsletter, drain } from './newsletter.mjs';
+import { contact, CONTACT_PATHS } from './contact.mjs';
 import { ogRoute } from './og/route.mjs';
 import { legacy } from './redirects.mjs';
 export { Items } from './items.mjs';
@@ -147,6 +148,8 @@ export default {
     if (LIST_LANG[p]) return reply(await eventsList(env, LIST_LANG[p], url));
     // the newsletter: sign-up, confirm, leave, the archive and its editor (src/newsletter.mjs), since 2026-10-01
     if (/^\/(et\/uudiskiri|en\/newsletter|uudiskiri|edit\/uudiskiri)(\/|$)/.test(p)) { const out = await newsletter(request, env, url, ctx); if (out) return out; }
+    // the contact form, /et/kontakt and /en/contact (src/contact.mjs), since 2026-10-07; before the text pages, whose pattern it matches
+    if (CONTACT_PATHS.includes(p.replace(/\/$/, ''))) return contact(request, env, url, ctx);
     const pm = PAGE.exec(p);
     if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }
     // the notices and their push subscriptions (src/items.mjs), since 2026-10-01

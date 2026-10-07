@@ -166,7 +166,7 @@ The site collects newsletter addresses, contact messages and push subscriptions,
 **Prompt**
 
 ```text
-In eccm, add privacy pages at /et/privaatsus and /en/privacy from the text
+In eccm, add privacy pages at /et/andmekaitse and /en/privacy from the text
 ECCM provides, as D1 pages like the other text pages, link them from the
 footer, and add the registry code 80603988 to the footer's copyright line.
 Check at 375 and 1280, deploy staging, push.
