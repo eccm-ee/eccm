@@ -1,13 +1,61 @@
-# Handoff, 2026-10-03, the seventh day of the eccm repository
+# Handoff, 2026-10-07, the eleventh day of the eccm repository
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
 committed on `main` of **https://github.com/kristjanjansen/eccm**, private,
-pushed (`git log --oneline origin/main..HEAD` counted 0 on 2026-10-03 before
-the day's commit). Push per CLAUDE.md and switch the account back.
+pushed. Push per CLAUDE.md and switch the account back. GitHub refused pushes
+with a 500 for about ten minutes on 2026-10-07 and then took them; retry
+before suspecting the commit.
 
 **This laptop cannot reach `eccm.positron.studio` or `positron.studio`**: its
 DNS filter (Fortinet) answers with a block page. Check through
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
+
+## 2026-10-07: the migration plan, the type, the staging tasks
+
+The team is adopting the rework. Their answers, verbatim in Estonian: the radio
+stays separate, the newsletter is needed (the last issue took a week by hand),
+members add calendar entries one by one, eccm.ee can be replaced directly since
+it is a test too, events to the end of the year are entered there.
+
+- **The plan is `docs/migration.md`, rendered at /docs/migration**, with
+  `docs/presence.md` and `docs/ici.md` beside it at /docs. Markdown files
+  bundled as text (`**/*.md` rule in wrangler.jsonc), drawn by `marked` in
+  `src/render/docs.mjs`: a Who does what table on top (done rows last), every
+  agent task with a snippet, a check and a prompt, every ECCM task with steps.
+  Read it first; its State column is the open list.
+- **Findings behind it** (five read-only investigations): eccm.ee is Joomla 5
+  on Virtuaal.com cPanel, registrant MTÜ Eesti Nüüdismuusika Keskus 80603988,
+  expires 2027-03-18, registrar, DNS, hosting and Exim mail all Virtuaal, no
+  DNSSEC, DMARC p=reject. No privacy page, no other subdomains. Väin (U:'s app)
+  is fed by Tarmo's server polling eccm.ee's Joomla API (category 47) every five
+  minutes; that and his `/radio1965/*` and `/radio/streams/*.mp3` files on
+  eccm.ee break at cutover.
+- **Type**: body in **Public Sans** (`vendor/public-sans/`, chosen off a /sans
+  study since removed), headings in Instrument Sans a tenth larger, the measure
+  35rem, tabular figures tracked -0.03em, buttons in the body face. The serif
+  title detection and every serif face are removed, knowledge in
+  `archive/serif-titles.md`; colour schemes from pictures stay.
+- **Done on staging today**: Joomla redirects (`src/redirects.mjs`, misses
+  counted in `redirect_miss`, migration 0007); noindex on every response from
+  the Worker behind `NOINDEX`, `SITE_ORIGIN` for canonical, sitemap and feeds,
+  `/robots.txt`, MusicEvent and Organization JSON-LD; contact form at
+  /et/kontakt and /en/contact (`src/contact.mjs`, migration 0008, to
+  `CONTACT_TO` info@eccm.ee, Turnstile only once its keys are set); privacy
+  draft at /et/andmekaitse and /en/privacy (`data/seed-step8-privacy.sql`, for
+  ECCM to approve); the EU emblem on Ulysses; a daily D1 backup into
+  `eccm-backup-staging` (`src/backup.mjs`, `tools/restore.mjs`); the radio and
+  the research pages removed (tags `radio-last`, `research-last`); a YouTube
+  click-to-play player from trip; `.badge` for status cells; text pages and
+  docs in one centred 48rem column; next events in three columns on a desk.
+- **Running when this was written**: the archive import from eccm.ee's public
+  pages (about 190 past events since 2024-09 plus the two TUMA AFEKT dates and
+  Feldman's English text), as seed files 9 and 10.
+- **Owed by ECCM**: the Virtuaal login and a cPanel Full Backup, a Cloudflare
+  account with Workers Paid, info@eccm.ee verified as a destination address (or
+  Paid) so contact mail arrives, Turnstile keys if wanted, the team's changed
+  dates and the three times, approval of the privacy text, Tarmo's answers.
+- **Loose ends, the owner's call**: the `eccm-files-staging` Worker is still
+  deployed with no route; positron's station row links to /radio, now 404.
 
 ## 2026-10-03: the Estonian front page, the event page, the seeded rows
 
@@ -37,7 +85,7 @@ radio is only englih".
 - Seen and left: event 5 (the second Gestures evening) carries event 1's
   ticket link and credits; U:'s 23:42 on 29.12 is still as eccm.ee types it.
 
-## Where it stands, 2026-10-03
+## Where it stands, 2026-10-07
 
 What is true now, each one checkable on the workers.dev address:
 
