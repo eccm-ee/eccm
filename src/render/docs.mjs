@@ -25,12 +25,13 @@ export const renderDocs = () => page({
   body: html`  <h1>Docs</h1>
   ${cards([
     ['/docs/migration', 'Migration', 'Moving eccm.ee here: decisions, steps, findings and open questions.'],
+    ['/logo', 'Logo', 'The mark, the wordmarks in both languages and every icon size, to look at and download.'],
     ['/docs/ici', 'ici on V\u00e4in', 'Albert Saprykin\u2019s ici as a session on V\u00e4in, and who does what.'],
   ])}`,
 });
 
 const DECISIONS = [
-  ['Radio', 'Stays, as its own thing. It moves into its own Worker, not deleted.'],
+  ['Radio', 'Removed from the site for now, kept in git so it can come back in about an hour.'],
   ['Newsletter', 'Needed at launch. The last issue took a week by hand.'],
   ['Calendar', 'Members add events one at a time today. Each language gets a feed to subscribe to once.'],
   ['Domain', 'eccm.ee can be replaced directly, since the current site is a test too. uus.eccm.ee is optional.'],
@@ -39,7 +40,7 @@ const DECISIONS = [
 ];
 
 const STEPS = [
-  ['1', 'Staging', 'Radio into its own Worker. Research pages archived. Noindex on every page. Redirects from Joomla. Contact and privacy pages. Backups.'],
+  ['1', 'Staging', 'Radio removed. Research pages to git history. Noindex on every page. Redirects from Joomla. Contact and privacy pages. Backups.'],
   ['2', 'Content', 'The missing 2026 events, the archive from 2024, the pictures into storage, the changed dates.'],
   ['3', 'ECCM\u2019s account', 'Cloudflare account, Workers Paid, the production environment, the data copied from staging.'],
   ['4', 'Zone move', 'eccm.ee\u2019s DNS to Cloudflare with every record pointing where it does today. Nobody sees a change.'],
@@ -58,18 +59,18 @@ const fix = (label, rows) => table({
 const SITE = [
   ['Staging pages can be indexed by search engines. The noindex header reaches only CSS and scripts.', 'Send noindex from the Worker on every response, behind a setting that is off on eccm.ee.', 'Kristjan', 'To do'],
   ['Old Joomla addresses answer 404 here. Google has events indexed under three address shapes.', 'Redirect by the old event id (already stored in D1), a map of about 30 page paths, rules for list and feed query strings, old /images/ by file name, 410 for Joomla login pages. Log every miss.', 'Kristjan', 'To do'],
-  ['The footer\u2019s Kirjuta meile links to Joomla\u2019s contact form, gone after cutover.', 'A mailto link, or a small form that mails the office.', 'Kristjan', 'To do'],
+  ['The footer\u2019s Kirjuta meile links to Joomla\u2019s contact form, gone after cutover.', 'A form at /et/kontakt and /en/contact: name, email, message. The Worker stores it in D1 and mails it to the office through the email binding the newsletter already uses, Reply-To the sender, so answering is pressing Reply. Cloudflare Turnstile, free and invisible to most people, keeps bots out. The address is printed beside it for anyone who prefers their own mail.', 'Kristjan', 'To do'],
   ['The newsletter collects addresses and there is no privacy notice.', 'A privacy page in both languages, and the registry code 80603988 in the footer.', 'Kristjan, text from ECCM', 'To do'],
   ['Ulysses lacks the EU emblem Creative Europe requires.', 'The Co-funded by the EU emblem on the Ulysses page.', 'Kristjan', 'To do'],
   ['No structured event data for search, no Sitemap line in robots.txt, the site address taken from each request.', 'schema.org Event on event pages, a robots.txt naming the sitemap, the address from config.', 'Kristjan', 'To do'],
   ['Anyone can edit events and upload pictures.', 'Cloudflare Access on /admin, /edit and /files: a login by email code for ECCM\u2019s people.', 'Kristjan', 'Before or right after cutover'],
-  ['No backups beyond D1\u2019s own history.', 'A daily D1 export into R2, and a copy of the picture and audio files.', 'Kristjan', 'To do'],
+  ['No backups beyond D1\u2019s own history. Cloudflare keeps 7 days of it (30 on Workers Paid), and nothing if the database or account is deleted.', 'The site\u2019s existing cron, once a day, writes every table into a separate backup bucket and keeps 30 days. Not into git, since the database holds subscribers\u2019 addresses. Pictures need none: they are stored by content hash and never overwritten.', 'Kristjan', 'To do'],
   ['Page share cards repeated the page\u2019s first sentence.', 'Page and front page cards carry the title only.', 'Kristjan', 'Done'],
 ];
 
 const ADMIN = [
-  ['The radio is part of the site Worker, but it should stay as its own thing.', 'Move it into its own Worker, eccm-radio. A transfer migration keeps the channels, schedules and recording. The audio bucket stays. /radio on the site links there. Tag the code before the move.', 'Kristjan', 'To do'],
-  ['Research and design-study pages (/type, /derive, /logo, /icons, /admin/research) are not needed by the site.', 'Remove them, keep what they learned in archive/research-pages.md and a git tag that restores them. /ds and /social stay.', 'Kristjan', 'To do'],
+  ['The radio is not wanted on the site for now, but may be needed back fast.', 'Save the channels and schedules as JSON in archive/radio.md, tag radio-last, remove the station, recorder, files Worker and /radio. The 46 MB of audio stays in its bucket. Back: check out the tag, deploy, load the JSON.', 'Kristjan', 'To do'],
+  ['Research and design-study pages (/type, /derive, /icons, /admin/research) are not needed by the site.', 'Remove them. In git at the tag research-last. /logo moves to Docs, /ds and /social stay.', 'Kristjan', 'To do'],
 ];
 
 const CONTENT = [
@@ -80,7 +81,7 @@ const CONTENT = [
   ['A few dates will change, said the team.', 'The team edits them here, in the event editor, once they are known.', 'Team', 'Waiting'],
   ['The archive is not here: about 99 Estonian and 91 English past events since 22.09.2024, plus 20 from early 2026, 76 pictures.', 'Import them from eccm.ee with their old ids, so the redirects find them. Pictures into R2.', 'Kristjan', 'To do'],
   ['eccm.ee also holds test content: 2027 placeholders, empty news, Residentuurid, duplicates.', 'Leave it behind.', 'Nobody', 'Decided'],
-  ['/nan/ is a separate static site and 404s here.', 'Copy it under /nan/ as it is.', 'Kristjan', 'To do'],
+  ['/nan/ (NAN, Nordic Analog Network) 404s here. It is one hand-made HTML file, 547 KB, its five pictures inside it.', 'Copy the file to /nan/, so every link to it keeps working. nan.eccm.ee instead only if NAN should read as its own site, after the zone move.', 'Kristjan', 'To do'],
 ];
 
 const STORAGE = [
@@ -99,6 +100,7 @@ const ACCOUNT = [
 ];
 
 const DOMAIN = [
+  ['The old hosting can hold files nobody links to, and the archive\u2019s source is Joomla\u2019s database. Neither is visible from outside.', 'Take cPanel\u2019s Full Backup first: every file, the database and the mailboxes in one archive. Read it for anything still in use, import the archive from it, keep it.', 'ECCM gives the login, Kristjan', 'Ask'],
   ['eccm.ee, its DNS, hosting and mail are all at Virtuaal.com. The domain is ECCM\u2019s and runs to 18.03.2027.', 'Move only the DNS to Cloudflare. Registration and mail stay at Virtuaal.', 'ECCM gives access, Kristjan does it', 'Ask'],
   ['Moving DNS can break mail. DMARC is set to reject, so one wrong record bounces everything.', 'Export the zone from cPanel and recreate every record by hand, unproxied, all still pointing at Virtuaal. Check mail before the switch. Never turn on Cloudflare Email Routing for eccm.ee.', 'Kristjan', 'To do'],
   ['The nameserver switch itself.', 'Change it in Virtuaal\u2019s registrar panel. DNSSEC is off, so nothing else to undo. Nobody sees a change, because every record still points where it did.', 'Kristjan with ECCM\u2019s login', 'To do'],
