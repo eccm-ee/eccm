@@ -33,7 +33,7 @@ import { itemsRoute } from './items.mjs';
 import { renderStation } from './render/station.mjs';
 import { renderAdmin } from './render/admin.mjs';
 import { renderResearch, renderRadioResearch } from './render/research.mjs';
-import { renderMigration } from './render/migration.mjs';
+import { renderDocs, renderMigration } from './render/docs.mjs';
 import { filesRoute } from './files.mjs';
 import { newsletter, drain } from './newsletter.mjs';
 import { ogRoute } from './og/route.mjs';
@@ -177,8 +177,9 @@ export default {
     // research, a card per study (src/render/research.mjs), since 2026-10-02
     if (p === '/admin/research') return new Response(String(renderResearch()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     if (p === '/admin/research/radio') return new Response(String(renderRadioResearch()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
-    // the plan for moving eccm.ee here (src/render/migration.mjs), since 2026-10-07
-    if (p === '/admin/migration') return new Response(String(renderMigration()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
+    // the docs, an index and the plan for moving eccm.ee here (src/render/docs.mjs), since 2026-10-07
+    if (p === '/docs' || p === '/docs/') return new Response(String(renderDocs()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
+    if (p === '/docs/migration') return new Response(String(renderMigration()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';

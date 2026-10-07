@@ -1,6 +1,7 @@
-// migration.mjs: /admin/migration, the plan for moving eccm.ee onto this site
-// (asked 2026-10-07: "add migration card and page to the admin with the
-// report"). Written from five read-only investigations run the same day: the
+// docs.mjs: /docs, the index of written plans and reports, and /docs/migration,
+// the plan for moving eccm.ee onto this site (asked 2026-10-07: "add migration
+// card and page to the admin with the report", then "move to /docs/migration
+// instead and make docs index page"). Written from five read-only investigations run the same day: the
 // old site and its archive, storage, the radio and admin pages, the domain,
 // and how Väin reads eccm.ee. The team's answers of that day are the
 // decisions at the top. Every figure was measured on 2026-10-07 unless the
@@ -15,6 +16,18 @@ const part = (title, body) => html`<section class="rk-part">
   </section>`;
 const two = (label, a, b, rows) => table({ label, cols: [{ label: a }, { label: b, cls: 'main' }], rows });
 const three = (label, a, b, c, rows) => table({ label, cols: [{ label: a }, { label: b, cls: 'main' }, { label: c, cls: 'wrap' }], rows });
+
+const cards = (list) => html`<div class="cards">
+    ${list.map(([href, title, desc]) => html`<a class="card" href="${href}"><span class="card-title">${title}</span><span class="card-desc">${desc}</span></a>`)}
+  </div>`;
+
+export const renderDocs = () => page({
+  wide: true, lang: 'en', title: 'Docs.',
+  body: html`  <h1>Docs</h1>
+  ${cards([
+    ['/docs/migration', 'Migration', 'Moving eccm.ee here: decisions, steps, findings and open questions.'],
+  ])}`,
+});
 
 const DECISIONS = [
   ['Radio', 'Stays, as its own thing. It moves into its own Worker, not deleted.'],
@@ -130,7 +143,8 @@ const ASK = [
 
 export const renderMigration = () => page({
   wide: true, lang: 'en', title: 'Migration.',
-  body: html`  <h1>Migration</h1>
+  body: html`  <p class="crumb"><a href="/docs">Docs</a></p>
+  <h1>Migration</h1>
   <p class="note">Moving eccm.ee onto this site. Measured on 7 October 2026.</p>
   ${part('Decisions', two('Decisions', 'What', 'Decided', DECISIONS))}
   ${part('Steps', table({ label: 'Steps', cols: [{ label: 'Step', cls: 'num' }, { label: 'What' }, { label: 'Covers', cls: 'main' }], rows: STEPS }))}
