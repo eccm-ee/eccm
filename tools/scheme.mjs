@@ -1,5 +1,5 @@
 // tools/scheme.mjs: reads every picture in the media table with the detector
-// in public/scheme.mjs, the same module derive.html and the editor run, and
+// in public/scheme.mjs, the same module the editor runs (derive.html did until 2026-10-07), and
 // writes one UPDATE per row to data/seed-step5-schemes.sql. Session 3 of
 // plans/plan-eccm-cms-step-1.md, written 2026-09-30 when the upload arrived
 // ("implement image upload and apply detection ... on current content").

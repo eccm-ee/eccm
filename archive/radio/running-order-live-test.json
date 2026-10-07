@@ -1,0 +1,20 @@
+{
+ "channel": "live-test",
+ "error": "the schedule is empty",
+ "missing": [],
+ "slots": [
+  {
+   "i": 0,
+   "key": "mic-test",
+   "title": "Proovisaade",
+   "kind": "live",
+   "start": 0,
+   "dur": 0,
+   "segments": 0,
+   "open": true,
+   "missing": false,
+   "who": null
+  }
+ ],
+ "now": 1791389099928
+}

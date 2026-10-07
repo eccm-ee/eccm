@@ -1,0 +1,31 @@
+{
+ "channel": "toonid",
+ "epoch": 1790881694386,
+ "slots": [
+  {
+   "key": "uploads/test-tone-330hz.mp3",
+   "kind": "file",
+   "open": false,
+   "title": "Testtoon 330 Hz",
+   "dur": 30
+  },
+  {
+   "key": "uploads/test-tone-440hz-22khz-64k.mp3",
+   "kind": "file",
+   "open": false,
+   "title": "Testtoon 440 Hz, 22 kHz mono",
+   "dur": 30
+  },
+  {
+   "key": "uploads/test-tone-220hz.mp3",
+   "kind": "file",
+   "open": false,
+   "title": "Testtoon 220 Hz",
+   "from": 10,
+   "dur": 30
+  }
+ ],
+ "rev": 3,
+ "at": 1790928025720,
+ "live": {}
+}

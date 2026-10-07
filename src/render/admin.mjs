@@ -13,21 +13,17 @@ import { page } from './chrome.mjs';
 
 // in English since 2026-10-02 ("convert all admin pages to english only"), and the type study moved under
 // Research the same day with the radio tools ("in admin page to reseach card link"), and the design system is
-// three cards since that evening ("split ds into components logo and social, separate cards in admin. 4 col cards")
+// three cards since that evening ("split ds into components logo and social, separate cards in admin. 4 col cards").
+// Radio, Files, Icons and Research went 2026-10-07 with what they led to (archive/radio.md, archive/README.md)
 const TOOLS = [
   // first while the migration is the work at hand (asked 2026-10-07: "move to /docs/migration instead and make docs index page")
   ['/docs', 'Docs', 'Plans and reports, starting with the migration of eccm.ee.'],
   ['/et/sundmused', 'Events', 'Every event. Each one is edited from the Edit button on its own page.'],
   ['/items', 'Notices', 'A notice to phones at a set time, and the list of notices.'],
-  ['/radio', 'Radio', 'The station\u2019s channels, what is on, and the recorded live shows.'],
-  ['/admin/files', 'Files', 'The site\u2019s audio: uploads and the recorded live shows, and which channel plays each.'],
   ['/edit/uudiskiri', 'Newsletter', 'Issues to subscribers: compose from events, send a test, send to all.'],
   ['/ds', 'Components', 'Type, figures, colour, space, buttons, tables and cards.'],
   ['/logo', 'Logo', 'The square mark, the wordmark in both languages, and every icon size.'],
-  // the icons left Research once Feather was chosen (asked 2026-10-02: "move icons up one level")
-  ['/icons', 'Icons', 'Feather, every icon the site has, in buttons small and large.'],
   ['/social', 'Social', 'The share image of every published event, as a scraper sees it.'],
-  ['/admin/research', 'Research', 'Typography and radio programming tools.'],
 ];
 
 export const renderAdmin = () => page({

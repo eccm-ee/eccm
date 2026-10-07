@@ -30,18 +30,11 @@ import { serveMedia } from './media.mjs';
 import { useTransforms } from './render/pic.mjs';
 import { renderIcs } from './render/ics.mjs';
 import { itemsRoute } from './items.mjs';
-import { renderStation } from './render/station.mjs';
 import { renderAdmin } from './render/admin.mjs';
-import { renderResearch, renderRadioResearch } from './render/research.mjs';
 import { renderDocs, renderDoc } from './render/docs.mjs';
-import { filesRoute } from './files.mjs';
 import { newsletter, drain } from './newsletter.mjs';
 import { ogRoute } from './og/route.mjs';
-import { radioShows, wakeRadio, serveShow, radioState } from './radio.mjs';
 export { Items } from './items.mjs';
-export { Radio } from './radio.mjs';
-import { station, STREAM_BASE } from './station/station.mjs';
-export { Schedule, Library } from './station/station.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
 const EVENT = { et: /^\/et\/sundmused\/([a-z0-9-]+)$/, en: /^\/en\/events\/([a-z0-9-]+)$/ };
@@ -127,16 +120,7 @@ export default {
     // workers.dev host draws the originals, as wrangler dev does
     useTransforms(url.hostname.endsWith('.workers.dev') ? 'off' : env.IMAGE_TRANSFORMS);
     useOrigin(url.origin);
-    // the radio station itself, under /stream since 2026-10-02 (src/station/station.mjs): the prefix comes off
-    // here and the station answers as it did on its own Worker, method, headers and body unchanged
-    if (p === STREAM_BASE || p.startsWith(STREAM_BASE + '/')) {
-      const inner = new URL(url); inner.pathname = p.slice(STREAM_BASE.length) || '/';
-      return station.fetch(new Request(inner, request), env, ctx);
-    }
-    // the uploads in pieces, eccm-files through its service binding (workers/files), since 2026-10-02
-    if (p.startsWith('/files/')) return env.FILES_SVC.fetch(request);
-    // /admin/files, the site's audio in two directories (src/files.mjs), since 2026-10-02
-    if (p === '/admin/files' || p.startsWith('/admin/files/')) { const out = await filesRoute(request, env, url); if (out) return out; }
+    // the radio (/stream, /files/*, /admin/files, /radio, /station) went 2026-10-07, restorable from the tag radio-last (archive/radio.md)
     // the uploaded pictures from R2, /media/{sha256}.{ext} (src/media.mjs)
     if (p.startsWith('/media/')) { const out = await serveMedia(env, p); if (out) return out; }
     // the event share images and their list for /ds (src/og/route.mjs), since 2026-10-01
@@ -164,19 +148,7 @@ export default {
     if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }
     // the notices and their push subscriptions (src/items.mjs), since 2026-10-01
     if (p === '/items' || p.startsWith('/items/')) { const out = await itemsRoute(request, env, url); if (out) return out; }
-    // the radio, positron's station in this site's chrome (src/render/station.mjs), since 2026-10-01
-    // the radio, at /radio since 2026-10-01 ("rename station to radio"); /station answers with the way there
-    if (p === '/radio') return reply(renderStation(await radioShows(env)));
-    // the programming sketch of the morning became the radio tools research the same afternoon (src/render/research.mjs)
-    if (p === '/radio/kava') return new Response(null, { status: 301, headers: { location: '/admin/research/radio' } });
-    if (p === '/radio/state.json') return radioState(env);
-    // a kept live show (src/radio.mjs), since 2026-10-02
-    if (p.startsWith('/radio/')) { const out = await serveShow(request, env, p); if (out) return out; }
-    if (p === '/station') return new Response(null, { status: 301, headers: { location: `/radio${url.search}` } });
     // the tools, one card each (src/render/admin.mjs), since 2026-10-01
-    // research, a card per study (src/render/research.mjs), since 2026-10-02
-    if (p === '/admin/research') return new Response(String(renderResearch()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
-    if (p === '/admin/research/radio') return new Response(String(renderRadioResearch()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     // the docs, an index and the plan for moving eccm.ee here (src/render/docs.mjs), since 2026-10-07
     if (p === '/docs' || p === '/docs/') return new Response(String(renderDocs()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     // each doc is a Markdown file under docs/ (src/render/docs.mjs)
@@ -186,8 +158,7 @@ export default {
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
   },
-  // the cron of wrangler.jsonc, every five minutes since the station came (it was ten): the outbox's retry
-  // (src/mail.mjs), the radio's recorder woken if its alarm ever stopped (src/radio.mjs), and the station's
-  // sweep of live chunks heard and gone (src/station/station.mjs), which wants five
-  async scheduled(event, env, ctx) { ctx.waitUntil(drain(env)); ctx.waitUntil(wakeRadio(env)); await station.scheduled(event, env, ctx); },
+  // the cron of wrangler.jsonc, every five minutes: the outbox's retry (src/mail.mjs); the radio's recorder
+  // and the station's sweep ran here until 2026-10-07 (archive/radio.md)
+  async scheduled(event, env, ctx) { ctx.waitUntil(drain(env)); },
 };
