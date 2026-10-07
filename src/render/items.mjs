@@ -15,6 +15,7 @@ import { page } from './chrome.mjs';
 import { field, input } from './editor.mjs';
 import { dayMonth, clock } from './dates.mjs';
 import { table } from './table.mjs';
+import { badge } from './badge.mjs';
 
 // a moment in ms as Tallinn's local ISO text, the shape dates.mjs reads
 export const local = (ms) => new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(Number(ms))).replace(' ', 'T');
@@ -26,6 +27,14 @@ const fate = (it) => {
   const n = Number(it.sent || 0);
   if (n) return `Sent to ${n} ${n === 1 ? 'device' : 'devices'}${it.failed ? `, ${it.failed} refused` : ''}.`;
   return it.failed ? `No device accepted it (${it.failed}).` : 'Published, no devices to send to.';
+};
+
+// the same as a badge and its figures, for the list's Status column
+const state = (it) => {
+  if (it.status === 'waiting') return badge('Waiting', 'progress');
+  const n = Number(it.sent || 0), f = Number(it.failed || 0);
+  if (n) return html`${badge('Sent', 'done')} <span class="small">${n} ${n === 1 ? 'device' : 'devices'}${f ? `, ${f} refused` : ''}</span>`;
+  return f ? html`${badge('Failed', 'problem')} <span class="small">${f} refused</span>` : html`${badge('Published', 'done')} <span class="small">no devices</span>`;
 };
 
 // the notice's fields, the new form's and the edit form's; time is false on a published notice
@@ -44,7 +53,7 @@ export const itemsList = (items) => (items.length ? table({
     cells: [
       html`<time datetime="${new Date(Number(it.publish_at)).toISOString()}">${when(it.publish_at)}</time>`,
       html`${it.url ? html`<a href="${it.url}">${it.title}</a>` : it.title}${it.body ? html`<br><span class="small">${it.body}</span>` : ''}`,
-      fate(it),
+      state(it),
       html`<a class="btn btn-sm" href="/items/${it.id}">Edit</a>`,
     ],
   })),

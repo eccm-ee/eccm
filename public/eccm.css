@@ -645,6 +645,26 @@
      the row past the frame (asked 2026-10-02) */
   .table .wrap { white-space: normal; min-inline-size: 16rem; max-inline-size: 28rem; }
   .table tr[aria-current="true"] > * { font-weight: 600; }
+  /* ── a badge (asked 2026-10-07: "develop a badge component for status cols in tables etc"), the state of a
+     row in its status cell, written by badge() in src/render/badge.mjs. It departs from eccm-ui's "hierarchy
+     is size and space, never a rule, a box or a tint" on purpose: a status is read down a column across many
+     rows, and a word alone in the small register gives the eye nothing to sort by, so the badge draws a box.
+     It keeps the rest of the rule: no hue anywhere, the accent is the ink, and the four tones differ by how
+     the box is drawn and by a leading Feather icon, never by colour alone. Neutral (draft, to do) is a
+     dashed edge in the second ink with no icon, the not yet; progress (waiting, scheduled, ask) a solid edge
+     with a clock; done (sent, published, done, decided) a check with no edge, the quietest, since finished
+     rows are the most and ask the least; problem (failed, refused) the ink filled with the ground's letters
+     and an alert, the one loud thing. Text pairs: ink-2 7.46:1 and 7.88:1, ink 17.40:1 and 17.49:1, the
+     filled ground on ink 17.40:1 and 17.49:1, light and dark. An inline block, so its baseline is its
+     text's and it sits on the cell's baseline beside the other cells' words; square corners, the small
+     register, proportional figures and the face's own spacing whatever the cell around it sets ── */
+  .badge { display: inline-block; vertical-align: baseline; padding-inline: var(--eccm-s-2); border: 1px solid transparent; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); font-weight: 400; font-variant-numeric: normal; color: var(--eccm-ink); white-space: nowrap; }
+  /* min-inline-size because without it a table cell sized itself to the badge less its icon and the cell's words ran
+     14 px past the frame (MEASURED 2026-10-07 on the outbox at 1280) */
+  .badge > .ico { inline-size: 1em; min-inline-size: 1em; block-size: 1em; vertical-align: -0.125em; margin-inline-end: var(--eccm-s-1); }
+  .badge-neutral { border-style: dashed; border-color: var(--eccm-ink-2); color: var(--eccm-ink-2); }
+  .badge-progress { border-color: var(--eccm-ink-2); }
+  .badge-problem { background: var(--eccm-ink); border-color: var(--eccm-ink); color: var(--eccm-ground); }
   /* figures on the admin pages: every time, date, length, count and the date and time fields in the body
      face's tabular figures (asked 2026-10-02: "intruduce style for all numbers, timestaps etc under admin.
      either use monotype-style numbers on body font or introduce true monotype font", then "add that to ds
@@ -797,6 +817,8 @@
     .table td[data-label]:not(.main)::before { content: attr(data-label) " "; }
     .table td.main { order: -1; flex-basis: 100%; font-size: var(--eccm-t-m); line-height: var(--eccm-lh-body); color: var(--eccm-ink); }
     .table td.num { text-align: start; }
+    /* the column's name before a badge is held off its edge, which the label's own trailing space does not do */
+    .table td[data-label]:not(.main) > .badge:first-child { margin-inline-start: var(--eccm-s-1); }
   }
 }
 

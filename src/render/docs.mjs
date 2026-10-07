@@ -10,6 +10,7 @@
 import { Marked } from 'marked';
 import { html, raw, esc } from './html.mjs';
 import { page } from './chrome.mjs';
+import { badge } from './badge.mjs';
 import migration from '../../docs/migration.md';
 import presence from '../../docs/presence.md';
 import ici from '../../docs/ici.md';
@@ -40,7 +41,10 @@ const marked = new Marked({
       const top = avg.indexOf(Math.max(...avg));
       const cls = avg.map((a, i) => (i === top ? ' class="main"' : a > 30 ? ' class="wrap"' : ''));
       const head = header.map((c, i) => `<th scope="col"${cls[i]}>${this.parser.parseInline(c.tokens)}</th>`).join('');
-      const body = rows.map((r) => `<tr>${r.map((c, i) => `<td${cls[i]} data-label="${esc(labels[i])}">${this.parser.parseInline(c.tokens)}</td>`).join('')}</tr>`).join('');
+      // a column headed State or Olek is a status, each cell a badge, its tone from the cell's words
+      const state = labels.map((l) => /^(state|olek)$/i.test(l.trim()));
+      const cell = (c, i) => { const inner = this.parser.parseInline(c.tokens); return state[i] && c.text.trim() ? String(badge(raw(inner))) : inner; };
+      const body = rows.map((r) => `<tr>${r.map((c, i) => `<td${cls[i]} data-label="${esc(labels[i])}">${cell(c, i)}</td>`).join('')}</tr>`).join('');
       return `<div class="table"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>\n`;
     },
     code({ text, lang }) {
