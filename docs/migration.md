@@ -19,12 +19,12 @@ Moving eccm.ee onto this site. Measured on 7 October 2026. Each task says who do
 | --- | --- | --- |
 | [Noindex on every page until cutover](#noindex-on-every-page-until-cutover) | Agent | To do |
 | [Redirects from the old Joomla addresses](#redirects-from-the-old-joomla-addresses) | Agent | Done |
-| [Contact form](#contact-form) | Agent | To do |
-| [Privacy notice](#privacy-notice) | ECCM writes, agent builds | To do |
-| [EU emblem on Ulysses](#eu-emblem-on-ulysses) | Agent | To do |
+| [Contact form](#contact-form) | Agent | Done |
+| [Privacy notice](#privacy-notice) | ECCM approves, agent drafted | Draft live |
+| [EU emblem on Ulysses](#eu-emblem-on-ulysses) | Agent | Done |
 | [Search basics](#search-basics) | Agent | To do |
 | [Login on admin and editing](#login-on-admin-and-editing) | Agent, ECCM adds the people | Before or right after cutover |
-| [Backups](#backups) | Agent | To do |
+| [Backups](#backups) | Agent | Done |
 | [Remove the radio, keep it restorable](#remove-the-radio-keep-it-restorable) | Agent | Done |
 | [Research pages to git history](#research-pages-to-git-history) | Agent | Done |
 | [Missing events, dates and times](#2-content) | ECCM | Ask |
