@@ -47,6 +47,7 @@
     .ds-tokens > code { font-family: ui-monospace, Menlo, monospace; font-size: 0.8125rem; }
     .ds-tokens > span:nth-child(3n) { color: var(--eccm-ink-2); }
     .ds-spec { display: grid; row-gap: var(--eccm-s-16); margin-block: var(--eccm-s-8); }
+    .ds-badges { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--eccm-s-3); }
     .ds-cap { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-3); }
     .ds-swatches { display: flex; flex-wrap: wrap; gap: var(--eccm-s-6); margin-block: var(--eccm-s-6); }
     .ds-swatch { inline-size: 9rem; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
@@ -437,6 +438,40 @@
           <tbody><tr><td data-label="Algus">19.00.00</td><td data-label="Lõpp">19.40.12</td><td data-label="Kestus" class="num">40:12</td><td data-label="Saade" class="main">Ludens: Grisey ja Riley, salvestis kontserdilt</td><td data-label="Liik">salvestis</td></tr><tr aria-current="true"><td data-label="Algus">19.40.12</td><td data-label="Lõpp">19.50.12</td><td data-label="Kestus" class="num">10:00</td><td data-label="Saade" class="main">ERR Klassikaraadio otse</td><td data-label="Liik">ülekanne</td></tr><tr><td data-label="Algus">19.50.12</td><td data-label="Lõpp">20.31.40</td><td data-label="Kestus" class="num">41:28</td><td data-label="Saade" class="main">Morton Feldman, For Philip Guston, esimene osa</td><td data-label="Liik">salvestis</td></tr><tr><td data-label="Algus">20.31.40</td><td data-label="Lõpp">lahtine</td><td data-label="Kestus" class="num"></td><td data-label="Saade" class="main">Stuudiost otse</td><td data-label="Liik">otse</td></tr></tbody>
         </table>
       </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 id="badge">Badge</h2>
+  <div class="prose flow">
+    <p>A row's state in its status column, four tones told apart by the edge and an icon as well as the word: neutral, progress, done and problem.</p>
+  </div>
+  <div class="ds-spec">
+    <div>
+      <p class="ds-cap"><code>.badge</code> with <code>.badge-neutral</code>, <code>.badge-progress</code>, <code>.badge-done</code> or <code>.badge-problem</code>, written by <code>badge()</code> in <code>src/render/badge.mjs</code></p>
+      <div class="ds-themes">
+        <div class="ds-theme" style="color-scheme: light">
+          <p class="ds-cap">Light</p>
+          <p class="ds-badges"><span class="badge badge-neutral">To do</span><span class="badge badge-progress"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#clock"/></svg>Waiting</span><span class="badge badge-done"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#check"/></svg>Done</span><span class="badge badge-problem"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#alert"/></svg>Failed</span></p>
+        </div>
+        <div class="ds-theme" style="color-scheme: dark">
+          <p class="ds-cap">Dark</p>
+          <p class="ds-badges"><span class="badge badge-neutral">To do</span><span class="badge badge-progress"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#clock"/></svg>Waiting</span><span class="badge badge-done"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#check"/></svg>Done</span><span class="badge badge-problem"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#alert"/></svg>Failed</span></p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p class="ds-cap">In a table, on the cell's baseline</p>
+      <div class="table fig">
+        <table>
+          <thead><tr><th scope="col">Time</th><th scope="col" class="main">Notice</th><th scope="col">Status</th></tr></thead>
+          <tbody>
+            <tr aria-current="true"><td data-label="Time"><time>10 Oct 19.30</time></td><td data-label="Notice" class="main">Gestuurid/situatsioonid tonight</td><td data-label="Status"><span class="badge badge-progress"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#clock"/></svg>Waiting</span></td></tr>
+            <tr><td data-label="Time"><time>2 Oct 12.00</time></td><td data-label="Notice" class="main">Uudiskiri is out</td><td data-label="Status"><span class="badge badge-done"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#check"/></svg>Sent</span> <span class="small">14 devices</span></td></tr>
+            <tr><td data-label="Time"><time>1 Oct 09.15</time></td><td data-label="Notice" class="main">Test notice</td><td data-label="Status"><span class="badge badge-problem"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#alert"/></svg>Failed</span> <span class="small">2 refused</span></td></tr>
+            <tr><td data-label="Time"><time>30 Sept 18.00</time></td><td data-label="Notice" class="main">Draft of the October letter</td><td data-label="Status"><span class="badge badge-neutral">Draft</span></td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

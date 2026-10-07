@@ -13,6 +13,7 @@ import { md } from './md.mjs';
 import { dateLong } from './dates.mjs';
 import { table } from './table.mjs';
 import { PRIVACY, PRIVACY_LINE } from './contact.mjs';
+import { badge } from './badge.mjs';
 
 export const NL = { et: '/et/uudiskiri', en: '/en/newsletter' };
 const T = {
@@ -87,7 +88,7 @@ export const renderIssues = ({ issues, counts }) => {
     </form>
     <section class="items-list">
       <h2>Letters</h2>
-      ${issues.length ? table({ label: 'Letters', cols: [{ label: 'Date' }, { label: 'Subject', cls: 'main' }, { label: 'Language' }, { label: 'Status' }], rows: issues.map((i) => ({ current: i.status === 'draft', cells: [html`<time datetime="${i.sent_at || i.updated_at}">${sentDay(i.sent_at || i.updated_at, 'en')}</time>`, html`<a href="/edit/uudiskiri/${i.id}">${i.subject || '(no subject)'}</a>`, i.lang === 'et' ? 'Estonian' : 'English', i.status === 'sent' ? `sent, ${i.sent_count}` : 'draft'] })) }) : html`<p class="note">No letters yet.</p>`}
+      ${issues.length ? table({ label: 'Letters', cols: [{ label: 'Date' }, { label: 'Subject', cls: 'main' }, { label: 'Language' }, { label: 'Status' }], rows: issues.map((i) => ({ current: i.status === 'draft', cells: [html`<time datetime="${i.sent_at || i.updated_at}">${sentDay(i.sent_at || i.updated_at, 'en')}</time>`, html`<a href="/edit/uudiskiri/${i.id}">${i.subject || '(no subject)'}</a>`, i.lang === 'et' ? 'Estonian' : 'English', i.status === 'sent' ? html`${badge('Sent', 'done')} <span class="small">${i.sent_count}</span>` : badge('Draft', 'neutral')] })) }) : html`<p class="note">No letters yet.</p>`}
     </section>
     <p><a href="/edit/uudiskiri/postkast">Outbox</a>: every mail, sent and unsent.</p>
   </div>`;
@@ -129,6 +130,6 @@ export const renderOutbox = ({ rows }) => {
   const body = html`  <p class="crumb"><a href="/edit/uudiskiri">Newsletter</a></p>
   <h1>Outbox</h1>
   <p class="note">The last 100 mails, newest first. An unsent mail is tried again every ten minutes, up to three times.</p>
-  ${rows.length ? table({ label: 'Outbox', cols: [{ label: 'Time' }, { label: 'Kind' }, { label: 'Subject', cls: 'main' }, { label: 'To' }, { label: 'Status' }], rows: rows.map((m) => [html`<time datetime="${m.created_at}">${m.created_at.slice(0, 16).replace('T', ' ')}</time>`, KIND[m.kind], html`${m.subject}${!m.sent_at && m.error ? html`<br><span class="small">${m.error}</span>` : ''}`, mask(m.to_addr), m.sent_at ? 'sent' : m.error ? `failed, ${m.tries} ${m.tries === 1 ? 'try' : 'tries'}` : 'waiting']) }) : html`<p class="note">No mail yet.</p>`}`;
+  ${rows.length ? table({ label: 'Outbox', cols: [{ label: 'Time' }, { label: 'Kind' }, { label: 'Subject', cls: 'main' }, { label: 'To' }, { label: 'Status' }], rows: rows.map((m) => [html`<time datetime="${m.created_at}">${m.created_at.slice(0, 16).replace('T', ' ')}</time>`, KIND[m.kind], html`${m.subject}${!m.sent_at && m.error ? html`<br><span class="small">${m.error}</span>` : ''}`, mask(m.to_addr), m.sent_at ? badge('Sent', 'done') : m.error ? html`${badge('Failed', 'problem')} <span class="small">${m.tries} ${m.tries === 1 ? 'try' : 'tries'}</span>` : badge('Waiting', 'progress')]) }) : html`<p class="note">No mail yet.</p>`}`;
   return page({ wide: true, lang: 'en', title: 'Outbox.', body });
 };
