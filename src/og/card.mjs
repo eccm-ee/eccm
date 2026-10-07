@@ -248,9 +248,7 @@ const pano = (picture, x) => `<image x="${x}" y="0" width="${PANO_W}" height="${
 export const cardSvg = (input, picture = null, tall = false, part = 1) => {
   if (tall && picture && part > 0) return `<svg xmlns="http://www.w3.org/2000/svg" width="${TALL_W}" height="${TALL_H}" viewBox="0 0 ${TALL_W} ${TALL_H}">`
     + `<rect width="${TALL_W}" height="${TALL_H}" fill="${input.ground}"/>${pano(picture, -STRIP - (part - 1) * TALL_W)}</svg>`;
-  let L = tall ? (picture ? LAYOUTS.tallStrip : LAYOUTS.tall) : LAYOUTS.wide;
-  // a card may set its line under the title larger than the date and venue's size, a page card's sentence
-  if (input.metaScale) L = { ...L, meta: Math.round((L.meta || META) * input.metaScale) };
+  const L = tall ? (picture ? LAYOUTS.tallStrip : LAYOUTS.tall) : LAYOUTS.wide;
   const face = input.serif ? 'serif' : 'sans';
   // the date and venue in the sans on every card, a serif title's too (asked 2026-10-02: "in serif social
   // cards use sans serif for meta info. same for event pages"); it was the serif's text cut under a serif title
@@ -322,7 +320,7 @@ export const PAGE_TITLES = {
 };
 // Each page in a colour of its own and with its own words under the title
 // (asked 2026-10-02: "use different colors per page content og cards. use desc
-// / 1st sencene from the page"). The colours are the events' own, the schemes
+// / 1st sencene from the page"; the words went on 2026-10-07, pageInput says why). The colours are the events' own, the schemes
 // their pictures were read for, never a palette made up for the pages (asked
 // the same evening: "reuse the events colors, do not invert new ones (by slug
 // hash?)"): every distinct ground but pure white, which vanishes on the white
@@ -374,24 +372,9 @@ export const pageColorMap = (keys, colors) => {
   }
   return map;
 };
-// the pages with no text of their own to take a sentence from
-export const PAGE_DESC = {
-  events: { et: 'Tulevased üritused.', en: 'Upcoming events.' },
-  newsletter: { et: 'ECCM-i kava ja uudised e-postiga.', en: 'The ECCM programme and news by email.' },
-  radio: { et: 'Kolm kanalit ja salvestatud otsesaated.', en: 'Three channels and the recorded live shows.' },
-};
-// the first sentence of a page's Markdown, as plain text: links to their words, emphasis and heading marks
-// gone, a list's items joined with commas, cut at a word near 120 characters
-export const firstSentence = (md) => {
-  const text = String(md || '').split(/\n\s*\n/).map((block) => block.split('\n').map((l) => l.replace(/^\s*(#+|[-*]|\d+\.)\s+/, '').trim()).filter(Boolean).join(', '))
-    .find(Boolean) || '';
-  const plain = text.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/[*_`]+/g, '').replace(/\s+/g, ' ').trim();
-  const one = (/^(.+?[.!?])(\s|$)/.exec(plain) || [, plain])[1];
-  return one.length <= 120 ? one : one.slice(0, 120).replace(/\s+\S*$/, '') + '…';
-};
-// its sentence a third larger than an event's date and venue, 40 to share and 69 on Instagram (asked
-// 2026-10-02: "make descs bigger")
-export const pageInput = (key, lang, title, desc, colors = SITE_CARD) => ({ lang, title, meta: [desc].filter(Boolean), ground: colors.ground, ink: colors.ink, ink2: colors.ink2, serif: false, page: key, metaScale: 4 / 3 });
+// the title alone on a page's card since 2026-10-07 ("rm descriptins from page social cards and frontpage
+// one"); the page's first sentence, a third larger than an event's date and venue, sat under it until then
+export const pageInput = (key, lang, title, colors = SITE_CARD) => ({ lang, title, meta: [], ground: colors.ground, ink: colors.ink, ink2: colors.ink2, serif: false, page: key });
 // one address per page and language, read fresh: the card follows the page's words when they are edited,
 // and its bytes are kept under its version (src/og/route.mjs)
 export const pagePath = (key, lang, tall = false) => `/og/${tall ? 'gt' : 'g'}/${key}-${lang}.png`;
