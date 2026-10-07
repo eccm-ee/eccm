@@ -15,6 +15,8 @@ import { page } from './chrome.mjs';
 // Research the same day with the radio tools ("in admin page to reseach card link"), and the design system is
 // three cards since that evening ("split ds into components logo and social, separate cards in admin. 4 col cards")
 const TOOLS = [
+  // first while it is the work at hand (asked 2026-10-07: "add migration card and page to the admin with the report")
+  ['/admin/migration', 'Migration', 'Moving eccm.ee here: decisions, steps, findings and open questions.'],
   ['/et/sundmused', 'Events', 'Every event. Each one is edited from the Edit button on its own page.'],
   ['/items', 'Notices', 'A notice to phones at a set time, and the list of notices.'],
   ['/radio', 'Radio', 'The station\u2019s channels, what is on, and the recorded live shows.'],
