@@ -1,12 +1,11 @@
 // badge.mjs: the .badge component of public/eccm.css as markup (asked 2026-10-07: "develop a badge
 // component for status cols in tables etc"). badge(text, tone) is one escaped span; text may be a Raw
 // from html.mjs (a docs cell's inline Markdown), and tone, when left out, comes from the word map below.
-// Four tones name a meaning, never a colour, and each draws differently: neutral is dashed and bare,
-// progress is ruled with a clock, done is a check with no box, problem is filled with an alert.
+// Four tones name a meaning and are kept as a class for sorting; since "labels are complex to read. make
+// uniform ones, no icons / dotted" (2026-10-07) every tone draws the same box with no icon.
 import { html } from './html.mjs';
 
 export const TONES = ['neutral', 'progress', 'done', 'problem'];
-const ICON = { progress: 'clock', done: 'check', problem: 'alert' };
 
 // every status word the site shows today, Estonian and English, lower case and without a full stop
 const WORDS = {
@@ -33,6 +32,5 @@ export const toneOf = (text) => {
 
 export const badge = (text, tone = toneOf(text)) => {
   const t = TONES.includes(tone) ? tone : 'neutral';
-  const ico = ICON[t];
-  return html`<span class="badge badge-${t}">${ico ? html`<svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#${ico}"/></svg>` : ''}${text}</span>`;
+  return html`<span class="badge badge-${t}">${text}</span>`;
 };

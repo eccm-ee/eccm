@@ -10,7 +10,7 @@
 import { Marked } from 'marked';
 import { html, raw, esc } from './html.mjs';
 import { page } from './chrome.mjs';
-import { badge } from './badge.mjs';
+import { badge, toneOf } from './badge.mjs';
 import migration from '../../docs/migration.md';
 import presence from '../../docs/presence.md';
 import ici from '../../docs/ici.md';
@@ -44,7 +44,11 @@ const marked = new Marked({
       // a column headed State or Olek is a status, each cell a badge, its tone from the cell's words
       const state = labels.map((l) => /^(state|olek)$/i.test(l.trim()));
       const cell = (c, i) => { const inner = this.parser.parseInline(c.tokens); return state[i] && c.text.trim() ? String(badge(raw(inner))) : inner; };
-      const body = rows.map((r) => `<tr>${r.map((c, i) => `<td${cls[i]} data-label="${esc(labels[i])}">${cell(c, i)}</td>`).join('')}</tr>`).join('');
+      // done rows go to the bottom of a table with a status column, the open ones first, each group in its written
+      // order (asked 2026-10-07: "move done to the bottom")
+      const si = state.indexOf(true);
+      const ordered = si < 0 ? rows : [...rows.filter((r) => toneOf(r[si]?.text) !== 'done'), ...rows.filter((r) => toneOf(r[si]?.text) === 'done')];
+      const body = ordered.map((r) => `<tr>${r.map((c, i) => `<td${cls[i]} data-label="${esc(labels[i])}">${cell(c, i)}</td>`).join('')}</tr>`).join('');
       return `<div class="table"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>\n`;
     },
     code({ text, lang }) {

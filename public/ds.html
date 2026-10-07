@@ -444,7 +444,7 @@
 
   <h2 id="badge">Badge</h2>
   <div class="prose flow">
-    <p>A row's state in its status column, four tones told apart by the edge and an icon as well as the word: neutral, progress, done and problem.</p>
+    <p>A row's state in its status column, one ruled box for every state, the word says which. In a doc table the done rows go last.</p>
   </div>
   <div class="ds-spec">
     <div>
@@ -452,11 +452,11 @@
       <div class="ds-themes">
         <div class="ds-theme" style="color-scheme: light">
           <p class="ds-cap">Light</p>
-          <p class="ds-badges"><span class="badge badge-neutral">To do</span><span class="badge badge-progress"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#clock"/></svg>Waiting</span><span class="badge badge-done"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#check"/></svg>Done</span><span class="badge badge-problem"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#alert"/></svg>Failed</span></p>
+          <p class="ds-badges"><span class="badge badge-neutral">To do</span><span class="badge badge-progress">Waiting</span><span class="badge badge-done">Done</span><span class="badge badge-problem">Failed</span></p>
         </div>
         <div class="ds-theme" style="color-scheme: dark">
           <p class="ds-cap">Dark</p>
-          <p class="ds-badges"><span class="badge badge-neutral">To do</span><span class="badge badge-progress"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#clock"/></svg>Waiting</span><span class="badge badge-done"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#check"/></svg>Done</span><span class="badge badge-problem"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#alert"/></svg>Failed</span></p>
+          <p class="ds-badges"><span class="badge badge-neutral">To do</span><span class="badge badge-progress">Waiting</span><span class="badge badge-done">Done</span><span class="badge badge-problem">Failed</span></p>
         </div>
       </div>
     </div>
@@ -466,9 +466,9 @@
         <table>
           <thead><tr><th scope="col">Time</th><th scope="col" class="main">Notice</th><th scope="col">Status</th></tr></thead>
           <tbody>
-            <tr aria-current="true"><td data-label="Time"><time>10 Oct 19.30</time></td><td data-label="Notice" class="main">Gestuurid/situatsioonid tonight</td><td data-label="Status"><span class="badge badge-progress"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#clock"/></svg>Waiting</span></td></tr>
-            <tr><td data-label="Time"><time>2 Oct 12.00</time></td><td data-label="Notice" class="main">Uudiskiri is out</td><td data-label="Status"><span class="badge badge-done"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#check"/></svg>Sent</span> <span class="small">14 devices</span></td></tr>
-            <tr><td data-label="Time"><time>1 Oct 09.15</time></td><td data-label="Notice" class="main">Test notice</td><td data-label="Status"><span class="badge badge-problem"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#alert"/></svg>Failed</span> <span class="small">2 refused</span></td></tr>
+            <tr aria-current="true"><td data-label="Time"><time>10 Oct 19.30</time></td><td data-label="Notice" class="main">Gestuurid/situatsioonid tonight</td><td data-label="Status"><span class="badge badge-progress">Waiting</span></td></tr>
+            <tr><td data-label="Time"><time>2 Oct 12.00</time></td><td data-label="Notice" class="main">Uudiskiri is out</td><td data-label="Status"><span class="badge badge-done">Sent</span> <span class="small">14 devices</span></td></tr>
+            <tr><td data-label="Time"><time>1 Oct 09.15</time></td><td data-label="Notice" class="main">Test notice</td><td data-label="Status"><span class="badge badge-problem">Failed</span> <span class="small">2 refused</span></td></tr>
             <tr><td data-label="Time"><time>30 Sept 18.00</time></td><td data-label="Notice" class="main">Draft of the October letter</td><td data-label="Status"><span class="badge badge-neutral">Draft</span></td></tr>
           </tbody>
         </table>
