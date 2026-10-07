@@ -31,7 +31,9 @@ const marked = new Marked({
     heading({ tokens, depth }) {
       const text = this.parser.parseInline(tokens);
       // the id from the visible words: tags and entities out first, so importer's is importer-s, not importer-39-s
-      return `<h${depth} id="${slug(text.replace(/<[^>]+>/g, '').replace(/&[#a-z0-9]+;/gi, ' '))}">${text}</h${depth}>\n`;
+      // every title links to itself, so a section can be copied and sent (asked 2026-10-07: "make titles linkable in docs")
+      const id = slug(text.replace(/<[^>]+>/g, '').replace(/&[#a-z0-9]+;/gi, ' '));
+      return `<h${depth} id="${id}"><a class="doc-anchor" href="#${id}">${text}</a></h${depth}>\n`;
     },
     table({ header, rows }) {
       const labels = header.map((c) => this.parser.parseInline(c.tokens).replace(/<[^>]+>/g, ''));

@@ -734,6 +734,9 @@
   .doc-done > summary > h3 { display: inline; font-size: var(--eccm-t-m); font-weight: 600; }
   .doc-done > summary > .doc-task { margin-block-start: 0.25lh; }
   .doc-done[open] > summary ~ * { margin-block-start: 1lh; }
+  /* a doc's titles link to themselves: no line until hovered, like the list's titles */
+  .doc-anchor { color: inherit; text-decoration-line: none; }
+  .doc-anchor:hover, .doc-anchor:focus-visible { text-decoration-line: underline; }
   /* a task's state and who, under its title: the badge first, the who in the second ink */
   .doc-task { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--eccm-s-1) var(--eccm-s-3); color: var(--eccm-ink-2); font-size: var(--eccm-t-s); }
   .doc .table :is(.wrap, .main) { inline-size: auto; min-inline-size: 0; max-inline-size: none; }
