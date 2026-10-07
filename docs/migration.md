@@ -55,7 +55,7 @@ Every agent prompt assumes the agent reads `CLAUDE.md` first, which has the run,
 
 ### Noindex on every page until cutover
 
-**Who:** agent. **State:** to do.
+**Who:** agent. **State:** done, the `NOINDEX` var on staging and one header for every response.
 
 Staging pages can be found by search engines today: the header in `public/_headers` reaches only static files, and every page is made by the Worker. The Worker sends it instead, behind a setting that is off on eccm.ee.
 
@@ -133,7 +133,7 @@ staging and push.
 
 ### Contact form
 
-**Who:** agent. **State:** to do.
+**Who:** agent. **State:** done, at /et/kontakt and /en/contact, mail arrives once info@eccm.ee is a verified address or the account is on Workers Paid.
 
 The footer's Kirjuta meile links to Joomla's form, gone after cutover. A form on the site: the Worker stores the message and mails it to the office through the email binding the newsletter already uses, with Reply-To set to the sender, so answering is pressing Reply. Turnstile keeps bots out without a puzzle for most people. info@eccm.ee is printed beside it.
 
@@ -159,7 +159,7 @@ skills first. Check at 375 and 1280, deploy staging, push.
 
 ### Privacy notice
 
-**Who:** ECCM writes, agent builds. **State:** to do.
+**Who:** ECCM approves, agent drafted. **State:** draft live, at /et/andmekaitse and /en/privacy.
 
 The site collects newsletter addresses, contact messages and push subscriptions, so it needs a privacy notice in both languages. See Privacy and consent below for what it has to say.
 
@@ -174,7 +174,7 @@ Check at 375 and 1280, deploy staging, push.
 
 ### EU emblem on Ulysses
 
-**Who:** agent. **State:** to do.
+**Who:** agent. **State:** done.
 
 Creative Europe requires the Co-funded by the European Union emblem on the Ulysses page. eccm.ee shows it, the rework has only the sentence.
 
@@ -189,7 +189,7 @@ guidelines give for web. Check at 375 and 1280, deploy staging, push.
 
 ### Search basics
 
-**Who:** agent. **State:** to do.
+**Who:** agent. **State:** done, MusicEvent and Organization data, `/robots.txt`, `SITE_ORIGIN`.
 
 No structured event data, no Sitemap line in robots.txt, and the site address is taken from each request, so staging pages name staging as their own address.
 
@@ -222,21 +222,20 @@ Results Test, deploy staging, push.
 
 **Who:** agent, ECCM adds the people. **State:** right after migration.
 
-Anyone can edit events and upload pictures today. Cloudflare Access puts a login by emailed code in front of `/admin`, `/edit`, `/files` and `/docs`, with nothing to build in the Worker.
+Anyone can edit events and upload pictures today. Cloudflare Access puts a login by emailed code in front of `/admin`, `/edit`, `/items` and `/docs`, with nothing to build in the Worker.
 
 **Prompt**
 
 ```text
 In eccm, write the steps to put Cloudflare Access (one-time PIN by email) in
-front of /admin*, /edit*, /items*, /files* and /docs* on the production zone,
-then remove OPEN_UPLOADS and any code that only existed because editing was
-open. Do not apply Access yourself: give ECCM the dashboard steps and the
+front of /admin*, /edit*, /items* and /docs* on the production zone,
+keeping /items.json and the public pages outside it. Do not apply Access yourself: give ECCM the dashboard steps and the
 list of paths.
 ```
 
 ### Backups
 
-**Who:** agent. **State:** to do.
+**Who:** agent. **State:** done, daily into `eccm-backup-staging`, restore with `tools/restore.mjs`.
 
 Cloudflare keeps 7 days of database history (30 on Workers Paid), and nothing if the database or the account is deleted. The site's existing five-minute cron, once a day, writes every table into a separate bucket and keeps 30 days. Not into git, since the database holds subscribers' addresses. Pictures need none: they are stored by content hash and never overwritten.
 
@@ -332,7 +331,7 @@ eccm.ee's lists, then apply to staging. Report what was skipped and why.
 
 ### Copy /nan/
 
-**Who:** agent. **State:** to do.
+**Who:** agent. **State:** later.
 
 [eccm.ee/nan](https://eccm.ee/nan/) is one hand-made HTML file, 547 KB, its five pictures inside it. It loads Google Fonts, which sends visitors' addresses to Google, so its fonts come from the site when copied.
 

@@ -722,6 +722,14 @@
   .doc > *, main.admin .doc > .table { max-inline-size: none; }
   /* in a doc every cell may wrap, so a column of long phrases cannot squeeze the task names to a word a line */
   .doc .table :is(th, td) { white-space: normal; }
+  /* a finished task folded: its title and badge are the summary, the triangle the cue that it opens */
+  .doc > .doc-done { --eccm-flow: 1.5lh; }
+  .doc-done > summary { cursor: pointer; }
+  .doc-done > summary > h3 { display: inline; font-size: var(--eccm-t-m); font-weight: 600; }
+  .doc-done > summary > .doc-task { margin-block-start: 0.25lh; }
+  .doc-done[open] > summary ~ * { margin-block-start: 1lh; }
+  /* a task's state and who, under its title: the badge first, the who in the second ink */
+  .doc-task { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--eccm-s-1) var(--eccm-s-3); color: var(--eccm-ink-2); font-size: var(--eccm-t-s); }
   .doc .table :is(.wrap, .main) { inline-size: auto; min-inline-size: 0; max-inline-size: none; }
   .doc > h3 { --eccm-flow: 1.5lh; font-size: var(--eccm-t-m); font-weight: 600; }
   .doc > h3 + * { --eccm-flow: 0.25lh; }
