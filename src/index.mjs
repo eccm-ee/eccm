@@ -29,7 +29,9 @@ import { renderSitemap, renderFeed } from './render/feeds.mjs';
 import { serveMedia } from './media.mjs';
 import { useTransforms } from './render/pic.mjs';
 import { renderIcs } from './render/ics.mjs';
-import { itemsRoute } from './items.mjs';
+import { itemsRoute, ask as askItems } from './items.mjs';
+import { joomlaApi } from './joomla.mjs';
+import { renderNotice } from './render/notice.mjs';
 import { renderAdmin } from './render/admin.mjs';
 import { renderDocs, renderDoc } from './render/docs.mjs';
 import { backup } from './backup.mjs';
@@ -152,6 +154,8 @@ const routes = {
     // SITE_ORIGIN from wrangler.jsonc, the request's origin only where it is not set
     useOrigin(env.SITE_ORIGIN || url.origin);
     if (p === '/robots.txt') return robots();
+    // the Joomla API Väin's server polls, answered from the notices (src/joomla.mjs), since 2026-10-07
+    if (p.startsWith('/api/index.php/')) { const out = await joomlaApi(request, env, url); if (out) return out; }
     // eccm.ee's old Joomla addresses: 301, 410, or the 404 with the miss logged (src/redirects.mjs)
     { const out = await legacy(request, env, url, ctx); if (out) return out; }
     // the radio (/stream, /files/*, /admin/files, /radio, /station) went 2026-10-07, restorable from the tag radio-last (archive/radio.md)
@@ -182,6 +186,13 @@ const routes = {
     if (CONTACT_PATHS.includes(p.replace(/\/$/, ''))) return contact(request, env, url, ctx);
     const pm = PAGE.exec(p);
     if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }
+    // a published notice's own page, the link Väin keeps (src/render/notice.mjs), since 2026-10-07
+    const nm = /^\/(?:teated|en\/notices)\/(\d+)$/.exec(p);
+    if (nm) {
+      const it = (await askItems(env, '/published')).items.find((x) => String(x.num) === nm[1]);
+      const lang = p.startsWith('/en/') ? 'en' : 'et';
+      return it ? reply(renderNotice({ lang, it, origin: origin() })) : reply(notFound(lang, p), 404);
+    }
     // the notices and their push subscriptions (src/items.mjs), since 2026-10-01
     if (p === '/items' || p.startsWith('/items/')) { const out = await itemsRoute(request, env, url); if (out) return out; }
     // the tools, one card each (src/render/admin.mjs), since 2026-10-01

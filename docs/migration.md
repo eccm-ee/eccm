@@ -451,26 +451,13 @@ Not needed: the current site is a test too. If wanted, uus.eccm.ee can work befo
 
 ## 5. Väin
 
-[Väin](https://github.com/tarmoj/radio1965) is U:'s app, by Tarmo Johannes. The app never calls eccm.ee: his server polls eccm.ee's Joomla API every 5 minutes for category 47, and opens `/content/articles/{id}` when an article is tapped. That API ends at cutover. His pages `/radio1965/contributor`, `/radio1965/editor` and the recordings in `/radio/streams` are files in eccm.ee's hosting.
+[Väin](https://github.com/tarmoj/radio1965) is U:'s app, by Tarmo Johannes. The app never calls eccm.ee: his server polls eccm.ee's Joomla API every 5 minutes for category 47, and opens `/content/articles/{id}` when an article is tapped. His pages `/radio1965/contributor`, `/radio1965/editor` and the recordings in `/radio/streams` are files in eccm.ee's hosting.
 
-### A feed in his importer's shape
+### The Joomla API from the Worker
 
-**Who:** agent builds, Tarmo switches. **State:** ask Tarmo.
+**Who:** agent. **State:** done.
 
-```json
-{ "items": [ { "id": "eccm-27", "title": "...", "summary": "...", "url": "https://eccm.ee/et/sundmused/...",
-  "publish_at": "2026-11-20T19:00:00", "tags": ["..."], "html": "<p>...</p>" } ] }
-```
-
-**Prompt**
-
-```text
-In eccm, add GET /api/radio1965/articles.json: public, CORS *, Cache-Control
-max-age=60, an ETag, listing published events (and later notices) in the shape
-in docs/migration.md, newest first. Read tarmoj/radio1965's
-server/joomla_importer.py to match the fields it maps. Write the 30-line change
-his importer needs as a patch file for Tarmo, do not open a PR on his repo.
-```
+The Worker answers the same `/api/index.php/v1` calls in the same shape, so Tarmo changes nothing. Notices ticked Väin on [/items](/items) are category 47 and reach the app; each has its page at `/teated/{number}`. Checked with his own importer code against a local server.
 
 ### His files after cutover
 

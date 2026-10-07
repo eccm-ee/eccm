@@ -18,6 +18,8 @@
 //   GET  /items/key          the public VAPID key a browser subscribes with (public/push.mjs)
 //
 // Open like the editor: nobody logs in (src/editor.mjs says since when).
+// A published notice is also public at /teated/{num} and /en/notices/{num},
+// and in the Joomla API Väin's server reads (src/joomla.mjs), since 2026-10-07.
 import { send } from './push.mjs';
 import { renderItems, renderItemEdit, itemsList, local } from './render/items.mjs';
 
@@ -44,9 +46,29 @@ export class Items {
     this.sql.exec(`CREATE TABLE IF NOT EXISTS subs (
       endpoint TEXT PRIMARY KEY, p256dh TEXT NOT NULL, auth TEXT NOT NULL, created_at INTEGER NOT NULL
     )`);
+    // added 2026-10-07 for Väin (src/joomla.mjs): vain ticks a notice into category 47 of the Joomla API,
+    // num is its public number (/teated/{num}, the API's article id) and updated_at its last edit; an older
+    // object gets the columns here and a number for every notice it already holds, oldest first
+    const cols = new Set([...this.sql.exec(`PRAGMA table_info(items)`)].map((c) => c.name));
+    if (!cols.has('vain')) this.sql.exec(`ALTER TABLE items ADD COLUMN vain INTEGER NOT NULL DEFAULT 0`);
+    if (!cols.has('num')) this.sql.exec(`ALTER TABLE items ADD COLUMN num INTEGER`);
+    if (!cols.has('updated_at')) this.sql.exec(`ALTER TABLE items ADD COLUMN updated_at INTEGER`);
+    this.sql.exec(`CREATE TABLE IF NOT EXISTS counter (name TEXT PRIMARY KEY, n INTEGER NOT NULL)`);
+    for (const r of [...this.sql.exec(`SELECT id FROM items WHERE num IS NULL ORDER BY created_at`)]) this.sql.exec(`UPDATE items SET num = ? WHERE id = ?`, this.nextNum(), r.id);
+    this.sql.exec(`CREATE UNIQUE INDEX IF NOT EXISTS items_num ON items (num)`);
     // no setAlarm here: on a cold wake the constructor runs before alarm(),
     // and setting one here replaces the alarm that is about to fire
     // (positron's workers/items, where Cloudflare's livelock is described)
+  }
+
+  // the next public number, from 1000 up and never one used before, even by a deleted notice: a number
+  // Väin's server has seen stays that notice's (joomla_{num} in its database)
+  nextNum() {
+    const used = Number([...this.sql.exec(`SELECT MAX(num) AS n FROM items`)][0].n ?? 0);
+    const kept = Number([...this.sql.exec(`SELECT n FROM counter WHERE name = 'num'`)][0]?.n ?? 0);
+    const n = Math.max(used, kept, 999) + 1;
+    this.sql.exec(`INSERT INTO counter (name, n) VALUES ('num', ?) ON CONFLICT (name) DO UPDATE SET n = excluded.n`, n);
+    return n;
   }
 
   nextDue() {
@@ -85,7 +107,7 @@ export class Items {
   async announce(row) {
     const subs = [...this.sql.exec(`SELECT * FROM subs`)];
     if (!subs.length || !this.env.VAPID_JWK) return { sent: 0, failed: subs.length };
-    const message = { id: row.id, title: row.title, body: row.body, url: row.url || '/items' };
+    const message = { id: row.id, title: row.title, body: row.body, url: row.url || `/teated/${row.num}` };
     let sent = 0, failed = 0;
     await Promise.all(subs.map(async (s) => {
       const status = await send(this.env, s, message).catch((e) => { console.log(`push failed: ${e.message}`); return 0; });
@@ -106,12 +128,16 @@ export class Items {
       const subs = Number([...this.sql.exec(`SELECT COUNT(*) AS n FROM subs`)][0].n);
       return json({ items, subs });
     }
+    // what the public sees: the notices published by now, for the Joomla API and /teated/{num}
+    if (path === '/published') {
+      return json({ items: [...this.sql.exec(`SELECT * FROM items WHERE status = 'published' AND publish_at <= ? ORDER BY num`, Date.now())] });
+    }
     const body = await request.json().catch(() => null);
     if (!body) return json({ error: 'body must be JSON' }, 400);
     if (path === '/add') {
       const now = Date.now();
-      this.sql.exec(`INSERT INTO items (id, title, body, url, status, publish_at, created_at) VALUES (?, ?, ?, ?, 'waiting', ?, ?)`,
-        crypto.randomUUID(), body.title, body.body || '', body.url || '', Math.max(Number(body.publish_at) || now, now), now);
+      this.sql.exec(`INSERT INTO items (id, title, body, url, status, publish_at, created_at, updated_at, vain, num) VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?)`,
+        crypto.randomUUID(), body.title, body.body || '', body.url || '', Math.max(Number(body.publish_at) || now, now), now, now, body.vain ? 1 : 0, this.nextNum());
       await this.rearm();
       return json({ ok: true });
     }
@@ -125,7 +151,7 @@ export class Items {
       const it = [...this.sql.exec(`SELECT status FROM items WHERE id = ?`, String(body.id))][0];
       if (!it) return json({ error: 'gone' }, 404);
       if (body.publish_at != null && it.status !== 'waiting') return json({ error: 'published' }, 409);
-      this.sql.exec(`UPDATE items SET title = ?, body = ?, url = ? WHERE id = ?`, body.title, body.body || '', body.url || '', body.id);
+      this.sql.exec(`UPDATE items SET title = ?, body = ?, url = ?, vain = ?, updated_at = ? WHERE id = ?`, body.title, body.body || '', body.url || '', body.vain ? 1 : 0, Date.now(), body.id);
       if (body.publish_at != null) this.sql.exec(`UPDATE items SET publish_at = ? WHERE id = ? AND status = 'waiting'`, Math.max(Number(body.publish_at), Date.now()), body.id);
       await this.rearm();
       return json({ ok: true });
@@ -150,7 +176,7 @@ export class Items {
 }
 
 const store = (env) => env.ITEMS.get(env.ITEMS.idFromName('items'));
-const ask = async (env, path, body) => (await store(env).fetch(`https://items${path}`, body === undefined ? {} : { method: 'POST', body: JSON.stringify(body) })).json();
+export const ask = async (env, path, body) => (await store(env).fetch(`https://items${path}`, body === undefined ? {} : { method: 'POST', body: JSON.stringify(body) })).json();
 
 const page = async (env, form = {}, errors = [], status = 200) => {
   const { items, subs } = await ask(env, '/list');
@@ -160,7 +186,7 @@ const page = async (env, form = {}, errors = [], status = 200) => {
 // the posted form, trimmed, and what is wrong with it
 const readForm = async (request) => {
   const f = Object.fromEntries([...(await request.formData())].map(([k, v]) => [k, String(v).trim()]));
-  f.title ??= ''; f.body ??= ''; f.url ??= ''; f.publish_at ??= '';
+  f.title ??= ''; f.body ??= ''; f.url ??= ''; f.publish_at ??= ''; f.vain = f.vain === '1';
   const errors = [];
   if (!f.title) errors.push({ field: 'title', msg: 'The title is missing.' });
   if (f.title.length > 120) errors.push({ field: 'title', msg: 'The title is longer than 120 characters.' });
@@ -174,14 +200,14 @@ async function one(request, env, id) {
   const { item: it } = await ask(env, '/get', { id });
   if (!it) return null;
   if (request.method !== 'POST') {
-    const form = { title: it.title, body: it.body, url: it.url, publish_at: local(it.publish_at) };
+    const form = { title: it.title, body: it.body, url: it.url, vain: !!Number(it.vain), publish_at: local(it.publish_at) };
     return new Response(renderItemEdit({ it, form }), { headers: HEAD });
   }
   const { f, errors } = await readForm(request);
   if (f.do === 'delete') { await ask(env, '/delete', { id }); return back(); }
   if (errors.length) return new Response(renderItemEdit({ it, form: f, errors }), { status: 400, headers: HEAD });
   const waiting = it.status === 'waiting';
-  const out = await ask(env, '/edit', { id, title: f.title, body: f.body, url: f.url, ...(waiting ? { publish_at: f.publish_at ? tallinnMs(f.publish_at) : Date.now() } : {}) });
+  const out = await ask(env, '/edit', { id, title: f.title, body: f.body, url: f.url, vain: f.vain, ...(waiting ? { publish_at: f.publish_at ? tallinnMs(f.publish_at) : Date.now() } : {}) });
   if (out.error === 'published') {
     const { item } = await ask(env, '/get', { id });
     return new Response(renderItemEdit({ it: item, form: f, errors: [{ field: 'publish_at', msg: 'The notice was published meanwhile and its time can no longer change.' }] }), { status: 409, headers: HEAD });
@@ -197,7 +223,7 @@ export async function itemsRoute(request, env, url) {
   if (p === '/items' && request.method === 'POST') {
     const { f, errors } = await readForm(request);
     if (errors.length) return page(env, f, errors, 400);
-    await ask(env, '/add', { title: f.title, body: f.body, url: f.url, publish_at: f.publish_at ? tallinnMs(f.publish_at) : Date.now() });
+    await ask(env, '/add', { title: f.title, body: f.body, url: f.url, vain: f.vain, publish_at: f.publish_at ? tallinnMs(f.publish_at) : Date.now() });
     return back();
   }
   if ((p === '/items/subscribe' || p === '/items/unsubscribe') && request.method === 'POST') {
