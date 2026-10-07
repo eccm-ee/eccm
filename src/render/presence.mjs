@@ -33,8 +33,7 @@ const TICKETS = [
 ];
 
 const SOCIAL = [
-  ['Instagram (213 followers, 22 posts) reads better than the site: one full picture per event, a name at the top, a rhythm.', 'The site takes that over: the picture first at full width, a dated list, the newest first. It stays the source, since Instagram has no dates as data, no languages, no tickets, no search.', 'Kristjan', 'Done here'],
-  ['Posts are made by hand, separately from the site.', 'The site makes the post: a share card and a 4:5 Instagram carousel per event, then a copy-caption button in the editor.', 'Kristjan', 'Cards done, button to do'],
+  ['Instagram (213 followers, 22 posts) works well as it is, but every post is made by hand, outside the brand’s type and colours.', 'Instagram stays its own place. The site gives it material: each event’s share card and 4:5 carousel made automatically, an in-brand editor for any other post (text cards, a picture cropped and set in the brand’s type), and the caption ready to copy.', 'Kristjan', 'Event cards done, editor to do'],
   ['Facebook’s website field and Instagram’s bio link do not point at the site.', 'Both point at eccm.ee after cutover.', 'ECCM', 'At cutover'],
   ['YouTube @ECCMjournal may or may not be ECCM’s.', 'One look while logged in. Unlist it if empty, link recordings from events if not.', 'ECCM', 'Ask'],
   ['Of seven member and partner sites, only TUMA links to eccm.ee.', 'One email each from ECCM: City of Music, Ulysses Platform, Ensemble U:, Sound Plasma, Improtest.', 'ECCM, text by Kristjan', 'To do'],
