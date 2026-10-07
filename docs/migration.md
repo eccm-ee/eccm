@@ -23,7 +23,7 @@ Moving eccm.ee onto this site. Measured on 7 October 2026. Each task says who do
 | [Privacy notice](#privacy-notice) | ECCM approves, agent drafted | Draft live |
 | [EU emblem on Ulysses](#eu-emblem-on-ulysses) | Agent | Done |
 | [Search basics](#search-basics) | Agent | Done |
-| [Login on admin and editing](#login-on-admin-and-editing) | Agent, ECCM adds the people | Before or right after cutover |
+| [Login on admin and editing](#login-on-admin-and-editing) | Agent, ECCM adds the people | Right after migration |
 | [Backups](#backups) | Agent | Done |
 | [Remove the radio, keep it restorable](#remove-the-radio-keep-it-restorable) | Agent | Done |
 | [Research pages to git history](#research-pages-to-git-history) | Agent | Done |
@@ -220,7 +220,7 @@ Results Test, deploy staging, push.
 
 ### Login on admin and editing
 
-**Who:** agent, ECCM adds the people. **State:** before or right after cutover.
+**Who:** agent, ECCM adds the people. **State:** right after migration.
 
 Anyone can edit events and upload pictures today. Cloudflare Access puts a login by emailed code in front of `/admin`, `/edit`, `/files` and `/docs`, with nothing to build in the Worker.
 
