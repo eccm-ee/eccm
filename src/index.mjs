@@ -33,9 +33,8 @@ import { itemsRoute } from './items.mjs';
 import { renderStation } from './render/station.mjs';
 import { renderAdmin } from './render/admin.mjs';
 import { renderResearch, renderRadioResearch } from './render/research.mjs';
-import { renderDocs, renderMigration } from './render/docs.mjs';
+import { renderDocs, renderDoc } from './render/docs.mjs';
 import { renderIci } from './render/ici.mjs';
-import { renderPresence } from './render/presence.mjs';
 import { filesRoute } from './files.mjs';
 import { newsletter, drain } from './newsletter.mjs';
 import { ogRoute } from './og/route.mjs';
@@ -181,8 +180,8 @@ export default {
     if (p === '/admin/research/radio') return new Response(String(renderRadioResearch()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     // the docs, an index and the plan for moving eccm.ee here (src/render/docs.mjs), since 2026-10-07
     if (p === '/docs' || p === '/docs/') return new Response(String(renderDocs()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
-    if (p === '/docs/presence') return new Response(String(renderPresence()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
-    if (p === '/docs/migration') return new Response(String(renderMigration()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
+    // each doc is a Markdown file under docs/ (src/render/docs.mjs)
+    { const d = /^\/docs\/([a-z0-9-]+)$/.exec(p); const out = d && renderDoc(d[1]); if (out) return new Response(String(out), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } }); }
     // ici on Väin, who does what (src/render/ici.mjs), since 2026-10-07
     if (p === '/docs/ici') return new Response(String(renderIci()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });

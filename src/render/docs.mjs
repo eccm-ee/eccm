@@ -1,176 +1,78 @@
-// docs.mjs: /docs, the index of written plans and reports, and /docs/migration,
-// the plan for moving eccm.ee onto this site (asked 2026-10-07: "add migration
-// card and page to the admin with the report", then "move to /docs/migration
-// instead and make docs index page"). Written from five read-only investigations run the same day: the
-// old site and its archive, storage, the radio and admin pages, the domain,
-// and how Väin reads eccm.ee. The team's answers of that day are the
-// decisions at the top. Every figure was measured on 2026-10-07 unless the
-// row says otherwise.
-import { html } from './html.mjs';
+// docs.mjs: /docs, the index of written plans and reports, and each doc, which
+// is a Markdown file under docs/ rendered here (asked 2026-10-07: "add
+// migration card and page to the admin with the report", "move to
+// /docs/migration instead and make docs index page", then "is json tables the
+// best format? i'd like to see acutual code snippets and prompts what devs need
+// to do"). The file is the source: GitHub shows it as it is, an agent reads it
+// directly, and this page adds the site's chrome, the .table component and a
+// Copy button on every code block. Bundled as text by the **/*.md rule in
+// wrangler.jsonc. /docs/ici is its own module (src/render/ici.mjs).
+import { Marked } from 'marked';
+import { html, raw, esc } from './html.mjs';
 import { page } from './chrome.mjs';
-import { table } from './table.mjs';
+import migration from '../../docs/migration.md';
+import presence from '../../docs/presence.md';
 
-const part = (title, body) => html`<section class="rk-part">
-    <h2>${title}</h2>
-    ${body}
-  </section>`;
-const two = (label, a, b, rows) => table({ label, cols: [{ label: a }, { label: b, cls: 'main' }], rows });
+const DOCS = {
+  migration: { md: migration, desc: 'Moving eccm.ee here: decisions, the order, every task with its prompt or steps.' },
+  presence: { md: presence, desc: 'The site, tickets, social and listings: what is wrong today and what fixes it.' },
+};
+
+const slug = (s) => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+// the site's own markup for the three things Markdown draws differently: a heading gets an id to link to,
+// a table is the .table component with each cell's column label for the narrow form, a code block carries Copy
+const marked = new Marked({
+  renderer: {
+    heading({ tokens, depth }) {
+      const text = this.parser.parseInline(tokens);
+      return `<h${depth} id="${slug(text.replace(/<[^>]+>/g, ''))}">${text}</h${depth}>\n`;
+    },
+    table({ header, rows }) {
+      const labels = header.map((c) => this.parser.parseInline(c.tokens).replace(/<[^>]+>/g, ''));
+      // the component's cells do not wrap: the column with the longest text is its .main, any other
+      // that runs past a short phrase is .wrap, the rest stay on one line
+      const avg = header.map((_, i) => rows.reduce((n, r) => n + (r[i]?.text.length || 0), 0) / (rows.length || 1));
+      const top = avg.indexOf(Math.max(...avg));
+      const cls = avg.map((a, i) => (i === top ? ' class="main"' : a > 30 ? ' class="wrap"' : ''));
+      const head = header.map((c, i) => `<th scope="col"${cls[i]}>${this.parser.parseInline(c.tokens)}</th>`).join('');
+      const body = rows.map((r) => `<tr>${r.map((c, i) => `<td${cls[i]} data-label="${esc(labels[i])}">${this.parser.parseInline(c.tokens)}</td>`).join('')}</tr>`).join('');
+      return `<div class="table"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>\n`;
+    },
+    code({ text, lang }) {
+      return `<div class="doc-code"><pre${lang ? ` data-lang="${esc(lang)}"` : ''}><code>${esc(text)}</code></pre><button class="doc-copy" type="button" data-copy>Copy</button></div>\n`;
+    },
+  },
+});
+
+// one handler for every Copy button: the block's text to the clipboard, the button says so for two seconds
+const COPY = `<script>document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var t=b.parentNode.querySelector('code').textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},2000)})})</script>`;
 
 const cards = (list) => html`<div class="cards">
     ${list.map(([href, title, desc]) => html`<a class="card" href="${href}"><span class="card-title">${title}</span><span class="card-desc">${desc}</span></a>`)}
   </div>`;
 
+// the doc's own # line is its title
+const titleOf = (md) => (/^#\s+(.+)$/m.exec(md) || [, 'Doc'])[1].trim();
+
 export const renderDocs = () => page({
   wide: true, lang: 'en', title: 'Docs.',
   body: html`  <h1>Docs</h1>
   ${cards([
-    ['/docs/migration', 'Migration', 'Moving eccm.ee here: decisions, steps, findings and open questions.'],
-    ['/docs/presence', 'Web presence', 'The site, tickets, social and listings: what is wrong today and what fixes it.'],
-    ['/docs/ici', 'ici on V\u00e4in', 'Albert Saprykin\u2019s ici as a session on V\u00e4in, and who does what.'],
+    ...Object.entries(DOCS).map(([key, d]) => [`/docs/${key}`, titleOf(d.md), d.desc]),
+    ['/docs/ici', 'ici on Väin', 'Albert Saprykin’s ici as a session on Väin, and who does what.'],
   ])}`,
 });
 
-const DECISIONS = [
-  ['Radio', 'Removed from the site for now, kept in git so it can come back in about an hour.'],
-  ['Newsletter', 'Needed at launch. The last issue took a week by hand.'],
-  ['Calendar', 'Members add events one at a time today. Each language gets a feed to subscribe to once.'],
-  ['Domain', 'eccm.ee can be replaced directly, since the current site is a test too. uus.eccm.ee is optional.'],
-  ['Events', 'Everything to the end of 2026 is entered on eccm.ee. A few dates will change.'],
-  ['Admin', 'Open for now, closed soon.'],
-];
-
-const STEPS = [
-  ['1', 'Staging', 'Radio removed. Research pages to git history. Noindex on every page. Redirects from Joomla. Contact and privacy pages. Backups.'],
-  ['2', 'Content', 'The missing 2026 events, the archive from 2024, the pictures into storage, the changed dates.'],
-  ['3', 'ECCM\u2019s account', 'Cloudflare account, Workers Paid, the production environment, the data copied from staging.'],
-  ['4', 'Zone move', 'eccm.ee\u2019s DNS to Cloudflare with every record pointing where it does today. Nobody sees a change.'],
-  ['5', 'Cutover', 'Apex and www to the Worker, noindex off, Väin and Tarmo\u2019s files kept working.'],
-  ['6', 'After', 'Two weeks of watching redirect misses, Search Console, admin closed, Joomla hosting cancelled with mail kept.'],
-];
-
-// every finding as the problem, what solves it, who does it and where it stands (asked 2026-10-07: "i do not
-// see problem soltion columns"); the facts behind each row are in the row, nothing kept in a separate list
-const fix = (label, rows) => table({
-  label,
-  cols: [{ label: 'Problem', cls: 'wrap' }, { label: 'Solution', cls: 'main' }, { label: 'Who' }, { label: 'State' }],
-  rows,
-});
-
-const SITE = [
-  ['Staging pages can be indexed by search engines. The noindex header reaches only CSS and scripts.', 'Send noindex from the Worker on every response, behind a setting that is off on eccm.ee.', 'Agent', 'To do'],
-  ['Old Joomla addresses answer 404 here. Google has events indexed under three address shapes.', 'Redirect by the old event id (already stored in D1), a map of about 30 page paths, rules for list and feed query strings, old /images/ by file name, 410 for Joomla login pages. Log every miss.', 'Agent', 'To do'],
-  ['The footer\u2019s Kirjuta meile links to Joomla\u2019s contact form, gone after cutover.', 'A form at /et/kontakt and /en/contact: name, email, message. The Worker stores it in D1 and mails it to the office through the email binding the newsletter already uses, Reply-To the sender, so answering is pressing Reply. Cloudflare Turnstile, free and invisible to most people, keeps bots out. The address is printed beside it for anyone who prefers their own mail.', 'Agent', 'To do'],
-  ['The newsletter collects addresses and there is no privacy notice.', 'A privacy page in both languages, and the registry code 80603988 in the footer.', 'ECCM writes, agent builds', 'To do'],
-  ['Ulysses lacks the EU emblem Creative Europe requires.', 'The Co-funded by the EU emblem on the Ulysses page.', 'Agent', 'To do'],
-  ['No structured event data for search, no Sitemap line in robots.txt, the site address taken from each request.', 'schema.org Event on event pages, a robots.txt naming the sitemap, the address from config.', 'Agent', 'To do'],
-  ['Anyone can edit events and upload pictures.', 'Cloudflare Access on /admin, /edit and /files: a login by email code for ECCM\u2019s people.', 'Agent', 'Before or right after cutover'],
-  ['No backups beyond D1\u2019s own history. Cloudflare keeps 7 days of it (30 on Workers Paid), and nothing if the database or account is deleted.', 'The site\u2019s existing cron, once a day, writes every table into a separate backup bucket and keeps 30 days. Not into git, since the database holds subscribers\u2019 addresses. Pictures need none: they are stored by content hash and never overwritten.', 'Agent', 'To do'],
-  ['Page share cards repeated the page\u2019s first sentence.', 'Page and front page cards carry the title only.', 'Agent', 'Done'],
-];
-
-const ADMIN = [
-  ['The radio is not wanted on the site for now, but may be needed back fast.', 'Save the channels and schedules as JSON in archive/radio.md, tag radio-last, remove the station, recorder, files Worker and /radio. The 46 MB of audio stays in its bucket. Back: check out the tag, deploy, load the JSON.', 'Agent', 'To do'],
-  ['Research and design-study pages (/type, /derive, /icons, /admin/research) are not needed by the site.', 'Remove them. In git at the tag research-last. /logo, /ds and /social stay in Admin.', 'Agent', 'To do'],
-];
-
-const CONTENT = [
-  ['Two upcoming events are on eccm.ee and not here: TUMA AFEKT festivalil 1.11 17:30, and in Tartu 2.11 19:00.', 'Add them.', 'ECCM', 'To do'],
-  ['Up to three / Kuni kolm, 5.12, is here but gone from eccm.ee.', 'Ask whether it moved or was cancelled.', 'ECCM', 'Ask'],
-  ['Three times differ: Üle Heli (00:00), Koosloome (14.11 11:00), Schönberg (8.12 18:00). eccm.ee prints none.', 'Confirm each.', 'ECCM', 'Ask'],
-  ['Feldman has no English text here.', 'Copy the English from eccm.ee.', 'ECCM', 'To do'],
-  ['A few dates will change, said the team.', 'The team edits them here, in the event editor, once they are known.', 'ECCM', 'Waiting'],
-  ['The archive is not here: about 99 Estonian and 91 English past events since 22.09.2024, plus 20 from early 2026, 76 pictures.', 'Import them from eccm.ee with their old ids, so the redirects find them. Pictures into R2.', 'Agent', 'To do'],
-  ['eccm.ee also holds test content: 2027 placeholders, empty news, Residentuurid, duplicates.', 'Leave it behind.', 'Nobody', 'Decided'],
-  ['/nan/ (NAN, Nordic Analog Network) 404s here. It is one hand-made HTML file, 547 KB, its five pictures inside it.', 'Copy the file to /nan/, so every link to it keeps working. nan.eccm.ee instead only if NAN should read as its own site, after the zone move.', 'Agent', 'To do'],
-];
-
-const STORAGE = [
-  ['Is there working image upload?', 'Yes, in the event editor: JPEG, PNG, WebP, GIF up to 10 MB into R2, alt text in both languages. Not used yet: today\u2019s 30 pictures are files in the site itself.', 'Nobody', 'Works'],
-  ['No attachments (PDFs, documents). eccm.ee has none either.', 'Add when needed: a file field in the editor, files in R2, a list on the page.', 'Agent', 'Later'],
-  ['Notices and the newsletter have no pictures.', 'Add if asked.', 'Agent', 'Later'],
-  ['Pictures are resized only on a Cloudflare zone.', 'Turn on Image Transformations for eccm.ee. 5,000 a month are free, about 1,300 expected.', 'ECCM', 'At cutover'],
-];
-
-const ACCOUNT = [
-  ['The site runs on a personal Cloudflare account.', 'A Cloudflare account owned by ECCM, with two admins of its own.', 'ECCM', 'Ask'],
-  ['On the free plan the newsletter only reaches verified addresses.', 'Workers Paid, $5 a month. It also keeps 30 days of database history.', 'ECCM pays', 'Ask'],
-  ['Production is empty.', 'Create the database, buckets and secrets in ECCM\u2019s account and copy the data from staging. Reuse the push key so phones stay subscribed.', 'Agent', 'After the account'],
-  ['The newsletter sends from uudiskiri@eccm.positron.studio.', 'Set up Cloudflare\u2019s email sending for eccm.ee. Its records go beside the existing mail records.', 'ECCM', 'After the zone move'],
-  ['Three places in the code name eccm.positron.studio.', 'Take the address from config.', 'Agent', 'To do'],
-];
-
-const DOMAIN = [
-  ['The old hosting can hold files nobody links to, and the archive\u2019s source is Joomla\u2019s database. Neither is visible from outside.', 'Take cPanel\u2019s Full Backup first: every file, the database and the mailboxes in one archive. Read it for anything still in use, import the archive from it, keep it.', 'ECCM', 'Ask'],
-  ['eccm.ee, its DNS, hosting and mail are all at Virtuaal.com. The domain is ECCM\u2019s and runs to 18.03.2027.', 'Move only the DNS to Cloudflare. Registration and mail stay at Virtuaal.', 'ECCM', 'Ask'],
-  ['Moving DNS can break mail. DMARC is set to reject, so one wrong record bounces everything.', 'Export the zone from cPanel and recreate every record by hand, unproxied, all still pointing at Virtuaal. Check mail before the switch. Never turn on Cloudflare Email Routing for eccm.ee.', 'ECCM', 'To do'],
-  ['The nameserver switch itself.', 'Change it in Virtuaal\u2019s registrar panel. DNSSEC is off, so nothing else to undo. Nobody sees a change, because every record still points where it did.', 'ECCM', 'To do'],
-  ['The cutover.', 'Point eccm.ee and www at the Worker. Minutes, and reversible by pointing them back.', 'ECCM', 'To do'],
-  ['A preview address first?', 'Not needed: the team says the current site is a test too. If wanted, uus.eccm.ee can work through Cloudflare for SaaS on positron.studio, with one record at Virtuaal.', 'ECCM', 'Decided: direct'],
-  ['Mail\u2019s certificates renew through Virtuaal\u2019s DNS, which stops after the move.', 'Check two weeks later that mail and webmail renewed.', 'ECCM', 'After'],
-  ['Cancelling Joomla hosting may end mail, which runs on the same Virtuaal server.', 'Ask Virtuaal before cancelling. Keep a mail-only plan, or move mail first.', 'ECCM', 'Ask'],
-];
-
-const VAIN = [
-  ['Väin (U:\u2019s app, Tarmo Johannes) gets eccm.ee articles: his server polls eccm.ee\u2019s Joomla API every 5 minutes. That API ends at cutover.', 'A small public feed here in the shape his importer already uses. He changes one address and about 30 lines. The app itself does not change.', 'Agent builds, Tarmo switches', 'Ask Tarmo'],
-  ['His pages /radio1965/contributor and /radio1965/editor, and the recordings in /radio/streams, are files in eccm.ee\u2019s hosting.', 'Until he moves them, the new site fetches those addresses from the old server and passes them on. The old server keeps a second name, old.eccm.ee, that points straight at it without going through Cloudflare. Virtuaal adds it in cPanel as an alias of the site.', 'Agent, ECCM adds the alias in cPanel', 'To do'],
-  ['Which articles feed Väin (Joomla category 47) is unknown.', 'Ask him, and whether a webhook on publish should replace the poll.', 'Tarmo', 'Ask'],
-];
-
-// privacy, cookies, consent and tracking (asked 2026-10-07: "eula? analtyocs consent? cookies? tracking?"),
-// read off the code that day: no Set-Cookie anywhere, localStorage only for the theme, no third-party script or font
-const PRIVACY = [
-  ['Cookies: does the site need a banner?', 'No. It sets no cookies. The only thing kept in the browser is the theme a visitor picks (Auto, Light, Dark), which is the visitor\u2019s own choice and needs no consent. Name it in the privacy notice.', 'Agent', 'Done'],
-  ['Analytics: none today.', 'Cloudflare Web Analytics: no cookies, no fingerprinting, counts only, so no consent and no banner. Never Google Analytics or the Meta pixel, which would need a consent banner.', 'ECCM turns it on', 'At cutover'],
-  ['Tracking by third parties.', 'None on the site: it loads no outside script, and its fonts are served from the site itself. Two old pages do: /nan/ loads Google Fonts, which sends every visitor\u2019s address to Google, and Konkursid embeds YouTube. Serve /nan/\u2019s fonts from the site when copying it. Embed YouTube from youtube-nocookie.com, or as a picture that loads the video on click.', 'Agent', 'To do'],
-  ['Personal data is collected: newsletter addresses, contact messages, push subscriptions.', 'A privacy notice in both languages, as GDPR article 13 asks: who is responsible (MTÜ Eesti Nüüdismuusika Keskus, 80603988, address, info@eccm.ee), what is collected and why, how long it is kept, Cloudflare as processor, the visitor\u2019s rights, and the complaint route to the Data Protection Inspectorate.', 'ECCM writes, agent builds', 'To do'],
-  ['Proof of consent.', 'The newsletter has double opt-in and a one-click unsubscribe, and keeps when each address was confirmed. Push asks the browser\u2019s own permission. Nothing is sent to anyone who did not ask.', 'Agent', 'Done'],
-  ['Processor agreement with Cloudflare.', 'Cloudflare\u2019s Data Processing Addendum is part of its terms, nothing to sign. Note it in the privacy notice.', 'ECCM', 'At account setup'],
-  ['EULA or terms of use.', 'A website needs no EULA, and terms of use are optional. Only if ECCM starts selling online.', 'Nobody', 'Decided'],
-  ['Accessibility.', 'Estonia\u2019s accessibility requirements bind public bodies, not an NGO, but funders may ask. Build to WCAG 2.2 AA anyway.', 'Agent', 'Ongoing'],
-];
-
-const link = (text, href) => html`<a href="${href}" rel="noopener">${text}</a>`;
-const LINKS = [
-  [link('eccm.ee', 'https://eccm.ee/'), 'The site today, Joomla at Virtuaal'],
-  [link('Staging', 'https://eccm-staging.kristjan-jansen.workers.dev/'), 'This site before cutover'],
-  [link('Business register', 'https://ariregister.rik.ee/est/company/80603988'), 'MTÜ Eesti Nüüdismuusika Keskus, 80603988'],
-  [link('Virtuaal.com', 'https://www.virtuaal.com/'), 'Registrar, DNS, hosting and mail for eccm.ee'],
-  [link('eccm.ee/nan', 'https://eccm.ee/nan/'), 'NAN, the page to copy'],
-  [link('Väin', 'https://github.com/tarmoj/radio1965'), 'U:\u2019s app and its server code'],
-  [link('Workers custom domains', 'https://developers.cloudflare.com/workers/configuration/routing/custom-domains/'), 'eccm.ee and www on the Worker at cutover'],
-  [link('Cloudflare for SaaS', 'https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/'), 'uus.eccm.ee before the zone move, if wanted'],
-  [link('Durable Object migrations', 'https://developers.cloudflare.com/durable-objects/reference/durable-objects-migrations/'), 'What removing the radio does to its stored data'],
-  [link('Email Service', 'https://developers.cloudflare.com/email-service/'), 'Sending the newsletter from eccm.ee'],
-  [link('Image transformations', 'https://developers.cloudflare.com/images/transform-images/'), 'Resizing pictures on the zone'],
-  [link('D1 Time Travel', 'https://developers.cloudflare.com/d1/reference/time-travel/'), 'Cloudflare\u2019s own database history'],
-  [link('Access', 'https://developers.cloudflare.com/cloudflare-one/policies/access/'), 'The login in front of /admin, /edit and /docs'],
-  [link('Turnstile', 'https://developers.cloudflare.com/turnstile/'), 'Keeping bots off the contact form'],
-  [link('Web Analytics', 'https://developers.cloudflare.com/web-analytics/'), 'Counting visits without cookies'],
-  [link('Cloudflare DPA', 'https://www.cloudflare.com/cloudflare-customer-dpa/'), 'The processor agreement'],
-  [link('Data Protection Inspectorate', 'https://www.aki.ee/'), 'Where a visitor can complain, named in the privacy notice'],
-];
-
-const ASK = [
-  ['ECCM', 'Who holds the Virtuaal login. Whether mail stays at Virtuaal and who runs the mailboxes. A Cloudflare account of their own, and who pays $5 a month. Whether a subscriber list exists and may be imported. Whether Search Console is verified, and by whom. The privacy text.'],
-  ['ECCM', 'The changed dates, the three times, Kuni kolm.'],
-  ['Tarmo', 'What category 47 is. Whether he takes the new feed. Whether old joomla_ ids must keep working. Where his files go. A webhook instead of the poll.'],
-];
-
-export const renderMigration = () => page({
-  wide: true, lang: 'en', title: 'Migration.',
-  body: html`  <p class="crumb"><a href="/docs">Docs</a></p>
-  <h1>Migration</h1>
-  <p class="note">Moving eccm.ee onto this site. Measured on 7 October 2026.</p>
-  ${part('Decisions', two('Decisions', 'What', 'Decided', DECISIONS))}
-  ${part('Steps', table({ label: 'Steps', cols: [{ label: 'Step', cls: 'num' }, { label: 'What' }, { label: 'Covers', cls: 'main' }], rows: STEPS }))}
-  ${part('Site', fix('Site', SITE))}
-  ${part('Radio and admin pages', fix('Radio and admin pages', ADMIN))}
-  ${part('Content', fix('Content', CONTENT))}
-  ${part('Storage', fix('Storage', STORAGE))}
-  ${part('ECCM\u2019s account', fix('Account', ACCOUNT))}
-  ${part('Domain and mail', fix('Domain and mail', DOMAIN))}
-  ${part('Väin', fix('Väin', VAIN))}
-  ${part('Privacy and consent', fix('Privacy and consent', PRIVACY))}
-  ${part('To ask', two('To ask', 'Whom', 'What', ASK))}
-  ${part('Links', two('Links', 'Site', 'What', LINKS))}`,
-});
+export const renderDoc = (key) => {
+  const d = DOCS[key];
+  if (!d) return null;
+  const body = d.md.replace(/^#\s+.+\n/m, '');
+  return page({
+    wide: true, lang: 'en', title: `${titleOf(d.md)}.`,
+    body: html`  <p class="crumb"><a href="/docs">Docs</a></p>
+  <h1>${titleOf(d.md)}</h1>
+  <div class="flow doc">${raw(marked.parse(body))}</div>
+  ${raw(COPY)}`,
+  });
+};

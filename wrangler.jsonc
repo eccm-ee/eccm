@@ -27,7 +27,8 @@
   "observability": { "enabled": true },
   // the share images' faces (src/og/render.mjs), bundled as bytes; the
   // resvg wasm needs no rule, a .wasm import is a compiled module by default
-  "rules": [{ "type": "Data", "globs": ["**/*.ttf"], "fallthrough": true }],
+  // and the docs (src/render/docs.mjs), each Markdown file bundled as its text
+  "rules": [{ "type": "Data", "globs": ["**/*.ttf"], "fallthrough": true }, { "type": "Text", "globs": ["**/*.md"], "fallthrough": true }],
   // SQLite-backed, the shape positron's workers/items proved
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Items"] }, { "tag": "v2", "new_sqlite_classes": ["Radio"] }, { "tag": "v3", "new_sqlite_classes": ["Schedule", "Library"] }],
   "env": {
