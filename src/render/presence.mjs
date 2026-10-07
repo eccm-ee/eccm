@@ -27,7 +27,7 @@ const SITE = [
 ];
 
 const TICKETS = [
-  ['Fienta’s organiser page is filed under a staff member’s name, lists no events, has the address twice with two postcodes and links http://eccm.ee.', 'Rename it Eesti Nüüdismuusika Keskus, the mark as picture, https://eccm.ee, one address, two lines of description, the public page on.', 'ECCM', 'Ask'],
+  [html`<a href="https://fienta.com/et/o/16904" rel="noopener">Fienta’s organiser page</a> is filed under a staff member’s name, lists no events, has the address twice with two postcodes and links http://eccm.ee.`, 'Rename it Eesti Nüüdismuusika Keskus, the mark as picture, https://eccm.ee, one address, two lines of description, the public page on.', 'ECCM', 'Ask'],
   ['The site never links the organiser page.', 'Link it from the footer and the tickets line. Read each event’s price from Fienta’s own data.', 'Kristjan', 'After Fienta is fixed'],
   ['Piletilevi and Piletikeskus list ECCM as a venue, through Estonian Music Days.', 'Nothing to claim there.', 'Nobody', 'Decided'],
 ];
