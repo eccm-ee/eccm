@@ -10,7 +10,7 @@
 // (asked 2026-10-01: "do it", of editing and deleting a waiting notice and a
 // list that refreshes itself, which public/items.mjs does). The forms post
 // with no script, as the editor's do.
-import { html } from './html.mjs';
+import { html, raw } from './html.mjs';
 import { page } from './chrome.mjs';
 import { field, input } from './editor.mjs';
 import { dayMonth, clock } from './dates.mjs';
@@ -40,7 +40,11 @@ const state = (it) => {
 // the notice's fields, the new form's and the edit form's; time is false on a published notice
 const fields = (form, err, time = true) => html`${field({ id: 'f-title', label: 'Title', err: err('title'), hint: 'The first line of the notice, bold on the phone.', control: input('f-title', 'title', form.title, ' required maxlength="120"') })}
     ${field({ id: 'f-body', label: 'Text', err: err('body'), control: html`<textarea id="f-body" name="body" rows="3">${form.body || ''}</textarea>` })}
-    ${field({ id: 'f-url', label: 'Link', err: err('url'), hint: 'What opens when the notice is tapped. Empty means this page.', control: input('f-url', 'url', form.url, ' spellcheck="false" placeholder="/et/sundmused/…"') })}
+    ${field({ id: 'f-url', label: 'Link', err: err('url'), hint: 'What opens when the notice is tapped. Empty means its own page.', control: input('f-url', 'url', form.url, ' spellcheck="false" placeholder="/et/sundmused/…"') })}
+    <div class="field">
+      <label class="check"><input type="checkbox" name="vain" value="1"${form.vain ? raw(' checked') : ''}> Väin</label>
+      <p class="hint">Also in U:'s Väin app.</p>
+    </div>
     ${time ? field({ id: 'f-publish', label: 'Publish at', err: err('publish_at'), hint: 'Tallinn time. Empty means now.', control: input('f-publish', 'publish_at', form.publish_at, ' type="datetime-local"') }) : ''}`;
 const errorList = (errors, what) => (errors.length ? html`<div class="errors" role="alert"><p>${what} Please fix:</p><ul>${errors.map((e) => html`<li>${e.msg}</li>`)}</ul></div>` : '');
 
@@ -52,7 +56,7 @@ export const itemsList = (items) => (items.length ? table({
     current: it.status === 'waiting',
     cells: [
       html`<time datetime="${new Date(Number(it.publish_at)).toISOString()}">${when(it.publish_at)}</time>`,
-      html`${it.url ? html`<a href="${it.url}">${it.title}</a>` : it.title}${it.body ? html`<br><span class="small">${it.body}</span>` : ''}`,
+      html`${it.url ? html`<a href="${it.url}">${it.title}</a>` : it.title}${it.body ? html`<br><span class="small">${it.body}</span>` : ''}${Number(it.vain) ? html`<br>${badge('Väin', 'neutral')}` : ''}`,
       state(it),
       html`<a class="btn btn-sm" href="/items/${it.id}">Edit</a>`,
     ],
@@ -98,6 +102,7 @@ export const renderItemEdit = ({ it, form, errors = [] }) => {
   const body = html`  <p class="crumb"><a href="/items">Notices</a></p>
   <h1>${it.title}</h1>
   <p class="note">${waiting ? `Waiting, publishes ${when(it.publish_at)}.` : `${when(it.publish_at)}: ${fate(it)} A notice already sent to phones cannot be changed there, only in this list.`}</p>
+  <p class="note">${waiting ? `Its page will be /teated/${it.num}.` : html`Its page is <a href="/teated/${it.num}">/teated/${it.num}</a>.`}</p>
   ${errorList(errors, 'Not saved.')}
   <form class="form" method="post" action="/items/${it.id}">
     ${fields(form, err, waiting)}
