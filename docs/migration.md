@@ -29,7 +29,7 @@ Moving eccm.ee onto this site. Measured on 7 October 2026. Each task says who do
 | [Research pages to git history](#research-pages-to-git-history) | Agent | Done |
 | [Missing events, dates and times](#2-content) | ECCM | Ask |
 | [Import the archive](#import-the-archive) | Agent | To do |
-| [Copy /nan/](#copy-nan) | Agent | To do |
+| [Copy /nan/](#copy-nan) | Agent | Later |
 | [Create the Cloudflare account](#create-the-cloudflare-account) | ECCM | Ask |
 | [Set up production](#set-up-production) | Agent | After the account |
 | [Email sending from eccm.ee](#email-sending-from-eccm-ee) | ECCM | After the zone move |
