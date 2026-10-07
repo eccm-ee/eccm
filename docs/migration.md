@@ -275,16 +275,16 @@ The missing events, the archive, the changed dates.
 
 | Problem | Solution | Who | State |
 | --- | --- | --- | --- |
-| TUMA AFEKT festivalil 1.11 17:30 and in Tartu 2.11 19:00 are on eccm.ee, not here. | Add them in the event editor. | ECCM | To do |
+| TUMA AFEKT festivalil 1.11 17:30 and in Tartu 2.11 19:00 were on eccm.ee, not here. | Imported with the archive. | Agent | Done |
 | Up to three / Kuni kolm, 5.12, is here but gone from eccm.ee. | Say whether it moved or was cancelled. | ECCM | Ask |
 | Üle Heli (00:00), Koosloome (14.11 11:00) and Schönberg (8.12 18:00) have times eccm.ee does not print. | Confirm each. | ECCM | Ask |
-| Feldman has no English text here. | Copy it from eccm.ee in the editor. | ECCM | To do |
+| Feldman had no English text here. | Imported with the archive. | Agent | Done |
 | A few dates will change. | Edit them here once known. | ECCM | Waiting |
 | 2027 placeholders, empty news, Residentuurid, duplicates on eccm.ee. | Leave them behind. | Nobody | Decided |
 
 ### Import the archive
 
-**Who:** agent. **State:** to do.
+**Who:** agent. **State:** done, 60 past events since 22.09.2024 with 36 pictures, in `data/seed-step10-archive-*.sql`.
 
 About 99 Estonian and 91 English past events since 22.09.2024, plus 20 from early 2026, with 76 pictures. Best from the cPanel Full Backup's database, otherwise from the public pages.
 
