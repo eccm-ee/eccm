@@ -351,8 +351,9 @@
      second column (asked 2026-09-28: "page content is too left, not great to
      read, center the paragraph or figure ou right column (images?)") */
   /* a text page, from D1 or a doc from docs/*.md, is one centred column a little wider than the measure
-     (asked 2026-10-07: "use same layout for md pages and db pages. centered, bit wider than currently") */
-  .page-text { max-inline-size: 40rem; margin-inline: auto; }
+     (asked 2026-10-07: "use same layout for md pages and db pages. centered, bit wider than currently", then
+     "pages more wider on desktop", 40rem to 48rem) */
+  .page-text { max-inline-size: 48rem; margin-inline: auto; }
   .page-text .event-top { grid-template-columns: minmax(0, 1fr); }
   .page-text .prose { max-inline-size: none; }
   /* the picture at its own size, its shape reserved from its own pixels so

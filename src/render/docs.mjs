@@ -73,9 +73,10 @@ export const renderDoc = (key) => {
   const body = d.md.replace(/^#\s+.+\n/m, '');
   return page({
     wide: true, lang: 'en', title: `${titleOf(d.md)}.`,
-    // the same centred column as a text page from D1 (.page-text), the crumb inside it
-    body: html`  <div class="page-text"><p class="crumb"><a href="/docs">Docs</a></p>
-  <h1>${titleOf(d.md)}</h1>
+    // the same centred column as a text page from D1 (.page-text); the crumb stays where every admin page has it,
+    // at the frame's left (asked 2026-10-07: "keep breadcrumbs in the same place")
+    body: html`  <p class="crumb"><a href="/docs">Docs</a></p>
+  <div class="page-text"><h1>${titleOf(d.md)}</h1>
   <div class="flow doc">${raw(marked.parse(body))}</div></div>
   ${raw(COPY)}`,
   });
