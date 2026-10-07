@@ -125,7 +125,7 @@ skills first. Check at 375 and 1280, deploy staging, push.
 
 ### Privacy notice
 
-**Who:** ECCM approves, agent drafted. **State:** draft live, at /et/andmekaitse and /en/privacy.
+**Who:** agent, ECCM approves. **State:** done, at /et/andmekaitse and /en/privacy.
 
 **Ask ECCM:** approve the text, or send corrections.
 
