@@ -9,8 +9,8 @@ import { html, raw, esc } from './html.mjs';
 import { SYMBOL, HEADER, FOOTER } from './mark.mjs';
 import { sitePath, siteAlt, pagePath, W as OG_W, H as OG_H } from '../og/card.mjs';
 
-// the request's origin, set once per request by src/index.mjs, for the absolute
-// address a share image needs
+// the site's own origin, SITE_ORIGIN or else the request's, set once per request by src/index.mjs,
+// for the absolute address a share image needs
 let ORIGIN = '';
 export const useOrigin = (o) => { ORIGIN = o; };
 export const origin = () => ORIGIN;
@@ -20,7 +20,8 @@ export const origin = () => ORIGIN;
 // found, a crop of the footer's ULYSSES mark
 // og: { key, title, lang } names the page's own card (src/og/card.mjs, pageInput), the site card otherwise; lang
 // is the card's when it differs from the page's, a text page shown in its other language
-const siteOg = (lang, title, og) => html`<meta property="og:type" content="website">
+const siteOg = (lang, title, og, canonical) => html`<meta property="og:type" content="website">
+${canonical ? html`<meta property="og:url" content="${canonical}">` : ''}
 <meta property="og:site_name" content="ECCM">
 <meta property="og:title" content="${title}">
 <meta property="og:image" content="${ORIGIN + (og ? pagePath(og.key, og.lang || lang) : sitePath(lang))}">
@@ -84,7 +85,6 @@ export const page = ({ lang, title, alternate, canonical, alternates, body, noti
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
 <title>${title} ECCM</title>
 ${canonical ? html`<link rel="canonical" href="${canonical}">` : ''}
 ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflang}" href="${a.href}">`)}
@@ -102,7 +102,7 @@ ${raw(THEME_HEAD)}
 <link rel="stylesheet" href="/eccm.css">
 <link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 ${head || ''}
-${String(head || '').includes('og:image') ? '' : siteOg(lang, `${title} ECCM`, og)}
+${String(head || '').includes('og:image') ? '' : siteOg(lang, `${title} ECCM`, og, canonical)}
 </head>
 <body>
 ${raw(SYMBOL)}

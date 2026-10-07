@@ -23,7 +23,7 @@
 import { renderEvent } from './render/event.mjs';
 import { renderPage } from './render/page.mjs';
 import { renderEvents, LIST } from './render/events.mjs';
-import { notFound, OTHER, useOrigin } from './render/chrome.mjs';
+import { notFound, OTHER, useOrigin, origin } from './render/chrome.mjs';
 import { editor } from './editor.mjs';
 import { renderSitemap, renderFeed } from './render/feeds.mjs';
 import { serveMedia } from './media.mjs';
@@ -65,7 +65,7 @@ async function event(env, lang, slug, url) {
   const next = (await db.prepare(`SELECT e.starts_at, e.venue, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et'
     WHERE e.status = 'published' AND e.starts_at > ? AND e.id != ? ORDER BY e.starts_at LIMIT 3`).bind(lang, ev.starts_at, ev.id).all()).results;
-  return renderEvent({ lang, text, fallback, ev, media, credits, twin, next, origin: url.origin, path: url.pathname });
+  return renderEvent({ lang, text, fallback, ev, media, credits, twin, next, origin: origin(), path: url.pathname });
 }
 
 // the events list: every published event with a text in this language, or
@@ -78,7 +78,7 @@ async function eventsList(env, lang, url, home = false) {
   const today = tallinnToday();
   const upcoming = rows.filter((r) => r.starts_at.slice(0, 10) >= today);
   const past = rows.filter((r) => r.starts_at.slice(0, 10) < today).reverse();
-  return renderEvents({ lang, upcoming, past, origin: url.origin, path: url.pathname, home });
+  return renderEvents({ lang, upcoming, past, origin: origin(), path: url.pathname, home });
 }
 
 // a text page by (lang, slug), the same query shape as an event's: the text
@@ -92,7 +92,7 @@ async function textPage(env, lang, slug, url) {
   if (!text) { text = await db.prepare(q).bind(OTHER[lang], slug).first(); fallback = !!text; }
   if (!text) return null;
   const twin = await db.prepare('SELECT lang, slug FROM page_text WHERE page_id = ? AND lang = ?').bind(text.page_id, OTHER[lang]).first();
-  return renderPage({ lang, text, fallback, twin, origin: url.origin, path: url.pathname });
+  return renderPage({ lang, text, fallback, twin, origin: origin(), path: url.pathname });
 }
 
 // an event's or a language's calendar; the rows are the list's query, one event or the window
@@ -111,10 +111,36 @@ async function calendar(env, lang, slug, url) {
     rows = (await env.DB.prepare(`${q} AND substr(e.starts_at, 1, 10) >= ? ORDER BY e.starts_at`).bind(lang, since).all()).results;
   }
   const headers = { ...ICS, ...(slug ? { 'content-disposition': `attachment; filename="${slug}.ics"` } : {}) };
-  return new Response(renderIcs({ rows, origin: url.origin, lang, name: slug ? rows[0].title : CALNAME[lang] }), { headers });
+  return new Response(renderIcs({ rows, origin: origin(), lang, name: slug ? rows[0].title : CALNAME[lang] }), { headers });
 }
 
+// robots.txt from here rather than public/, since its Sitemap line is an absolute address and the
+// origin is the environment's (SITE_ORIGIN); crawling stays open so a crawler can read the noindex
+const robots = () => new Response(`User-agent: *\nAllow: /\n\nSitemap: ${origin()}/sitemap.xml\n`, { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
+
+// x-robots-tag: noindex on every response the Worker returns while NOINDEX is "on" (staging), the one place
+// it is set for the whole site (docs/migration.md, Noindex on every page until cutover). A response with
+// immutable headers (a fetched one) is copied first; a WebSocket upgrade is left alone
+const noindex = (res) => {
+  if (!res || res.webSocket) return res;
+  try { res.headers.set('x-robots-tag', 'noindex'); return res; } catch {
+    const out = new Response(res.body, res); out.headers.set('x-robots-tag', 'noindex'); return out;
+  }
+};
+
 export default {
+  async fetch(request, env, ctx) {
+    const res = await routes.fetch(request, env, ctx);
+    return env.NOINDEX === 'on' ? noindex(res) : res;
+  },
+  // the cron of wrangler.jsonc, every five minutes: the outbox's retry (src/mail.mjs) and the daily backup (src/backup.mjs); the radio's recorder
+  // and the station's sweep ran here until 2026-10-07 (archive/radio.md)
+  async scheduled(event, env, ctx) { ctx.waitUntil(backup(env, event.scheduledTime)); ctx.waitUntil(drain(env)); },
+};
+
+// every route, its response sent through fetch above; redirects name the request's own origin in Location
+// (src/redirects.mjs), so a staging host stays on itself
+const routes = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const p = url.pathname;
@@ -122,7 +148,10 @@ export default {
     // since its DNS filter blocked the custom domain (2026-10-02, asked: "images broken in .../en/"), so a
     // workers.dev host draws the originals, as wrangler dev does
     useTransforms(url.hostname.endsWith('.workers.dev') ? 'off' : env.IMAGE_TRANSFORMS);
-    useOrigin(url.origin);
+    // the site's own address for canonical, og:url, og:image, the sitemap, the feeds and the calendars:
+    // SITE_ORIGIN from wrangler.jsonc, the request's origin only where it is not set
+    useOrigin(env.SITE_ORIGIN || url.origin);
+    if (p === '/robots.txt') return robots();
     // eccm.ee's old Joomla addresses: 301, 410, or the 404 with the miss logged (src/redirects.mjs)
     { const out = await legacy(request, env, url, ctx); if (out) return out; }
     // the radio (/stream, /files/*, /admin/files, /radio, /station) went 2026-10-07, restorable from the tag radio-last (archive/radio.md)
@@ -130,10 +159,10 @@ export default {
     if (p.startsWith('/media/')) { const out = await serveMedia(env, p); if (out) return out; }
     // the event share images and their list for /ds (src/og/route.mjs), since 2026-10-01
     if (p.startsWith('/og/')) { const out = await ogRoute(request, env, url, ctx); if (out) return out; }
-    // the sitemap and the feeds, named nowhere until cutover (src/render/feeds.mjs), url.origin while staging only
-    if (p === '/sitemap.xml') return new Response(renderSitemap({ origin: url.origin, events: (await env.DB.prepare("SELECT e.id, e.updated_at, t.lang, t.slug FROM event e JOIN event_text t ON t.event_id = e.id WHERE e.status = 'published'").all()).results, pages: (await env.DB.prepare("SELECT p.id, p.updated_at, t.lang, t.slug FROM page p JOIN page_text t ON t.page_id = p.id WHERE p.status = 'published'").all()).results }), { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, s-maxage=86400, stale-while-revalidate=86400' } });
+    // the sitemap and the feeds (src/render/feeds.mjs), at SITE_ORIGIN; robots.txt names the sitemap
+    if (p === '/sitemap.xml') return new Response(renderSitemap({ origin: origin(), events: (await env.DB.prepare("SELECT e.id, e.updated_at, t.lang, t.slug FROM event e JOIN event_text t ON t.event_id = e.id WHERE e.status = 'published'").all()).results, pages: (await env.DB.prepare("SELECT p.id, p.updated_at, t.lang, t.slug FROM page p JOIN page_text t ON t.page_id = p.id WHERE p.status = 'published'").all()).results }), { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, s-maxage=86400, stale-while-revalidate=86400' } });
     const fm = /^\/(et|en)\/feed\.xml$/.exec(p);
-    if (fm) return new Response(renderFeed({ origin: url.origin, lang: fm[1], rows: (await env.DB.prepare("SELECT m.*, e.*, t.slug, t.title, t.body FROM event e JOIN event_text t ON t.event_id = e.id AND t.lang = ? LEFT JOIN media m ON m.id = e.image_id WHERE e.status = 'published' ORDER BY e.created_at DESC, e.id DESC LIMIT 20").bind(fm[1]).all()).results }), { headers: { 'content-type': 'application/rss+xml; charset=utf-8', 'cache-control': 'public, max-age=60' } });
+    if (fm) return new Response(renderFeed({ origin: origin(), lang: fm[1], rows: (await env.DB.prepare("SELECT m.*, e.*, t.slug, t.title, t.body FROM event e JOIN event_text t ON t.event_id = e.id AND t.lang = ? LEFT JOIN media m ON m.id = e.image_id WHERE e.status = 'published' ORDER BY e.created_at DESC, e.id DESC LIMIT 20").bind(fm[1]).all()).results }), { headers: { 'content-type': 'application/rss+xml; charset=utf-8', 'cache-control': 'public, max-age=60' } });
     // the calendars (src/render/ics.mjs), session 1's last piece since 2026-10-01: one event at its page's
     // address plus .ics, and a feed per language at the list's, the coming events and the last ninety days
     const ic = /^\/(et\/sundmused|en\/events)(?:\/([a-z0-9-]+))?\.ics$/.exec(p);
@@ -165,7 +194,4 @@ export default {
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
   },
-  // the cron of wrangler.jsonc, every five minutes: the outbox's retry (src/mail.mjs) and the daily backup (src/backup.mjs); the radio's recorder
-  // and the station's sweep ran here until 2026-10-07 (archive/radio.md)
-  async scheduled(event, env, ctx) { ctx.waitUntil(backup(env, event.scheduledTime)); ctx.waitUntil(drain(env)); },
 };

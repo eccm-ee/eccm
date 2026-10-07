@@ -8,6 +8,7 @@ import { md } from './md.mjs';
 import { T, OTHER, page } from './chrome.mjs';
 import { dayMonth, whenLine, mapsUrl } from './dates.mjs';
 import { poster } from './pic.mjs';
+import { jsonLd, organizer } from './ld.mjs';
 import { cardInput, cardVersion, cardPath, cardAlt, W as CARD_W, H as CARD_H } from '../og/card.mjs';
 
 // the Open Graph head of plans/plan-eccm-event-markup.md section 4, with the
@@ -20,11 +21,13 @@ const firstPara = (body) => {
   const plain = p.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/[*_`>#]/g, '').replace(/\s+/g, ' ').trim();
   return plain.length <= 200 ? plain : plain.slice(0, 200).replace(/\s+\S*$/, '') + '…';
 };
-const ogHead = ({ lang, title, body, ev, media, origin, canonical }) => {
+const ogHead = ({ lang, title, body, ev, media, origin, canonical, textLang }) => {
   // the same input the card route builds, picture included, so og:image names the hash the route renders and no scraper takes a 302 first
   const input = cardInput({ lang, title, ev, scheme: media && media.scheme, pic: media && media.key });
   const desc = firstPara(body);
-  return html`<meta property="og:type" content="website">
+  const image = origin + cardPath(ev.id, lang, cardVersion(input));
+  return html`${eventLd({ lang, title, desc, ev, origin, canonical, image, textLang })}
+<meta property="og:type" content="website">
 <meta property="og:url" content="${canonical}">
 <meta property="og:title" content="${title}">
 ${desc ? html`<meta name="description" content="${desc}">
@@ -32,13 +35,35 @@ ${desc ? html`<meta name="description" content="${desc}">
 <meta property="og:site_name" content="${SITE_NAME[lang]}">
 <meta property="og:locale" content="${LOCALE[lang]}">
 <meta property="og:locale:alternate" content="${LOCALE[OTHER[lang]]}">
-<meta property="og:image" content="${origin + cardPath(ev.id, lang, cardVersion(input))}">
+<meta property="og:image" content="${image}">
 <meta property="og:image:width" content="${CARD_W}">
 <meta property="og:image:height" content="${CARD_H}">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:alt" content="${cardAlt(input)}">
 <meta name="twitter:card" content="summary_large_image">
 `;
+};
+
+// the MusicEvent of docs/migration.md (Search basics): the times in Tallinn with their offset, the end
+// from ends_at or else from the duration, the share card as its picture, an offer only with a ticket link
+const eventLd = ({ lang, title, desc, ev, origin, canonical, image, textLang = lang }) => {
+  const endLocal = ev.ends_at || (ev.duration_min ? new Date(new Date(ev.starts_at + ':00Z').getTime() + ev.duration_min * 60000).toISOString().slice(0, 16) : null);
+  return jsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'MusicEvent',
+    name: title,
+    ...(desc ? { description: desc } : {}),
+    url: canonical,
+    startDate: `${ev.starts_at}:00${offsetFor(ev.starts_at)}`,
+    ...(endLocal ? { endDate: `${endLocal}:00${offsetFor(endLocal)}` } : {}),
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    location: { '@type': 'Place', name: ev.venue || ev.address, address: ev.address || ev.venue },
+    organizer: organizer(origin),
+    image: [image],
+    ...(ev.ticket_url ? { offers: { '@type': 'Offer', url: ev.ticket_url } } : {}),
+    inLanguage: textLang,
+  });
 };
 
 export const CATEGORY = {
@@ -120,7 +145,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
   // the poster is the page's LCP, so it is asked for before the stylesheet finds it
   // (asked 2026-09-30: "i saw font change jump ... can we optimize / preload?")
   const pic = media ? poster(media, media[`alt_${lang}`] || media.alt_et) : null;
-  const head = html`${ogHead({ lang, title, body: text.body, ev, media, origin, canonical })}${pic ? pic.preload : ''}`;
+  const head = html`${ogHead({ lang, title, body: text.body, ev, media, origin, canonical, textLang })}${pic ? pic.preload : ''}`;
 
   const body = html`  <article class="event"${scheme ? raw(` data-scheme="${scheme.mode}" style="${scheme.style}"`) : ''}>
     <header class="event-top">
