@@ -81,7 +81,8 @@ const cards = (list) => html`<div class="cards">
 
 // a finished task folds away: an h3 section whose state badge is done becomes a closed <details>, its title and
 // badge the summary (asked 2026-10-07: "collapse sections done"); a section runs to the next h2 or h3
-const collapseDone = (out) => out.replace(/(<h3 id="[^"]*">[\s\S]*?<\/h3>\n)(<p class="doc-task">[\s\S]*?<\/p>\n)([\s\S]*?)(?=<h[23] |$)/g,
+// the title may not run past its own </h3>: a lazy match across headings once folded a whole section into one summary
+const collapseDone = (out) => out.replace(/(<h3 id="[^"]*">(?:(?!<\/h3>)[\s\S])*<\/h3>\n)(<p class="doc-task">(?:(?!<\/p>)[\s\S])*<\/p>\n)([\s\S]*?)(?=<h[23] |$)/g,
   (m, h3, task, rest) => (task.includes('badge-done') ? `<details class="doc-done"><summary>${h3}${task}</summary>${rest}</details>\n` : m));
 
 // the contents, built from the doc itself where it says <!-- contents --> (asked 2026-10-07: "can we unify
