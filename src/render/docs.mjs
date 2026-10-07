@@ -6,16 +6,19 @@
 // to do"). The file is the source: GitHub shows it as it is, an agent reads it
 // directly, and this page adds the site's chrome, the .table component and a
 // Copy button on every code block. Bundled as text by the **/*.md rule in
-// wrangler.jsonc. /docs/ici is its own module (src/render/ici.mjs).
+// wrangler.jsonc.
 import { Marked } from 'marked';
 import { html, raw, esc } from './html.mjs';
 import { page } from './chrome.mjs';
 import migration from '../../docs/migration.md';
 import presence from '../../docs/presence.md';
+import ici from '../../docs/ici.md';
 
 const DOCS = {
   migration: { md: migration, desc: 'Moving eccm.ee here: decisions, the order, every task with its prompt or steps.' },
   presence: { md: presence, desc: 'The site, tickets, social and listings: what is wrong today and what fixes it.' },
+  // written by the positron session as src/render/ici.mjs, made Markdown 2026-10-07 ("update /docs/ici to md")
+  ici: { md: ici, desc: 'Albert Saprykin\u2019s ici as a session on V\u00e4in, and who does what.' },
 };
 
 const slug = (s) => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -40,13 +43,13 @@ const marked = new Marked({
       return `<div class="table"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>\n`;
     },
     code({ text, lang }) {
-      return `<div class="doc-code"><pre${lang ? ` data-lang="${esc(lang)}"` : ''}><code>${esc(text)}</code></pre><button class="doc-copy" type="button" data-copy>Copy</button></div>\n`;
+      return `<div class="doc-code"><pre${lang ? ` data-lang="${esc(lang)}"` : ''}><code>${esc(text)}</code></pre><button class="btn btn-sm btn-ico doc-copy" type="button" data-copy aria-label="Copy"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#copy"/></svg></button></div>\n`;
     },
   },
 });
 
-// one handler for every Copy button: the block's text to the clipboard, the button says so for two seconds
-const COPY = `<script>document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var t=b.parentNode.querySelector('code').textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},2000)})})</script>`;
+// one handler for every Copy button: the block's text to the clipboard, the icon turns to a check for two seconds
+const COPY = `<script>document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var t=b.parentNode.querySelector('code').textContent,u=b.querySelector('use'),h=u.getAttribute('href');navigator.clipboard.writeText(t).then(function(){u.setAttribute('href',h.replace('#copy','#check'));b.setAttribute('aria-label','Copied');setTimeout(function(){u.setAttribute('href',h);b.setAttribute('aria-label','Copy')},2000)})})</script>`;
 
 const cards = (list) => html`<div class="cards">
     ${list.map(([href, title, desc]) => html`<a class="card" href="${href}"><span class="card-title">${title}</span><span class="card-desc">${desc}</span></a>`)}
@@ -60,7 +63,6 @@ export const renderDocs = () => page({
   body: html`  <h1>Docs</h1>
   ${cards([
     ...Object.entries(DOCS).map(([key, d]) => [`/docs/${key}`, titleOf(d.md), d.desc]),
-    ['/docs/ici', 'ici on Väin', 'Albert Saprykin’s ici as a session on Väin, and who does what.'],
   ])}`,
 });
 
