@@ -18,15 +18,13 @@
 <!-- public/derive.html: the working example of plans/plan-eccm-design-from-image.md,
      second pass 2026-09-27 after nine dictated asks (BACKLOG.md has them
      verbatim). Every event picture in this directory is read as the page
-     opens: on a 64 px canvas for colour, and at up to 600 px for type. From
-     the colour come a scheme, light or dark, a ground, an ink, a muted ink,
-     an accent and the text colour that passes on it; from the type a verdict,
-     serif, sans, unsure, no type, or type too small to read for serifs, from
-     stroke contrast and feet at the baseline of text-like shapes 14 px tall
-     or more. Beside each picture a sample event page is
+     opens, on a 64 px canvas, for a scheme, light or dark, a ground, an ink,
+     a muted ink, an accent and the text colour that passes on it. The type
+     reading and the serif it chose left on 2026-10-07
+     (archive/serif-titles.md). Beside each picture a sample event page is
      drawn in what it gave: the head, the buttons in the system face in both
-     modes, a body with rich text and credits, so
-     a serif is judged in use and a dark scheme is judged on a whole page.
+     modes, a body with rich text and credits, so a dark scheme is judged on
+     a whole page.
      Every picture is same-origin, so the canvas is not tainted; nothing is
      fetched from elsewhere. Not graded by verify.mjs. -->
 <link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
@@ -43,7 +41,6 @@
 <link rel="stylesheet" href="./eccm.css">
 <link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  /* Newsreader, the serif, and its two alternatives are declared in eccm.css beside Instrument Sans */
   @layer page {
     .intro { max-inline-size: var(--eccm-measure); }
     .intro + .intro { margin-block-start: 1lh; }
@@ -86,17 +83,17 @@
     body.embed main { padding: 0; }
     body.embed .card { border: 0; padding: 0; margin: 0; }
     .sample .kicker { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--ev-ink2); margin-block-end: var(--eccm-s-3); }
-    .sample .title { font-size: var(--eccm-t-2xl); line-height: var(--eccm-lh-head); text-wrap: balance; font-family: var(--ev-title-face); font-weight: var(--ev-title-weight, 400); max-inline-size: var(--eccm-measure); }
-    .sample .facts { margin-block-start: var(--eccm-s-8); font-family: var(--ev-title-face); }
-    .sample .facts dt { color: var(--ev-ink2); font-family: 'Instrument Sans', 'Instrument Sans Fallback', Helvetica, Arial, sans-serif; }
+    .sample .title { font-size: var(--eccm-t-2xl); line-height: var(--eccm-lh-head); text-wrap: balance; max-inline-size: var(--eccm-measure); }
+    .sample .facts { margin-block-start: var(--eccm-s-8); }
+    .sample .facts dt { color: var(--ev-ink2); }
     .sample .actions { display: flex; flex-wrap: wrap; gap: var(--eccm-s-3); margin-block-start: var(--eccm-s-8); }
     .sample .btn-pri { background: var(--ev-btn-fill); color: var(--ev-on-btn); }
-    .sample .body { max-inline-size: var(--eccm-measure); margin-block-start: 2lh; font-family: var(--ev-body-face); }
-    .sample .body h2 { font-size: var(--eccm-t-l); font-family: var(--ev-title-face); }
+    .sample .body { max-inline-size: var(--eccm-measure); margin-block-start: 2lh; }
+    .sample .body h2 { font-size: var(--eccm-t-l); }
     .sample .body a { text-decoration-color: var(--ev-accent, var(--ev-ink2)); text-decoration-thickness: 2px; color: inherit; }
     .sample .body ul { list-style: disc; padding-inline-start: 1.2em; }
-    .sample .credits { margin-block-start: 2lh; font-family: var(--ev-title-face); }
-    .sample .credits dt { color: var(--ev-ink2); font-family: 'Instrument Sans', 'Instrument Sans Fallback', Helvetica, Arial, sans-serif; }
+    .sample .credits { margin-block-start: 2lh; }
+    .sample .credits dt { color: var(--ev-ink2); }
     .sample :focus-visible { outline: 2px solid var(--ev-accent, var(--ev-ink)); outline-offset: 2px; }
     section + section { margin-block-start: var(--eccm-s-16); }
   }
@@ -159,8 +156,7 @@
 
 <main class="frame">
   <h1>Kujundus pildist</h1>
-  <p class="intro">Each picture is read as the page opens: its colour at 64 pixels gives a light or a dark scheme, a ground and an accent for underlines and focus, and its type at up to 600 pixels gives serif, sans, no type found, or type too small to read for serifs. Under it a short event page is drawn in what it gave, its picture after the buttons, with the title and the facts in the serif when the graphic's type reads as a serif, and the body in it only on a ground near white; the same page again at a phone's width beside it.</p>
-  <p class="intro small" id="serif-switch"></p>
+  <p class="intro">Each picture is read as the page opens: its colour at 64 pixels gives a light or a dark scheme, a ground and an accent for underlines and focus. Under it a short event page is drawn in what it gave, its picture after the buttons; the same page again at a phone's width beside it.</p>
   <p class="tally" id="tally">Reading the pictures.</p>
   <div id="cards"></div>
 
@@ -177,7 +173,7 @@
 
 <script type="module">
   // the detector lives in ./scheme.mjs since 2026-09-30, the one copy the editor and tools/scheme.mjs run too
-  import { lum, contrast, hex, readColour, readType, scheme, SERIFS, bodySerif } from './scheme.mjs';
+  import { lum, contrast, hex, readColour, scheme } from './scheme.mjs';
 
   // ── the sample page ──────────────────────────────────────────────────────
   const BODY = [
@@ -190,13 +186,6 @@
     set('--ev-ground', hex(s.ground)); set('--ev-ink', hex(s.ink)); set('--ev-ink2', hex(s.ink2));
     if (s.accent) set('--ev-accent', hex(s.accent.rgb));
     set('--ev-btn-fill', hex(s.btnFill)); set('--ev-on-btn', hex(s.onBtn));
-    const face = s.serif ? SERIF : null;
-    set('--ev-title-face', face ? face.family : 'inherit');
-    if (face) set('--ev-title-weight', face.weight);
-    // the body takes the serif only on a ground near white; on a darker light
-    // ground, the Gestures sage, it stays in the sans, the same legibility
-    // rule as on a dark ground (asked 2026-09-27)
-    set('--ev-body-face', face && bodySerif(s) ? face.family : 'inherit');
     el.innerHTML = `
       <p class="kicker"></p>
       <p class="title"></p>
@@ -211,27 +200,13 @@
     return el;
   };
 
-  // the serif is Roboto Serif since 2026-09-28 ("replace literata with roboto serif"), and Literata, the day before's
-  // choice, stays as the alternative on ?serif=literata ("put literata to derive as well as alternative")
-  // Newsreader since 2026-09-28 ("use newsreader in derive"); Literata and Roboto Serif, the day's earlier choices, stay as the
-  // alternatives on ?serif=literata and ?serif=roboto
-  const serifKey = SERIFS[new URL(location.href).searchParams.get('serif')] ? new URL(location.href).searchParams.get('serif') : 'roboto';
-  const SERIF = SERIFS[serifKey];
-  {
-    // the line under the intro that switches the serif on the same set
-    const line = document.getElementById('serif-switch'); const u = new URL(location.href);
-    line.append('The serif: ');
-    Object.entries(SERIFS).forEach(([k, f], i) => { if (i) line.append(', '); if (k === serifKey) { const b = document.createElement('b'); b.textContent = f.name; line.append(b); } else { u.searchParams.set('serif', k); const a = document.createElement('a'); a.href = u.pathname + u.search; a.textContent = f.name; line.append(a); } });
-    line.append('.');
-  }
-
   // ── the pictures, four sets off eccm.ee ─────────────────────────────────
   // the newest set is the default and the earlier ones answer ?set=1, ?set=2
   // and ?set=3, so every rule keeps the picture it was written on
   const SETS = {
     // calendar page one, read 2026-09-26
     1: [
-      { file: 'ic_large_w900h600q100_gestures-situations-small.jpg', kicker: '30.09.2026 19.00 ECCM Ulysses', title: 'Gestuurid/situatsioonid: ilma partituurita kuulamine. Marianna Liik, Artjom Astrov, Maryn-Liis Rüütelmaa', gestures: true, serifByHand: true },
+      { file: 'ic_large_w900h600q100_gestures-situations-small.jpg', kicker: '30.09.2026 19.00 ECCM Ulysses', title: 'Gestuurid/situatsioonid: ilma partituurita kuulamine. Marianna Liik, Artjom Astrov, Maryn-Liis Rüütelmaa', gestures: true },
       { file: 'ic_medium_w300h300q100_chatgpt-image-sep-13-2026-10-27-27-am.png', kicker: '08.10.2026 19.00 Eesti Nüüdismuusika Keskus', title: 'Schönbergi sari' },
       { file: 'ic_medium_w300h300q100_morton-feldman.jpg', kicker: '10.10.2026 18.00 Arvo Pärdi Keskus, Laulasmaa', title: 'Morton Feldman 100: For Philip Guston' },
       { file: 'ic_medium_w300h300q100_enmt-scrapyard-2-eriti-vaike-copy.jpg', kicker: '10.10.2026 19.30 Kanuti Gildi SAAL', title: 'Scrapyard' },
@@ -282,7 +257,7 @@
   const PICS = SETS[FLAGS.get('set')] || SETS[4];
   const TIMES = (window.__times = []);
   const cards = document.getElementById('cards');
-  const tally = { light: 0, dark: 0, accent: 0, serif: 0 };
+  const tally = { light: 0, dark: 0, accent: 0 };
   // ?view=sample&pick=N draws one picture's sample alone, which is what the phone view iframes ask for; the child reports its height
   const EMBED = FLAGS.get('view') === 'sample' ? Number(FLAGS.get('pick')) : null;
   if (EMBED !== null) document.body.classList.add('embed');
@@ -296,13 +271,10 @@
     await img.decode();
     const t1 = performance.now();
     const r = readColour(img);
-    r.serifByHand = !!p.serifByHand;
     const t2 = performance.now();
-    const t = FLAGS.get('type') === '0' ? { verdict: 'skipped', n: 0, found: 0, small: 0, share: 0, contrast: 0, foot: 0, polarity: '', W: 0, H: 0 } : readType(img);
-    const t3 = performance.now();
-    const s = scheme(r, t);
-    TIMES.push({ file: p.file.slice(22, 40), decode: Math.round(t1 - t0), colour: Math.round(t2 - t1), type: Math.round(t3 - t2), scheme: Math.round(performance.now() - t3) });
-    tally[s.mode]++; if (s.accent) tally.accent++; if (s.serif) tally.serif++;
+    const s = scheme(r);
+    TIMES.push({ file: p.file.slice(22, 40), decode: Math.round(t1 - t0), colour: Math.round(t2 - t1), scheme: Math.round(performance.now() - t2) });
+    tally[s.mode]++; if (s.accent) tally.accent++;
     const card = document.createElement('article'); card.className = 'card';
     const top = document.createElement('div'); top.className = 'card-top';
     const left = document.createElement('div'); left.className = 'card-pic';
@@ -322,8 +294,6 @@
     row('ground', `${hex(s.ground)}, ${s.groundNote}; ink ${f2(contrast(lum(s.ink), lum(s.ground)))}:1, muted ink ${f2(contrast(lum(s.ink2), lum(s.ground)))}:1`);
     row('accent', s.accent ? `${hex(s.accent.rgb)}, chroma ${s.accent.C.toFixed(3)}, hue ${Math.round(s.accent.h)}; on the ground ${f2(contrast(lum(s.accent.rgb), lum(s.ground)))}:1, for underlines and focus only` : s.notes.join('; '));
     row('button', `${hex(s.btnFill)} filled with ${hex(s.onBtn)} text, ${f2(contrast(lum(s.btnFill), lum(s.onBtn)))}:1`);
-    row('type', `${t.verdict}: ${t.found} text-like shapes at ${t.W} px, ${t.n} of them 14 px tall with a 3 px stem, which a serif needs${t.n ? `, ${t.polarity}, ${pc(t.share)} serif-like, median stroke contrast ${f2(t.contrast)}, median foot ${f2(t.foot)}` : ''}`);
-    row('serif', s.serif ? `in the title and facts${s.mode === 'light' && lum(s.ground) >= 0.8 ? ' and the body' : ', the body stays in the sans on a ground this dark'} (${s.serifHow})` : 'none');
     top.append(left, dl);
     if (EMBED !== null) { card.append(sample(p, s)); cards.append(card); continue; }
     const pv = document.createElement('figure'); pv.className = 'phone-view';
@@ -333,10 +303,10 @@
     cards.append(card);
   }
   if (EMBED !== null) { await new Promise((r) => setTimeout(r, 300)); parent.postMessage({ derive: true, pick: EMBED, height: document.documentElement.scrollHeight }, '*'); }
-  document.getElementById('tally').textContent = `${PICS.length} pictures read: ${tally.light} light schemes and ${tally.dark} dark, ${tally.accent} with an accent, ${tally.serif} read as serif-typed.`;
+  document.getElementById('tally').textContent = `${PICS.length} pictures read: ${tally.light} light schemes and ${tally.dark} dark, ${tally.accent} with an accent.`;
 
-  // ?first=N reads only the first N pictures and ?type=0 skips the type
-  // reading, for a probe; window.__times carries each picture's timings
+  // ?first=N reads only the first N pictures, for a probe; window.__times
+  // carries each picture's timings
 </script>
 <script type="module" src="./site.mjs"></script>
 </body>

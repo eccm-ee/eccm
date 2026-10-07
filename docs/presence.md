@@ -2,6 +2,27 @@
 
 The site as the one source of facts, with Instagram and Facebook as their own places that the site gives material to. Nothing new opened. Read on 28 September 2026, the State lines on 7 October. Each task says who does it: **ECCM**, or **agent**, meaning someone at ECCM gives the prompt to a coding agent working in this repository.
 
+## Who does what
+
+| Task | Who | State |
+| --- | --- | --- |
+| [One name, spelled one way](#one-name-spelled-one-way) | ECCM decides, agent applies | To do |
+| [Page descriptions and structured data](#page-descriptions-and-structured-data) | Agent | To do |
+| [Titles name the organisation](#titles-name-the-organisation) | Agent | Done |
+| [Instagram and Facebook linked](#instagram-and-facebook-linked) | Agent | Done |
+| [A way to follow](#a-way-to-follow) | Agent | Built, sends after Workers Paid |
+| [NAN is found as NAN](#nan-is-found-as-nan) | Agent | To do |
+| [Fix the Fienta organiser page](#fix-the-fienta-organiser-page) | ECCM | Ask |
+| [Link it from the site](#link-it-from-the-site) | Agent | After Fienta is fixed |
+| [Material for Instagram](#material-for-instagram) | Agent | Event cards done, editor to do |
+| [Point the profiles at the site](#point-the-profiles-at-the-site) | ECCM | At cutover |
+| [YouTube](#youtube) | ECCM | Ask |
+| [Partner links](#partner-links) | ECCM | To do |
+| [Wikipedia](#wikipedia) | ECCM, agent drafts | To do |
+| [Google Maps](#google-maps) | ECCM | Ask |
+| [Search Console](#search-console) | ECCM | At cutover |
+| [Measurement](#measurement) | ECCM turns it on | At cutover |
+
 ## The site
 
 ### One name, spelled one way

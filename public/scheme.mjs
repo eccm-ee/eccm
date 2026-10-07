@@ -7,8 +7,9 @@
 // turns a reading into the flat JSON media.scheme holds
 // (plans/plan-eccm-social-images.md section 10, the shape chosen at session
 // 3 of plans/plan-eccm-cms-step-1.md). DETECTOR_V is bumped by hand in the
-// same commit as any change to readColour, readType or scheme.
-export const DETECTOR_V = 1;
+// same commit as any change to readColour or scheme; 2 since 2026-10-07, when
+// the type reading and the serif left it (archive/serif-titles.md).
+export const DETECTOR_V = 2;
 
 // ── colour arithmetic, the plan's §4 in code ─────────────────────────────
 export const lin = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
@@ -81,103 +82,8 @@ export const readColour = (img) => {
   return { meanY, meanC, vivid, cast, top, edges, flatAll, seed, hues: hues || [] };
 };
 
-// ── type, on up to 600 px: stroke contrast and feet, per text-like shape ──
-export const readType = (img) => {
-  const W = Math.min(600, img.naturalWidth), H = Math.round(W * img.naturalHeight / img.naturalWidth);
-  const c = document.createElement('canvas'); c.width = W; c.height = H;
-  const ctx = c.getContext('2d', { willReadFrequently: true });
-  ctx.drawImage(img, 0, 0, W, H);
-  const d = ctx.getImageData(0, 0, W, H).data;
-  const Y = new Float32Array(W * H);
-  let sum = 0;
-  for (let i = 0, j = 0; i < d.length; i += 4, j++) { Y[j] = (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255; sum += Y[j]; }
-  const light = sum / (W * H) > 0.5;
-  const mask = new Uint8Array(W * H);
-  for (let j = 0; j < W * H; j++) mask[j] = light ? (Y[j] < 0.35 ? 1 : 0) : (Y[j] > 0.65 ? 1 : 0);
-  // a horizontal run longer than a tenth of the width is a rule, not a
-  // letter: the Gestures poster draws three through its words, and they
-  // welded every letter into one shape on the first pass (MEASURED: 4
-  // text-like shapes found on a poster with 17 letters)
-  const LONG = Math.max(24, Math.round(W / 10));
-  for (let y = 0; y < H; y++) { let len = 0; for (let x = 0; x <= W; x++) { const on = x < W && mask[y * W + x]; if (on) len++; else { if (len >= LONG) for (let k = x - len; k < x; k++) mask[y * W + k] = 0; len = 0; } } }
-  // connected components, 8 neighbours, iterative
-  const label = new Int32Array(W * H).fill(-1);
-  const comps = [];
-  const stack = [];
-  for (let s = 0; s < W * H; s++) {
-    if (!mask[s] || label[s] >= 0) continue;
-    const id = comps.length;
-    const comp = { id, pts: [], x0: W, x1: 0, y0: H, y1: 0 };
-    stack.push(s); label[s] = id;
-    while (stack.length) {
-      const p = stack.pop(); const x = p % W, y = (p - x) / W;
-      comp.pts.push(p); if (x < comp.x0) comp.x0 = x; if (x > comp.x1) comp.x1 = x; if (y < comp.y0) comp.y0 = y; if (y > comp.y1) comp.y1 = y;
-      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
-        const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
-        const q = ny * W + nx; if (mask[q] && label[q] < 0) { label[q] = id; stack.push(q); }
-      }
-    }
-    comps.push(comp);
-  }
-  // text-like: 7 to 80 px tall, not a line, not a blob, not a speck
-  const shapes = comps.filter((k) => { const h = k.y1 - k.y0 + 1, w = k.x1 - k.x0 + 1; const fill = k.pts.length / (w * h); return h >= 7 && h <= 80 && w >= 3 && w <= 120 && w / h <= 2.5 && fill >= 0.15 && fill <= 0.75 && k.pts.length >= 16; });
-  // type sits in lines: a shape counts only with three or more others of
-  // a like height whose bottoms sit within a fifth of that height, which
-  // no photograph's specks manage (MEASURED on the first pass: three
-  // photographs read as serif from their grain)
-  const text = shapes.filter((k) => { const h = k.y1 - k.y0 + 1; let mates = 0; for (const o of shapes) { if (o === k) continue; const oh = o.y1 - o.y0 + 1; if (Math.abs(o.y1 - k.y1) <= 0.2 * h && oh >= 0.6 * h && oh <= 1.6 * h && Math.abs(o.x0 - k.x0) <= 12 * h) mates++; } return mates >= 3; });
-  const q = (arr, p) => { const a = [...arr].sort((x, y) => x - y); return a[Math.min(a.length - 1, Math.floor(p * a.length))]; };
-  // a serif is read only on a letter 14 px tall or more with a stem of 3
-  // px or more: below that a serif is one pixel, antialiasing is half a
-  // stroke, and a capital's bar reads as a foot (MEASURED 2026-09-27 on the
-  // Ludensemble poster at 300 px: letters 7 to 9 px tall, stems 2 px, 15 of
-  // 15 read as serif in a geometric sans; asked: "why serif? no serifs on
-  // image"); the same floor took the Huddersfield photograph's arrows, 2 px
-  // strokes, out of a serif verdict they had made on their own
-  const MIN_H = 14, MIN_STEM = 3;
-  let serifish = 0, small = 0; const contrasts = [], feet = [];
-  for (const k of text) {
-    const h = k.y1 - k.y0 + 1;
-    if (h < MIN_H) { small++; continue; }
-    const runs = [], rowMax = new Map();
-    for (let y = k.y0; y <= k.y1; y++) {
-      let len = 0;
-      for (let x = k.x0; x <= k.x1 + 1; x++) {
-        const on = x <= k.x1 && label[y * W + x] === k.id;
-        if (on) len++; else if (len) { runs.push(len); rowMax.set(y, Math.max(rowMax.get(y) || 0, len)); len = 0; }
-      }
-    }
-    if (runs.length < 6) continue;
-    const stem = q(runs, 0.5);
-    if (stem < MIN_STEM) { small++; continue; }
-    const strokes = runs.filter((r) => r <= 1.5 * stem + 1);
-    if (strokes.length < 4) continue;
-    const contrastRatio = (q(strokes, 0.9) - q(strokes, 0.1)) / Math.max(1, q(strokes, 0.5));
-    const band = Math.max(1, Math.round(h * 0.14));
-    const bottom = Math.max(...Array.from({ length: band }, (_, i) => rowMax.get(k.y1 - i) || 0));
-    const top = Math.max(...Array.from({ length: band }, (_, i) => rowMax.get(k.y0 + i) || 0));
-    const mid = Math.max(1, q(Array.from({ length: Math.max(1, k.y1 - k.y0 - 2 * band) }, (_, i) => rowMax.get(k.y0 + band + i) || 0), 0.5));
-    // a bar the width of the glyph (E, L, T, D in any face) is not a foot:
-    // a serif foot is a stem widened at its end and stays under seven
-    // tenths of the glyph (MEASURED 2026-09-27: the Residentuur poster's
-    // bold sans capitals, 19 px tall, carried "feet" of 13 to 15 px on 15
-    // to 18 px glyphs and read 90 per cent serif; Sound Plasma's real
-    // serifs run 11 to 15 px on 23 to 28 px glyphs and 9 of 11 pass either
-    // way)
-    const wG = k.x1 - k.x0 + 1;
-    const asFoot = (run) => (run <= 0.7 * wG ? run : 0);
-    const foot = Math.max(asFoot(bottom), asFoot(top)) / mid;
-    contrasts.push(contrastRatio); feet.push(foot);
-    if (contrastRatio >= 0.9 || foot >= 1.8) serifish++;
-  }
-  const n = contrasts.length;
-  const share = n ? serifish / n : 0;
-  const verdict = n >= 8 ? (share >= 0.45 ? 'serif' : share <= 0.25 ? 'sans' : 'unsure') : text.length >= 8 ? 'type too small to read for serifs' : 'no type found';
-  return { verdict, n, found: text.length, small, share, contrast: n ? q(contrasts, 0.5) : 0, foot: n ? q(feet, 0.5) : 0, polarity: light ? 'dark type on light' : 'light type on dark', W, H };
-};
-
 // ── the scheme, §3 and §4 with the asks of 2026-09-27 ────────────────────
-export const scheme = (r, t) => {
+export const scheme = (r) => {
   let dark = r.meanY < 0.22;
   // a pure hue: chroma 0.08 or more and outside the yellow-to-brown band
   // (OKLCH hue 40 to 110), which reads as mud however dark it is (asked
@@ -276,10 +182,6 @@ export const scheme = (r, t) => {
   // a purchase button", of an accent-filled one); the accent stays on
   // underlines and the focus ring
   s.btnFill = dark ? WHITE : INK; s.onBtn = dark ? INK : WHITE;
-  // the faces: a serif for a serif-typed graphic, in the title and facts; in
-  // the body only on a light ground
-  s.serif = t.verdict === 'serif' || !!r.serifByHand;
-  s.serifHow = t.verdict === 'serif' ? 'the detector read the type as serif' : r.serifByHand ? 'marked serif by hand, the detector found no type: the letters lie on the dark disc under three rules' : '';
   return s;
 };
 // the dark half of a light scheme (asked 2026-10-02: "figure out dark mode colors for derived colors"): the
@@ -309,44 +211,26 @@ export const darkOf = (light) => {
   return { ground: hex(ground), ink: hex(ink), ink2: hex(ink2), accent: accent && hex(accent), btnFill: hex(ink), onBtn: hex(ground) };
 };
 
-// the serif a derived page takes, Roboto Serif since 2026-10-01 ("change serif to Roboto Serif"; Newsreader
-// from 2026-09-28), with the two
-// alternatives derive.html switches to on ?serif=
-export const SERIFS = { newsreader: { name: 'Newsreader', family: "'Newsreader', 'Newsreader Fallback', Georgia, serif", weight: 400 }, literata: { name: 'Literata', family: "'Literata', Georgia, serif", weight: 400 }, roboto: { name: 'Roboto Serif', family: "'Roboto Serif', 'Roboto Serif Fallback', Georgia, serif", weight: 400 } };
-
-// the body takes the serif only on a ground near white; on a darker light
-// ground, the Gestures sage, it stays in the sans, the same legibility rule
-// as on a dark ground (asked 2026-09-27)
-export const bodySerif = (s) => s.serif && s.mode === 'light' && lum(s.ground) >= 0.8;
-
-// a reading as the row stores it: the nine values the event page sets as
-// --ev-* properties, the mode and the serif, and the readings kept so a false
-// verdict can be argued with later; nothing renders from those
-export const contract = (r, t, s, face = SERIFS.roboto) => ({
+// a reading as the row stores it: the six colours the event page sets as
+// --ev-* properties, the mode, and the readings kept so a false verdict can
+// be argued with later; nothing renders from those
+export const contract = (r, s) => ({
   v: DETECTOR_V,
   detector: 'derive 2026-09-27',
   mode: s.mode,
   ground: hex(s.ground), ink: hex(s.ink), ink2: hex(s.ink2),
   accent: s.accent ? hex(s.accent.rgb) : null,
   btnFill: hex(s.btnFill), onBtn: hex(s.onBtn),
-  titleFace: s.serif ? face.family : null,
-  titleWeight: s.serif ? String(face.weight) : null,
-  bodyFace: bodySerif(s) ? face.family : null,
-  serif: s.serif,
   notes: [s.groundNote, ...s.notes].filter(Boolean),
   readings: {
     meanY: +r.meanY.toFixed(3), meanC: +r.meanC.toFixed(4), cast: { h: Math.round(r.cast.h), C: +r.cast.C.toFixed(4) }, top: r.top.map((c) => ({ hex: c.hex, share: +c.share.toFixed(3) })),
-    type: { verdict: t.verdict, found: t.found, n: t.n, share: +t.share.toFixed(2) },
   },
   computed_at: new Date().toISOString().slice(0, 19) + 'Z',
 });
 
 // the whole reading of one decoded picture, which is what the editor and
-// the tool call; hand: { serif: true } for a picture whose letters the
-// detector cannot see (derive.html's serifByHand)
-export const read = (img, hand = {}) => {
+// the tool call
+export const read = (img) => {
   const r = readColour(img);
-  r.serifByHand = !!hand.serif;
-  const t = readType(img);
-  return { r, t, s: scheme(r, t) };
+  return { r, s: scheme(r) };
 };

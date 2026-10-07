@@ -21,7 +21,8 @@ const firstPara = (body) => {
   return plain.length <= 200 ? plain : plain.slice(0, 200).replace(/\s+\S*$/, '') + '…';
 };
 const ogHead = ({ lang, title, body, ev, media, origin, canonical }) => {
-  const input = cardInput({ lang, title, ev, scheme: media && media.scheme });
+  // the same input the card route builds, picture included, so og:image names the hash the route renders and no scraper takes a 302 first
+  const input = cardInput({ lang, title, ev, scheme: media && media.scheme, pic: media && media.key });
   const desc = firstPara(body);
   return html`<meta property="og:type" content="website">
 <meta property="og:url" content="${canonical}">
@@ -61,8 +62,8 @@ const pad = (n) => String(n).padStart(2, '0');
 const toUtc = (local, off) => { const sign = off[0] === '-' ? 1 : -1; const [h, m] = off.slice(1).split(':').map(Number); return new Date(new Date(local + ':00Z').getTime() + sign * (h * 60 + m) * 60000); };
 const stamp = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
 
-// the derived scheme, the flat contract, as the nine custom properties on the article
-const VARS = { ground: '--ev-ground', ink: '--ev-ink', ink2: '--ev-ink2', accent: '--ev-accent', btnFill: '--ev-btn-fill', onBtn: '--ev-on-btn', titleFace: '--ev-title-face', titleWeight: '--ev-title-weight', bodyFace: '--ev-body-face' };
+// the derived scheme, the flat contract, as the six custom properties on the article
+const VARS = { ground: '--ev-ground', ink: '--ev-ink', ink2: '--ev-ink2', accent: '--ev-accent', btnFill: '--ev-btn-fill', onBtn: '--ev-on-btn' };
 const schemeStyle = (json) => {
   if (!json) return null;
   let s; try { s = JSON.parse(json); } catch { return null; }
@@ -71,24 +72,20 @@ const schemeStyle = (json) => {
   const dk = s.mode === 'light' && HEX.test(s.ground) ? darkOf(s) : null;
   const val = (k) => (dk && k in dk && s[k] != null ? `light-dark(${s[k]}, ${dk[k] || dk.ink})` : s[k]);
   const decl = Object.entries(VARS).filter(([k]) => val(k) != null).map(([k, v]) => `${v}: ${val(k)}`);
-  return { mode: s.mode === 'dark' ? 'dark' : 'light', style: esc(decl.join('; ')), serif: !!(s.titleFace || s.bodyFace), file: SERIF_FILE[/'(Roboto|Newsreader|Literata)/.exec(s.titleFace || s.bodyFace || '')?.[1]] };
+  return { mode: s.mode === 'dark' ? 'dark' : 'light', style: esc(decl.join('; ')) };
 };
 // a scheme as the editor's browser posts it, kept only when every value is
-// one the detector can write: six colours as hex, the faces from
-// public/scheme.mjs's SERIFS, so nothing a visitor typed reaches a style
-// attribute; returns the JSON to store, or null
+// one the detector can write, six colours as hex, so nothing a visitor typed
+// reaches a style attribute; returns the JSON to store, or null. The face
+// fields an editor wrote before 2026-10-07 (archive/serif-titles.md) are
+// dropped, and a stored row that still has them renders without them
 const HEX = /^#[0-9a-f]{6}$/;
-// Roboto Serif with its fallback is the serif since 2026-10-01 ("change serif to Roboto Serif"); the
-// others stay acceptable so a row written before still renders
-const FACES = ["'Roboto Serif', 'Roboto Serif Fallback', Georgia, serif", "'Newsreader', 'Newsreader Fallback', Georgia, serif", "'Literata', Georgia, serif", "'Roboto Serif', Georgia, serif"];
-// the file a scheme's serif needs first, preloaded with the page
-const SERIF_FILE = { Roboto: '/vendor/roboto-serif-latin.woff2', Newsreader: '/vendor/newsreader-latin.woff2', Literata: '/vendor/literata-latin.woff2' };
 export const cleanScheme = (json) => {
   let s; try { s = JSON.parse(json); } catch { return null; }
   if (!s || typeof s !== 'object' || !Number.isInteger(s.v) || !['light', 'dark'].includes(s.mode)) return null;
   if (!['ground', 'ink', 'ink2', 'btnFill', 'onBtn'].every((k) => HEX.test(s[k])) || !(s.accent === null || HEX.test(s.accent))) return null;
-  if (![s.titleFace, s.bodyFace].every((f) => f === null || FACES.includes(f)) || !(s.titleWeight === null || /^\d{3}$/.test(s.titleWeight))) return null;
-  return JSON.stringify(s);
+  const { titleFace, titleWeight, bodyFace, serif, ...kept } = s;
+  return JSON.stringify(kept);
 };
 
 const creditValue = (c, lang) => {
@@ -120,11 +117,10 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
     { hreflang: 'x-default', href: origin + (lang === 'et' ? path : alternate.href) },
   ] : [];
   const canonical = origin + (fallback ? eventPath('et', text.slug) : path);
-  // the poster is the page's LCP and the serif, when the scheme sets one, is
-  // most of its text, so both are asked for before the stylesheet finds them
+  // the poster is the page's LCP, so it is asked for before the stylesheet finds it
   // (asked 2026-09-30: "i saw font change jump ... can we optimize / preload?")
   const pic = media ? poster(media, media[`alt_${lang}`] || media.alt_et) : null;
-  const head = html`${ogHead({ lang, title, body: text.body, ev, media, origin, canonical })}${pic ? pic.preload : ''}${scheme && scheme.file ? html`<link rel="preload" href="${scheme.file}" as="font" type="font/woff2" crossorigin>` : ''}`;
+  const head = html`${ogHead({ lang, title, body: text.body, ev, media, origin, canonical })}${pic ? pic.preload : ''}`;
 
   const body = html`  <article class="event"${scheme ? raw(` data-scheme="${scheme.mode}" style="${scheme.style}"`) : ''}>
     <header class="event-top">

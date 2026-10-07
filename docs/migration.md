@@ -13,6 +13,33 @@ Moving eccm.ee onto this site. Measured on 7 October 2026. Each task says who do
 | Events | Everything to the end of 2026 is entered on eccm.ee. A few dates will change. |
 | Admin | Open for now, closed soon. |
 
+## Who does what
+
+| Task | Who | State |
+| --- | --- | --- |
+| [Noindex on every page until cutover](#noindex-on-every-page-until-cutover) | Agent | To do |
+| [Redirects from the old Joomla addresses](#redirects-from-the-old-joomla-addresses) | Agent | To do |
+| [Contact form](#contact-form) | Agent | To do |
+| [Privacy notice](#privacy-notice) | ECCM writes, agent builds | To do |
+| [EU emblem on Ulysses](#eu-emblem-on-ulysses) | Agent | To do |
+| [Search basics](#search-basics) | Agent | To do |
+| [Login on admin and editing](#login-on-admin-and-editing) | Agent, ECCM adds the people | Before or right after cutover |
+| [Backups](#backups) | Agent | To do |
+| [Remove the radio, keep it restorable](#remove-the-radio-keep-it-restorable) | Agent | To do |
+| [Research pages to git history](#research-pages-to-git-history) | Agent | To do |
+| [Missing events, dates and times](#2-content) | ECCM | Ask |
+| [Import the archive](#import-the-archive) | Agent | To do |
+| [Copy /nan/](#copy-nan) | Agent | To do |
+| [Create the Cloudflare account](#create-the-cloudflare-account) | ECCM | Ask |
+| [Set up production](#set-up-production) | Agent | After the account |
+| [Email sending from eccm.ee](#email-sending-from-eccm-ee) | ECCM | After the zone move |
+| [Take a full backup first](#take-a-full-backup-first) | ECCM | Ask |
+| [Move the DNS to Cloudflare](#move-the-dns-to-cloudflare) | ECCM | To do |
+| [Cutover](#cutover) | ECCM, with the agent ready | To do |
+| [After](#after) | ECCM | After |
+| [A feed in his importer's shape](#a-feed-in-his-importer-s-shape) | Agent builds, Tarmo switches | Ask Tarmo |
+| [His files after cutover](#his-files-after-cutover) | Agent, ECCM adds the alias in cPanel | To do |
+
 ## Order
 
 1. **Staging:** the site tasks below, on [staging](https://eccm-staging.kristjan-jansen.workers.dev/).

@@ -27,9 +27,6 @@ const arg = (name) => process.argv.includes(name) ? process.argv[process.argv.in
 const OUT = arg('--out') ? new URL('../' + arg('--out'), import.meta.url).pathname : new URL('../data/seed-step5-schemes.sql', import.meta.url).pathname;
 const missing = process.argv.includes('--missing');
 const where = process.argv.includes('--remote') ? '--remote' : '--local';
-// derive.html's serifByHand: the Gestures letters lie on a dark disc under
-// three rules and the detector finds no type in them
-const HAND = { 'ic_large_w900h600q100_gestures-situations-small.jpg': { serif: true } };
 
 const q = (sql) => JSON.parse(execFileSync('npx', ['wrangler', 'd1', 'execute', 'eccm-staging', where, '--env', 'staging', '--json', '--command', sql], { encoding: 'utf8', env: { ...process.env, CF_API_TOKEN: '', CLOUDFLARE_API_TOKEN: '' } }))[0].results;
 // --keys a.jpg,b.png reads those files and writes nothing, for a probe
@@ -38,11 +35,11 @@ const rows = probe ? probe.map((key, i) => ({ id: i, key })) : q(`SELECT id, key
 
 const PAGE = `<!doctype html><meta charset="utf-8"><script type="module">
 import { read, contract } from '/scheme.mjs';
-const rows = ${JSON.stringify(rows.map((r) => ({ ...r, hand: HAND[r.key] || {} })))};
+const rows = ${JSON.stringify(rows)};
 const out = [];
 for (const r of rows) {
   const img = new Image(); img.src = '/' + r.key;
-  try { await img.decode(); const { r: c, t, s } = read(img, r.hand); out.push({ id: r.id, key: r.key, scheme: contract(c, t, s) }); }
+  try { await img.decode(); const { r: c, s } = read(img); out.push({ id: r.id, key: r.key, scheme: contract(c, s) }); }
   catch (e) { out.push({ id: r.id, key: r.key, error: String(e) }); }
 }
 await fetch('/done', { method: 'POST', body: JSON.stringify(out) });
@@ -73,5 +70,5 @@ const head = missing
   ? `-- ${name}: the derived scheme of every picture in public/ that had none, written by\n-- tools/scheme.mjs --missing on ${new Date().toISOString().slice(0, 10)} from the ${where.slice(2)} database; apply after the seed that added them.\n`
   : `-- ${name}: the derived scheme of every picture in public/, written by\n-- tools/scheme.mjs on ${new Date().toISOString().slice(0, 10)} from the ${where.slice(2)} database; apply after the four seeds.\n`;
 if (!probe) await writeFile(OUT, `${head}${lines.join('\n')}\n`);
-for (const x of results) console.log(x.error ? `${x.id} ${x.key}: ${x.error}` : `${x.id} ${x.scheme.mode} ground ${x.scheme.ground} accent ${x.scheme.accent ?? 'none'} ${x.scheme.serif ? 'serif' : 'sans'} (${x.scheme.readings.type.verdict})`);
+for (const x of results) console.log(x.error ? `${x.id} ${x.key}: ${x.error}` : `${x.id} ${x.scheme.mode} ground ${x.scheme.ground} accent ${x.scheme.accent ?? 'none'}`);
 console.log(probe ? `${results.length} read, nothing written` : `${lines.length} of ${results.length} rows written to data/${name}`);

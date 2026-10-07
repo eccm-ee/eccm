@@ -159,7 +159,7 @@ async function list(env, url) {
   const out = all.map((r) => {
     const input = cardInput({ lang: r.lang, title: r.title, ev: r, scheme: r.scheme, pic: r.pic_key });
     return {
-      id: r.id, lang: r.lang, title: input.title, serif: input.serif, ground: input.ground,
+      id: r.id, lang: r.lang, title: input.title, ground: input.ground,
       page: r.lang === 'et' ? `/et/sundmused/${r.slug}` : `/en/events/${r.slug}`,
       image: cardPath(r.id, r.lang, cardVersion(input)), tall: tallPath(r.id, r.lang, tallVersion(input)),
       ...(input.pic ? { tallPictures: [1, 2].map((n) => tallPath(r.id, r.lang, tallVersion(input, n), n)) } : {}),

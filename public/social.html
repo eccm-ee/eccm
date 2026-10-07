@@ -58,10 +58,6 @@
     .ds-ground { padding: var(--eccm-s-8); background: var(--ev-ground, var(--eccm-ground)); color: var(--ev-ink, var(--eccm-ink)); }
     .ds-ground + .ds-ground { margin-block-start: var(--eccm-s-6); }
     .ds-ground .facts dt, .ds-ground .credits dt, .ds-ground .small { color: var(--ev-ink2, var(--eccm-ink-2)); }
-    /* the faces a derived page sets, as derive.html applies them */
-    .ds-serif h1, .ds-serif h2 { font-family: var(--ev-title-face, inherit); font-weight: var(--ev-title-weight, 400); }
-    .ds-serif .facts dd, .ds-serif .credits dd { font-family: var(--ev-title-face, inherit); }
-    .ds-serif .prose { font-family: var(--ev-body-face, inherit); }
     .ds-ground .ds-cap { color: inherit; opacity: 0.7; }
     .ds-btns { display: flex; flex-wrap: wrap; gap: var(--eccm-s-4); }
     .ds-squares { display: flex; flex-wrap: wrap; gap: var(--eccm-s-8); margin-block: var(--eccm-s-8); }
@@ -222,7 +218,7 @@
   <div id="og-pages"><p class="ds-cap">Loading the pages.</p></div>
   <h2>Events</h2>
   <div class="prose flow">
-    <p>Each event: its share card, and on the line under it its Instagram cards at 1080 by 1350, Instagram's 4:5, the text card and the picture split across two cards, so a carousel's swipe shows it whole, the text card's type larger since a feed is read on a phone. The share card is the image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in the face its picture's scheme reads, Roboto Serif or Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
+    <p>Each event: its share card, and on the line under it its Instagram cards at 1080 by 1350, Instagram's 4:5, the text card and the picture split across two cards, so a carousel's swipe shows it whole, the text card's type larger since a feed is read on a phone. The share card is the image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
   </div>
   <div class="ds-og" id="og-cards"><p class="ds-cap">Loading the events.</p></div>
 
@@ -254,7 +250,7 @@ try {
   const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
   const far = (a, b) => Math.hypot(...rgb(a).map((v, i) => v - rgb(b)[i])) > 30;
   const cards = [];
-  for (const c of all) if (cards.length < 8 && cards.every((k) => k.serif !== c.serif || far(k.ground, c.ground))) cards.push(c);
+  for (const c of all) if (cards.length < 8 && cards.every((k) => far(k.ground, c.ground))) cards.push(c);
   // the share card each event page names; its wide picture layout went the same evening ("rm horz og image variants")
   const fig = (c, src, what, w = 1200, h = 630, short = false) => {
     const f = document.createElement('figure');
@@ -263,7 +259,7 @@ try {
     a.append(img);
     const cap = document.createElement('figcaption');
     // the Instagram cards say only where they sit in the carousel; the share card above says the rest
-    cap.textContent = short ? what : `${what}: ${c.lang.toUpperCase()}, ${c.serif ? 'Roboto Serif' : 'Instrument Sans'} on ${c.ground}`;
+    cap.textContent = short ? what : `${what}: ${c.lang.toUpperCase()} on ${c.ground}`;
     f.append(a, cap); return f;
   };
   // the pages, each its share card and its Instagram text card, in the events' own shape
@@ -277,7 +273,7 @@ try {
     pagesBox.className = 'og-rows';
     pagesBox.replaceChildren(...pages.map((c) => {
       const row = document.createElement('div'); row.className = 'og-row';
-      const at = { page: c.page, title: c.title, lang: c.lang, serif: false, ground: c.ground };
+      const at = { page: c.page, title: c.title, lang: c.lang, ground: c.ground };
       const share = fig(at, c.image, `${c.title}, share card`); share.classList.add('og-share');
       const ig = document.createElement('div'); ig.className = 'og-ig';
       ig.append(fig(at, c.tall, 'Instagram', 1080, 1350, true));

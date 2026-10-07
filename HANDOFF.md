@@ -457,12 +457,12 @@ eager; an upload has no delete and a replaced picture's row and object stay.
 | https://eccm.positron.studio/et/eccm | the five text pages from D1, ECCM, Tallinn 1965, NAN, Ulysses, Konkursid, at `/et/{slug}` and `/en/{slug}`, a fallback either way where a language has no text, one centred column of the measure |
 | https://eccm.positron.studio/edit/events/1 | one event's form, open to anyone who opens it, reached from the Muuda button on the event and from nowhere else. **There is no editor list and no new-event form** |
 | https://eccm.positron.studio/edit/pages/1 | one text page's form, reached from the Muuda/Edit button every text page carries; `/edit/pages/new` still makes one |
-| https://eccm.positron.studio/derive | design from a picture, four sets of six pictures (`?set=1` to `4`), Newsreader as the serif with Literata and Roboto Serif on `?serif=literata` and `?serif=roboto` |
+| https://eccm.positron.studio/derive | design from a picture, four sets of six pictures (`?set=1` to `4`), colours only since 2026-10-07 |
 | https://eccm.positron.studio/ds | the components: type, figures, colour, space, buttons, tables and cards, in both themes |
 | https://eccm.positron.studio/logo | the square mark, the wordmark in both languages and every icon size |
 | https://eccm.positron.studio/icons | Feather, the site's 63 icons, in buttons small and large on both grounds |
 | https://eccm.positron.studio/social | the share and Instagram cards of every page and event |
-| https://eccm.positron.studio/type | seventeen faces for body and titles, then the six sans and the ten serifs in the derived page's three uses |
+| https://eccm.positron.studio/type | seven faces for body and titles; the ten serifs and the derived page's three uses left 2026-10-07 (archive/serif-titles.md) |
 
 Six static pages (derive, ds, icons, logo, social, type), `ls public/*.html | wc -l` counting 6 on 2026-10-03.
 
@@ -629,8 +629,9 @@ here.
   column on `page`, a field and five pictures.
 - **No accent colour.** *"none. keep it black inc outliens."* The token
   `--eccm-accent` is the ink.
-- **Newsreader is the serif** on the derived page and the design system, with
-  Literata and Roboto Serif as alternatives.
+- **No serif on a derived page.** *"rm serif title discovery and sttyling.
+  leave knowedge"* (2026-10-07): the scheme is colours only, and
+  `archive/serif-titles.md` keeps what the detector knew.
 - **The chrome is H-B and footer A** from the layout study: *"implement this
   layout on all pages now, rm layout"*, after *"all headers are bad. cramped,
   no proper typo approach"* sent the study back to eight measured sites.

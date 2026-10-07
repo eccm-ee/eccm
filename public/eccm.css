@@ -31,35 +31,18 @@
    the swap changes the letters and moves nothing (asked 2026-09-30: "i saw
    font change jump ... can we optimize / preload?"). MEASURED 2026-09-30 in
    headless Chrome with canvas measureText over one Estonian and English
-   line: size-adjust is the width ratio at the body's 18 px, since
-   Newsreader's optical size axis draws a narrower cut at 100 px (91 per cent
-   at 18 against 101 at 100), and the overrides the webfont's font box at
-   100 px divided by it; Helvetica and Arial measured alike. Checked on a
+   line: size-adjust is the width ratio at the body's 18 px, and the
+   overrides the webfont's font box at 100 px divided by it; Helvetica and Arial measured alike. Checked on a
    620 px paragraph: webfont and fallback break into the same lines */
 /* MEASURED 2026-10-01 in headless Chrome over one Estonian and English line: Instrument Sans at its
    normal width sets it 2.09 per cent wider than Helvetica at 18 px, its box 97 over 25 per 100 px */
 @font-face { font-family: 'Instrument Sans Fallback'; src: local('Helvetica'), local('Arial'); size-adjust: 102.09%; ascent-override: 95.02%; descent-override: 24.49%; line-gap-override: 0%; }
-/* Roboto Serif, the serif since 2026-10-01, over Georgia: MEASURED that day over one Estonian and English
-   line, 11.01 per cent wider at 18 px, its box 93 over 24 per 100 px */
-@font-face { font-family: 'Roboto Serif Fallback'; src: local('Georgia'); size-adjust: 111.01%; ascent-override: 83.78%; descent-override: 21.62%; line-gap-override: 0%; }
-@font-face { font-family: 'Newsreader Fallback'; src: local('Georgia'); size-adjust: 91.38%; ascent-override: 80.98%; descent-override: 28.45%; line-gap-override: 0%; }
 /* Geist Mono, the true monospace weighed for the admin's figures on ds.html's Figures section (asked
    2026-10-02: "either use monotype-style numbers on body font or introduce true monotype font", then "add
    that to ds first"). Declared so the comparison draws it from its own subsets, SIL OFL beside them in
    ./vendor/; not chosen, so no page but ds.html names it and a browser fetches it nowhere else */
 @font-face { font-family: 'Geist Mono'; font-weight: 400 700; font-display: swap; src: url('./vendor/geist-mono-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: 'Geist Mono'; font-weight: 400 700; font-display: swap; src: url('./vendor/geist-mono-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-/* the serif a derived page may set (plans/plan-eccm-design-from-image.md),
-   declared here rather than in derive.html so it is declared once: Newsreader
-   since 2026-09-28 ("use newsreader in derive"), with Literata and Roboto
-   Serif beside it as the alternatives derive.html draws on ?serif=literata
-   and ?serif=roboto; Source Serif 4 before them, declared by type.html */
-@font-face { font-family: 'Newsreader'; font-weight: 200 800; font-display: swap; src: url('./vendor/newsreader-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: 'Newsreader'; font-weight: 200 800; font-display: swap; src: url('./vendor/newsreader-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: 'Roboto Serif'; font-weight: 100 900; font-stretch: 50% 150%; font-display: swap; src: url('./vendor/roboto-serif-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: 'Roboto Serif'; font-weight: 100 900; font-stretch: 50% 150%; font-display: swap; src: url('./vendor/roboto-serif-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: 'Literata'; font-weight: 200 900; font-display: swap; src: url('./vendor/literata-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: 'Literata'; font-weight: 200 900; font-display: swap; src: url('./vendor/literata-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; }
@@ -160,7 +143,8 @@
   /* headings at text weight: hierarchy is size and space, and bold is spent
      nowhere by default (eccm-ui §2, Vignelli; asked 2026-09-26 as "rough and
      90ies", which system Helvetica in bold is) */
-  h1, h2, h3 { font-family: 'Instrument Sans', 'Instrument Sans Fallback', Helvetica, Arial, sans-serif; font-weight: 400; line-height: var(--eccm-lh-head); text-wrap: balance; }
+  /* overflow-wrap is the floor for a word with no break in it, "Gestuurid/situatsioonid:" ran 6 px past a phone once the headings went a tenth up (eccm-ui section 2) */
+  h1, h2, h3 { font-family: 'Instrument Sans', 'Instrument Sans Fallback', Helvetica, Arial, sans-serif; font-weight: 400; line-height: var(--eccm-lh-head); text-wrap: balance; overflow-wrap: anywhere; }
   a {
     color: inherit;
     text-decoration-line: underline;
@@ -366,7 +350,9 @@
      over the prose, since a page has no picture to fill the event page's
      second column (asked 2026-09-28: "page content is too left, not great to
      read, center the paragraph or figure ou right column (images?)") */
-  .page-text { max-inline-size: var(--eccm-measure); margin-inline: auto; }
+  /* a text page, from D1 or a doc from docs/*.md, is one centred column a little wider than the measure
+     (asked 2026-10-07: "use same layout for md pages and db pages. centered, bit wider than currently") */
+  .page-text { max-inline-size: 40rem; margin-inline: auto; }
   .page-text .event-top { grid-template-columns: minmax(0, 1fr); }
   .page-text .prose { max-inline-size: none; }
   /* the picture at its own size, its shape reserved from its own pixels so
@@ -376,13 +362,21 @@
   /* the next events at the foot, so the page does not end in a dead end; set off from the credits by the
      scale's top step, since it is another page's business (asked 2026-09-30: "add more space on top of
      Järgmised üritused") */
-  .next { margin-block-start: var(--eccm-s-24); }
+  /* half as much again since 2026-10-07, and its own container so the list can lay itself out across a desk
+     (asked: "more space between event and more events. horiz layout in desktop?") */
+  .next { margin-block-start: calc(var(--eccm-s-24) * 1.5); container: next / inline-size; }
   .next h2 { font-size: var(--eccm-t-l); margin-block-end: var(--eccm-s-6); }
   /* the two columns belong to the list, the rows take them through subgrid, so the widest date sets one
      column for every row and the titles start on one x (asked 2026-10-01, a crop of three rows whose titles
      started at three places: "fix cols, should align") */
   .next-list, .edit-list { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--eccm-s-6); row-gap: var(--eccm-s-4); max-inline-size: var(--eccm-measure); }
   .next-list li, .edit-list li { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; }
+  /* on a desk the next events stand side by side, three columns, each its date over its title over its place */
+  @container next (min-width: 48rem) {
+    .next-list { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--eccm-s-8); max-inline-size: none; }
+    .next-list li { display: block; grid-column: auto; }
+    .next-list time { display: block; margin-block-end: var(--eccm-s-1); }
+  }
   /* proportional figures, never tabular: Schibsted Grotesk's tnum also sets the full stop and the comma a
      figure wide, 63 against 28 per 100, so "10. okt 19.30" read "10 . okt 19 . 30"; Helvetica's touched only the
      digits, which is why it went unseen until the face was really drawn (2026-10-01) */
@@ -393,7 +387,8 @@
   .event-pic figcaption { margin-block-start: var(--eccm-s-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
   /* an event whose picture has a derived scheme (media.scheme, read by
      public/scheme.mjs; asked 2026-09-30 as "apply detection (bg color,
-     sans/serif etc) on current content"): the whole article takes the
+     sans/serif etc) on current content", the serif half gone on 2026-10-07,
+     archive/serif-titles.md): the whole article takes the
      picture's ground and inks, the way the derive page's sample does. The
      site's own tokens are redefined inside it, so every rule under it that
      reads --eccm-ink-2 or --eccm-rule follows without a rule of its own. The
@@ -415,17 +410,6 @@
      its colours are light-dark() pairs, the dark half the same hue made dark (public/scheme.mjs darkOf, asked
      2026-10-02: "figure out dark mode colors for derived colors"), so it takes the root's color-scheme */
   .event[data-scheme="dark"] { color-scheme: dark; }
-  /* the faces: the title and the facts' values in the serif when the picture's
-     type read as one, the body only where the scheme says so (a ground near
-     white); labels stay in the sans, as on the derive page */
-  /* the facts and the credits, the page's meta, stay in the sans when the title is a serif (asked 2026-10-02: "in
-     serif social cards use sans serif for meta info. same for event pages"); they took the title's face before */
-  .event[data-scheme] h1, .event[data-scheme] .prose h2 { font-family: var(--ev-title-face, inherit); font-weight: var(--ev-title-weight, 400); }
-  .event[data-scheme] .prose > :not(h2, .credits) { font-family: var(--ev-body-face, inherit); }
-  /* the body serif is for a ground near white only (scheme.mjs bodySerif), so a light scheme gone dark sets
-     its body in the sans, as a dark scheme does */
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .event[data-scheme="light"] .prose > :not(h2, .credits) { font-family: inherit; } }
-  :root[data-theme="dark"] .event[data-scheme="light"] .prose > :not(h2, .credits) { font-family: inherit; }
   /* prose flow: the owl, and the space is counted in the leading, Rutter's
      one line between paragraphs and a heading carrying two above and half a
      line below (eccm-ui §1, Bringhurst 2.2.2). The first cut said one leading
@@ -773,7 +757,11 @@
      the events' schemes, its dark half at OKLCH 0.24 in the same hue the way a derived scheme's is, with the
      copy icon button in its corner (asked: "code blocks: light beiige, one from the event bgs. use copy icon button") */
   /* main.admin lifts the cap off .table, so the doc's own rule names it to win back the measure */
-  .doc > *, main.admin .doc > .table { max-inline-size: var(--eccm-measure); }
+  /* a doc fills its .page-text column, tables and code included */
+  .doc > *, main.admin .doc > .table { max-inline-size: none; }
+  /* in a doc every cell may wrap, so a column of long phrases cannot squeeze the task names to a word a line */
+  .doc .table :is(th, td) { white-space: normal; }
+  .doc .table :is(.wrap, .main) { inline-size: auto; min-inline-size: 0; max-inline-size: none; }
   .doc > h3 { --eccm-flow: 1.5lh; font-size: var(--eccm-t-m); font-weight: 600; }
   .doc > h3 + * { --eccm-flow: 0.25lh; }
   .doc ul { list-style: disc; }

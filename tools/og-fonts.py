@@ -4,7 +4,7 @@
 # its default instance only, so each face is instanced at the weight and
 # optical size the image sets it in, its latin and latin-ext subsets merged
 # so Estonian keeps its letters, and renamed so the SVG names it by family.
-# Both faces are OFL with no Reserved Font Name (their LICENSE files beside
+# The face is OFL with no Reserved Font Name (its LICENSE file beside
 # them), so a modified copy may keep the names.
 #
 #   uvx --from 'fonttools[woff]' python tools/og-fonts.py
@@ -26,11 +26,6 @@ FACES = [
     ('sans', 'Instrument Sans', 'instrument-sans', {'wght': 400, 'wdth': 100}),
     # the tagline of the logo, as the header sets it (.tag-is): the narrowest width at 500, for the site card
     ('tag', 'Instrument Sans Condensed', 'instrument-sans', {'wght': 500, 'wdth': 75}),
-    # the title, 44 to 96 px: the display end of the optical size axis
-    # the serif since 2026-10-01 ("change serif to Roboto Serif"), Newsreader before
-    ('serif', 'Roboto Serif Display', 'roboto-serif', {'wght': 400, 'opsz': 72, 'wdth': 100}),
-    # the meta line at 30 px: the axis at the size it is drawn
-    ('serifText', 'Roboto Serif Text', 'roboto-serif', {'wght': 400, 'opsz': 30, 'wdth': 100}),
 ]
 
 def static(path, axes):
@@ -67,6 +62,6 @@ for key, family, stem, axes in FACES:
 
 with open(os.path.join(ROOT, 'src', 'og', 'metrics.mjs'), 'w') as fh:
     fh.write('// metrics.mjs: written by tools/og-fonts.py, the advance width of every code point\n')
-    fh.write("// of the three faces the share images use and each face's cap height, in ems,\n")
+    fh.write("// of the two faces the share images use and each face's cap height, in ems,\n")
     fh.write('// read from the TTFs in fonts/.\n')
     fh.write('export default ' + json.dumps(metrics, separators=(',', ':')) + ';\n')

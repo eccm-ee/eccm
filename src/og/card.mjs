@@ -14,7 +14,7 @@ import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
-export const TEMPLATE_V = 16;
+export const TEMPLATE_V = 17;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
@@ -144,17 +144,12 @@ const room = (fs, face, metaN, L = LAYOUTS.wide) => {
   return 1 + Math.floor(avail / (TITLE_LH * fs));
 };
 
-// The size is the one the sans would take for this title, for both faces, so a
-// serif card and a sans card of the same title are set at the same size (asked
-// 2026-10-01: "same font size to sans serif"; Roboto Serif sets wider, and
-// fitting it on its own widths put its titles a step smaller). The serif then
-// wraps at that size and steps down only when it truly does not fit.
+// the largest size whose wrapped title fits the room, an ellipsis on the last
+// line only when the smallest does not
 function fitTitle(title, face, metaN, L = LAYOUTS.wide) {
   const steps = L.steps, measure = L.measure;
   const raw = pieces(title);
-  const fits = (f, fs) => wrapAt(fitPieces(raw, f, fs, measure), f, fs, measure).length <= room(fs, f, metaN, L);
-  const start = face === 'sans' ? 0 : Math.max(0, steps.findIndex((fs) => fits('sans', fs)));
-  for (const fs of steps.slice(start)) {
+  for (const fs of steps) {
     const ps = fitPieces(raw, face, fs, measure);
     if (wrapAt(ps, face, fs, measure).length <= room(fs, face, metaN, L)) return { fs, lines: balance(ps, face, fs, measure) };
   }
@@ -168,8 +163,8 @@ function fitTitle(title, face, metaN, L = LAYOUTS.wide) {
 
 // what the card shows, from the rows the event page reads: the title in the
 // page's language (the Estonian one when there is no other), the start and
-// the venue, and from the picture's scheme the ground, the two inks and
-// whether the title is the serif. Everything visible is here, so its hash is
+// the venue, and from the picture's scheme the ground and the two inks.
+// Everything visible is here, so its hash is
 // the card's version.
 export const cardInput = ({ lang, title, ev, scheme, pic }) => {
   let s = null;
@@ -179,7 +174,6 @@ export const cardInput = ({ lang, title, ev, scheme, pic }) => {
     lang, title,
     meta: [whenLine(ev.starts_at, ev.ends_at, lang), ev.venue].filter(Boolean),
     ground: ok ? s.ground : SITE.ground, ink: ok ? s.ink : SITE.ink, ink2: ok ? s.ink2 : SITE.ink2,
-    serif: !!(ok && (s.serif || s.titleFace)),
     // the picture's key for the picture layout, a JPEG or PNG resvg can draw; the bytes are read at render
     ...(pic && /\.(jpe?g|png)$/i.test(pic) ? { pic } : {}),
   };
@@ -249,10 +243,8 @@ export const cardSvg = (input, picture = null, tall = false, part = 1) => {
   if (tall && picture && part > 0) return `<svg xmlns="http://www.w3.org/2000/svg" width="${TALL_W}" height="${TALL_H}" viewBox="0 0 ${TALL_W} ${TALL_H}">`
     + `<rect width="${TALL_W}" height="${TALL_H}" fill="${input.ground}"/>${pano(picture, -STRIP - (part - 1) * TALL_W)}</svg>`;
   const L = tall ? (picture ? LAYOUTS.tallStrip : LAYOUTS.tall) : LAYOUTS.wide;
-  const face = input.serif ? 'serif' : 'sans';
-  // the date and venue in the sans on every card, a serif title's too (asked 2026-10-02: "in serif social
-  // cards use sans serif for meta info. same for event pages"); it was the serif's text cut under a serif title
-  const metaFace = 'sans';
+  // one face for the title and the meta, the sans (a serif title left on 2026-10-07, archive/serif-titles.md)
+  const face = 'sans', metaFace = face;
   const meta = metaLines(input.meta, metaFace, L.meta || META, L.measure);
   const { fs, lines } = fitTitle(input.title, face, meta.length, L);
   const out = [];
@@ -289,7 +281,7 @@ export const SITE_V = 3;   // the site card's own version, in its R2 key
 export const siteSvg = (lang) => {
   const l = lang === 'en' ? 'en' : 'et';
   // the mark alone at its foot: the title is already the centre's name, which the nameplate would say twice
-  return cardSvg({ lang: l, title: SITE_NAME[l], meta: ['Pühavaimu 9, Tallinn'], ...SITE_CARD, serif: false, plate: false });
+  return cardSvg({ lang: l, title: SITE_NAME[l], meta: ['Pühavaimu 9, Tallinn'], ...SITE_CARD, plate: false });
 };
 // the radio's own card, the same shape in the wine, so a link to /radio is
 // told from the site's card at a glance (asked 2026-10-01: "rename station to
@@ -301,7 +293,7 @@ const RADIO_CARD = { ground: '#f4ecf0', ink: '#3b1d2b', ink2: '#6b4a5b' };
 const RADIO_NAME = { et: 'Raadio', en: 'Radio' };
 export const radioSvg = (lang) => {
   const l = lang === 'en' ? 'en' : 'et';
-  return cardSvg({ lang: l, title: RADIO_NAME[l], meta: [SITE_NAME[l]], ...RADIO_CARD, serif: false, plate: false });
+  return cardSvg({ lang: l, title: RADIO_NAME[l], meta: [SITE_NAME[l]], ...RADIO_CARD, plate: false });
 };
 export const radioPath = (lang) => `/og/radio-${lang === 'en' ? 'en' : 'et'}.png`;
 
@@ -374,7 +366,7 @@ export const pageColorMap = (keys, colors) => {
 };
 // the title alone on a page's card since 2026-10-07 ("rm descriptins from page social cards and frontpage
 // one"); the page's first sentence, a third larger than an event's date and venue, sat under it until then
-export const pageInput = (key, lang, title, colors = SITE_CARD) => ({ lang, title, meta: [], ground: colors.ground, ink: colors.ink, ink2: colors.ink2, serif: false, page: key });
+export const pageInput = (key, lang, title, colors = SITE_CARD) => ({ lang, title, meta: [], ground: colors.ground, ink: colors.ink, ink2: colors.ink2, page: key });
 // one address per page and language, read fresh: the card follows the page's words when they are edited,
 // and its bytes are kept under its version (src/og/route.mjs)
 export const pagePath = (key, lang, tall = false) => `/og/${tall ? 'gt' : 'g'}/${key}-${lang}.png`;

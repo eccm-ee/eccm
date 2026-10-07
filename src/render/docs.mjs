@@ -29,7 +29,8 @@ const marked = new Marked({
   renderer: {
     heading({ tokens, depth }) {
       const text = this.parser.parseInline(tokens);
-      return `<h${depth} id="${slug(text.replace(/<[^>]+>/g, ''))}">${text}</h${depth}>\n`;
+      // the id from the visible words: tags and entities out first, so importer's is importer-s, not importer-39-s
+      return `<h${depth} id="${slug(text.replace(/<[^>]+>/g, '').replace(/&[#a-z0-9]+;/gi, ' '))}">${text}</h${depth}>\n`;
     },
     table({ header, rows }) {
       const labels = header.map((c) => this.parser.parseInline(c.tokens).replace(/<[^>]+>/g, ''));
@@ -72,9 +73,10 @@ export const renderDoc = (key) => {
   const body = d.md.replace(/^#\s+.+\n/m, '');
   return page({
     wide: true, lang: 'en', title: `${titleOf(d.md)}.`,
-    body: html`  <p class="crumb"><a href="/docs">Docs</a></p>
+    // the same centred column as a text page from D1 (.page-text), the crumb inside it
+    body: html`  <div class="page-text"><p class="crumb"><a href="/docs">Docs</a></p>
   <h1>${titleOf(d.md)}</h1>
-  <div class="flow doc">${raw(marked.parse(body))}</div>
+  <div class="flow doc">${raw(marked.parse(body))}</div></div>
   ${raw(COPY)}`,
   });
 };

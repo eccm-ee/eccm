@@ -58,10 +58,6 @@
     .ds-ground { padding: var(--eccm-s-8); background: var(--ev-ground, var(--eccm-ground)); color: var(--ev-ink, var(--eccm-ink)); }
     .ds-ground + .ds-ground { margin-block-start: var(--eccm-s-6); }
     .ds-ground .facts dt, .ds-ground .credits dt, .ds-ground .small { color: var(--ev-ink2, var(--eccm-ink-2)); }
-    /* the faces a derived page sets, as derive.html applies them */
-    .ds-serif h1, .ds-serif h2 { font-family: var(--ev-title-face, inherit); font-weight: var(--ev-title-weight, 400); }
-    .ds-serif .facts dd, .ds-serif .credits dd { font-family: var(--ev-title-face, inherit); }
-    .ds-serif .prose { font-family: var(--ev-body-face, inherit); }
     .ds-ground .ds-cap { color: inherit; opacity: 0.7; }
     .ds-btns { display: flex; flex-wrap: wrap; gap: var(--eccm-s-4); }
     .ds-squares { display: flex; flex-wrap: wrap; gap: var(--eccm-s-8); margin-block: var(--eccm-s-8); }
@@ -209,7 +205,7 @@
 
   <h2>Typography</h2>
   <div class="prose flow">
-    <p>One family, Instrument Sans at its normal width (since 2026-10-01; Schibsted Grotesk before). Headings are weight 400 and the hierarchy comes from size and space, never from bold or from a rule. On a page whose scheme is derived from its picture, Newsreader takes the headings when the picture's own type reads as serif, and the body only on a ground near white.</p>
+    <p>One family, Instrument Sans at its normal width (since 2026-10-01; Schibsted Grotesk before). Headings are weight 400 and the hierarchy comes from size and space, never from bold or from a rule.</p>
   </div>
   <div class="ds-spec">
     <div>
@@ -249,34 +245,6 @@
         <div><dt>Dramaturg</dt><dd>Alissa Šnaider</dd></div>
         <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
       </dl>
-    </div>
-    <div>
-      <p class="ds-cap">Serif, on a page whose picture reads as serif: title, facts and credits in Roboto Serif, and the body too on a ground near white</p>
-      <div class="ds-serif" lang="et" style="--ev-title-face: 'Roboto Serif', 'Roboto Serif Fallback', Georgia, serif; --ev-title-weight: 400; --ev-body-face: 'Roboto Serif', 'Roboto Serif Fallback', Georgia, serif">
-        <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Sound Plasma 10</h1></div>
-        <dl class="facts">
-          <div><dt>Millal</dt><dd><time datetime="2026-11-12T19:00+02:00">12.11.2026 kell 19.00</time></dd></div>
-          <div><dt>Kus</dt><dd>Mustpeade maja valge saal, Pikk 26, Tallinn</dd></div>
-        </dl>
-        <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
-          <p>Sound Plasma 10. juubelikontserdil kohtuvad Tallinna Uue Muusika Ansambel ja defunensemble. Kümme aastat mikrotonaalset muusikat, kaks ansamblit ühel laval ja üks õhtu, mida ei saa korrata.</p>
-        </div>
-        <dl class="credits" style="margin-block-start: var(--eccm-s-8)">
-          <div><dt>Esinejad</dt><dd>Tallinna Uue Muusika Ansambel, defunensemble</dd></div>
-          <div><dt>Graafiline disain</dt><dd>Jaan Evart</dd></div>
-        </dl>
-      </div>
-    </div>
-    <div class="ds-ground ds-serif" lang="et" style="--ev-ground: #1b2746; --ev-ink: #ffffff; --ev-ink2: #c9c9c9; --ev-title-face: 'Roboto Serif', 'Roboto Serif Fallback', Georgia, serif; --ev-title-weight: 400; --ev-body-face: inherit">
-      <p class="ds-cap" lang="en">The same on a dark derived ground: title, facts and credits keep the serif, the body stays in the sans</p>
-      <div class="event-lead"><h1 style="margin: 0 0 var(--eccm-s-8)">Uus kontserdisari: Up to Three / Kuni kolm</h1></div>
-      <dl class="facts">
-        <div><dt>Millal</dt><dd><time datetime="2026-12-05T19:00+02:00">05.12.2026 kell 19.00</time></dd></div>
-        <div><dt>Kus</dt><dd>ECCM saal, Pühavaimu 9, Tallinn</dd></div>
-      </dl>
-      <div class="prose flow" style="margin-block-start: var(--eccm-s-8)">
-        <p>Kuni kolm esinejat, kuni kolm teost, kuni kolm veerandtundi. Sari, mis mahub ühte õhtusse ja jätab ruumi vestluseks.</p>
-      </div>
     </div>
     <div>
       <p class="ds-cap">Artist bios: after the body and before the credits, the name an h2 in the prose register, the paragraphs at the measure, the link the last line, three steps of space between bios and one within, a square photo at 5.5rem beside the name when a row has one</p>
@@ -327,7 +295,7 @@
     <div class="ds-swatch"><i style="background: var(--eccm-accent)"></i><code>--eccm-accent</code><br>the ink, no accent since 2026-09-28</div>
   </div>
   <div class="prose flow">
-    <p class="small">A page derived from its picture sets the same roles with its own tokens: <code>--ev-ground</code>, <code>--ev-ink</code>, <code>--ev-ink2</code>, <code>--ev-accent</code>, <code>--ev-btn-fill</code>, <code>--ev-on-btn</code>, <code>--ev-title-face</code>, <code>--ev-title-weight</code>, <code>--ev-body-face</code>. The examples are on the <a href="./derive.html">design from a picture</a> page.</p>
+    <p class="small">A page derived from its picture sets the same roles with its own tokens: <code>--ev-ground</code>, <code>--ev-ink</code>, <code>--ev-ink2</code>, <code>--ev-accent</code>, <code>--ev-btn-fill</code> and <code>--ev-on-btn</code>. The examples are on the <a href="./derive.html">design from a picture</a> page.</p>
   </div>
 
   <h2>Dark mode</h2>

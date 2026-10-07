@@ -63,9 +63,9 @@ const SAME_HEIGHT = `      const tas = [...document.querySelectorAll('.langs tex
       const ro = new ResizeObserver((entries) => { for (const en of entries) { const h = en.target.offsetHeight; for (const t of tas) if (t !== en.target && t.offsetHeight !== h) t.style.height = h + 'px'; } });
       tas.forEach((t) => ro.observe(t));`;
 
-// what the detector gave, in one line under the picture: the scheme's mode, its ground and whether the titles
-// take the serif; the same words from the stored row and from the browser's reading
-const say = (s) => `${s.mode === 'dark' ? 'Dark' : 'Light'} scheme, ground ${s.ground}${s.accent ? `, accent ${s.accent}` : ''}, ${s.serif ? 'serif title' : 'sans throughout'}.`;
+// what the detector gave, in one line under the picture: the scheme's mode, its ground and its accent; the same
+// words from the stored row and from the browser's reading
+const say = (s) => `${s.mode === 'dark' ? 'Dark' : 'Light'} scheme, ground ${s.ground}${s.accent ? `, accent ${s.accent}` : ''}.`;
 const schemeSay = (json) => { try { return say(JSON.parse(json)); } catch { return ''; } };
 // the picture field's script: a chosen or dropped file is shown at once and read with public/scheme.mjs, and the
 // reading goes into the hidden field the save stores on the media row; a picture already on the event with no
@@ -74,7 +74,7 @@ const READ_PICTURE = `      const { read, contract } = await import('/scheme.mjs
       const say = ${say.toString()};
       const fig = document.querySelector('.edit-pic'), img = fig.querySelector('img'), out = document.getElementById('scheme-say');
       const field = document.querySelector('[name="image_scheme"]'), file = document.querySelector('[name="image_file"]');
-      const reading = async (el) => { await el.decode(); const { r, t, s } = read(el); const c = contract(r, t, s); field.value = JSON.stringify(c); out.textContent = say(c); };
+      const reading = async (el) => { await el.decode(); const { r, s } = read(el); const c = contract(r, s); field.value = JSON.stringify(c); out.textContent = say(c); };
       file.addEventListener('change', async () => {
         const f = file.files[0]; if (!f) return;
         field.value = ''; out.textContent = 'Reading the picture.';
@@ -128,7 +128,7 @@ export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmus
     <h2>Picture</h2>
     <!-- the picture and a drop field side by side (asked 2026-09-30: "implement image upload"); the
          browser reads a chosen file with public/scheme.mjs, the derive page's own detector, and sends
-         the scheme beside it, so the page takes the picture's colours and faces from the first save -->
+         the scheme beside it, so the page takes the picture's colours from the first save -->
     <div class="drop">
       <figure class="edit-pic"${pic ? '' : raw(' hidden')}><img src="${pic ? `/${pic.key}` : ''}"${pic ? raw(` width="${pic.width}" height="${pic.height}"`) : ''} alt=""${pic && !pic.scheme ? raw(' data-read') : ''}><figcaption id="scheme-say">${pic && pic.scheme ? schemeSay(pic.scheme) : ''}</figcaption></figure>
       <label class="drop-zone">

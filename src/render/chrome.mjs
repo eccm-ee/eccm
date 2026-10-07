@@ -61,8 +61,8 @@ export const LABEL = { et: 'ET', en: 'EN' };
 // pairs when both texts exist (plans/plan-eccm-event-markup.md section 4)
 // notice: one line above main, ruled under, which the editor's preview uses
 // to say nothing is saved (src/editor.mjs); absent on every public page
-// head: preloads the page itself knows it needs, the event's poster and the
-// serif its scheme sets (src/render/pic.mjs, src/render/event.mjs)
+// head: preloads the page itself knows it needs, the event's poster
+// (src/render/pic.mjs, src/render/event.mjs)
 // wide: a tool page (asked 2026-10-01: "admin pages full w"), its forms, tables and grids over the whole frame
 export const page = ({ lang, title, alternate, canonical, alternates, body, notice, head, wide, og }) => {
   const t = T[lang];
