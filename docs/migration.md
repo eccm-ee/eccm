@@ -18,7 +18,7 @@ Moving eccm.ee onto this site. Measured on 7 October 2026. Each task says who do
 | Task | Who | State |
 | --- | --- | --- |
 | [Noindex on every page until cutover](#noindex-on-every-page-until-cutover) | Agent | To do |
-| [Redirects from the old Joomla addresses](#redirects-from-the-old-joomla-addresses) | Agent | To do |
+| [Redirects from the old Joomla addresses](#redirects-from-the-old-joomla-addresses) | Agent | Done |
 | [Contact form](#contact-form) | Agent | To do |
 | [Privacy notice](#privacy-notice) | ECCM writes, agent builds | To do |
 | [EU emblem on Ulysses](#eu-emblem-on-ulysses) | Agent | To do |
@@ -89,13 +89,13 @@ an event page and /docs, then deploy staging and push.
 
 ### Redirects from the old Joomla addresses
 
-**Who:** agent. **State:** to do.
+**Who:** agent. **State:** done, in `src/redirects.mjs`. Misses are counted in the `redirect_miss` table.
 
 Google has eccm.ee's events under three address shapes, and they all answer 404 here. The old ids are already stored: `event_text.legacy_id` per language, `page_text.legacy_path` per page. The design is in `plans/plan-eccm-urls-sitemap-rss.md` section 3, but its event pattern misses one live shape.
 
 ```js
-// every event shape: /index.php/{lang}/[up to two menu segments/]{id}-{alias}[/{date}]
-const OLD_EVENT = /^\/index\.php\/(et|en)\/(?:[a-z0-9-]+\/){0,2}(\d+)-[^/]*(?:\/\d{4}(?:-\d\d){4})?\/?$/;
+// every event shape: /index.php/{lang}/[up to two menu segments, each starting with a letter/]{id}-{alias}[/{date}]
+const OLD_EVENT = /^\/index\.php\/(et|en)\/(?:[a-z][a-z0-9-]*\/){0,2}(\d+)(?:-[^/]*)?(?:\/\d{4}(?:-\d\d){4})?\/?$/;
 ```
 
 | Old | New |
