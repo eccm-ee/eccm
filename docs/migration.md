@@ -489,7 +489,7 @@ if (p.startsWith('/radio1965/') || p.startsWith('/radio/streams/'))
 | Problem | Solution | Who | State |
 | --- | --- | --- | --- |
 | Does the site need a cookie banner? | No. It sets no cookies. The only thing kept in the browser is the theme a visitor picks, their own choice. | Nobody | Done |
-| Analytics. | [Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/): no cookies, counts only, so no consent. Never Google Analytics or the Meta pixel, which would need a banner. | ECCM turns it on | At cutover |
+| Analytics. | [Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/): no cookies, counts only, so no consent. Never Google Analytics or the Meta pixel, which would need a banner. | ECCM turns it on | After migration |
 | Third parties. | None on the site: no outside scripts, fonts from the site itself. /nan/'s Google Fonts move to the site, Konkursid's YouTube embed uses youtube-nocookie.com or loads on click. | Agent | To do |
 | Personal data: newsletter, contact, push. | A privacy notice per language (GDPR article 13): who is responsible, what and why, how long, Cloudflare as processor, rights, complaints to the [Data Protection Inspectorate](https://www.aki.ee/). | ECCM writes, agent builds | To do |
 | Proof of consent. | Double opt-in and one-click unsubscribe on the newsletter, the browser's own permission for push. | Nobody | Done |

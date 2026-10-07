@@ -15,13 +15,13 @@ The site as the one source of facts, with Instagram and Facebook as their own pl
 | [Fix the Fienta organiser page](#fix-the-fienta-organiser-page) | ECCM | Ask |
 | [Link it from the site](#link-it-from-the-site) | Agent | After Fienta is fixed |
 | [Material for Instagram](#material-for-instagram) | Agent | Event cards done, editor to do |
-| [Point the profiles at the site](#point-the-profiles-at-the-site) | ECCM | At cutover |
+| [Point the profiles at the site](#point-the-profiles-at-the-site) | ECCM | After migration |
 | [YouTube](#youtube) | ECCM | Ask |
 | [Partner links](#partner-links) | ECCM | To do |
 | [Wikipedia](#wikipedia) | ECCM, agent drafts | To do |
 | [Google Maps](#google-maps) | ECCM | Ask |
-| [Search Console](#search-console) | ECCM | At cutover |
-| [Measurement](#measurement) | ECCM turns it on | At cutover |
+| [Search Console](#search-console) | ECCM | After migration |
+| [Measurement](#measurement) | ECCM turns it on | After migration |
 
 ## The site
 
@@ -143,7 +143,7 @@ staging, push.
 
 ### Point the profiles at the site
 
-**Who:** ECCM. **State:** at cutover.
+**Who:** ECCM. **State:** after migration.
 
 1. Facebook page, About, Website: `https://eccm.ee`.
 2. Instagram, Edit profile, Links: `https://eccm.ee`.
@@ -199,7 +199,7 @@ the official website. Write them to a file for a volunteer; do not publish.
 
 ### Search Console
 
-**Who:** ECCM. **State:** at cutover.
+**Who:** ECCM. **State:** after migration.
 
 1. [Search Console](https://search.google.com/search-console), add the domain property eccm.ee, verify with the TXT record it shows (in Cloudflare DNS).
 2. Submit `https://eccm.ee/sitemap.xml`.
@@ -207,7 +207,7 @@ the official website. Write them to a file for a volunteer; do not publish.
 
 ### Measurement
 
-**Who:** ECCM turns it on. **State:** at cutover.
+**Who:** ECCM turns it on. **State:** after migration.
 
 [Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/) for the zone: free, no cookie, so no banner. Subscribers are counted by the Worker, no tracking pixel.
 
