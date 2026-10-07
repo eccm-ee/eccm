@@ -17,6 +17,12 @@
    same day, so most of the site had in fact been drawn in Helvetica. The
    fallback is Helvetica, then Arial, size-adjusted to the face (below), so a
    swap reflows nothing. */
+/* the body face since 2026-10-07, Public Sans (OFL, vendor/public-sans/OFL.txt), chosen off /sans for long text and
+   tables: darker than Instrument Sans at 400 and tabular figures through tnum (asked: "lets do it"); headings stay Instrument Sans */
+@font-face { font-family: 'Public Sans'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('./vendor/public-sans/latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Public Sans'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('./vendor/public-sans/latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Public Sans'; font-style: italic; font-weight: 100 900; font-display: swap; src: url('./vendor/public-sans/italic-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Public Sans'; font-style: italic; font-weight: 100 900; font-display: swap; src: url('./vendor/public-sans/italic-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: 'Instrument Sans'; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url('./vendor/instrument-sans-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 /* the fallbacks at the webfonts' own metrics, trip's recipe
@@ -68,13 +74,16 @@
     /* type: 18 px base, a 1.25 ratio, nothing under 14 px */
     --eccm-t-s: 0.875rem;
     --eccm-t-m: 1.125rem;
-    --eccm-t-l: 1.4rem;
-    --eccm-t-xl: clamp(1.55rem, 1.2rem + 1.5vw, 1.75rem);
-    --eccm-t-2xl: clamp(1.85rem, 1.3rem + 2.5vw, 2.2rem);
+    /* the three heading steps a tenth up since 2026-10-07, when the body went to the darker Public Sans and
+       the Instrument Sans headings beside it read small (asked: "heading needs to be bti larger with this body") */
+    --eccm-t-l: 1.55rem;
+    --eccm-t-xl: clamp(1.7rem, 1.3rem + 1.6vw, 1.95rem);
+    --eccm-t-2xl: clamp(2.05rem, 1.4rem + 2.8vw, 2.45rem);
     --eccm-lh-body: 1.5;
     --eccm-lh-head: 1.15;
     --eccm-lh-meta: 1.4;
-    --eccm-measure: 66ch;
+    /* in rem since 2026-10-07: 66 ch of Instrument Sans's wide zero ran about 98 letters a line; 35 rem of Public Sans at 18 px is about 68 */
+    --eccm-measure: 35rem;
     /* space: quarter-rem steps, linear at the bottom, widening at the top */
     --eccm-s-1: 0.25rem;
     --eccm-s-2: 0.5rem;
@@ -139,7 +148,7 @@
 
   html { background: var(--eccm-ground); color: var(--eccm-ink); }
   body {
-    font: 400 var(--eccm-t-m) / var(--eccm-lh-body) 'Instrument Sans', 'Instrument Sans Fallback', Helvetica, Arial, sans-serif;
+    font: 400 var(--eccm-t-m) / var(--eccm-lh-body) 'Public Sans', Helvetica, Arial, sans-serif;
     text-wrap: pretty;
     /* grayscale antialiasing: on a Mac the default subpixel rendering draws
        Helvetica heavier than a designed site looks, and a lighter page was
@@ -151,7 +160,7 @@
   /* headings at text weight: hierarchy is size and space, and bold is spent
      nowhere by default (eccm-ui §2, Vignelli; asked 2026-09-26 as "rough and
      90ies", which system Helvetica in bold is) */
-  h1, h2, h3 { font-weight: 400; line-height: var(--eccm-lh-head); text-wrap: balance; }
+  h1, h2, h3 { font-family: 'Instrument Sans', 'Instrument Sans Fallback', Helvetica, Arial, sans-serif; font-weight: 400; line-height: var(--eccm-lh-head); text-wrap: balance; }
   a {
     color: inherit;
     text-decoration-line: underline;
@@ -456,7 +465,7 @@
      fallback, and the inversed one takes the derived accent when there is
      one, with the text colour the derivation says passes on it. 3rem is a
      finger, not a relationship */
-  .btn { display: inline-flex; align-items: center; block-size: 3rem; padding-inline: var(--eccm-s-6); border: 1px solid var(--ev-ink, var(--eccm-ink)); background: transparent; color: var(--ev-ink, var(--eccm-ink)); text-decoration: none; cursor: pointer; font-family: 'Instrument Sans', 'Instrument Sans Fallback', Helvetica, Arial, sans-serif; font-weight: 400; }
+  .btn { display: inline-flex; align-items: center; block-size: 3rem; padding-inline: var(--eccm-s-6); border: 1px solid var(--ev-ink, var(--eccm-ink)); background: transparent; color: var(--ev-ink, var(--eccm-ink)); text-decoration: none; cursor: pointer; font-family: inherit; font-weight: 400; }
   .btn:hover { text-decoration: none; outline: 1px solid var(--ev-ink, var(--eccm-ink)); outline-offset: -2px; }
   /* the filled button is the ground's inverse, never the accent (derive.html, asked 2026-09-27:
      "Readability issues on a purchase button"), and a derived scheme names both halves */
@@ -661,6 +670,8 @@
      so 1:58:40 ran 20 per cent wider and "2 Oct" took two spaces. .fig is the same for a figure CSS cannot
      reach through structure, and a container of figures */
   .fig, main.admin :is(time, .table td:not(.main), .station-col-times, .form input:is([type="date"], [type="time"], [type="datetime-local"], [type="number"])) { font-variant-numeric: tabular-nums; }
+  /* tabular figures are drawn a figure-space wide, which reads gappy; pulled together where a cell is figures (asked 2026-10-07: "add negative trackin for monospace-numbers") */
+  .fig, .table .num, main.admin time { letter-spacing: -0.03em; }
   /* the radio, /station (src/render/station.mjs, public/station.mjs): every channel a column holding the whole
      of that station, nothing said twice (asked 2026-10-01: "whole stations need to fit so single col. avoid
      dumplication and vertical jumps"), the shape NTS gives its two live channels. No box: a rule on top, ink on
