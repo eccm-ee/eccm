@@ -127,6 +127,8 @@ skills first. Check at 375 and 1280, deploy staging, push.
 
 **Who:** ECCM approves, agent drafted. **State:** draft live, at /et/andmekaitse and /en/privacy.
 
+**Ask ECCM:** approve the text, or send corrections.
+
 The site collects newsletter addresses, contact messages and push subscriptions, so it needs a privacy notice in both languages. See Privacy and consent below for what it has to say.
 
 **Prompt**
@@ -273,6 +275,8 @@ The missing events, the archive, the changed dates.
 
 **Who:** ECCM. **State:** ask.
 
+**Ask ECCM:** the dates that will change, the three times below, and whether Kuni kolm on 5.12 is still on.
+
 | Problem | Solution | Who | State |
 | --- | --- | --- | --- |
 | TUMA AFEKT festivalil 1.11 17:30 and in Tartu 2.11 19:00 were on eccm.ee, not here. | Imported with the archive. | Agent | Done |
@@ -281,6 +285,12 @@ The missing events, the archive, the changed dates.
 | Feldman had no English text here. | Imported with the archive. | Agent | Done |
 | A few dates will change. | Edit them here once known. | ECCM | Waiting |
 | 2027 placeholders, empty news, Residentuurid, duplicates on eccm.ee. | Leave them behind. | Nobody | Decided |
+
+### Existing subscribers
+
+**Who:** ECCM. **State:** ask.
+
+**Ask ECCM:** whether a list of people you already write to exists, and whether they agreed to get the newsletter. Only people who agreed may be imported; anyone else signs up again with the double opt-in.
 
 ### Import the archive
 
@@ -324,6 +334,8 @@ Cloudflare account, Workers Paid, production, the data copied.
 ### Create the Cloudflare account
 
 **Who:** ECCM. **State:** ask.
+
+**Ask ECCM:** who opens the account, and who pays the $5 a month.
 
 1. Sign up at [dash.cloudflare.com](https://dash.cloudflare.com/sign-up) with an ECCM address, not a person's own.
 2. Invite a second admin from ECCM, and the developer, under Manage Account, Members.
@@ -389,6 +401,8 @@ eccm.ee is ECCM's (registry code 80603988) until 18.03.2027. Registrar, DNS, hos
 
 **Who:** ECCM. **State:** ask.
 
+**Ask ECCM:** who holds the Virtuaal login (registrar, cPanel and mail are probably one account).
+
 The old hosting can hold files nobody links to, and the archive's best source is Joomla's database. Neither is visible from outside.
 
 1. Log in to cPanel at Virtuaal.
@@ -423,6 +437,8 @@ DMARC is set to reject, so one wrong mail record bounces everything. Every recor
 
 **Who:** ECCM. **State:** after.
 
+**Ask ECCM:** whether mail stays at Virtuaal, who runs the mailboxes, and whether Google Search Console is verified for eccm.ee, and by whom.
+
 1. Two weeks later, check that mail and webmail renewed their certificates, since the wildcard can no longer renew through Virtuaal's DNS.
 2. Before cancelling the Joomla hosting, ask Virtuaal whether mail survives it. Mail runs on the same server.
 
@@ -438,11 +454,15 @@ Not needed: the current site is a test too. If wanted, uus.eccm.ee can work befo
 
 **Who:** agent. **State:** done.
 
+**Ask Tarmo:** nothing changes in his code. Does he want a push on publish instead of the five-minute poll?
+
 The Worker answers the same `/api/index.php/v1` calls in the same shape, so Tarmo changes nothing. Notices ticked Väin on [/items](/items) are category 47 and reach the app; each has its page at `/teated/{number}`. Checked with his own importer code against a local server.
 
 ### His files after cutover
 
 **Who:** agent, ECCM adds the alias in cPanel. **State:** to do.
+
+**Ask Tarmo:** where his `/radio1965` and `/radio/streams` files should live after cutover.
 
 The old server keeps a second name, old.eccm.ee, that points straight at it, and the Worker passes `/radio1965/*` and `/radio/streams/*` through to it until he moves them.
 
@@ -465,11 +485,6 @@ if (p.startsWith('/radio1965/') || p.startsWith('/radio/streams/'))
 | Accessibility. | Estonia's rules bind public bodies, not an NGO, but build to WCAG 2.2 AA anyway. | Agent | Ongoing |
 
 This is a reading of the rules, not legal advice. ECCM approves the privacy text.
-
-## To ask
-
-- **ECCM:** who holds the Virtuaal login. Whether mail stays at Virtuaal and who runs the mailboxes. A Cloudflare account of their own, and who pays $5 a month. Whether a subscriber list exists and may be imported. Whether Search Console is verified, and by whom. The privacy text. The changed dates, the three times, Kuni kolm.
-- **Tarmo:** nothing changes in his code; ECCM ticks Väin on the notices meant for the app. Still to ask: where his `/radio1965` and `/radio/streams` files go, and whether he wants a push on publish instead of the poll.
 
 ## Links
 
