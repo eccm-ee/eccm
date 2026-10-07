@@ -37,6 +37,7 @@ import { renderDocs, renderDoc } from './render/docs.mjs';
 import { filesRoute } from './files.mjs';
 import { newsletter, drain } from './newsletter.mjs';
 import { ogRoute } from './og/route.mjs';
+import { legacy } from './redirects.mjs';
 import { radioShows, wakeRadio, serveShow, radioState } from './radio.mjs';
 export { Items } from './items.mjs';
 export { Radio } from './radio.mjs';
@@ -127,6 +128,8 @@ export default {
     // workers.dev host draws the originals, as wrangler dev does
     useTransforms(url.hostname.endsWith('.workers.dev') ? 'off' : env.IMAGE_TRANSFORMS);
     useOrigin(url.origin);
+    // eccm.ee's old Joomla addresses: 301, 410, or the 404 with the miss logged (src/redirects.mjs)
+    { const out = await legacy(request, env, url, ctx); if (out) return out; }
     // the radio station itself, under /stream since 2026-10-02 (src/station/station.mjs): the prefix comes off
     // here and the station answers as it did on its own Worker, method, headers and body unchanged
     if (p === STREAM_BASE || p.startsWith(STREAM_BASE + '/')) {
