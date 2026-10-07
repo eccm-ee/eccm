@@ -18,7 +18,7 @@ export const renderResearch = () => page({
   body: html`  <h1>Research</h1>
   ${cards([
     ['/type', 'Typography', 'The faces compared at the page’s own sizes.'],
-    ['/sans', 'Body sans', 'Ten sturdier, narrower body faces measured in long text and tables.'],
+    ['/sans', 'Body sans', 'Three body faces, Public Sans, IBM Plex Sans and Libre Franklin, in long text and tables.'],
     ['/admin/research/radio', 'Radio tools', 'How radio programming tools lay out channels, schedules, live shows and the archive.'],
   ])}`,
 });
