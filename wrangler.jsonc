@@ -69,7 +69,7 @@
       // the cron that drains what did not go at once.
       "send_email": [{ "name": "EMAIL" }],
       "triggers": { "crons": ["*/5 * * * *"] },
-      "vars": { "OPEN_UPLOADS": "on", "IMAGE_TRANSFORMS": "on", "MAIL_FROM": "ECCM <uudiskiri@eccm.positron.studio>", "VAPID_PUBLIC": "BMFK4ASgBxY0RNxBPRoJTUHFf3pTkyx9lR3jIYG_miJdtrc7a_moyVkig2QlFVBr5d5BuacnyV6skIeaxvTGHM4", "VAPID_SUB": "https://eccm.positron.studio/" }
+      "vars": { "OPEN_UPLOADS": "on", "IMAGE_TRANSFORMS": "on", "MAIL_FROM": "ECCM <uudiskiri@eccm.positron.studio>", "VAPID_PUBLIC": "BMFK4ASgBxY0RNxBPRoJTUHFf3pTkyx9lR3jIYG_miJdtrc7a_moyVkig2QlFVBr5d5BuacnyV6skIeaxvTGHM4", "VAPID_SUB": "https://eccm.positron.studio/", "CONTACT_TO": "info@eccm.ee" }
     },
     "production": {
       "name": "eccm"

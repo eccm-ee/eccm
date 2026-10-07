@@ -12,6 +12,7 @@ import { field, input } from './editor.mjs';
 import { md } from './md.mjs';
 import { dateLong } from './dates.mjs';
 import { table } from './table.mjs';
+import { PRIVACY, PRIVACY_LINE } from './contact.mjs';
 
 export const NL = { et: '/et/uudiskiri', en: '/en/newsletter' };
 const T = {
@@ -37,6 +38,7 @@ export const renderSignup = ({ lang, issues, form = {}, say, err }) => {
       ${field({ id: 'n-email', label: t.email, err, control: input('n-email', 'email', form.email, ' type="email" autocomplete="email" required') })}
       <div class="hp" aria-hidden="true"><label for="n-site">Website</label><input id="n-site" name="website" tabindex="-1" autocomplete="off"></div>
       <div class="actions"><button class="btn btn-pri" type="submit">${t.join}</button></div>
+      <p class="hint"><a href="${PRIVACY[lang]}">${PRIVACY_LINE[lang]}</a></p>
     </form>`}
     ${issues.length ? html`<section class="news-past"><h2>${t.past}</h2>${table({ label: t.past, cols: [{ label: t.date }, { label: t.letter, cls: 'main' }], rows: issues.map((i) => [html`<time datetime="${i.sent_at}">${sentDay(i.sent_at, lang)}</time>`, html`<a href="${NL[lang]}/${i.slug}">${i.subject}</a>`]) })}</section>` : ''}
   </article>`;
@@ -122,7 +124,7 @@ export const renderIssueForm = ({ issue, form = issue, errors = [], say, mail, t
 
 // a@b.ee as a***@b.ee: the outbox shows that a mail went and to whom roughly, never the list
 const mask = (a) => String(a).replace(/^(.)[^@]*/, '$1***');
-const KIND = { confirm: 'Confirmation', issue: 'Letter', test: 'Test letter' };
+const KIND = { confirm: 'Confirmation', issue: 'Letter', test: 'Test letter', contact: 'Contact message' };
 export const renderOutbox = ({ rows }) => {
   const body = html`  <p class="crumb"><a href="/edit/uudiskiri">Newsletter</a></p>
   <h1>Outbox</h1>

@@ -17,10 +17,10 @@ const BATCH = 20;   // a drain stays well inside one invocation's subrequests
 
 export async function queue(env, rows) {
   if (!rows.length) return;
-  const st = env.DB.prepare('INSERT INTO outbox (kind, issue_id, to_addr, subject, text, html, unsub) VALUES (?, ?, ?, ?, ?, ?, ?)');
+  const st = env.DB.prepare('INSERT INTO outbox (kind, issue_id, to_addr, subject, text, html, unsub, reply_to) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
   // D1 batches are one transaction each; a big list goes in slices
   for (let i = 0; i < rows.length; i += 50) {
-    await env.DB.batch(rows.slice(i, i + 50).map((r) => st.bind(r.kind, r.issue_id ?? null, r.to, r.subject, r.text, r.html ?? null, r.unsub ?? null)));
+    await env.DB.batch(rows.slice(i, i + 50).map((r) => st.bind(r.kind, r.issue_id ?? null, r.to, r.subject, r.text, r.html ?? null, r.unsub ?? null, r.reply_to ?? null)));
   }
 }
 
@@ -33,6 +33,8 @@ export async function drain(env) {
       await env.EMAIL.send({
         to: m.to_addr, from: env.MAIL_FROM, subject: m.subject, text: m.text,
         ...(m.html ? { html: m.html } : {}),
+        // a contact message's sender, so the office answers with Reply (src/contact.mjs)
+        ...(m.reply_to ? { replyTo: m.reply_to } : {}),
         // List-Id names the list, which Gmail reads with List-Unsubscribe when it decides whether to
         // offer its own Unsubscribe beside the sender; that choice is Gmail's and comes with the sending
         // domain's volume and reputation, so the letter's own Lahku link is the one that always works
