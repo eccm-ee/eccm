@@ -26,6 +26,7 @@ export const renderDocs = () => page({
   body: html`  <h1>Docs</h1>
   ${cards([
     ['/docs/migration', 'Migration', 'Moving eccm.ee here: decisions, steps, findings and open questions.'],
+    ['/docs/ici', 'ici on V\u00e4in', 'Albert Saprykin\u2019s ici as a session on V\u00e4in, and who does what.'],
   ])}`,
 });
 
