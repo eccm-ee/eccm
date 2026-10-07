@@ -724,10 +724,9 @@
   /* in a doc every cell may wrap, so a column of long phrases cannot squeeze the task names to a word a line */
   .doc .table :is(th, td) { white-space: normal; }
   /* the contents: one table, each section a group row above its tasks, the group's link in the heading's weight */
-  .doc-toc .doc-toc-group > th { padding-block-start: var(--eccm-s-6); font-size: var(--eccm-t-m); font-weight: 600; color: var(--eccm-ink); }
+  /* no rule under a group, the link's own underline is the cue (asked 2026-10-07: "no need for these separtor lines, just text underlines") */
+  .doc-toc .doc-toc-group > th { padding-block-start: var(--eccm-s-6); border: 0; font-size: var(--eccm-t-m); font-weight: 600; color: var(--eccm-ink); }
   .doc-toc tbody > .doc-toc-group:first-child > th { padding-block-start: var(--eccm-s-2); }
-  .doc-toc .doc-toc-group a { text-decoration-line: none; }
-  .doc-toc .doc-toc-group a:hover { text-decoration-line: underline; }
   /* a finished task folded: its title and badge are the summary, the triangle the cue that it opens */
   .doc > .doc-done { --eccm-flow: 1.5lh; }
   .doc-done > summary { cursor: pointer; }
