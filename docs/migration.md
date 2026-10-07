@@ -333,27 +333,32 @@ Cloudflare account, Workers Paid, production, the data copied.
 
 **Who:** agent. **State:** after the account.
 
-```sh
-npx wrangler d1 create eccm --env production
-npx wrangler d1 migrations apply eccm --remote --env production
-npx wrangler r2 bucket create eccm-media --env production
-npx wrangler d1 export eccm-staging --remote --env staging --output /tmp/eccm.sql --no-schema
-npx wrangler d1 execute eccm --remote --env production --file /tmp/eccm.sql
-npx wrangler secret put VAPID_JWK --env production
-```
-
-**Prompt**
+One prompt does it all: the agent fills in the production settings, then runs the commands below in this order and checks each step. ECCM only has to be logged in to its own Cloudflare account in the terminal (`npx wrangler login`).
 
 ```text
-In eccm, fill in env.production in wrangler.jsonc for ECCM's account (its
-account_id, the D1 id, the media bucket, routes eccm.ee and www.eccm.ee as
-custom domains, IMAGE_TRANSFORMS on, NOINDEX absent, MAIL_FROM
-uudiskiri@eccm.ee, SITE_ORIGIN https://eccm.ee). Replace the three hardcoded
-eccm.positron.studio addresses (src/index.mjs, src/render/editor.mjs,
-src/station/station.mjs if the station is still there) with config. Create the
-database and bucket, apply migrations, copy the data without the schema, copy
-the media/ prefix of the bucket, reuse the staging VAPID key so subscribed
-phones stay subscribed. Do not deploy routes until ECCM says the zone is active.
+In eccm, set up production in ECCM's Cloudflare account; do not deploy to
+eccm.ee until ECCM says the zone is active.
+
+1. In wrangler.jsonc env.production: ECCM's account_id; vars SITE_ORIGIN
+   https://eccm.ee, IMAGE_TRANSFORMS on, MAIL_FROM "ECCM <uudiskiri@eccm.ee>",
+   CONTACT_TO info@eccm.ee, VAPID_PUBLIC and VAPID_SUB as in staging; no
+   NOINDEX; the D1, R2 (MEDIA, BACKUP) and Durable Object bindings as staging
+   has them; routes eccm.ee and www.eccm.ee as custom domains, commented out
+   until cutover.
+2. Run, checking each:
+   npx wrangler d1 create eccm --env production          (put its id in wrangler.jsonc)
+   npx wrangler d1 migrations apply eccm --remote --env production
+   npx wrangler r2 bucket create eccm-media
+   npx wrangler r2 bucket create eccm-backup
+   npx wrangler d1 export eccm-staging --remote --env staging --no-schema --output /tmp/eccm.sql
+   npx wrangler d1 execute eccm --remote --env production --file /tmp/eccm.sql
+   npx wrangler secret put VAPID_JWK --env production     (the staging value, so subscribed phones stay subscribed)
+3. Copy what staging holds in its media bucket under media/ (uploaded
+   pictures) to eccm-media; og/ is a cache and rebuilds itself. The event
+   pictures under public/ deploy with the site.
+4. Deploy to the workers.dev address only and check: the front page, an
+   event, /docs, /api/index.php/v1/content/articles, the contact form.
+Report the account, ids and what was copied, with row counts against staging.
 ```
 
 ### Email sending from eccm.ee
