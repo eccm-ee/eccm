@@ -1,0 +1,47 @@
+{
+ "default": "main",
+ "channels": [
+  {
+   "name": "main",
+   "title": "UbuWeb",
+   "default": true,
+   "playlist": "/station.m3u8",
+   "now": "/now.json",
+   "schedule": "/schedule.json",
+   "playing": {
+    "programme": "uploads/ubu-schwitters-ursonate-largo.mp3",
+    "slot": 2,
+    "kind": "file",
+    "title": "Ursonate, zweiter Teil: Largo",
+    "who": "Kurt Schwitters",
+    "into": 100.018272
+   }
+  },
+  {
+   "name": "toonid",
+   "title": "Toonid",
+   "default": false,
+   "playlist": "/c/toonid/station.m3u8",
+   "now": "/c/toonid/now.json",
+   "schedule": "/c/toonid/schedule.json",
+   "playing": {
+    "programme": "uploads/test-tone-330hz.mp3",
+    "slot": 0,
+    "kind": "file",
+    "title": "Testtoon 330 Hz",
+    "who": null,
+    "into": 29.926868
+   }
+  },
+  {
+   "name": "live-test",
+   "title": "Otse proov",
+   "default": false,
+   "playlist": "/c/live-test/station.m3u8",
+   "now": "/c/live-test/now.json",
+   "schedule": "/c/live-test/schedule.json",
+   "playing": null,
+   "error": "the schedule is empty"
+  }
+ ]
+}

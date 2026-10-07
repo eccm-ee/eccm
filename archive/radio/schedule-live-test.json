@@ -1,0 +1,17 @@
+{
+ "channel": "live-test",
+ "epoch": 1790882821701,
+ "slots": [
+  {
+   "key": "mic-test",
+   "kind": "live",
+   "open": true,
+   "title": "Proovisaade"
+  }
+ ],
+ "rev": 9,
+ "at": 1790928025802,
+ "live": {
+  "mic-test": []
+ }
+}

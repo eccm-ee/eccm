@@ -268,7 +268,7 @@ try {
     // one card per kind of page, in Estonian, so nothing shows twice (asked 2026-10-02: "its messed up ... so
     // many dupes"): the list had every page in both languages, and the ECCM page's title is the centre's name,
     // the front page's own; every page still has its card, this shows the kinds
-    const SHOW = ['home', 'events', 'tallinn-1965', 'konkursid', 'liikmed', 'newsletter', 'radio'];
+    const SHOW = ['home', 'events', 'tallinn-1965', 'konkursid', 'liikmed', 'newsletter'];
     const pages = (await (await fetch('/og/g.json')).json()).filter((c) => c.lang === 'et' && SHOW.includes(c.key)).sort((a, b) => SHOW.indexOf(a.key) - SHOW.indexOf(b.key));
     pagesBox.className = 'og-rows';
     pagesBox.replaceChildren(...pages.map((c) => {

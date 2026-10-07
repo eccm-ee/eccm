@@ -25,8 +25,8 @@ Moving eccm.ee onto this site. Measured on 7 October 2026. Each task says who do
 | [Search basics](#search-basics) | Agent | To do |
 | [Login on admin and editing](#login-on-admin-and-editing) | Agent, ECCM adds the people | Before or right after cutover |
 | [Backups](#backups) | Agent | To do |
-| [Remove the radio, keep it restorable](#remove-the-radio-keep-it-restorable) | Agent | To do |
-| [Research pages to git history](#research-pages-to-git-history) | Agent | To do |
+| [Remove the radio, keep it restorable](#remove-the-radio-keep-it-restorable) | Agent | Done |
+| [Research pages to git history](#research-pages-to-git-history) | Agent | Done |
 | [Missing events, dates and times](#2-content) | ECCM | Ask |
 | [Import the archive](#import-the-archive) | Agent | To do |
 | [Copy /nan/](#copy-nan) | Agent | To do |
@@ -258,7 +258,7 @@ the local database. Deploy staging, push.
 
 ### Remove the radio, keep it restorable
 
-**Who:** agent. **State:** to do.
+**Who:** agent. **State:** done 7 October 2026, the tag `radio-last`, the restore steps in `archive/radio.md`.
 
 The radio is the station, the recorder, the files Worker and `/radio`. Removing its Durable Objects destroys their state, so the state is saved first. The 46 MB of audio stays in its bucket, free.
 
@@ -286,7 +286,7 @@ and the commit.
 
 ### Research pages to git history
 
-**Who:** agent. **State:** to do.
+**Who:** agent. **State:** done 7 October 2026, the tag `research-last`.
 
 `/type`, `/derive`, `/icons` and `/admin/research` are not needed by the site. `/logo`, `/ds` and `/social` stay in Admin.
 

@@ -283,31 +283,16 @@ export const siteSvg = (lang) => {
   // the mark alone at its foot: the title is already the centre's name, which the nameplate would say twice
   return cardSvg({ lang: l, title: SITE_NAME[l], meta: ['Pühavaimu 9, Tallinn'], ...SITE_CARD, plate: false });
 };
-// the radio's own card, the same shape in the wine, so a link to /radio is
-// told from the site's card at a glance (asked 2026-10-01: "rename station to
-// radio and make a social card for it"). On a pale wine ground with the wine
-// as its ink since 2026-10-02, when the deep wine ground read as a dark mode
-// ("raadio has dark mode bg", "social radio bg not fixed"); the ink is 12.96 : 1
-// on the ground and the second ink 6.57 : 1
-const RADIO_CARD = { ground: '#f4ecf0', ink: '#3b1d2b', ink2: '#6b4a5b' };
-const RADIO_NAME = { et: 'Raadio', en: 'Radio' };
-export const radioSvg = (lang) => {
-  const l = lang === 'en' ? 'en' : 'et';
-  return cardSvg({ lang: l, title: RADIO_NAME[l], meta: [SITE_NAME[l]], ...RADIO_CARD, plate: false });
-};
-export const radioPath = (lang) => `/og/radio-${lang === 'en' ? 'en' : 'et'}.png`;
-
 // ── a card for each page ─────────────────────────────────────────────────────
 // Every page that is not an event has a card of its own, made as an event's is
 // (asked 2026-10-02: "pages og cards same as event og cards"): the page's title,
 // the hall's address under it, the nameplate at the foot, on the site card's ground,
 // at an address with its version, and its Instagram text card beside it. The
-// site and radio cards above stay at their addresses for whatever still names
-// them. A page is a key: a fixed one below, or a text page's slug.
+// site card above stays at its address for whatever still names
+// it; the radio's card went with the radio on 2026-10-07. A page is a key: a fixed one below, or a text page's slug.
 export const PAGE_TITLES = {
   home: SITE_NAME,
   events: { et: 'Sündmused', en: 'Events' },
-  radio: RADIO_NAME,
   newsletter: { et: 'Uudiskiri', en: 'Newsletter' },
 };
 // Each page in a colour of its own and with its own words under the title

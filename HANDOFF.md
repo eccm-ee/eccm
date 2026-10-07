@@ -41,48 +41,31 @@ radio is only englih".
 
 What is true now, each one checkable on the workers.dev address:
 
-- **/admin** (English) has ten cards, four to a row: Events, Notices, Radio,
-  Files, Newsletter, Components (/ds), Logo, Icons, Social, Research
+- **The radio and the research pages left on 2026-10-07** (`archive/radio.md`, `archive/README.md`, tags `radio-last` and `research-last`): /stream, /radio, /station, /admin/files, /files/*, eccm-files' source, /type, /derive, /icons and /admin/research answer 404; the state is in `archive/radio/`.
+- **/admin** (English) has seven cards, four to a row: Docs, Events, Notices, Newsletter, Components (/ds), Logo, Social
   (`TOOLS` in `src/render/admin.mjs`). Admin pages carry a crumb trail:
   Admin, the parent, the page.
 - **Both front pages come from D1**, `/` and `/en/`, the events to come.
 - **Dark mode** follows the system, with one word in the footer cycling
   Auto, Light and Dark, kept in the browser and set before the first paint.
   A light event scheme carries its dark half as `light-dark()` pairs.
-- **/radio** plays three channels from eccm's own station at `/stream`
-  (UbuWeb, Toonid, Otse proov) and lists the kept live shows under Recordings.
-- **/admin/files** has Uploads (17, the programmes the channels play) and
-  Recordings (1, a 45 s test show). **Uploads are open to anyone** (asked:
-  "allow uploads for all for now we will fix it later"): `OPEN_UPLOADS: "on"`
-  in both `wrangler.jsonc` and `workers/files/wrangler.jsonc`. Set it off and
-  redeploy both, and the page asks for `FILES_TOKEN` again (in `.dev.vars`);
-  the caps, 500 MB a file and 4 GB and 40 uploads an hour, hold either way.
-  The gate the owner has not chosen: Cloudflare Access on `/admin*` and
-  `/files*`, the token, or open.
-- **/admin/research/radio**: common structure, then views and tools with who
-  is best at each as links to the page that shows it and a Why column, then
-  the providers' pages.
 - **/ds** has a Figures section: admin figures are the body face's tabular
   figures, Geist Mono weighed beside them and not used.
 - **Pictures on a workers.dev host are the originals**, since
   `/cdn-cgi/image/` exists only on the zone (`src/index.mjs`, `useTransforms`).
   On `eccm.positron.studio` they are resized as before.
-- **Buckets on this account**: `eccm-media-staging` (pictures, and the
-  recorder's parts under `radio/parts/` while a show is joined),
-  `eccm-files-staging` (`uploads/`, `recordings/`, `live/`, `index/`).
+- **Buckets on this account**: `eccm-media-staging` (pictures),
+  `eccm-files-staging` (the radio's audio, kept and unbound since 2026-10-07).
   `eccm-station-staging` and positron's `vain-archive` are deleted.
-- **Workers**: `eccm-staging` (the site, the station, the recorder),
-  `eccm-files-staging` (uploads, reached at `/files/*`). positron's
+- **Workers**: `eccm-staging` (the site), and `eccm-files-staging`, still
+  deployed with no route from the site since 2026-10-07. positron's
   `positron-station` serves only `GET /media/` for the MIM and kristjanjansen
   media, all its bucket holds since 2026-10-03; `positron-vain` is deleted.
 - **positron** is deployed at build `fdc5677-081701-752c`: crate is gone
   (`/crate/` 404), the station row links to eccm's /radio, click and und sit
   under timeline. Its build tree is committed (0bbbbcc).
 
-To check after a change here: `/stream/channels.json` names what each channel
-plays, `/radio/state.json` is the recorder's alarm and rows, and
-`node tools/upload.mjs` with `FILES_BASE` set puts a file through the whole
-upload.
+To check after a change here: an event page, `/` and `/admin` render, and `/radio` answers 404.
 
 ## 2026-10-02, afternoon and night: design pages, share cards, icons, dark mode
 

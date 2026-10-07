@@ -1,0 +1,70 @@
+{
+ "channel": "toonid",
+ "rev": 3,
+ "epoch": 1790881694386,
+ "now": 1791389098824,
+ "open": false,
+ "loop": 5633,
+ "total": 90.070204,
+ "station_time": 38.978868,
+ "playing": 1,
+ "slots": [
+  {
+   "i": 1,
+   "key": "uploads/test-tone-440hz-22khz-64k.mp3",
+   "title": "Testtoon 440 Hz, 22 kHz mono",
+   "kind": "file",
+   "start": 30.014694,
+   "dur": 30.014694,
+   "segments": 3,
+   "open": false,
+   "missing": false,
+   "clip": [
+    0,
+    30
+   ],
+   "who": null,
+   "loop": 5633,
+   "from": 1791389089860,
+   "to": 1791389119875
+  },
+  {
+   "i": 2,
+   "key": "uploads/test-tone-220hz.mp3",
+   "title": "Testtoon 220 Hz",
+   "kind": "file",
+   "start": 60.029388,
+   "dur": 30.040816,
+   "segments": 3,
+   "open": false,
+   "missing": false,
+   "clip": [
+    10,
+    30
+   ],
+   "who": null,
+   "loop": 5633,
+   "from": 1791389119875,
+   "to": 1791389149915
+  },
+  {
+   "i": 0,
+   "key": "uploads/test-tone-330hz.mp3",
+   "title": "Testtoon 330 Hz",
+   "kind": "file",
+   "start": 0,
+   "dur": 30.014694,
+   "segments": 3,
+   "open": false,
+   "missing": false,
+   "clip": [
+    0,
+    30
+   ],
+   "who": null,
+   "loop": 5634,
+   "from": 1791389149915,
+   "to": 1791389179930
+  }
+ ]
+}
