@@ -770,8 +770,10 @@
   .doc :is(ul, ol) { padding-inline-start: 1.25em; }
   .doc :is(ul, ol) > li + li { margin-block-start: 0.25lh; }
   .doc :not(pre) > code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em; overflow-wrap: anywhere; }
-  .doc-code { position: relative; background: light-dark(#eeeedd, oklch(0.24 0.012 105)); }
-  .doc-code pre { margin: 0; padding: var(--eccm-s-4); padding-inline-end: var(--eccm-s-12); overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
+  /* warmer than grey, less yellow than #eeeedd: the events' beige mixed with their neutral #ededed (asked: "more neutrale-r code bg") */
+  .doc-code { position: relative; background: light-dark(color-mix(in oklch, #eeeedd 40%, #ededed), oklch(0.24 0.005 105)); }
+  /* a long block scrolls inside itself past two thirds of the screen (asked: "limit max h of code block (2/3 screen?)") */
+  .doc-code pre { margin: 0; padding: var(--eccm-s-4); padding-inline-end: var(--eccm-s-12); max-block-size: 66dvh; overflow: auto; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
   .doc-copy { position: absolute; inset-block-start: var(--eccm-s-2); inset-inline-end: var(--eccm-s-2); inline-size: 2rem; border-color: transparent; }
   .doc-copy:hover, .doc-copy:focus-visible { border-color: currentColor; }
 }
