@@ -32,6 +32,7 @@ import { renderIcs } from './render/ics.mjs';
 import { itemsRoute } from './items.mjs';
 import { renderAdmin } from './render/admin.mjs';
 import { renderDocs, renderDoc } from './render/docs.mjs';
+import { backup } from './backup.mjs';
 import { newsletter, drain } from './newsletter.mjs';
 import { contact, CONTACT_PATHS } from './contact.mjs';
 import { ogRoute } from './og/route.mjs';
@@ -85,7 +86,7 @@ async function eventsList(env, lang, url, home = false) {
 // other language's row under this language's chrome and the fallback line
 async function textPage(env, lang, slug, url) {
   const db = env.DB;
-  const q = "SELECT t.* FROM page_text t JOIN page p ON p.id = t.page_id WHERE t.lang = ? AND t.slug = ? AND p.status = 'published'";
+  const q = "SELECT t.*, p.key AS page_key FROM page_text t JOIN page p ON p.id = t.page_id WHERE t.lang = ? AND t.slug = ? AND p.status = 'published'";
   let text = await db.prepare(q).bind(lang, slug).first();
   let fallback = false;
   if (!text) { text = await db.prepare(q).bind(OTHER[lang], slug).first(); fallback = !!text; }
@@ -164,7 +165,7 @@ export default {
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
   },
-  // the cron of wrangler.jsonc, every five minutes: the outbox's retry (src/mail.mjs); the radio's recorder
+  // the cron of wrangler.jsonc, every five minutes: the outbox's retry (src/mail.mjs) and the daily backup (src/backup.mjs); the radio's recorder
   // and the station's sweep ran here until 2026-10-07 (archive/radio.md)
-  async scheduled(event, env, ctx) { ctx.waitUntil(drain(env)); },
+  async scheduled(event, env, ctx) { ctx.waitUntil(backup(env, event.scheduledTime)); ctx.waitUntil(drain(env)); },
 };

@@ -356,6 +356,15 @@
   .page-text { max-inline-size: 48rem; margin-inline: auto; }
   .page-text .event-top { grid-template-columns: minmax(0, 1fr); }
   .page-text .prose { max-inline-size: none; }
+  /* the EU emblem under the Ulysses text, a group of its own two lines down, 3rem tall so the flag inside
+     it is over the 1cm the EU's rule sets (public/partners/SOURCE.md); the negative file in the dark theme */
+  .eu-emblem { --eccm-flow: 2lh; }
+  /* the files carry a transparent margin of 7 per cent of their height, pulled back so the flag's ink starts on the text's x */
+  .eu-emblem img { display: block; block-size: 3rem; inline-size: auto; margin-inline-start: calc(3rem * -0.07); }
+  .eu-emblem .eu-neg { display: none; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .eu-emblem .eu-pos { display: none; } :root:not([data-theme="light"]) .eu-emblem .eu-neg { display: block; } }
+  :root[data-theme="dark"] .eu-emblem .eu-pos { display: none; }
+  :root[data-theme="dark"] .eu-emblem .eu-neg { display: block; }
   /* the picture at its own size, its shape reserved from its own pixels so
      nothing moves while it arrives */
   .event-pic { max-inline-size: var(--eccm-measure); }

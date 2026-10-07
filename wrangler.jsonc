@@ -46,7 +46,10 @@
       // the uploaded pictures, one original per sha256 (src/media.mjs), created
       // 2026-09-30 with wrangler r2 bucket create eccm-media-staging
       // the radio's audio bucket, eccm-files-staging, is kept and unbound since 2026-10-07 (archive/radio.md)
-      "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "eccm-media-staging" }],
+      "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "eccm-media-staging" },
+        // the daily copy of every D1 table (src/backup.mjs), d1/YYYY-MM-DD.json, 30 days kept;
+        // created 2026-10-07 with wrangler r2 bucket create eccm-backup-staging
+        { "binding": "BACKUP", "bucket_name": "eccm-backup-staging" }],
       // Image Transformations are on for positron.studio since 2026-09-30
       // (dashboard, Images, Transformations, "This zone only"); "off" makes
       // src/render/pic.mjs draw the originals, as a zone without them needs

@@ -21,7 +21,17 @@ import { T, OTHER, page } from './chrome.mjs';
 
 export const pagePath = (lang, slug) => `/${lang}/${slug}`;
 
-// text: the page_text row shown, in the requested language or, when fallback
+// The Co-funded by the European Union emblem Creative Europe requires on the
+// Ulysses page, in the visitor's language, the negative file in the dark theme
+// (public/partners/SOURCE.md has the source and the size rule). A body cannot
+// carry a picture (md.mjs), so it is drawn here for the page key.
+const EU = {
+  et: { alt: 'Kaasrahastanud Euroopa Liit', w: 191 },
+  en: { alt: 'Co-funded by the European Union', w: 215 },
+};
+const euEmblem = (lang) => html`<p class="eu-emblem">${['', '-neg'].map((v) => html`<img class="eu${v || '-pos'}" src="/partners/eu-cofunded-${lang}${v}.png" alt="${EU[lang].alt}" width="${EU[lang].w}" height="48" loading="lazy" decoding="async">`)}</p>`;
+
+// text: the page_text row shown (with page_key when the caller read it), in the requested language or, when fallback
 // is true, in the other one; twin: { lang, slug } of the other language's row
 // when it exists, which in the fallback case is the row shown; editHref:
 // where the edit button goes, the row's own editor page unless the caller
@@ -49,6 +59,7 @@ export const renderPage = ({ lang, text, fallback, twin, origin, path, notice, e
     </header>
     <div class="prose flow" lang="${textLang}">
       ${raw(md(text.body, { video: true }))}
+      ${text.page_key === 'ulysses' ? euEmblem(lang) : ''}
     </div>
   </article>`;
   return page({ lang, title: text.title, alternate, canonical, alternates, body, notice, og: { key: text.slug, title: text.title, lang: textLang } });
