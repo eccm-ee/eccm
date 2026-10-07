@@ -116,6 +116,40 @@ const VAIN = [
   ['Which articles feed Väin (Joomla category 47) is unknown.', 'Ask him, and whether a webhook on publish should replace the poll.', 'Tarmo', 'Ask'],
 ];
 
+// privacy, cookies, consent and tracking (asked 2026-10-07: "eula? analtyocs consent? cookies? tracking?"),
+// read off the code that day: no Set-Cookie anywhere, localStorage only for the theme, no third-party script or font
+const PRIVACY = [
+  ['Cookies: does the site need a banner?', 'No. It sets no cookies. The only thing kept in the browser is the theme a visitor picks (Auto, Light, Dark), which is the visitor\u2019s own choice and needs no consent. Name it in the privacy notice.', 'Agent', 'Done'],
+  ['Analytics: none today.', 'Cloudflare Web Analytics: no cookies, no fingerprinting, counts only, so no consent and no banner. Never Google Analytics or the Meta pixel, which would need a consent banner.', 'ECCM turns it on', 'At cutover'],
+  ['Tracking by third parties.', 'None on the site: it loads no outside script, and its fonts are served from the site itself. Two old pages do: /nan/ loads Google Fonts, which sends every visitor\u2019s address to Google, and Konkursid embeds YouTube. Serve /nan/\u2019s fonts from the site when copying it. Embed YouTube from youtube-nocookie.com, or as a picture that loads the video on click.', 'Agent', 'To do'],
+  ['Personal data is collected: newsletter addresses, contact messages, push subscriptions.', 'A privacy notice in both languages, as GDPR article 13 asks: who is responsible (MTÜ Eesti Nüüdismuusika Keskus, 80603988, address, info@eccm.ee), what is collected and why, how long it is kept, Cloudflare as processor, the visitor\u2019s rights, and the complaint route to the Data Protection Inspectorate.', 'ECCM writes, agent builds', 'To do'],
+  ['Proof of consent.', 'The newsletter has double opt-in and a one-click unsubscribe, and keeps when each address was confirmed. Push asks the browser\u2019s own permission. Nothing is sent to anyone who did not ask.', 'Agent', 'Done'],
+  ['Processor agreement with Cloudflare.', 'Cloudflare\u2019s Data Processing Addendum is part of its terms, nothing to sign. Note it in the privacy notice.', 'ECCM', 'At account setup'],
+  ['EULA or terms of use.', 'A website needs no EULA, and terms of use are optional. Only if ECCM starts selling online.', 'Nobody', 'Decided'],
+  ['Accessibility.', 'Estonia\u2019s accessibility requirements bind public bodies, not an NGO, but funders may ask. Build to WCAG 2.2 AA anyway.', 'Agent', 'Ongoing'],
+];
+
+const link = (text, href) => html`<a href="${href}" rel="noopener">${text}</a>`;
+const LINKS = [
+  [link('eccm.ee', 'https://eccm.ee/'), 'The site today, Joomla at Virtuaal'],
+  [link('Staging', 'https://eccm-staging.kristjan-jansen.workers.dev/'), 'This site before cutover'],
+  [link('Business register', 'https://ariregister.rik.ee/est/company/80603988'), 'MTÜ Eesti Nüüdismuusika Keskus, 80603988'],
+  [link('Virtuaal.com', 'https://www.virtuaal.com/'), 'Registrar, DNS, hosting and mail for eccm.ee'],
+  [link('eccm.ee/nan', 'https://eccm.ee/nan/'), 'NAN, the page to copy'],
+  [link('Väin', 'https://github.com/tarmoj/radio1965'), 'U:\u2019s app and its server code'],
+  [link('Workers custom domains', 'https://developers.cloudflare.com/workers/configuration/routing/custom-domains/'), 'eccm.ee and www on the Worker at cutover'],
+  [link('Cloudflare for SaaS', 'https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/'), 'uus.eccm.ee before the zone move, if wanted'],
+  [link('Durable Object migrations', 'https://developers.cloudflare.com/durable-objects/reference/durable-objects-migrations/'), 'What removing the radio does to its stored data'],
+  [link('Email Service', 'https://developers.cloudflare.com/email-service/'), 'Sending the newsletter from eccm.ee'],
+  [link('Image transformations', 'https://developers.cloudflare.com/images/transform-images/'), 'Resizing pictures on the zone'],
+  [link('D1 Time Travel', 'https://developers.cloudflare.com/d1/reference/time-travel/'), 'Cloudflare\u2019s own database history'],
+  [link('Access', 'https://developers.cloudflare.com/cloudflare-one/policies/access/'), 'The login in front of /admin, /edit and /docs'],
+  [link('Turnstile', 'https://developers.cloudflare.com/turnstile/'), 'Keeping bots off the contact form'],
+  [link('Web Analytics', 'https://developers.cloudflare.com/web-analytics/'), 'Counting visits without cookies'],
+  [link('Cloudflare DPA', 'https://www.cloudflare.com/cloudflare-customer-dpa/'), 'The processor agreement'],
+  [link('Data Protection Inspectorate', 'https://www.aki.ee/'), 'Where a visitor can complain, named in the privacy notice'],
+];
+
 const ASK = [
   ['ECCM', 'Who holds the Virtuaal login. Whether mail stays at Virtuaal and who runs the mailboxes. A Cloudflare account of their own, and who pays $5 a month. Whether a subscriber list exists and may be imported. Whether Search Console is verified, and by whom. The privacy text.'],
   ['ECCM', 'The changed dates, the three times, Kuni kolm.'],
@@ -136,5 +170,7 @@ export const renderMigration = () => page({
   ${part('ECCM\u2019s account', fix('Account', ACCOUNT))}
   ${part('Domain and mail', fix('Domain and mail', DOMAIN))}
   ${part('Väin', fix('Väin', VAIN))}
-  ${part('To ask', two('To ask', 'Whom', 'What', ASK))}`,
+  ${part('Privacy and consent', fix('Privacy and consent', PRIVACY))}
+  ${part('To ask', two('To ask', 'Whom', 'What', ASK))}
+  ${part('Links', two('Links', 'Site', 'What', LINKS))}`,
 });

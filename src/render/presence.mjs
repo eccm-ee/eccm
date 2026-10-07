@@ -67,6 +67,28 @@ const MEASURE = [
   ['eccm.ee pages whose title names the organisation', '1 of 6'],
 ];
 
+const link = (text, href) => html`<a href="${href}" rel="noopener">${text}</a>`;
+const LINKS = [
+  [link('Instagram', 'https://www.instagram.com/eccm.ee/'), 'eccm.ee'],
+  [link('Facebook', 'https://www.facebook.com/eestinyydismuusikakeskus'), 'eestinyydismuusikakeskus'],
+  [link('YouTube', 'https://www.youtube.com/@ECCMjournal'), '@ECCMjournal, ECCM\u2019s or not'],
+  [link('Fienta organiser', 'https://fienta.com/et/o/16904'), 'Where ECCM\u2019s own tickets are sold'],
+  [link('EMIC', 'https://www.emic.ee/Uhingud-ja-liidud'), 'Estonian Music Information Centre, the directory'],
+  [link('Estonian Music Days', 'https://www.eestimuusikapaevad.ee/en/venue/estonian-centre-for-contemporary-music-eccm/'), 'The venue page'],
+  [link('tallinn.ee', 'https://www.tallinn.ee/et/muusikalinn/uudis/eesti-nuudismuusika-keskuse-asub-nuud-mustpeade-majas'), 'City of Music news on ECCM\u2019s move, 17.11.2022'],
+  [link('Music City Tallinn', 'https://muusikalinntallinn.ee/'), 'No mention of ECCM yet'],
+  [link('Ulysses Platform', 'https://ulysses-platform.eu/'), 'Names ECCM, no link'],
+  [link('Ensemble U:', 'https://uuu.ee/'), 'No link to eccm.ee'],
+  [link('Sound Plasma', 'https://sound-plasma.com/'), 'No link to eccm.ee'],
+  [link('Improtest', 'https://www.improtest.ee/'), 'No link to eccm.ee'],
+  [link('TUMA', 'https://www.enmtallinn.com/'), 'Links to eccm.ee'],
+  [link('Business register', 'https://ariregister.rik.ee/est/company/80603988'), 'The registry entry, 80603988'],
+  [link('Inforegister', 'https://www.inforegister.ee/80603988-EESTI-NUUDISMUUSIKA-KESKUS-MTU/'), 'The mirror that outranks eccm.ee for its own name'],
+  [link('Google Business Profile', 'https://business.google.com/'), 'The Maps card to claim'],
+  [link('Search Console', 'https://search.google.com/search-console'), 'Search after cutover'],
+  [link('Web Analytics', 'https://developers.cloudflare.com/web-analytics/'), 'Counting visits without cookies'],
+];
+
 export const renderPresence = () => page({
   wide: true, lang: 'en', title: 'Web presence.',
   body: html`  <p class="crumb"><a href="/docs">Docs</a></p>
@@ -79,5 +101,6 @@ export const renderPresence = () => page({
   ${part('Rhythm', html`<p class="note">About 3 hours a month at four events a month.</p>
     ${table({ label: 'Rhythm', cols: [{ label: 'When' }, { label: 'What', cls: 'main' }, { label: 'Where' }, { label: 'Minutes', cls: 'num' }], rows: RHYTHM })}`)}
   ${part('Baseline', table({ label: 'Baseline', cols: [{ label: 'Measure', cls: 'main' }, { label: '28 September', cls: 'num' }], rows: MEASURE }))}
-  ${part('To ask', html`<p>Which accounts does ECCM hold under its own name (Fienta, Facebook, Instagram, YouTube, Google, the domain), who holds each login, and is there a list of people you already write to?</p>`)}`,
+  ${part('To ask', html`<p>Which accounts does ECCM hold under its own name (Fienta, Facebook, Instagram, YouTube, Google, the domain), who holds each login, and is there a list of people you already write to?</p>`)}
+  ${part('Links', table({ label: 'Links', cols: [{ label: 'Site' }, { label: 'What', cls: 'main' }], rows: LINKS }))}`,
 });
