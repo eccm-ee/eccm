@@ -20,6 +20,7 @@ import { T, OTHER, page } from './chrome.mjs';
 import { dateLong, dateShort, clock, hasClock, mapsUrl } from './dates.mjs';
 import { offsetFor, CATEGORY } from './event.mjs';
 import { listImg } from './pic.mjs';
+import { jsonLd, organization } from './ld.mjs';
 
 export const LIST = { et: '/et/sundmused', en: '/en/events' };
 const eventPath = (l, slug) => (l === 'et' ? `/et/sundmused/${slug}` : `/en/events/${slug}`);
@@ -73,5 +74,5 @@ export const renderEvents = ({ lang, upcoming, past, origin, path, home = false 
       </ol>
     </section>` : ''}
   </article>`;
-  return page({ lang, title: home ? t.upcoming : t.events, alternate, canonical: origin + path, alternates, body, og: home ? { key: 'home', title: PAGE_TITLES.home[lang] } : { key: 'events', title: PAGE_TITLES.events[lang] } });
+  return page({ lang, title: home ? t.upcoming : t.events, alternate, canonical: origin + path, alternates, body, head: home ? jsonLd(organization(origin, lang)) : null, og: home ? { key: 'home', title: PAGE_TITLES.home[lang] } : { key: 'events', title: PAGE_TITLES.events[lang] } });
 };

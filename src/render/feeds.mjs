@@ -6,11 +6,9 @@
 // x-default on the Estonian, a thing with no twin listing only itself and
 // x-default. /et/feed.xml and /en/feed.xml carry the twenty newest published
 // events by created_at with a text row in that language, no fallback.
-// Nothing advertises them yet: no link rel=alternate in a head and no Sitemap
-// line in robots.txt, because the host is noindex and section 5 says both
-// wait for cutover; the routes exist, answer, and are named nowhere. The host
-// is the request's origin while this is staging only; at cutover it becomes
-// the configured origin, never request.url (section 4).
+// No link rel=alternate in a head names the feeds yet. robots.txt names the
+// sitemap (src/index.mjs), and every address in both is SITE_ORIGIN, the
+// configured origin, never request.url (section 4).
 import { T } from './chrome.mjs';
 import { LIST, HOME } from './events.mjs';
 import { pagePath } from './page.mjs';
