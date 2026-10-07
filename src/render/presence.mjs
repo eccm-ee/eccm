@@ -17,34 +17,34 @@ const fix = (label, rows) => table({
 });
 
 const SITE = [
-  ['Five of six eccm.ee pages are titled Avaleht, Home or Kontakt, without the organisation’s name. Registry mirrors outrank the site for its own name.', 'Every title ends in the name: event title and ECCM, page name and ECCM.', 'Kristjan', 'Done here'],
-  ['The name is spelled four ways: for and of, centre and center, upper and lower case.', 'One spelling per language: Eesti Nüüdismuusika Keskus, Estonian Centre for Contemporary Music, the one the City and Estonian Music Days use. og:site_name the same on every page.', 'ECCM decides, Kristjan applies', 'og:site_name differs between pages'],
-  ['No page description and no structured data. Search engines read the contact page’s organisation as a Person with a name in the fax field.', 'A description per page from its summary. Organization data on the front page with the registry code 80603988, the venue, and links to Facebook, Instagram, Fienta and EMIC. MusicEvent data on every event.', 'Kristjan', 'To do'],
-  ['Instagram is linked from nowhere, Facebook from one page.', 'Both in the footer and on the contact page.', 'Kristjan', 'Done here'],
-  ['No way to follow the site: no newsletter, the RSS feed advertised nowhere.', 'Newsletter with double opt-in, feeds in the head, a calendar feed per language.', 'Kristjan', 'Built, sends after Workers Paid'],
-  ['The contact page prints a person’s mobile number. info@eccm.ee appears only on /nan/.', 'The contact form, info@eccm.ee, postal and venue addresses kept apart, the feeds named for calendars and listings.', 'Kristjan', 'To do'],
-  ['A search for Nordic Analog Network finds a darkroom photography network, not ECCM’s NAN.', 'A title and description on /nan/ that say it is an ECCM initiative, and a link from the about page.', 'Kristjan', 'To do'],
+  ['Five of six eccm.ee pages are titled Avaleht, Home or Kontakt, without the organisation’s name. Registry mirrors outrank the site for its own name.', 'Every title ends in the name: event title and ECCM, page name and ECCM.', 'Agent', 'Done here'],
+  ['The name is spelled four ways: for and of, centre and center, upper and lower case.', 'One spelling per language: Eesti Nüüdismuusika Keskus, Estonian Centre for Contemporary Music, the one the City and Estonian Music Days use. og:site_name the same on every page.', 'ECCM decides, agent applies', 'og:site_name differs between pages'],
+  ['No page description and no structured data. Search engines read the contact page’s organisation as a Person with a name in the fax field.', 'A description per page from its summary. Organization data on the front page with the registry code 80603988, the venue, and links to Facebook, Instagram, Fienta and EMIC. MusicEvent data on every event.', 'Agent', 'To do'],
+  ['Instagram is linked from nowhere, Facebook from one page.', 'Both in the footer and on the contact page.', 'Agent', 'Done here'],
+  ['No way to follow the site: no newsletter, the RSS feed advertised nowhere.', 'Newsletter with double opt-in, feeds in the head, a calendar feed per language.', 'Agent', 'Built, sends after Workers Paid'],
+  ['The contact page prints a person’s mobile number. info@eccm.ee appears only on /nan/.', 'The contact form, info@eccm.ee, postal and venue addresses kept apart, the feeds named for calendars and listings.', 'Agent', 'To do'],
+  ['A search for Nordic Analog Network finds a darkroom photography network, not ECCM’s NAN.', 'A title and description on /nan/ that say it is an ECCM initiative, and a link from the about page.', 'Agent', 'To do'],
 ];
 
 const TICKETS = [
   [html`<a href="https://fienta.com/et/o/16904" rel="noopener">Fienta’s organiser page</a> is filed under a staff member’s name, lists no events, has the address twice with two postcodes and links http://eccm.ee.`, 'Rename it Eesti Nüüdismuusika Keskus, the mark as picture, https://eccm.ee, one address, two lines of description, the public page on.', 'ECCM', 'Ask'],
-  ['The site never links the organiser page.', 'Link it from the footer and the tickets line. Read each event’s price from Fienta’s own data.', 'Kristjan', 'After Fienta is fixed'],
+  ['The site never links the organiser page.', 'Link it from the footer and the tickets line. Read each event’s price from Fienta’s own data.', 'Agent', 'After Fienta is fixed'],
   ['Piletilevi and Piletikeskus list ECCM as a venue, through Estonian Music Days.', 'Nothing to claim there.', 'Nobody', 'Decided'],
 ];
 
 const SOCIAL = [
-  ['Instagram (213 followers, 22 posts) works well as it is, but every post is made by hand, outside the brand’s type and colours.', 'Instagram stays its own place. The site gives it material: each event’s share card and 4:5 carousel made automatically, an in-brand editor for any other post (text cards, a picture cropped and set in the brand’s type), and the caption ready to copy.', 'Kristjan', 'Event cards done, editor to do'],
+  ['Instagram (213 followers, 22 posts) works well as it is, but every post is made by hand, outside the brand’s type and colours.', 'Instagram stays its own place. The site gives it material: each event’s share card and 4:5 carousel made automatically, an in-brand editor for any other post (text cards, a picture cropped and set in the brand’s type), and the caption ready to copy.', 'Agent', 'Event cards done, editor to do'],
   ['Facebook’s website field and Instagram’s bio link do not point at the site.', 'Both point at eccm.ee after cutover.', 'ECCM', 'At cutover'],
   ['YouTube @ECCMjournal may or may not be ECCM’s.', 'One look while logged in. Unlist it if empty, link recordings from events if not.', 'ECCM', 'Ask'],
-  ['Of seven member and partner sites, only TUMA links to eccm.ee.', 'One email each from ECCM: City of Music, Ulysses Platform, Ensemble U:, Sound Plasma, Improtest.', 'ECCM, text by Kristjan', 'To do'],
+  ['Of seven member and partner sites, only TUMA links to eccm.ee.', 'One email each from ECCM: City of Music, Ulysses Platform, Ensemble U:, Sound Plasma, Improtest.', 'ECCM', 'To do'],
 ];
 
 const LISTINGS = [
-  ['No Wikipedia article in either language.', 'An Estonian article from published sources, then English, and a Wikidata item with the registry code. ECCM does not write it, by Wikipedia’s conflict rule: a volunteer or the article-for-creation route.', 'Kristjan drafts', 'To do'],
+  ['No Wikipedia article in either language.', 'An Estonian article from published sources, then English, and a Wikidata item with the registry code. ECCM does not write it, by Wikipedia’s conflict rule: a volunteer or the article-for-creation route.', 'ECCM, agent drafts', 'To do'],
   ['No Google Maps card is known.', 'Claim or create it at Pühavaimu 9 as Eesti Nüüdismuusika Keskus. Verification comes by post or phone.', 'ECCM', 'Ask'],
-  ['Search Console is not set up for the new site.', 'A property verified by DNS, the sitemap submitted, the old one kept until the redirects are crawled.', 'Kristjan with DNS', 'At cutover'],
-  ['No measurement at all.', 'Cloudflare Web Analytics: free, no cookie, so no banner. Subscribers counted by the Worker, no tracking pixel.', 'Kristjan', 'At cutover'],
-  ['EMIC and Estonian Music Days already list ECCM.', 'Nothing to do but check their link after cutover.', 'Kristjan', 'At cutover'],
+  ['Search Console is not set up for the new site.', 'A property verified by DNS, the sitemap submitted, the old one kept until the redirects are crawled.', 'ECCM', 'At cutover'],
+  ['No measurement at all.', 'Cloudflare Web Analytics: free, no cookie, so no banner. Subscribers counted by the Worker, no tracking pixel.', 'Agent', 'At cutover'],
+  ['EMIC and Estonian Music Days already list ECCM.', 'Nothing to do but check their link after cutover.', 'ECCM', 'At cutover'],
 ];
 
 // the rhythm one part-time person can keep, the site the source of every other surface
@@ -71,7 +71,7 @@ export const renderPresence = () => page({
   wide: true, lang: 'en', title: 'Web presence.',
   body: html`  <p class="crumb"><a href="/docs">Docs</a></p>
   <h1>Web presence</h1>
-  <p class="note">The site as the one source, Instagram and Facebook fed from it, nothing new opened. Read on 28 September 2026, the State column on 7 October.</p>
+  <p class="note">The site as the one source, Instagram and Facebook given material from it, nothing new opened. Read on 28 September 2026, the State column on 7 October.</p>
   ${part('The site', fix('The site', SITE))}
   ${part('Tickets', fix('Tickets', TICKETS))}
   ${part('Social', fix('Social', SOCIAL))}
