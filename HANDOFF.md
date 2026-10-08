@@ -1,4 +1,4 @@
-# Handoff, 2026-10-07, the eleventh day of the eccm repository
+# Handoff, 2026-10-08, the twelfth day of the eccm repository
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
 committed on `main` of **https://github.com/kristjanjansen/eccm**, private,
@@ -47,9 +47,21 @@ it is a test too, events to the end of the year are entered there.
   the research pages removed (tags `radio-last`, `research-last`); a YouTube
   click-to-play player from trip; `.badge` for status cells; text pages and
   docs in one centred 48rem column; next events in three columns on a desk.
-- **Running when this was written**: the archive import from eccm.ee's public
-  pages (about 190 past events since 2024-09 plus the two TUMA AFEKT dates and
-  Feldman's English text), as seed files 9 and 10.
+- **Later the same evening**: the archive is in staging (60 past events from
+  22.09.2024 with 36 pictures, `data/seed-step9-upcoming.sql` and
+  `seed-step10-archive-*.sql`, applied remote; 92 events in all, every row of
+  eccm.ee's lists matched, the TUMA AFEKT dates and Feldman's English with
+  them). **Väin keeps working unchanged after cutover**: `src/joomla.mjs`
+  answers `/api/index.php/v1/content/articles` and `/articles/{id}` in Joomla's
+  shape from published notices ticked Väin (category 47), numbered from 1000
+  and never reused, each with a public page at `/teated/{n}`; checked with
+  Tarmo's own importer functions. Docs: a contents table built from each doc's
+  own sections and task lines, finished tasks folded, every title a link,
+  uniform badges, each question to ECCM or Tarmo inside its task.
+- **Next, agent work that can start without ECCM**: the pass-through of
+  `/radio1965/*` and `/radio/streams/*` to the old server behind a setting off
+  until cutover; ECCM's exact dashboard steps for Cloudflare Access on /admin,
+  /edit, /items and /docs. Everything else in `docs/migration.md` waits on ECCM.
 - **Owed by ECCM**: the Virtuaal login and a cPanel Full Backup, a Cloudflare
   account with Workers Paid, info@eccm.ee verified as a destination address (or
   Paid) so contact mail arrives, Turnstile keys if wanted, the team's changed
