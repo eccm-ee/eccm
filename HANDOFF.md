@@ -66,8 +66,10 @@ it is a test too, events to the end of the year are entered there.
   account with Workers Paid, info@eccm.ee verified as a destination address (or
   Paid) so contact mail arrives, Turnstile keys if wanted, the team's changed
   dates and the three times, approval of the privacy text, Tarmo's answers.
-- **Loose ends, the owner's call**: the `eccm-files-staging` Worker is still
-  deployed with no route; positron's station row links to /radio, now 404.
+- **Loose end**: the `eccm-files-staging` Worker is still deployed with no
+  route, its deletion agreed 2026-10-08 and left for the owner to run (the
+  classifier refused it). positron's station row is retired since 2026-10-08
+  (positron `cff8baf`, deployed at `d881601-090801-76c7`).
 
 ## 2026-10-03: the Estonian front page, the event page, the seeded rows
 
@@ -122,7 +124,7 @@ What is true now, each one checkable on the workers.dev address:
   `positron-station` serves only `GET /media/` for the MIM and kristjanjansen
   media, all its bucket holds since 2026-10-03; `positron-vain` is deleted.
 - **positron** is deployed at build `fdc5677-081701-752c`: crate is gone
-  (`/crate/` 404), the station row links to eccm's /radio, click and und sit
+  (`/crate/` 404), the station row is retired (2026-10-08), click and und sit
   under timeline. Its build tree is committed (0bbbbcc).
 
 To check after a change here: an event page, `/` and `/admin` render, and `/radio` answers 404.
