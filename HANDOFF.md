@@ -94,8 +94,8 @@ radio is only englih".
   the 12 station files and their 12 index files (each kept in
   `eccm-files-staging/uploads/` at the same size), leaving 99 objects, all
   `mimproject/`, `mimproject-images/` and `kristjanjansen/`.
-- Seen and left: event 5 (the second Gestures evening) carries event 1's
-  ticket link and credits; U:'s 23:42 on 29.12 is still as eccm.ee types it.
+- Seen and left: U:'s 23:42 on 29.12 is still as eccm.ee types it. Event 5's
+  ticket link and credits are right (checked 2026-10-08, below).
 
 ## Where it stands, 2026-10-07
 
@@ -718,8 +718,10 @@ ornament; both lines of a tagline pair are centred or both start on the E.
   section 7. Then the outlines for whichever wins; a true 16 px mark; a
   maskable Android icon; the bios migration when that plan is read.
 - **Konkursid** holds the intro and a link to the full call on eccm.ee.
-- **The second Gestures evening (event 5)** carries event 1's ticket link and
-  credits, copied in seed-step4; its own names are only in its title.
+- **The second Gestures evening (event 5) is right as it is**, checked
+  2026-10-08: its Fienta page (`...-200456`) sells 11.10 for Hõbepappel,
+  Kannike and Vares though its slug names the first trio, and eccm.ee lists
+  the same six artists and crew on both evenings.
 - **Not done on the radio**: putting a kept show back into a channel's
   running order. /radio stays English only (answered 2026-10-03).
 - **UbuWeb's fair-use stance is not a licence**: settle the rights before the
@@ -755,6 +757,6 @@ centre, so use `1 0` for the top of a page.
 
 Everything is pushed. `BACKLOG.md` has every ask verbatim with what was
 measured, the open ones at the top. The candidates now: the gate for /admin
-and /files, event 5's ticket and credits, and the open list above. Agents
+and /files, and the open list above. Agents
 report and do not commit; the session commits by path, deploys and pushes,
 and a deploy ships the working tree, so `git status` before every deploy.
