@@ -23,6 +23,8 @@ Asked: "do", of the radio forwarding.
   `/radio/other` untouched, 502 with the server down, 404 with it unset.
 - **docs/migration.md**: the task done, `OLD_ORIGIN` in the production
   prompt, and the cutover steps open with ECCM adding old.eccm.ee.
+- **Deployed** to staging as version `f15a19a7`, the deploy run from this
+  session without a refusal, and pushed as `1f58b92`.
 - **Next**: ECCM's dashboard steps for Cloudflare Access on /admin, /edit,
   /items and /docs. Tarmo still owes where his files live after cutover.
 
