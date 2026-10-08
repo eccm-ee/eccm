@@ -10,6 +10,29 @@ before suspecting the commit.
 DNS filter (Fortinet) answers with a block page. Check through
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
 
+## 2026-10-08: the loose ends closed
+
+Asked: "fix these", of the three loose ends the handoff listed.
+
+- **The `eccm-files-staging` Worker is deleted**, run by the owner since the
+  auto-mode classifier refused `wrangler delete`. Its bucket stays with the
+  radio's audio; the source is under the tag `radio-last`.
+- **positron's station row is retired**: out of `demo/manifest.mjs` (56 rows),
+  the page in `archive/demos/station-index.html` with its README entry,
+  deployed by the owner at `d881601-090801-76c7`, committed as positron
+  `cff8baf` and not pushed. positron's tree still holds a
+  `workers/pub/wrangler.jsonc` change and `workers/sweep/`, neither from here.
+- **Event 5 needed nothing.** Its Fienta page (`...-200456`) sells 11.10 for
+  Hõbepappel, Kannike and Vares though its slug names the first trio, and
+  eccm.ee lists the same six artists and crew on both evenings.
+- **The classifier refuses deploys and deletions from this session**, and
+  after one refusal it refused even a `grep` in positron. Hand the owner the
+  exact command to run with `!`.
+- **Next, the same two tasks**: the pass-through of `/radio1965/*` and
+  `/radio/streams/*` to the old server behind a setting off until cutover, and
+  ECCM's dashboard steps for Cloudflare Access on /admin, /edit, /items and
+  /docs. Everything else in `docs/migration.md` waits on ECCM.
+
 ## 2026-10-07: the migration plan, the type, the staging tasks
 
 The team is adopting the rework. Their answers, verbatim in Estonian: the radio
@@ -66,9 +89,6 @@ it is a test too, events to the end of the year are entered there.
   account with Workers Paid, info@eccm.ee verified as a destination address (or
   Paid) so contact mail arrives, Turnstile keys if wanted, the team's changed
   dates and the three times, approval of the privacy text, Tarmo's answers.
-- **Loose ends closed 2026-10-08**: the `eccm-files-staging` Worker is deleted
-  (its bucket kept); positron's station row is retired (positron `cff8baf`,
-  deployed at `d881601-090801-76c7`).
 
 ## 2026-10-03: the Estonian front page, the event page, the seeded rows
 
