@@ -66,10 +66,9 @@ it is a test too, events to the end of the year are entered there.
   account with Workers Paid, info@eccm.ee verified as a destination address (or
   Paid) so contact mail arrives, Turnstile keys if wanted, the team's changed
   dates and the three times, approval of the privacy text, Tarmo's answers.
-- **Loose end**: the `eccm-files-staging` Worker is still deployed with no
-  route, its deletion agreed 2026-10-08 and left for the owner to run (the
-  classifier refused it). positron's station row is retired since 2026-10-08
-  (positron `cff8baf`, deployed at `d881601-090801-76c7`).
+- **Loose ends closed 2026-10-08**: the `eccm-files-staging` Worker is deleted
+  (its bucket kept); positron's station row is retired (positron `cff8baf`,
+  deployed at `d881601-090801-76c7`).
 
 ## 2026-10-03: the Estonian front page, the event page, the seeded rows
 
@@ -119,8 +118,8 @@ What is true now, each one checkable on the workers.dev address:
 - **Buckets on this account**: `eccm-media-staging` (pictures),
   `eccm-files-staging` (the radio's audio, kept and unbound since 2026-10-07).
   `eccm-station-staging` and positron's `vain-archive` are deleted.
-- **Workers**: `eccm-staging` (the site), and `eccm-files-staging`, still
-  deployed with no route from the site since 2026-10-07. positron's
+- **Workers**: `eccm-staging` (the site) alone; `eccm-files-staging` was
+  deleted 2026-10-08, its source under the tag `radio-last`. positron's
   `positron-station` serves only `GET /media/` for the MIM and kristjanjansen
   media, all its bucket holds since 2026-10-03; `positron-vain` is deleted.
 - **positron** is deployed at build `fdc5677-081701-752c`: crate is gone
