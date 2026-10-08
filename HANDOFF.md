@@ -10,6 +10,22 @@ before suspecting the commit.
 DNS filter (Fortinet) answers with a block page. Check through
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
 
+## 2026-10-08: Tarmo's files pass through to the old server
+
+Asked: "do", of the radio forwarding.
+
+- **`src/passthrough.mjs`** sends `/radio1965`, `/radio1965/*` and
+  `/radio/streams/*` to `OLD_ORIGIN` whole (method, headers, body, Range,
+  redirects unfollowed), a 502 when it does not answer. Unset everywhere, so
+  those paths 404 as before; production gets `https://old.eccm.ee` at cutover.
+- **Checked** under `wrangler dev` against a stand-in server: query string,
+  a 206 for Range, a POST body, a 302 passed on, `/radio1965x` and
+  `/radio/other` untouched, 502 with the server down, 404 with it unset.
+- **docs/migration.md**: the task done, `OLD_ORIGIN` in the production
+  prompt, and the cutover steps open with ECCM adding old.eccm.ee.
+- **Next**: ECCM's dashboard steps for Cloudflare Access on /admin, /edit,
+  /items and /docs. Tarmo still owes where his files live after cutover.
+
 ## 2026-10-08: the loose ends closed
 
 Asked: "fix these", of the three loose ends the handoff listed.

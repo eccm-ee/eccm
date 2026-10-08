@@ -353,8 +353,8 @@ eccm.ee until ECCM says the zone is active.
 
 1. In wrangler.jsonc env.production: ECCM's account_id; vars SITE_ORIGIN
    https://eccm.ee, IMAGE_TRANSFORMS on, MAIL_FROM "ECCM <uudiskiri@eccm.ee>",
-   CONTACT_TO info@eccm.ee, VAPID_PUBLIC and VAPID_SUB as in staging; no
-   NOINDEX; the D1, R2 (MEDIA, BACKUP) and Durable Object bindings as staging
+   CONTACT_TO info@eccm.ee, VAPID_PUBLIC and VAPID_SUB as in staging,
+   OLD_ORIGIN https://old.eccm.ee once ECCM has added that alias; no NOINDEX; the D1, R2 (MEDIA, BACKUP) and Durable Object bindings as staging
    has them; routes eccm.ee and www.eccm.ee as custom domains, commented out
    until cutover.
 2. Run, checking each:
@@ -427,11 +427,12 @@ DMARC is set to reject, so one wrong mail record bounces everything. Every recor
 
 **Who:** ECCM, with the agent ready. **State:** to do.
 
-1. Delete the A record for eccm.ee and the CNAME for www.
-2. Deploy production, which attaches eccm.ee and www.eccm.ee to the Worker.
-3. Turn on Image Transformations for the zone.
-4. Check: the front page, an event, an old Joomla address, the newsletter sign-up.
-5. To go back: recreate the A and CNAME records. Minutes.
+1. Add old.eccm.ee in cPanel and in DNS, pointing at the old server, for [Tarmo's files](#his-files-after-cutover).
+2. Delete the A record for eccm.ee and the CNAME for www.
+3. Deploy production, which attaches eccm.ee and www.eccm.ee to the Worker.
+4. Turn on Image Transformations for the zone.
+5. Check: the front page, an event, an old Joomla address, the newsletter sign-up, a file under /radio/streams.
+6. To go back: recreate the A and CNAME records. Minutes.
 
 ### After
 
@@ -460,15 +461,22 @@ The Worker answers the same `/api/index.php/v1` calls in the same shape, so Tarm
 
 ### His files after cutover
 
-**Who:** agent, ECCM adds the alias in cPanel. **State:** to do.
+**Who:** agent, ECCM adds the alias in cPanel. **State:** done in `src/passthrough.mjs`, on once `OLD_ORIGIN` is set at cutover.
 
 **Ask Tarmo:** where his `/radio1965` and `/radio/streams` files should live after cutover.
 
-The old server keeps a second name, old.eccm.ee, that points straight at it, and the Worker passes `/radio1965/*` and `/radio/streams/*` through to it until he moves them.
+The old server keeps a second name, old.eccm.ee, that points straight at it, and the Worker passes `/radio1965/*` and `/radio/streams/*` through to it until he moves them. The request goes on whole, so seeking in a recording and saving on his editor page work. Unset, the paths answer 404, as on staging.
 
-```js
-if (p.startsWith('/radio1965/') || p.startsWith('/radio/streams/'))
-  return fetch(new URL(p + url.search, 'https://old.eccm.ee'), request);
+```jsonc
+// wrangler.jsonc, env.production.vars, at cutover
+"OLD_ORIGIN": "https://old.eccm.ee"
+```
+
+**Check**
+
+```sh
+curl -sI https://old.eccm.ee/radio1965/contributor   # 200 from the old server, before cutover
+curl -sI https://eccm.ee/radio1965/contributor       # the same after it
 ```
 
 ## Privacy and consent

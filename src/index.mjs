@@ -39,6 +39,7 @@ import { newsletter, drain } from './newsletter.mjs';
 import { contact, CONTACT_PATHS } from './contact.mjs';
 import { ogRoute } from './og/route.mjs';
 import { legacy } from './redirects.mjs';
+import { passthrough } from './passthrough.mjs';
 export { Items } from './items.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
@@ -158,6 +159,8 @@ const routes = {
     if (p.startsWith('/api/index.php/')) { const out = await joomlaApi(request, env, url); if (out) return out; }
     // eccm.ee's old Joomla addresses: 301, 410, or the 404 with the miss logged (src/redirects.mjs)
     { const out = await legacy(request, env, url, ctx); if (out) return out; }
+    // Tarmo's /radio1965/* and /radio/streams/* from the old server, only once OLD_ORIGIN is set (src/passthrough.mjs)
+    { const out = await passthrough(request, env, url); if (out) return out; }
     // the radio (/stream, /files/*, /admin/files, /radio, /station) went 2026-10-07, restorable from the tag radio-last (archive/radio.md)
     // the uploaded pictures from R2, /media/{sha256}.{ext} (src/media.mjs)
     if (p.startsWith('/media/')) { const out = await serveMedia(env, p); if (out) return out; }
