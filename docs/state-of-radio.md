@@ -103,7 +103,11 @@ The Instagram visuals vary the texture per person within one system, which is th
 
 - **Flow against documentation.** The concept wants much of the programme gone after it airs. Üle Heli, ECCM and funders will want recordings. Väin records everything by default. So each show is marked **kept**, recorded and playable afterwards, or **once**, live only, and the page says which.
 - **An open identity against being findable.** The look can vary. The names must not.
-- **Lendable needs groundwork.** An open licence, a server that is not a volunteer's box, someone who moderates, and someone who pays.
+- **Lending Väin needs four things that do not exist yet:**
+  - **A licence.** Tarmo's code has none, so legally nobody else may use it. An open licence from him fixes that.
+  - **A server.** Väin runs on `live.uuu.ee`, which the ensemble U: lends for free. Other communities need a server someone has agreed to keep running.
+  - **Someone who moderates.** Anyone who signs up can broadcast and post. Someone has to answer complaints and ban when needed.
+  - **Someone who pays** for the server, the domain and the app store accounts.
 - **ECCM's place.** The concept does not name ECCM, the app thanks it, the public side hides it. Say once how they relate.
 
 ## Next steps
