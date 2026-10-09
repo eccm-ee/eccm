@@ -14,12 +14,18 @@ import { badge, toneOf } from './badge.mjs';
 import migration from '../../docs/migration.md';
 import presence from '../../docs/presence.md';
 import ici from '../../docs/ici.md';
+import stateOfRadio from '../../docs/state-of-radio.md';
+import vainTechNotes from '../../docs/vain-tech-notes.md';
 
 const DOCS = {
   migration: { md: migration, desc: 'Moving eccm.ee here: decisions, the order, every task with its prompt or steps.' },
   presence: { md: presence, desc: 'The site, tickets, social and listings: what is wrong today and what fixes it.' },
   // written by the positron session as src/render/ici.mjs, made Markdown 2026-10-07 ("update /docs/ici to md")
   ici: { md: ici, desc: 'Albert Saprykin\u2019s ici as a session on V\u00e4in, and who does what.' },
+  // written 2026-10-09 ("write it to eccm docs and gimem link"), from the analysis of the spinoffs
+  'state-of-radio': { md: stateOfRadio, desc: 'Radio Tallinn 1965 and V\u00e4in: what is out there, how it reads, and the plans for \u00dcle Heli.' },
+  // split from state-of-radio 2026-10-09 ("split it to v2in tech notes doc"), read from V\u00e4in's code at 4f9cecb
+  'vain-tech-notes': { md: vainTechNotes, desc: 'V\u00e4in\u2019s server read for Tarmo: what to change for the festival and after.' },
 };
 
 const slug = (s) => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
