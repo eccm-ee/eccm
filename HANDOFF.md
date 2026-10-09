@@ -1,4 +1,4 @@
-# Handoff, 2026-10-08, the twelfth day of the eccm repository
+# Handoff, 2026-10-09, the thirteenth day of the eccm repository
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
 committed on `main` of **https://github.com/kristjanjansen/eccm**, private,
@@ -6,9 +6,46 @@ pushed. Push per CLAUDE.md and switch the account back. GitHub refused pushes
 with a 500 for about ten minutes on 2026-10-07 and then took them; retry
 before suspecting the commit.
 
-**This laptop cannot reach `eccm.positron.studio` or `positron.studio`**: its
-DNS filter (Fortinet) answers with a block page. Check through
+**This laptop could not reach `eccm.positron.studio` or `positron.studio`** on
+earlier days (its Fortinet DNS filter answered with a block page); on
+2026-10-09 `curl` reached it. If it blocks again, check through
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
+
+## 2026-10-09: the radio spinoffs read, two docs, no share image on tools
+
+Asked: "do the analysis of eccm spinoffs: radio1965 and then v2in", then a
+long run of edits, then "deploy and gimme links".
+
+- **/docs/state-of-radio** (`docs/state-of-radio.md`): Raadio Tallinn 1965 and
+  Väin read against the team's concept "tulevik, mida ei tulnud" (16 August,
+  pasted in chat, not stored): two equal branches, Raadio Tallinn 1965 the
+  local web platform, Väin the open lendable app. Where reality differs, what
+  is out there (Linktree, Instagram, Vimeo, Substack, TestFlight, the feed),
+  the three marks at original, 60 and 16 px, audiences, next steps: the Üle
+  Heli festival 23 to 25 October first (`yleheli` and guest channels), Väin as
+  an open space, an experiment with Väin on the web, Raadio Tallinn 1965's
+  platform with three addresses (`raadiotallinn1965.ee`,
+  `raadiotallinn1965.väin.ee`, `väin.ee/raadiotallinn1965`).
+- **/docs/vain-tech-notes** (`docs/vain-tech-notes.md`): Väin's server read at
+  `4f9cecb` for Tarmo, before, when and after `eccm.ee` moves: who may write
+  (a patch), channels from a file, per-channel defaults in the hook, one push
+  topic, https for audio through nginx, times without a zone, what depends on
+  `eccm.ee`'s old hosting. The write-route note is worded as a recommendation;
+  the user sent both links to Maria Hansar for Tarmo.
+- **Pictures** (the marks sheet and the Instagram sheet) are in R2
+  `eccm-media-staging` under `media/{sha256}`, local and remote, not in git;
+  taken from the team's shared Drive folder `Raadio_Tallinn_1965`.
+- **Registry** (`whois.tld.ee/v1/{domain}`): `väin.ee`, `raadiotallinn1965.ee`,
+  `radiotallinn1965.ee` free; `vain.ee` taken until 2029-11-09.
+- **No share image on admin and docs pages** (`src/render/chrome.mjs`: no
+  `siteOg` when `wide`), asked "lets not have them for amdin and docs".
+- **Joomla shim checked again**: Väin's importer unchanged since 11 September,
+  /items needs nothing.
+- **Deployed** to staging (last version `e0052130`) and pushed; the 375 and
+  1280 shots of the docs were skipped at the owner's word.
+- **Next**: the owner's call on what to send ECCM and Tarmo; nothing built for
+  the festival yet. Memories `radio-spinoffs` and `docs-no-formula` hold the
+  context and the docs rule.
 
 ## 2026-10-08: Tarmo's files pass through to the old server
 
