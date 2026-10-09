@@ -18,6 +18,8 @@ export const origin = () => ORIGIN;
 // logo (asked 2026-10-01: "make eccm default social card", "just original
 // logo"): a link to such a page used to preview as whatever picture a scraper
 // found, a crop of the footer's ULYSSES mark
+// admin and docs pages (every wide page) name none, so a shared link to a tool shows its title alone
+// (asked 2026-10-09: "lets not have them for amdin and docs")
 // og: { key, title, lang } names the page's own card (src/og/card.mjs, pageInput), the site card otherwise; lang
 // is the card's when it differs from the page's, a text page shown in its other language
 const siteOg = (lang, title, og, canonical) => html`<meta property="og:type" content="website">
@@ -105,7 +107,7 @@ ${raw(THEME_HEAD)}
 <link rel="stylesheet" href="/eccm.css">
 <link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 ${head || ''}
-${String(head || '').includes('og:image') ? '' : siteOg(lang, `${title} ECCM`, og, canonical)}
+${wide || String(head || '').includes('og:image') ? '' : siteOg(lang, `${title} ECCM`, og, canonical)}
 </head>
 <body>
 ${raw(SYMBOL)}
