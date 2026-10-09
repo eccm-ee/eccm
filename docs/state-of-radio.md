@@ -132,7 +132,7 @@ Nothing new to maintain, but afterwards the player belongs to Üle Heli and Raad
 väin.ee
 ```
 
-Free in the registry on 9 October. `vain.ee` is taken.
+Free in the registry. `vain.ee` is taken.
 
 A space any community can borrow. The real test of the concept is a second community using it.
 
@@ -164,7 +164,7 @@ väin.ee/raadiotallinn1965
 
 What the concept says Raadio Tallinn 1965 is. One address of three, chosen before going live, since moving it breaks saved links and posters:
 
-- **Its own domain,** free on 9 October. Stands alone, a second registration.
+- **Its own domain,** free. Stands alone, a second registration.
 - **A subdomain of Väin,** the first space hosted there. Still its own app and notifications to a browser, but reads as "on Väin".
 - **A path on Väin.** Simplest, but every community then shares one app, one notification permission and one set of logins.
 

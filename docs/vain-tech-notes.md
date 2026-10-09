@@ -139,7 +139,7 @@ Väin's feed (`/radio1965/api/events`) gives every card, kept recordings as `str
 
 ### Domains
 
-Checked in the registry (`whois.tld.ee`) on 9 October: `väin.ee` (`xn--vin-qla.ee`), `raadiotallinn1965.ee` and `radiotallinn1965.ee` are free. `vain.ee` is registered until 9 November 2029.
+Checked in the registry (`whois.tld.ee`): `väin.ee` (`xn--vin-qla.ee`), `raadiotallinn1965.ee` and `radiotallinn1965.ee` are free. `vain.ee` is registered until 9 November 2029.
 
 ### Images
 
