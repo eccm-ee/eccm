@@ -1,4 +1,4 @@
-# Handoff, 2026-10-09, the thirteenth day of the eccm repository
+# Handoff, 2026-11-03
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
 committed on `main` of **https://github.com/kristjanjansen/eccm**, private,
@@ -10,6 +10,22 @@ before suspecting the commit.
 earlier days (its Fortinet DNS filter answered with a block page); on
 2026-10-09 `curl` reached it. If it blocks again, check through
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
+
+
+## 2026-11-03: the radio's audio left eccm; Väin and KCMD work moved to v2in
+
+- **eccm-files-staging is deleted** (by the owner, the classifier refused it): its 36 objects (45,808,677 bytes) are in
+  positron's R2 `v2in-media/eccm-radio/`, checked by count and bytes first. `archive/radio.md` and `wrangler.jsonc`
+  say so (`ec5e7c2`).
+- **Virtuaal, read in the browser:** ECCM's account #8069 holds eccm.ee (renews 08.03.2027, paid by invoice) and the
+  Standard hosting (36.06 EUR a quarter, next 27.01.2027). The domain lapsed in April 2024 and August 2025 over unpaid
+  invoices; in 2025 mail to eccm@eccm.ee, the account's address, bounced "No Such User". Change the account email to
+  a read mailbox. No mail-only package exists; mail needs the hosting.
+- **Väin's ties to eccm.ee:** the Joomla API (category 47), the editor and contributor pages, and the recordings in
+  `/radio1965/streams` (44 files). Uploads go by ssh to the name `eccm.ee`, so they stop at cutover unless Tarmo
+  switches them to `old.eccm.ee` first. Not yet in docs/migration.md.
+- **The Ukrainian channel (KCMD) and the new radio work** live in their own repository, ~/personal/v2in
+  (github kristjanjansen/v2in), and positron's /radio/kcmd/ page.
 
 ## 2026-10-09: the radio spinoffs read, two docs, no share image on tools
 
