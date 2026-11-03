@@ -41,11 +41,13 @@ it was. `tools/upload.mjs` put a file through the same path from the shell.
 
 ## What was kept
 
-- **The bucket `eccm-files-staging`**, untouched: `uploads/` (the 17
-  programmes), `recordings/` (the one show), `index/` (each file's frame
-  index) and `live/`. Nothing in it was deleted. It is no longer bound.
-- **The Worker `eccm-files-staging`** is still deployed on the account; only
-  its source left this repository. Deleting it is a separate decision.
+- **The audio moved to `v2in-media/eccm-radio/`** on 2026-11-03: the 36
+  objects of the bucket `eccm-files-staging` (`uploads/`, `recordings/` and
+  `index/`, 45,808,677 bytes) were copied there and checked by count and
+  bytes, then the bucket was deleted by the owner. A restore binds
+  `STATION_MEDIA` to a bucket filled from that prefix.
+- **The Worker `eccm-files-staging`** was deleted on 2026-10-08; its source
+  is under the tag `radio-last`.
 - **The state**, read from staging before the removal, in `archive/radio/`:
 
 | file | what | read from |
