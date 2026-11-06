@@ -13,14 +13,14 @@
 //   contact         messages sent through the contact form (0008_contact.sql)
 //   redirect_miss   old Joomla addresses staging was asked for (0007_redirect_miss.sql)
 //   login_fail      wrong keys typed at /login, an hour's worth (0009_editor.sql)
-//   editor          staging's keys, so production starts with the ones tools/editors.mjs makes there (0009)
-// A table missing from the export counts 0. --keep editor keeps a table's rows, --also name clears another table's.
+// A table missing from the export counts 0. --keep contact keeps a table's rows, --also name clears another table's.
+// The editor key is a secret (EDITOR_KEY), not a row, so nothing of it is in the export.
 //
 // The file is split into statements with quotes respected, so a value holding
 // a semicolon or a newline never cuts one in two. Counts go to stderr.
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const DEFAULT = ['subscriber', 'issue', 'outbox', 'contact', 'redirect_miss', 'login_fail', 'editor'];
+const DEFAULT = ['subscriber', 'issue', 'outbox', 'contact', 'redirect_miss', 'login_fail'];
 
 const args = process.argv.slice(2);
 const flag = (name) => args.flatMap((a, i) => (a === name && args[i + 1] ? [args[i + 1]] : []));

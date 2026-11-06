@@ -56,8 +56,8 @@
       // Image Transformations are on for positron.studio since 2026-09-30
       // (dashboard, Images, Transformations, "This zone only"); "off" makes
       // src/render/pic.mjs draw the originals, as a zone without them needs
-      // The editors' sessions are signed with the secret SESSION_SECRET (src/auth.mjs,
-      // wrangler secret put SESSION_SECRET --env staging); a new one logs every editor out.
+      // The one editor key is the secret EDITOR_KEY and the sessions are signed with SESSION_SECRET
+      // and a hash of it (src/auth.mjs, wrangler secret put ... --env staging); a new value of either logs every browser out.
       // the newsletter's mail (src/mail.mjs): the send_email binding, the
       // address it sends from on eccm.positron.studio, the sending domain the
       // owner onboarded 2026-10-01 (Email Sending, Enabled, 1,000 a day), and
@@ -89,7 +89,7 @@
       "send_email": [{ "name": "EMAIL" }],
       "triggers": { "crons": ["*/5 * * * *"] },
       // no NOINDEX here, eccm.ee is indexed.
-      // Secrets: SESSION_SECRET, TURNSTILE_SITEKEY, TURNSTILE_SECRET (wrangler secret put ... --env production)
+      // Secrets: EDITOR_KEY, SESSION_SECRET, TURNSTILE_SITEKEY, TURNSTILE_SECRET (wrangler secret put ... --env production)
       "vars": { "SITE_ORIGIN": "https://eccm.ee", "IMAGE_TRANSFORMS": "on", "CONTACT_TO": "info@eccm.ee", "MAIL_FROM": "ECCM <uudiskiri@eccm.ee>" }
     }
   }

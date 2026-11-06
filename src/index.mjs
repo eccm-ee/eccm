@@ -6,7 +6,7 @@
 // is missing. The URL words are plans/plan-eccm-urls-sitemap-rss.md section 2.
 // The editor (src/editor.mjs) answers /edit/events* and /edit/pages*, and
 // /edit itself goes to the front page. In front of it and the other tools
-// since 2026-11-06, editor keys, /login and /logout (src/auth.mjs); the
+// since 2026-11-06, ECCM's one editor key, /login and /logout (src/auth.mjs); the
 // first gate went 2026-09-29, asked as "rm login/session stuff. all is free
 // for editing". Before that /edit was the
 // static public/edit.html, the form that saved nothing, removed 2026-09-28
@@ -152,11 +152,10 @@ const routes = {
     // SITE_ORIGIN from wrangler.jsonc, the request's origin only where it is not set
     useOrigin(env.SITE_ORIGIN || url.origin);
     if (p === '/robots.txt') return robots();
-    // the editors' login, and the gate in front of the tools (src/auth.mjs); who is the editor, named on a save
-    if (p === '/login') return login(request, env, url, ctx);
+    // the editors' login, and the gate in front of the tools (src/auth.mjs)
+    if (p === '/login') return login(request, env, url);
     if (p === '/logout') return logout();
-    let who = null;
-    if (isProtected(p)) { const g = await gate(request, env, url, ctx); if (g.res) return g.res; who = g.who; }
+    if (isProtected(p)) { const out = await gate(request, env, url); if (out) return out; }
     // /ds, /logo and /social are files under public/, sent here first by assets.run_worker_first so the gate sees them
     if (isStatic(p)) return env.ASSETS.fetch(request);
     // eccm.ee's old Joomla addresses: 301, 410, or the 404 with the miss logged (src/redirects.mjs)
@@ -194,10 +193,8 @@ const routes = {
     // the notices to phones (/items, /teated/{n}, /en/notices/{n}, the Items Durable Object and Web Push) went 2026-11-06 (archive/notices.md)
     // the tools, one card each (src/render/admin.mjs), since 2026-10-01
     // /docs, the migration plan and the presence notes drawn from Markdown, went 2026-11-06; the plan is plans/plan-eccm-migration.md
-    if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin({ who, editors: (await env.DB.prepare('SELECT id, name, created_at, last_used FROM editor WHERE revoked_at IS NULL ORDER BY id').all()).results })), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
-    // the Revoke button of /admin's Editors list
-    { const r = request.method === 'POST' && /^\/admin\/editors\/(\d+)\/revoke$/.exec(p); if (r) { await env.DB.prepare("UPDATE editor SET revoked_at = strftime('%Y-%m-%dT%H:%M:%SZ','now') WHERE id = ? AND revoked_at IS NULL").bind(+r[1]).run(); return new Response(null, { status: 303, headers: { location: '/admin', 'cache-control': 'no-store' } }); } }
-    if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url, who); if (out) return out; }
+    if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
+    if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
   },

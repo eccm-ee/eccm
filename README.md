@@ -15,7 +15,7 @@ Everything is on Cloudflare, in one account per environment.
 | --- | --- |
 | Worker (`src/`) | Draws every page from the database, handles editing, the newsletter, the contact form and redirects from the old Joomla addresses. |
 | Static files (`public/`) | The stylesheet, fonts, icons, pictures of the design pages, served as they are. There is no build step. |
-| D1 database (`DB`) | Events, pages, pictures' details, subscribers, newsletter issues, the mail outbox, editors. Schema in `migrations/`. |
+| D1 database (`DB`) | Events, pages, pictures' details, subscribers, newsletter issues, the mail outbox, wrong login keys. Schema in `migrations/`. |
 | R2 bucket (`MEDIA`) | Uploaded pictures, one file per picture, named by its content hash. |
 | R2 bucket (`BACKUP`) | A copy of the database every day, kept 30 days. |
 | Email (`EMAIL`) | Sends the newsletter, sign-up confirmations and contact form mail through Cloudflare Email Sending. |
@@ -44,8 +44,8 @@ npx wrangler d1 execute eccm-staging --local --env staging --file data/seed-step
 Or load a copy of the live database (see Backups below) with `--local`.
 
 Secrets the Worker reads, for local use in a `.dev.vars` file (git-ignored):
-`SESSION_SECRET` for logins. Without it the site runs, but logging in does
-not.
+`EDITOR_KEY` and `SESSION_SECRET` for logins. Without them the site runs,
+but logging in does not.
 
 ## Deploy
 
@@ -54,25 +54,27 @@ npx wrangler d1 migrations apply eccm --remote --env production   # only when mi
 npx wrangler deploy --env production
 ```
 
-The same with `eccm-staging` and `--env staging` for staging. The secret is
-set once per environment, with
+The same with `eccm-staging` and `--env staging` for staging. The two
+secrets are set once per environment: `EDITOR_KEY` as below, and
+`SESSION_SECRET` with `openssl rand -hex 32` and
 `npx wrangler secret put SESSION_SECRET --env production`.
 `plans/plan-eccm-migration.md`, Set up production, has the first deploy. A `.env` file in
 this directory overrides wrangler's login, so keep none here.
 
-## Editors and logging in
+## Logging in
 
-Each editor has a key of their own, like `xxxx-xxxx-xxxx`, typed once at
-`/login`. It stays logged in for 90 days. Keys are managed from this
-directory with `tools/editors.mjs`:
+ECCM has one editor key, like `xxxx-xxxx-xxxx`, shared by everyone who
+edits and typed once at `/login`. It stays logged in for 90 days. Case,
+dashes and spaces do not matter. The key is the secret `EDITOR_KEY`, made
+and set like this:
 
-- **create** an editor: prints their new key once. Send it to them; it is not
-  stored anywhere and cannot be shown again.
-- **list** the editors, with when each key was last used.
-- **revoke** an editor's key: they are logged out on their next click.
+```sh
+node -e "const a='0123456789abcdefghjkmnpqrstvwxyz',r=require('crypto').randomInt;console.log([0,0,0].map(()=>[0,0,0,0].map(()=>a[r(32)]).join('')).join('-'))"
+npx wrangler secret put EDITOR_KEY --env production   # paste the key printed above
+```
 
-Run `node tools/editors.mjs` with no arguments for the exact commands. A lost
-key is revoked and a new one created.
+To change it, put a new one the same way: every browser is logged out and
+needs the new key.
 
 Behind the login: `/admin`, `/edit`, `/ds`, `/logo` and `/social`. Everything else is public.
 
@@ -128,7 +130,7 @@ first.
 
 For a full copy at any moment, `npx wrangler d1 export eccm --remote --env
 production --output copy.sql`. Copying staging's content into a new
-database without its test sign-ups, mail and keys:
+database without its test sign-ups and mail:
 `node tools/clear-test-rows.mjs copy.sql clean.sql`.
 
 The backups hold subscribers' addresses: never commit one.

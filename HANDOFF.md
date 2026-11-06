@@ -36,9 +36,12 @@ Asked: "Joomla API, category 47 -- this goes to v2in, we already imported envent
   - `77f7534`: New event back at `/edit/events/new` from a card on /admin; notices to phones removed (migration v5
     deleted the Items object on staging, `archive/notices.md`, tag `notices-last`), the privacy pages without their
     notices section; `docs/migration.md` is `plans/plan-eccm-migration.md`, presence and /docs gone.
-- **Next:** the owner's first editor key (`node tools/editors.mjs create "Name" --remote --env staging`); the unused
-  staging secret `VAPID_JWK` to delete by hand (`wrangler secret delete VAPID_JWK --env staging`, refused from the
-  session); everything else waits on ECCM's account (`plans/plan-eccm-migration.md`).
+- **Then one key, not one per person** (asked: "no its one eccm editor key"): the secret `EDITOR_KEY` signs into
+  every editing page, `SESSION_SECRET` stays beside it for the cookie, changing either logs every browser out;
+  `tools/editors.mjs` and the editor table are gone (migration 0010), saves record `updated_by` "ECCM". The owner
+  deleted `VAPID_JWK` and deployed v2in `fa78c4b` by hand.
+- **Next:** `EDITOR_KEY` on staging, put by the owner (README, "Logging in"); everything else waits on ECCM's
+  account (`plans/plan-eccm-migration.md`).
 
 ## 2026-11-03: the radio's audio left eccm; Väin and KCMD work moved to v2in
 

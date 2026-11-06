@@ -11,7 +11,7 @@ Moving eccm.ee onto this site. Measured on 7 October 2026. Each task says who do
 | Calendar | Members add events one at a time today. Each language gets a feed to subscribe to once. |
 | Domain | eccm.ee is replaced directly, since the current site is a test too. uus.eccm.ee is optional. |
 | Events | Everything to the end of 2026 is entered on eccm.ee. A few dates will change. |
-| Admin | Behind editor keys since 6 November 2026, one per person, made with `tools/editors.mjs`. |
+| Admin | Behind ECCM's one editor key since 6 November 2026, the secret `EDITOR_KEY`. |
 
 ## 1. Staging
 
@@ -186,14 +186,15 @@ Results Test, deploy staging, push.
 
 ### Login on admin and editing
 
-**Who:** agent. **State:** done on staging, editor keys in `src/auth.mjs`.
+**Who:** agent. **State:** done on staging, the one editor key in `src/auth.mjs`.
 
-Each editor has a key of their own, typed once at `/login`, then a cookie for 90 days. It guards `/admin`, `/edit`, `/ds`, `/logo` and `/social`; everything else stays public. Ten wrong keys an hour from one address, then a wait. Saves name the editor.
+ECCM has one key, shared by everyone who edits, typed once at `/login`, then a cookie for 90 days. It guards `/admin`, `/edit`, `/ds`, `/logo` and `/social`; everything else stays public. Ten wrong keys an hour from one address, then a wait. Saves write ECCM in `updated_by`.
+
+The key is the secret `EDITOR_KEY`, in the form `xxxx-xxxx-xxxx`. Make one and set it; to change it, put a new one the same way, which logs every browser out:
 
 ```sh
-node tools/editors.mjs create "Name" --remote --env staging   # prints the key once
-node tools/editors.mjs list --remote --env staging
-node tools/editors.mjs revoke 3 --remote --env staging        # or Revoke on /admin
+node -e "const a='0123456789abcdefghjkmnpqrstvwxyz',r=require('crypto').randomInt;console.log([0,0,0].map(()=>[0,0,0,0].map(()=>a[r(32)]).join('')).join('-'))"
+npx wrangler secret put EDITOR_KEY --env staging   # paste the key printed above
 ```
 
 **Check**
@@ -369,16 +370,16 @@ env -u CF_API_TOKEN -u CLOUDFLARE_API_TOKEN npx wrangler ... (CLAUDE.md, Deploy)
    npx wrangler d1 migrations apply eccm --remote --env production
    npx wrangler r2 bucket create eccm-media
    npx wrangler r2 bucket create eccm-backup
+   npx wrangler secret put EDITOR_KEY --env production          (a new key, made as in Login on admin and editing, handed to ECCM privately)
    npx wrangler secret put SESSION_SECRET --env production      (a new random value, openssl rand -hex 32)
    npx wrangler secret put TURNSTILE_SITEKEY --env production   (a Turnstile widget in ECCM's account for eccm.ee and the workers.dev address)
    npx wrangler secret put TURNSTILE_SECRET --env production    (the same widget's secret, for the contact form)
 3. Move the content without staging's test rows (subscribers, drafts,
-   outbox, contact messages, redirect misses, login failures and staging's
-   editor keys), with tools/clear-test-rows.mjs:
+   outbox, contact messages, redirect misses and login failures), with
+   tools/clear-test-rows.mjs:
    npx wrangler d1 export eccm-staging --remote --env staging --no-schema --output tmp/staging.sql
    node tools/clear-test-rows.mjs tmp/staging.sql tmp/production.sql
    npx wrangler d1 execute eccm --remote --env production --file tmp/production.sql
-   node tools/editors.mjs create "Name" --remote --env production   (one per editor ECCM names, each key handed over privately)
 4. Copy what staging holds in its media bucket under media/ (uploaded
    pictures) to eccm-media; og/ is a cache and rebuilds itself. The event
    pictures under public/ deploy with the site.
