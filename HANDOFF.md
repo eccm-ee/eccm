@@ -25,8 +25,20 @@ Asked: "Joomla API, category 47 -- this goes to v2in, we already imported envent
   hooks rsync new recordings to eccm.ee by ssh (v2in to take them with an rrsync-only user), one recording v2in lacks
   (`video/stream-1793914592-20261105-233632.mp4`), the article event `joomla_56` that Tarmo's server opens through
   eccm.ee's Joomla on every tap, his contributor and editor pages, and his mail through `mail.eccm.ee`.
-- **Next:** that plan's steps 1 to 3 in v2in; Tarmo's steps 4 and 5; a background read of what to remove from eccm
-  before production was started.
+- **Later the same day, deployed to staging and pushed:**
+  - `89fe97c`: the radio docs (state-of-radio, vain-tech-notes, ici) deleted, tag `radio-archive`; archive/radio and the
+    two radio plans moved to v2in.
+  - `bfbe290`: staging synced with eccm.ee (seed step 11, 3 new events, 10 changed, 2 to draft, 9 pictures).
+  - `52cb36a`: editor keys in place of Cloudflare Access (`src/auth.mjs`, migration 0009, `tools/editors.mjs`,
+    `SESSION_SECRET` set on staging); `env.production` complete apart from ECCM's account and database ids, proven by
+    throwaway deploys (an explicit `"migrations": []`; an empty account_id falls back to staging's); README for the
+    inheritor; laptop notes in the git-ignored `CLAUDE.local.md`; `tools/clear-test-rows.mjs`.
+  - `77f7534`: New event back at `/edit/events/new` from a card on /admin; notices to phones removed (migration v5
+    deleted the Items object on staging, `archive/notices.md`, tag `notices-last`), the privacy pages without their
+    notices section; `docs/migration.md` is `plans/plan-eccm-migration.md`, presence and /docs gone.
+- **Next:** the owner's first editor key (`node tools/editors.mjs create "Name" --remote --env staging`); the unused
+  staging secret `VAPID_JWK` to delete by hand (`wrangler secret delete VAPID_JWK --env staging`, refused from the
+  session); everything else waits on ECCM's account (`plans/plan-eccm-migration.md`).
 
 ## 2026-11-03: the radio's audio left eccm; Väin and KCMD work moved to v2in
 
