@@ -67,6 +67,11 @@ export const LABEL = { et: 'ET', en: 'EN' };
 // head: preloads the page itself knows it needs, the event's poster
 // (src/render/pic.mjs, src/render/event.mjs)
 // wide: a tool page (asked 2026-10-01: "admin pages full w"), its forms, tables and grids over the whole frame
+// the RSS feed and the calendar in every public page's head, so a feed reader or a browser finds them from any page
+// (asked 2026-11-06: "we have rss right?", then "add to head"); not on admin and tool pages
+const FEED_TITLE = { et: 'ECCM sündmused', en: 'ECCM events' };
+const CAL_TITLE = { et: 'ECCM sündmuste kalender', en: 'ECCM events calendar' };
+const CAL = { et: '/et/sundmused.ics', en: '/en/events.ics' };
 export const page = ({ lang, title, alternate, canonical, alternates, body, notice, head, wide, og }) => {
   const t = T[lang];
   // every tool page leads back to /admin (asked 2026-10-01: "all admin pages should have upper link back to
@@ -90,6 +95,8 @@ export const page = ({ lang, title, alternate, canonical, alternates, body, noti
 <title>${title} ECCM</title>
 ${canonical ? html`<link rel="canonical" href="${canonical}">` : ''}
 ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflang}" href="${a.href}">`)}
+${wide ? '' : html`<link rel="alternate" type="application/rss+xml" title="${FEED_TITLE[lang]}" href="/${lang}/feed.xml">
+<link rel="alternate" type="text/calendar" title="${CAL_TITLE[lang]}" href="${CAL[lang]}">`}
 <link rel="icon" href="/icons/logo-square-bold.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
