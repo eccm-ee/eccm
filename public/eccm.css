@@ -523,6 +523,13 @@
      one row sit on the same column rhythm as the pairs above and below (asked 2026-09-29 with a crop of
      Algus, Lõpp and Kestus on two rows: "move to single row") */
   .fields > .field-row { grid-column: 1 / -1; gap: inherit; }
+  /* a row of short controls (dates, a number) is a cluster, each field at its control's own width and the
+     section's column gap between them, so no column's spare width shows as a gap (asked 2026-11-06 with a crop
+     of Start, End and Duration three equal columns apart: "rm extra h gap"); it wraps on a phone */
+  .fields > .field-row.short { display: flex; flex-wrap: wrap; }
+  .fields > .field-row.short > .field { flex: 0 1 auto; }
+  .fields > .field-row.short input[type="datetime-local"] { inline-size: 16rem; max-inline-size: 100%; }
+  .fields > .field-row.short input[type="number"] { inline-size: 8rem; }
   .fields input[type="datetime-local"] { max-inline-size: 16rem; }
   .fields input[type="number"] { max-inline-size: 8rem; }
   .form input, .form select, .form textarea { inline-size: 100%; border: 1px solid var(--eccm-rule-strong); border-radius: 0; background: var(--eccm-ground); color: var(--eccm-ink); padding: var(--eccm-s-3) var(--eccm-s-4); font: inherit; }

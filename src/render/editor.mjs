@@ -120,6 +120,12 @@ export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmus
   <form class="form form-wide" method="post" action="${action}" enctype="multipart/form-data">
     <input type="hidden" name="rev" value="${v.rev}">
     <input type="hidden" name="credit_count" value="${v.credits.length}">
+    <!-- Publishing first, so a draft is the first thing an editor sees (asked 2026-11-06: "move publishing to top") -->
+    <h2>Publishing</h2>
+    <div class="fields">
+      ${group({ label: 'Status', hint: 'A draft is not shown on the public site.', err: err('status'), control: segment('status', STATUSES, v.status) })}
+      ${field({ id: 'f-publish', label: 'Publish from', err: err('publish_at'), hint: 'Empty means now.', control: input('f-publish', 'publish_at', v.publish_at, ' type="datetime-local"') })}
+    </div>
     <h2>Title</h2>
     <div class="langs">
       ${langBlock(v, err, 'et', 'Estonian', 'Title', 'Slug', 'Description', 'head')}
@@ -149,8 +155,9 @@ export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmus
 
     <h2>When and where</h2>
     <div class="fields">
-      <!-- the three that say when, on one row (asked 2026-09-29 with a crop: "move to single row") -->
-      <div class="field-row">
+      <!-- the three that say when, on one row (asked 2026-09-29 with a crop: "move to single row"), each at its own
+           width (asked 2026-11-06: "rm extra h gap") -->
+      <div class="field-row short">
         ${field({ id: 'f-start', label: 'Start', err: err('starts_at'), control: input('f-start', 'starts_at', v.starts_at, ' type="datetime-local" required') })}
         ${field({ id: 'f-end', label: 'End', err: err('ends_at'), hint: 'Empty for a single evening.', control: input('f-end', 'ends_at', v.ends_at, ' type="datetime-local"') })}
         ${field({ id: 'f-duration', label: 'Duration in minutes', err: err('duration_min'), control: input('f-duration', 'duration_min', v.duration_min, ' type="number" min="1" max="1440" inputmode="numeric"') })}
@@ -162,11 +169,6 @@ export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmus
       ${field({ id: 'f-category', label: 'Series', err: err('category'), control: html`<select id="f-category" name="category">${opts(CATEGORIES, v.category)}</select>` })}
     </div>
 
-    <h2>Publishing</h2>
-    <div class="fields">
-      ${group({ label: 'Status', hint: 'A draft is not shown on the public site.', err: err('status'), control: segment('status', STATUSES, v.status) })}
-      ${field({ id: 'f-publish', label: 'Publish from', err: err('publish_at'), hint: 'Empty means now.', control: input('f-publish', 'publish_at', v.publish_at, ' type="datetime-local"') })}
-    </div>
     <h2>Text</h2>
     <div class="langs">
       ${langBlock(v, err, 'et', 'Estonian', 'Title', 'Slug', 'Description', 'body')}
@@ -216,16 +218,16 @@ export const pageForm = ({ v, errors = [], cancel = '/' }) => {
 
   <form class="form form-wide" method="post" action="${action}">
     <input type="hidden" name="rev" value="${v.rev}">
-    <h2>Title</h2>
-    <div class="langs">
-      ${langBlock(v, err, 'et', 'Estonian', 'Title', 'Slug', 'Text', 'head')}
-      ${langBlock(v, err, 'en', 'English', 'Title', 'Slug', 'Text', 'head')}
-    </div>
-
+    <!-- Publishing first, so a draft is the first thing an editor sees (asked 2026-11-06: "move publishing to top") -->
     <h2>Publishing</h2>
     <div class="fields">
       ${group({ label: 'Status', hint: 'A draft is not shown on the public site.', err: err('status'), control: segment('status', STATUSES, v.status) })}
       ${field({ id: 'f-publish', label: 'Publish from', err: err('publish_at'), hint: 'Empty means now.', control: input('f-publish', 'publish_at', v.publish_at, ' type="datetime-local"') })}
+    </div>
+    <h2>Title</h2>
+    <div class="langs">
+      ${langBlock(v, err, 'et', 'Estonian', 'Title', 'Slug', 'Text', 'head')}
+      ${langBlock(v, err, 'en', 'English', 'Title', 'Slug', 'Text', 'head')}
     </div>
 
     <h2>Text</h2>
