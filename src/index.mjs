@@ -30,7 +30,6 @@ import { serveMedia } from './media.mjs';
 import { useTransforms } from './render/pic.mjs';
 import { renderIcs } from './render/ics.mjs';
 import { itemsRoute, ask as askItems } from './items.mjs';
-import { joomlaApi } from './joomla.mjs';
 import { renderNotice } from './render/notice.mjs';
 import { renderAdmin } from './render/admin.mjs';
 import { renderDocs, renderDoc } from './render/docs.mjs';
@@ -155,11 +154,9 @@ const routes = {
     // SITE_ORIGIN from wrangler.jsonc, the request's origin only where it is not set
     useOrigin(env.SITE_ORIGIN || url.origin);
     if (p === '/robots.txt') return robots();
-    // the Joomla API Väin's server polls, answered from the notices (src/joomla.mjs), since 2026-10-07
-    if (p.startsWith('/api/index.php/')) { const out = await joomlaApi(request, env, url); if (out) return out; }
     // eccm.ee's old Joomla addresses: 301, 410, or the 404 with the miss logged (src/redirects.mjs)
     { const out = await legacy(request, env, url, ctx); if (out) return out; }
-    // Tarmo's /radio1965/* and /radio/streams/* from the old server, only once OLD_ORIGIN is set (src/passthrough.mjs)
+    // the radio1965 recordings, /radio1965/streams/*, from v2in.stream (src/passthrough.mjs)
     { const out = await passthrough(request, env, url); if (out) return out; }
     // the radio (/stream, /files/*, /admin/files, /radio, /station) went 2026-10-07, restorable from the tag radio-last (archive/radio.md)
     // the uploaded pictures from R2, /media/{sha256}.{ext} (src/media.mjs)

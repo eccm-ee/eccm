@@ -10,7 +10,7 @@
 // (asked 2026-10-01: "do it", of editing and deleting a waiting notice and a
 // list that refreshes itself, which public/items.mjs does). The forms post
 // with no script, as the editor's do.
-import { html, raw } from './html.mjs';
+import { html } from './html.mjs';
 import { page } from './chrome.mjs';
 import { field, input } from './editor.mjs';
 import { dayMonth, clock } from './dates.mjs';
@@ -41,10 +41,6 @@ const state = (it) => {
 const fields = (form, err, time = true) => html`${field({ id: 'f-title', label: 'Title', err: err('title'), hint: 'The first line of the notice, bold on the phone.', control: input('f-title', 'title', form.title, ' required maxlength="120"') })}
     ${field({ id: 'f-body', label: 'Text', err: err('body'), control: html`<textarea id="f-body" name="body" rows="3">${form.body || ''}</textarea>` })}
     ${field({ id: 'f-url', label: 'Link', err: err('url'), hint: 'What opens when the notice is tapped. Empty means its own page.', control: input('f-url', 'url', form.url, ' spellcheck="false" placeholder="/et/sundmused/…"') })}
-    <div class="field">
-      <label class="check"><input type="checkbox" name="vain" value="1"${form.vain ? raw(' checked') : ''}> Väin</label>
-      <p class="hint">Also in U:'s Väin app.</p>
-    </div>
     ${time ? field({ id: 'f-publish', label: 'Publish at', err: err('publish_at'), hint: 'Tallinn time. Empty means now.', control: input('f-publish', 'publish_at', form.publish_at, ' type="datetime-local"') }) : ''}`;
 const errorList = (errors, what) => (errors.length ? html`<div class="errors" role="alert"><p>${what} Please fix:</p><ul>${errors.map((e) => html`<li>${e.msg}</li>`)}</ul></div>` : '');
 
@@ -56,7 +52,7 @@ export const itemsList = (items) => (items.length ? table({
     current: it.status === 'waiting',
     cells: [
       html`<time datetime="${new Date(Number(it.publish_at)).toISOString()}">${when(it.publish_at)}</time>`,
-      html`${it.url ? html`<a href="${it.url}">${it.title}</a>` : it.title}${it.body ? html`<br><span class="small">${it.body}</span>` : ''}${Number(it.vain) ? html`<br>${badge('Väin', 'neutral')}` : ''}`,
+      html`${it.url ? html`<a href="${it.url}">${it.title}</a>` : it.title}${it.body ? html`<br><span class="small">${it.body}</span>` : ''}`,
       state(it),
       html`<a class="btn btn-sm" href="/items/${it.id}">Edit</a>`,
     ],

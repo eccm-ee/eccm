@@ -1,6 +1,5 @@
 // notice.mjs: one published notice as a public page, /teated/{num} and
-// /en/notices/{num} (asked 2026-10-07, for Väin: the article link its server
-// keeps points here). The text page's shape (src/render/page.mjs): the title,
+// /en/notices/{num} (asked 2026-10-07). The text page's shape (src/render/page.mjs): the title,
 // the publish date and the link as the event page's facts, then the body in
 // .flow. A notice has one text, so the two addresses differ only in chrome.
 import { html, raw } from './html.mjs';

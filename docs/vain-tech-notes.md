@@ -121,11 +121,11 @@ Feed times have no offset (`2026-10-09T13:53:09`), so a phone in Germany shows t
 
 ## When `eccm.ee` moves
 
-Five things in Väin touch `eccm.ee`. One keeps working, four need a home of Väin's own before the old hosting is cancelled.
+Five things in Väin touch `eccm.ee`. The new site keeps one of them, and nothing needs old.eccm.ee.
 
-- **Articles: nothing to do.** Väin polls `eccm.ee`'s Joomla API for category 47. The new site answers the same calls in the same shape, from notices ticked Väin at /items ([Väin](/docs/migration#5-vain)).
-- **Recordings** go by ssh into the old hosting's `/radio1965/streams`. Old links keep playing through the new site's pass-through, but uploads stop when the hosting is cancelled.
-- **The editor and contributor pages** are deployed there by rsync from the GitHub workflow. They are static and can move to any host.
+- **Articles** from the Joomla API, category 47, end at cutover. ECCM's articles are already events on [v2in](https://v2in.stream/), so `joomla_importer.py` can be retired.
+- **Recordings** go by ssh into the old hosting's `/radio1965/streams`. All 44 are copied to v2in, and the new site serves that path from there, so old links keep playing. The ssh copy should stop before cutover.
+- **The editor and contributor pages** are deployed there by rsync from the GitHub workflow. They are static and call only the API on live.uuu.ee, so they can live there, with `RADIO65_CONTRIBUTOR_WEB_URL` changed to match.
 - **Mail** for sign-up and password resets goes through `mail.eccm.ee`, as long as ECCM's mail stays at Virtuaal.
 - **Password reset links** point at `https://eccm.ee/radio1965/contributor/` and follow that page wherever it goes.
 

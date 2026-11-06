@@ -354,7 +354,7 @@ eccm.ee until ECCM says the zone is active.
 1. In wrangler.jsonc env.production: ECCM's account_id; vars SITE_ORIGIN
    https://eccm.ee, IMAGE_TRANSFORMS on, MAIL_FROM "ECCM <uudiskiri@eccm.ee>",
    CONTACT_TO info@eccm.ee, VAPID_PUBLIC and VAPID_SUB as in staging,
-   OLD_ORIGIN https://old.eccm.ee once ECCM has added that alias; no NOINDEX; the D1, R2 (MEDIA, BACKUP) and Durable Object bindings as staging
+   no NOINDEX; the D1, R2 (MEDIA, BACKUP) and Durable Object bindings as staging
    has them; routes eccm.ee and www.eccm.ee as custom domains, commented out
    until cutover.
 2. Run, checking each:
@@ -427,11 +427,11 @@ DMARC is set to reject, so one wrong mail record bounces everything. Every recor
 
 **Who:** ECCM, with the agent ready. **State:** to do.
 
-1. Add old.eccm.ee in cPanel and in DNS, pointing at the old server, for [Tarmo's files](#his-files-after-cutover).
+1. Check that Tarmo has made [his changes](#what-tarmo-changes-before-cutover).
 2. Delete the A record for eccm.ee and the CNAME for www.
 3. Deploy production, which attaches eccm.ee and www.eccm.ee to the Worker.
 4. Turn on Image Transformations for the zone.
-5. Check: the front page, an event, an old Joomla address, the newsletter sign-up, a file under /radio/streams.
+5. Check: the front page, an event, an old Joomla address, the newsletter sign-up, a file under /radio1965/streams.
 6. To go back: recreate the A and CNAME records. Minutes.
 
 ### After
@@ -449,35 +449,36 @@ Not needed: the current site is a test too. If wanted, uus.eccm.ee can work befo
 
 ## 5. Väin
 
-[Väin](https://github.com/tarmoj/radio1965) is U:'s app, by Tarmo Johannes. The app never calls eccm.ee: his server polls eccm.ee's Joomla API every 5 minutes for category 47, and opens `/content/articles/{id}` when an article is tapped. His pages `/radio1965/contributor`, `/radio1965/editor` and the recordings in `/radio/streams` are files in eccm.ee's hosting.
+[Väin](https://github.com/tarmoj/radio1965) is U:'s app, by Tarmo Johannes. Its radio, events and recordings move to [v2in](https://v2in.stream/), not to this site, so eccm.ee needs no old.eccm.ee and keeps one path for it.
 
-### The Joomla API from the Worker
+| on eccm.ee today | after cutover |
+| --- | --- |
+| The Joomla API, category 47, polled by his server every 5 minutes | Gone. ECCM's articles are already v2in events, and new ones are written there. |
+| The recordings in `/radio1965/streams/` | Copied to v2in. This site forwards the path there. |
+| The contributor and editor pages, `/radio1965/contributor/` and `/radio1965/editor/` | Tarmo's to move, to live.uuu.ee beside the API they call. Until then they answer 404. |
+| Sign-up and reset mail through `mail.eccm.ee` | Works while ECCM's mail stays at Virtuaal. |
 
-**Who:** agent. **State:** done.
+### The recordings from v2in
 
-**Ask Tarmo:** nothing changes in his code. Does he want a push on publish instead of the five-minute poll?
+**Who:** agent. **State:** done 6 November 2026 in `src/passthrough.mjs`.
 
-The Worker answers the same `/api/index.php/v1` calls in the same shape, so Tarmo changes nothing. Notices ticked Väin on [/items](/items) are category 47 and reach the app; each has its page at `/teated/{number}`. Checked with his own importer code against a local server.
-
-### His files after cutover
-
-**Who:** agent, ECCM adds the alias in cPanel. **State:** done in `src/passthrough.mjs`, on once `OLD_ORIGIN` is set at cutover.
-
-**Ask Tarmo:** where his `/radio1965` and `/radio/streams` files should live after cutover.
-
-The old server keeps a second name, old.eccm.ee, that points straight at it, and the Worker passes `/radio1965/*` and `/radio/streams/*` through to it until he moves them. The request goes on whole, so seeking in a recording and saving on his editor page work. Unset, the paths answer 404, as on staging.
-
-```jsonc
-// wrangler.jsonc, env.production.vars, at cutover
-"OLD_ORIGIN": "https://old.eccm.ee"
-```
+Events in the app link to `https://eccm.ee/radio1965/streams/<file>`. The Worker fetches the same path from `https://v2in.stream`, which holds all 44 files, and passes the request on whole, so seeking works.
 
 **Check**
 
 ```sh
-curl -sI https://old.eccm.ee/radio1965/contributor   # 200 from the old server, before cutover
-curl -sI https://eccm.ee/radio1965/contributor       # the same after it
+curl -sI https://eccm.ee/radio1965/streams/tarmo-20261025-184903.mp3   # 200, audio/mpeg, after cutover
 ```
+
+### What Tarmo changes before cutover
+
+**Who:** Tarmo. **State:** to ask.
+
+**Ask Tarmo:** the three steps below, and a date for them.
+
+1. Stop copying recordings to eccm.ee by ssh (`icecast_on_disconnect.sh`, `rtmp_on_record_done.sh`, `remote_files.py`).
+2. Point `deploy-static.yml`'s secrets at his own server, so the contributor and editor pages live at live.uuu.ee, and set `RADIO65_CONTRIBUTOR_WEB_URL` to match.
+3. Retire `joomla_importer.py`, since eccm.ee's Joomla API ends at cutover.
 
 ## Privacy and consent
 

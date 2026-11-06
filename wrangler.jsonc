@@ -72,8 +72,7 @@
     },
     "production": {
       "name": "eccm",
-      // no NOINDEX here, eccm.ee is indexed; at cutover add "OLD_ORIGIN": "https://old.eccm.ee", the alias ECCM
-      // adds in cPanel, so Tarmo's /radio1965/* and /radio/streams/* reach the old server (src/passthrough.mjs)
+      // no NOINDEX here, eccm.ee is indexed
       "vars": { "SITE_ORIGIN": "https://eccm.ee" }
       // ECCM's account_id, eccm.ee and www.eccm.ee go here at cutover
       // (plans/plan-eccm-setup.md section 8); until then this deploys nowhere

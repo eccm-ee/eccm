@@ -18,8 +18,9 @@
 //   GET  /items/key          the public VAPID key a browser subscribes with (public/push.mjs)
 //
 // Open like the editor: nobody logs in (src/editor.mjs says since when).
-// A published notice is also public at /teated/{num} and /en/notices/{num},
-// and in the Joomla API Väin's server reads (src/joomla.mjs), since 2026-10-07.
+// A published notice is also public at /teated/{num} and /en/notices/{num}.
+// From 2026-10-07 to 2026-11-06 a notice ticked Väin was also in a Joomla API for Väin's server;
+// that went to v2in, and the vain column stays, written 0.
 import { send } from './push.mjs';
 import { renderItems, renderItemEdit, itemsList, local } from './render/items.mjs';
 
@@ -46,8 +47,8 @@ export class Items {
     this.sql.exec(`CREATE TABLE IF NOT EXISTS subs (
       endpoint TEXT PRIMARY KEY, p256dh TEXT NOT NULL, auth TEXT NOT NULL, created_at INTEGER NOT NULL
     )`);
-    // added 2026-10-07 for Väin (src/joomla.mjs): vain ticks a notice into category 47 of the Joomla API,
-    // num is its public number (/teated/{num}, the API's article id) and updated_at its last edit; an older
+    // added 2026-10-07: vain (unused since 2026-11-06), num the notice's public number (/teated/{num})
+    // and updated_at its last edit; an older
     // object gets the columns here and a number for every notice it already holds, oldest first
     const cols = new Set([...this.sql.exec(`PRAGMA table_info(items)`)].map((c) => c.name));
     if (!cols.has('vain')) this.sql.exec(`ALTER TABLE items ADD COLUMN vain INTEGER NOT NULL DEFAULT 0`);
@@ -61,8 +62,8 @@ export class Items {
     // (positron's workers/items, where Cloudflare's livelock is described)
   }
 
-  // the next public number, from 1000 up and never one used before, even by a deleted notice: a number
-  // Väin's server has seen stays that notice's (joomla_{num} in its database)
+  // the next public number, from 1000 up and never one used before, even by a deleted notice, so an
+  // address once given out never names another notice
   nextNum() {
     const used = Number([...this.sql.exec(`SELECT MAX(num) AS n FROM items`)][0].n ?? 0);
     const kept = Number([...this.sql.exec(`SELECT n FROM counter WHERE name = 'num'`)][0]?.n ?? 0);
@@ -128,7 +129,7 @@ export class Items {
       const subs = Number([...this.sql.exec(`SELECT COUNT(*) AS n FROM subs`)][0].n);
       return json({ items, subs });
     }
-    // what the public sees: the notices published by now, for the Joomla API and /teated/{num}
+    // what the public sees: the notices published by now, for /teated/{num}
     if (path === '/published') {
       return json({ items: [...this.sql.exec(`SELECT * FROM items WHERE status = 'published' AND publish_at <= ? ORDER BY num`, Date.now())] });
     }
@@ -136,8 +137,8 @@ export class Items {
     if (!body) return json({ error: 'body must be JSON' }, 400);
     if (path === '/add') {
       const now = Date.now();
-      this.sql.exec(`INSERT INTO items (id, title, body, url, status, publish_at, created_at, updated_at, vain, num) VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?)`,
-        crypto.randomUUID(), body.title, body.body || '', body.url || '', Math.max(Number(body.publish_at) || now, now), now, now, body.vain ? 1 : 0, this.nextNum());
+      this.sql.exec(`INSERT INTO items (id, title, body, url, status, publish_at, created_at, updated_at, num) VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?)`,
+        crypto.randomUUID(), body.title, body.body || '', body.url || '', Math.max(Number(body.publish_at) || now, now), now, now, this.nextNum());
       await this.rearm();
       return json({ ok: true });
     }
@@ -151,7 +152,7 @@ export class Items {
       const it = [...this.sql.exec(`SELECT status FROM items WHERE id = ?`, String(body.id))][0];
       if (!it) return json({ error: 'gone' }, 404);
       if (body.publish_at != null && it.status !== 'waiting') return json({ error: 'published' }, 409);
-      this.sql.exec(`UPDATE items SET title = ?, body = ?, url = ?, vain = ?, updated_at = ? WHERE id = ?`, body.title, body.body || '', body.url || '', body.vain ? 1 : 0, Date.now(), body.id);
+      this.sql.exec(`UPDATE items SET title = ?, body = ?, url = ?, updated_at = ? WHERE id = ?`, body.title, body.body || '', body.url || '', Date.now(), body.id);
       if (body.publish_at != null) this.sql.exec(`UPDATE items SET publish_at = ? WHERE id = ? AND status = 'waiting'`, Math.max(Number(body.publish_at), Date.now()), body.id);
       await this.rearm();
       return json({ ok: true });
@@ -186,7 +187,7 @@ const page = async (env, form = {}, errors = [], status = 200) => {
 // the posted form, trimmed, and what is wrong with it
 const readForm = async (request) => {
   const f = Object.fromEntries([...(await request.formData())].map(([k, v]) => [k, String(v).trim()]));
-  f.title ??= ''; f.body ??= ''; f.url ??= ''; f.publish_at ??= ''; f.vain = f.vain === '1';
+  f.title ??= ''; f.body ??= ''; f.url ??= ''; f.publish_at ??= '';
   const errors = [];
   if (!f.title) errors.push({ field: 'title', msg: 'The title is missing.' });
   if (f.title.length > 120) errors.push({ field: 'title', msg: 'The title is longer than 120 characters.' });
@@ -200,14 +201,14 @@ async function one(request, env, id) {
   const { item: it } = await ask(env, '/get', { id });
   if (!it) return null;
   if (request.method !== 'POST') {
-    const form = { title: it.title, body: it.body, url: it.url, vain: !!Number(it.vain), publish_at: local(it.publish_at) };
+    const form = { title: it.title, body: it.body, url: it.url, publish_at: local(it.publish_at) };
     return new Response(renderItemEdit({ it, form }), { headers: HEAD });
   }
   const { f, errors } = await readForm(request);
   if (f.do === 'delete') { await ask(env, '/delete', { id }); return back(); }
   if (errors.length) return new Response(renderItemEdit({ it, form: f, errors }), { status: 400, headers: HEAD });
   const waiting = it.status === 'waiting';
-  const out = await ask(env, '/edit', { id, title: f.title, body: f.body, url: f.url, vain: f.vain, ...(waiting ? { publish_at: f.publish_at ? tallinnMs(f.publish_at) : Date.now() } : {}) });
+  const out = await ask(env, '/edit', { id, title: f.title, body: f.body, url: f.url, ...(waiting ? { publish_at: f.publish_at ? tallinnMs(f.publish_at) : Date.now() } : {}) });
   if (out.error === 'published') {
     const { item } = await ask(env, '/get', { id });
     return new Response(renderItemEdit({ it: item, form: f, errors: [{ field: 'publish_at', msg: 'The notice was published meanwhile and its time can no longer change.' }] }), { status: 409, headers: HEAD });
@@ -223,7 +224,7 @@ export async function itemsRoute(request, env, url) {
   if (p === '/items' && request.method === 'POST') {
     const { f, errors } = await readForm(request);
     if (errors.length) return page(env, f, errors, 400);
-    await ask(env, '/add', { title: f.title, body: f.body, url: f.url, vain: f.vain, publish_at: f.publish_at ? tallinnMs(f.publish_at) : Date.now() });
+    await ask(env, '/add', { title: f.title, body: f.body, url: f.url, publish_at: f.publish_at ? tallinnMs(f.publish_at) : Date.now() });
     return back();
   }
   if ((p === '/items/subscribe' || p === '/items/unsubscribe') && request.method === 'POST') {
