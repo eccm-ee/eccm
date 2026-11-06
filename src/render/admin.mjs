@@ -17,7 +17,6 @@ import { page } from './chrome.mjs';
 // three cards since that evening ("split ds into components logo and social, separate cards in admin. 4 col cards").
 // Radio, Files, Icons and Research went 2026-10-07 with what they led to (archive/README.md, v2in's archive/eccm-radio/radio.md)
 const TOOLS = [
-  ['/et/sundmused', 'Events', 'Every event. Each one is edited from the Edit button on its own page.'],
   // the one door to a new event's form (asked 2026-11-06), here since the public list is the same for every visitor
   ['/edit/events/new', 'New event', 'A blank event form. It is saved as a draft until set to Published.'],
   ['/edit/uudiskiri', 'Newsletter', 'Issues to subscribers: compose from events, send a test, send to all.'],
