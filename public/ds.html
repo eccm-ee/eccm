@@ -393,7 +393,7 @@
 
   <h2>Table</h2>
   <div class="prose flow">
-    <p>Rows whose cells are compared down a column: no box, no tint and no rule between rows, one hairline under the head. Times align on their left edge, in proportional figures on a public page and tabular ones on the admin pages (Figures, above), amounts on their right, and the main column takes what is left and wraps. The current row is marked by weight and by <code>aria-current</code>. Under 36rem of its own width a row becomes its main cell over the others in the small register, each led by its column's name. Used on the notices and the newsletter.</p>
+    <p>Rows whose cells are compared down a column: no box, no tint and no rule between rows, one hairline under the head. Times align on their left edge, in proportional figures on a public page and tabular ones on the admin pages (Figures, above), amounts on their right, and the main column takes what is left and wraps. The current row is marked by weight and by <code>aria-current</code>. Under 36rem of its own width a row becomes its main cell over the others in the small register, each led by its column's name. Used on the newsletter.</p>
   </div>
   <div class="ds-spec">
     <div>
@@ -454,12 +454,12 @@
       <p class="ds-cap">In a table, on the cell's baseline</p>
       <div class="table fig">
         <table>
-          <thead><tr><th scope="col">Time</th><th scope="col" class="main">Notice</th><th scope="col">Status</th></tr></thead>
+          <thead><tr><th scope="col">Time</th><th scope="col" class="main">Subject</th><th scope="col">Status</th></tr></thead>
           <tbody>
-            <tr aria-current="true"><td data-label="Time"><time>10 Oct 19.30</time></td><td data-label="Notice" class="main">Gestuurid/situatsioonid tonight</td><td data-label="Status"><span class="badge badge-progress">Waiting</span></td></tr>
-            <tr><td data-label="Time"><time>2 Oct 12.00</time></td><td data-label="Notice" class="main">Uudiskiri is out</td><td data-label="Status"><span class="badge badge-done">Sent</span> <span class="small">14 devices</span></td></tr>
-            <tr><td data-label="Time"><time>1 Oct 09.15</time></td><td data-label="Notice" class="main">Test notice</td><td data-label="Status"><span class="badge badge-problem">Failed</span> <span class="small">2 refused</span></td></tr>
-            <tr><td data-label="Time"><time>30 Sept 18.00</time></td><td data-label="Notice" class="main">Draft of the October letter</td><td data-label="Status"><span class="badge badge-neutral">Draft</span></td></tr>
+            <tr aria-current="true"><td data-label="Time"><time>10 Oct 19.30</time></td><td data-label="Subject" class="main">Gestuurid/situatsioonid tonight</td><td data-label="Status"><span class="badge badge-progress">Waiting</span></td></tr>
+            <tr><td data-label="Time"><time>2 Oct 12.00</time></td><td data-label="Subject" class="main">Uudiskiri is out</td><td data-label="Status"><span class="badge badge-done">Sent</span> <span class="small">14 sent</span></td></tr>
+            <tr><td data-label="Time"><time>1 Oct 09.15</time></td><td data-label="Subject" class="main">Test letter</td><td data-label="Status"><span class="badge badge-problem">Failed</span> <span class="small">2 refused</span></td></tr>
+            <tr><td data-label="Time"><time>30 Sept 18.00</time></td><td data-label="Subject" class="main">Draft of the October letter</td><td data-label="Status"><span class="badge badge-neutral">Draft</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -474,8 +474,8 @@
     <div>
       <p class="ds-cap"><code>.cards</code> around <code>a.card</code>, with <code>.card-title</code> and <code>.card-desc</code></p>
       <div class="cards">
-        <a class="card" href="/items"><span class="card-title">Notices</span><span class="card-desc">A notice to phones at a set time, and the list of notices.</span></a>
         <a class="card" href="/et/sundmused"><span class="card-title">Events</span><span class="card-desc">Every event. Each one is edited from the Edit button on its own page.</span></a>
+        <a class="card" href="/edit/events/new"><span class="card-title">New event</span><span class="card-desc">A blank event form. It is saved as a draft until set to Published.</span></a>
         <a class="card" href="/logo"><span class="card-title">Logo</span><span class="card-desc">The square mark, the wordmark in both languages, and every icon size.</span></a>
         <a class="card" href="/edit/uudiskiri"><span class="card-title">Newsletter</span><span class="card-desc">Issues to subscribers: compose from events, send a test, send to all.</span></a>
       </div>

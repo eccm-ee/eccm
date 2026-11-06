@@ -15,8 +15,6 @@
 //   login_fail      wrong keys typed at /login, an hour's worth (0009_editor.sql)
 //   editor          staging's keys, so production starts with the ones tools/editors.mjs makes there (0009)
 // A table missing from the export counts 0. --keep editor keeps a table's rows, --also name clears another table's.
-// Not in the export at all: the push subscriptions and the notices, which
-// live in the Items Durable Object (src/items.mjs), not in D1.
 //
 // The file is split into statements with quotes respected, so a value holding
 // a semicolon or a newline never cuts one in two. Counts go to stderr.

@@ -1,5 +1,5 @@
 -- seed-step9-upcoming.sql: what eccm.ee lists to come and D1 did not have, read
--- once each off eccm.ee's public pages on 2026-10-07 (docs/migration.md, "2. Content").
+-- once each off eccm.ee's public pages on 2026-10-07 (plans/plan-eccm-migration.md, "2. Content").
 --
 -- The two TUMA evenings at the AFEKT festival, each with its Estonian and
 -- English page (iCagenda 154 and 155, 1.11.2026 17:30 in Krulli kvartal; 156

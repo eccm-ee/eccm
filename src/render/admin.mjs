@@ -6,7 +6,8 @@
 // level"). /derive, the study the picture detector came
 // out of, has no card: the detector runs on upload now (public/scheme.mjs)
 // and nobody editing needs the page (asked: "is derive needed as we have
-// content done?"). Behind the editor keys (src/auth.mjs) since 2026-11-06,
+// content done?"). The Notices and Docs cards went 2026-11-06 with the notices
+// (archive/notices.md) and /docs (the plan is plans/plan-eccm-migration.md). Behind the editor keys (src/auth.mjs) since 2026-11-06,
 // with the Editors list under the cards: who has a key, and Revoke; a new key
 // is made with tools/editors.mjs, which prints it once.
 import { html } from './html.mjs';
@@ -19,10 +20,9 @@ import { dateShort } from './dates.mjs';
 // three cards since that evening ("split ds into components logo and social, separate cards in admin. 4 col cards").
 // Radio, Files, Icons and Research went 2026-10-07 with what they led to (archive/README.md, v2in's archive/eccm-radio/radio.md)
 const TOOLS = [
-  // first while the migration is the work at hand (asked 2026-10-07: "move to /docs/migration instead and make docs index page")
-  ['/docs', 'Docs', 'Plans and reports, starting with the migration of eccm.ee.'],
   ['/et/sundmused', 'Events', 'Every event. Each one is edited from the Edit button on its own page.'],
-  ['/items', 'Notices', 'A notice to phones at a set time, and the list of notices.'],
+  // the one door to a new event's form (asked 2026-11-06), here since the public list is the same for every visitor
+  ['/edit/events/new', 'New event', 'A blank event form. It is saved as a draft until set to Published.'],
   ['/edit/uudiskiri', 'Newsletter', 'Issues to subscribers: compose from events, send a test, send to all.'],
   ['/ds', 'Components', 'Type, figures, colour, space, buttons, tables and cards.'],
   ['/logo', 'Logo', 'The square mark, the wordmark in both languages, and every icon size.'],

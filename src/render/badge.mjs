@@ -1,6 +1,6 @@
 // badge.mjs: the .badge component of public/eccm.css as markup (asked 2026-10-07: "develop a badge
 // component for status cols in tables etc"). badge(text, tone) is one escaped span; text may be a Raw
-// from html.mjs (a docs cell's inline Markdown), and tone, when left out, comes from the word map below.
+// from html.mjs, and tone, when left out, comes from the word map below.
 // Four tones name a meaning and are kept as a class for sorting; since "labels are complex to read. make
 // uniform ones, no icons / dotted" (2026-10-07) every tone draws the same box with no icon.
 import { html } from './html.mjs';

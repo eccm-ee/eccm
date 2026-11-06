@@ -9,8 +9,9 @@
 // with no text in this language shows its Estonian title and links to the
 // fallback page, the way an event page's next-events list does. The Muuda
 // button under the title leads to the events editor, which is where this
-// list is edited; the Add button that led to /edit/events/new went 2026-09-29
-// with that route. With home set it is the English front page at /en/ (asked
+// list is edited; the Add button that led to /edit/events/new went 2026-09-29,
+// and the form, back since 2026-11-06, is reached from /admin, so this page
+// stays the same for every visitor. With home set it is the English front page at /en/ (asked
 // 2026-09-28 with a picture of /en/ answering the 404): the front page's
 // heading, the events to come, no button and no past. The Estonian front
 // page at / is the same since 2026-10-03, in place of public/index.html.

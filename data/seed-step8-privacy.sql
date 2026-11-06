@@ -3,7 +3,7 @@
 -- "Isikuandmete töötleja üldjuhend", chapter 10) and /en/privacy, a text page
 -- like those of seed-step3.sql. ECCM had no privacy text, so this is a draft
 -- written 2026-10-07 from what the site does (the newsletter, the contact
--- form, the push notices, the theme in the browser's storage, the YouTube
+-- form, the theme in the browser's storage, the YouTube
 -- player that loads on a click), in the order of comparable organisations'
 -- notices, for ECCM to approve or rewrite at /edit/pages. The page's id is
 -- whatever is free, so the file does not collide with pages added elsewhere;
@@ -33,13 +33,7 @@ Kontaktivormiga saadad meile oma nime, e-posti aadressi ja sõnumi. Salvestame n
 
 Alus on meie õigustatud huvi vastata sulle, kui oled meie poole pöördunud. Veebilehe andmebaasist kustutame sõnumi ühe aasta pärast. Postkasti jõudnud kirja hoiame nii kaua, kui see on vastamiseks ja asja ajamiseks vajalik.
 
-## 4. Teated
-
-Kui lülitad oma seadmes ECCM-i teated sisse, annab brauser meile tellimuse: aadressi, kuhu teateid saata, ja võtmed nende krüpteerimiseks. Muid andmeid sinu ega su seadme kohta me ei saa.
-
-Alus on sinu nõusolek, mille annad brauseri enda loaga. Teated saad välja lülitada brauseri või seadme seadetes. Siis tellimus lõpeb ja me kustutame selle.
-
-## 5. Teenusepakkujad
+## 4. Teenusepakkujad
 
 Veebileht töötab Cloudflare''i teenustel: majutus, andmebaas, failide hoidmine ja e-kirjade saatmine. Cloudflare on meie volitatud töötleja ja töötleb andmeid ainult meie jaoks, [Cloudflare''i andmetöötluse lisa](https://www.cloudflare.com/cloudflare-customer-dpa/) alusel. Cloudflare logib päringuid (näiteks IP-aadress, aeg ja avatud leht) turvalisuse ja vigade leidmise jaoks ning hoiab neid lühikest aega. Kontaktivormil kontrollib Cloudflare Turnstile, et saatja on inimene.
 
@@ -49,11 +43,11 @@ Mõnel lehel on YouTube''i video. Enne klõpsu näed ainult pilti, mis tuleb mei
 
 Muid kolmandaid osapooli lehel ei ole: kirjatüübid ja pildid tulevad meie enda serverist.
 
-## 6. Küpsised ja brauseri mälu
+## 5. Küpsised ja brauseri mälu
 
 Veebileht ei kasuta küpsiseid. Ainus asi, mida brauserisse salvestame, on sinu valitud teema (hele või tume). See jääb sinu brauseri enda mällu ega jõua meieni. Külastusi me ei loe ning analüütikat ega reklaami jälgimist ei kasuta.
 
-## 7. Sinu õigused
+## 6. Sinu õigused
 
 Sul on õigus küsida, milliseid andmeid sinu kohta hoiame, ja saada neist koopia. Sul on õigus lasta valed andmed parandada ja oma andmed kustutada. Sul on õigus esitada vastuväide töötlemisele, mis põhineb meie õigustatud huvil. Nõusoleku saad igal ajal tagasi võtta, ja see ei muuda varasemat töötlemist ebaseaduslikuks.
 
@@ -81,13 +75,7 @@ With the contact form you send us your name, email address and message. We store
 
 The basis is our legitimate interest in answering you when you contact us. The message is deleted from the website''s database after one year. The copy in our mailbox is kept as long as we need it to answer and deal with your matter.
 
-## 4. Notifications
-
-If you turn on ECCM notifications on your device, your browser gives us a subscription: the address to send notifications to and the keys to encrypt them. We receive nothing else about you or your device.
-
-The basis is your consent, given through your browser''s own permission. You can turn notifications off in your browser or device settings. The subscription then ends and we delete it.
-
-## 5. Service providers
+## 4. Service providers
 
 The website runs on Cloudflare''s services: hosting, the database, file storage and sending email. Cloudflare is our processor and handles the data only on our behalf, under [Cloudflare''s Data Processing Addendum](https://www.cloudflare.com/cloudflare-customer-dpa/). Cloudflare logs requests (such as the IP address, the time and the page opened) for security and to find faults, and keeps them for a short time. On the contact form, Cloudflare Turnstile checks that the sender is a person.
 
@@ -97,11 +85,11 @@ Some pages show a YouTube video. Before you click it you see only a picture serv
 
 There are no other third parties on the site: fonts and pictures come from our own server.
 
-## 6. Cookies and browser storage
+## 5. Cookies and browser storage
 
 The website sets no cookies. The only thing we keep in your browser is the theme you pick (light or dark). It stays in your browser''s own storage and never reaches us. We do not count visits and use no analytics or advertising tracking.
 
-## 7. Your rights
+## 6. Your rights
 
 You have the right to ask what data we hold about you and to get a copy of it. You have the right to have wrong data corrected and your data deleted. You have the right to object to processing based on our legitimate interest. You can withdraw your consent at any time, which does not make earlier processing unlawful.
 

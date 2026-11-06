@@ -351,7 +351,7 @@
      over the prose, since a page has no picture to fill the event page's
      second column (asked 2026-09-28: "page content is too left, not great to
      read, center the paragraph or figure ou right column (images?)") */
-  /* a text page, from D1 or a doc from docs/*.md, is one centred column a little wider than the measure
+  /* a text page from D1 is one centred column a little wider than the measure
      (asked 2026-10-07: "use same layout for md pages and db pages. centered, bit wider than currently", then
      "pages more wider on desktop", 40rem to 48rem) */
   .page-text { max-inline-size: 48rem; margin-inline: auto; }
@@ -607,8 +607,8 @@
   .credit .field-row > .field.free { display: none; }
   .credit:has(select option[value=""]:checked) .field-row > .field.free { display: grid; }
   /* the picture the select names, at the thumbnail's own width */
-  /* /items (src/render/items.mjs): three sections in the editor form, the
-     gap between them two steps above the form's own, each heading at the form's size */
+  /* the newsletter's editor (src/render/newsletter.mjs), first drawn for the notices that went 2026-11-06:
+     sections in the editor form, the gap between them two steps above the form's own, each heading at the form's size */
   .items { display: grid; row-gap: var(--eccm-s-16); max-inline-size: var(--eccm-measure); }
   .items h2 { font-size: var(--eccm-t-l); margin-block: 0; }
   .items-list { display: grid; gap: var(--eccm-s-6); }
@@ -626,7 +626,7 @@
      the whole size of a 16 by 9 box in the ink's own line, its title and one line of description set from
      the top left with the frame's own inset; the cards a grid holds (.cards) are three to a row on a desk,
      two then one as the row narrows, each at least 16rem */
-  /* a tool page (page({ wide }) in src/render/chrome.mjs: /admin, the notices, the newsletter's editor and
+  /* a tool page (page({ wide }) in src/render/chrome.mjs: /admin, the newsletter's editor and
      outbox, the event and page editors) spends the whole frame on its forms, tables and grids, asked
      2026-10-01 as "admin pages full w"; a note above them keeps the measure, since it is still read */
   main.admin :is(.items, .form, .table, .cards, .fields, .langs) { max-inline-size: none; }
@@ -699,9 +699,6 @@
   /* the preview's one line above the page, ruled under in the hairline */
   .notice { border-block-end: 1px solid var(--eccm-rule); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
   .notice > .frame { padding-block: var(--eccm-s-3); }
-  /* the bar site.mjs puts under the header in the installed app while notifications are off: a row with two ends, the line and its button, which wraps to two left-aligned lines on a narrow phone */
-  .push-ask > .frame { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--eccm-s-3) var(--eccm-s-6); }
-  .push-ask p { font-size: var(--eccm-t-m); line-height: var(--eccm-lh-body); color: var(--eccm-ink); }
   /* ── the YouTube player (asked 2026-10-07: "see ../trip for video player and implement. youtube url in
      content should use it"). A body paragraph that is only a YouTube URL is this box, src/render/md.mjs: 16:9
      reserved before anything arrives, the site's own copy of the video's picture and the primary icon button
@@ -714,44 +711,7 @@
   .yt-face:hover > .btn { outline: 1px solid var(--ev-on-btn, var(--eccm-ground)); outline-offset: -2px; }
   .yt > iframe { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; border: 0; }
 
-  /* docs (src/render/docs.mjs, docs/*.md, 2026-10-07): every block at the text's measure, tables and code
-     included (asked: "give pages content same w as text blocs"); a code block on #eeeedd, the light beige of
-     the events' schemes, its dark half at OKLCH 0.24 in the same hue the way a derived scheme's is, with the
-     copy icon button in its corner (asked: "code blocks: light beiige, one from the event bgs. use copy icon button") */
-  /* main.admin lifts the cap off .table, so the doc's own rule names it to win back the measure */
-  /* a doc fills its .page-text column, tables and code included */
-  .doc > *, main.admin .doc > .table { max-inline-size: none; }
-  /* in a doc every cell may wrap, so a column of long phrases cannot squeeze the task names to a word a line */
-  .doc .table :is(th, td) { white-space: normal; }
-  /* the contents: one table, each section a group row above its tasks, the group's link in the heading's weight */
-  /* no rule under a group, the link's own underline is the cue (asked 2026-10-07: "no need for these separtor lines, just text underlines") */
-  .doc-toc .doc-toc-group > th { padding-block-start: var(--eccm-s-6); border: 0; font-size: var(--eccm-t-m); font-weight: 600; color: var(--eccm-ink); }
-  .doc-toc tbody > .doc-toc-group:first-child > th { padding-block-start: var(--eccm-s-2); }
-  /* a finished task folded: its title and badge are the summary, the triangle the cue that it opens */
-  .doc > .doc-done { --eccm-flow: 1.5lh; }
-  .doc-done > summary { cursor: pointer; }
-  .doc-done > summary > h3 { display: inline; font-size: var(--eccm-t-m); font-weight: 600; }
-  .doc-done > summary > .doc-task { margin-block-start: 0.25lh; }
-  .doc-done[open] > summary ~ * { margin-block-start: 1lh; }
-  /* a doc's titles link to themselves: no line until hovered, like the list's titles */
-  .doc-anchor { color: inherit; text-decoration-line: none; }
-  .doc-anchor:hover, .doc-anchor:focus-visible { text-decoration-line: underline; }
-  /* a task's state and who, under its title: the badge first, the who in the second ink */
-  .doc-task { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--eccm-s-1) var(--eccm-s-3); color: var(--eccm-ink-2); font-size: var(--eccm-t-s); }
-  .doc .table :is(.wrap, .main) { inline-size: auto; min-inline-size: 0; max-inline-size: none; }
-  .doc > h3 { --eccm-flow: 1.5lh; font-size: var(--eccm-t-m); font-weight: 600; }
-  .doc > h3 + * { --eccm-flow: 0.25lh; }
-  .doc ul { list-style: disc; }
-  .doc ol { list-style: decimal; }
-  .doc :is(ul, ol) { padding-inline-start: 1.25em; }
-  .doc :is(ul, ol) > li + li { margin-block-start: 0.25lh; }
-  .doc :not(pre) > code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em; overflow-wrap: anywhere; }
-  /* warmer than grey, less yellow than #eeeedd: the events' beige mixed with their neutral #ededed (asked: "more neutrale-r code bg") */
-  .doc-code { position: relative; background: light-dark(color-mix(in oklch, #eeeedd 40%, #ededed), oklch(0.24 0.005 105)); }
-  /* a long block scrolls inside itself past two thirds of the screen (asked: "limit max h of code block (2/3 screen?)") */
-  .doc-code pre { margin: 0; padding: var(--eccm-s-4); padding-inline-end: var(--eccm-s-12); max-block-size: 66dvh; overflow: auto; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
-  .doc-copy { position: absolute; inset-block-start: var(--eccm-s-2); inset-inline-end: var(--eccm-s-2); inline-size: 2rem; border-color: transparent; }
-  .doc-copy:hover, .doc-copy:focus-visible { border-color: currentColor; }
+  /* the docs' rules (.doc, .doc-toc, .doc-code) went 2026-11-06 with /docs */
 }
 
 @layer page {

@@ -1,5 +1,5 @@
 // contact.mjs: the contact form at /et/kontakt and /en/contact, which
-// replaces the footer's link to Joomla's form (docs/migration.md, Contact
+// replaces the footer's link to Joomla's form (plans/plan-eccm-migration.md, Contact
 // form). A POST is a row in contact and a mail in the outbox (src/mail.mjs)
 // to CONTACT_TO with Reply-To the sender, then the thank-you on the same page.
 // It works without JavaScript; with TURNSTILE_SITEKEY and TURNSTILE_SECRET

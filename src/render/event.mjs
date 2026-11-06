@@ -44,7 +44,7 @@ ${desc ? html`<meta name="description" content="${desc}">
 `;
 };
 
-// the MusicEvent of docs/migration.md (Search basics): the times in Tallinn with their offset, the end
+// the MusicEvent of plans/plan-eccm-migration.md (Search basics): the times in Tallinn with their offset, the end
 // from ends_at or else from the duration, the share card as its picture, an offer only with a ticket link
 const eventLd = ({ lang, title, desc, ev, origin, canonical, image, textLang = lang }) => {
   const endLocal = ev.ends_at || (ev.duration_min ? new Date(new Date(ev.starts_at + ':00Z').getTime() + ev.duration_min * 60000).toISOString().slice(0, 16) : null);

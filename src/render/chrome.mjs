@@ -18,7 +18,7 @@ export const origin = () => ORIGIN;
 // logo (asked 2026-10-01: "make eccm default social card", "just original
 // logo"): a link to such a page used to preview as whatever picture a scraper
 // found, a crop of the footer's ULYSSES mark
-// admin and docs pages (every wide page) name none, so a shared link to a tool shows its title alone
+// admin pages (every wide page) name none, so a shared link to a tool shows its title alone
 // (asked 2026-10-09: "lets not have them for amdin and docs")
 // og: { key, title, lang } names the page's own card (src/og/card.mjs, pageInput), the site card otherwise; lang
 // is the card's when it differs from the page's, a text page shown in its other language
@@ -67,7 +67,7 @@ export const LABEL = { et: 'ET', en: 'EN' };
 // head: preloads the page itself knows it needs, the event's poster
 // (src/render/pic.mjs, src/render/event.mjs)
 // wide: a tool page (asked 2026-10-01: "admin pages full w"), its forms, tables and grids over the whole frame
-export const page = ({ lang, title, alternate, canonical, alternates, body, notice, head, wide, og, root = 'admin' }) => {
+export const page = ({ lang, title, alternate, canonical, alternates, body, notice, head, wide, og }) => {
   const t = T[lang];
   // every tool page leads back to /admin (asked 2026-10-01: "all admin pages should have upper link back to
   // /admin"): in front of the page's own crumb when it has one, as a crumb of its own when not; /admin
@@ -78,10 +78,7 @@ export const page = ({ lang, title, alternate, canonical, alternates, body, noti
     // Admin, the page's own parent crumb when it brings one, then the page itself, unlinked and marked current
     const b = String(body), back = `<a href="/admin">${lang === 'en' ? 'Admin' : 'Haldus'}</a>`, sep = '<span class="crumb-sep" aria-hidden="true">/</span>';
     const here = `${sep}<span aria-current="page">${esc(String(title).replace(/\.$/, ''))}</span>`;
-    // root 'docs': the docs stand on their own, not under Admin (asked 2026-10-07: "docs are not under admin"),
-    // so their trail starts at the page's own parent crumb and the /docs index carries none
-    if (root === 'docs') body = raw(b.replace(/<p class="crumb">([\s\S]*?)<\/p>/, (m, inner) => `<p class="crumb crumb-trail">${inner}${here}</p>`));
-    else body = raw(b.includes('<p class="crumb">')
+    body = raw(b.includes('<p class="crumb">')
       ? b.replace(/<p class="crumb">([\s\S]*?)<\/p>/, (m, inner) => `<p class="crumb crumb-trail">${back}${sep}${inner}${here}</p>`)
       : `  <p class="crumb crumb-trail">${back}${here}</p>\n${b}`);
   }

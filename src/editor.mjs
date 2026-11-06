@@ -1,15 +1,18 @@
 // editor.mjs: the editing step of the CMS, asked 2026-09-28 as "So next cms
-// step. Editing?". Routes under /edit, every one of them open:
+// step. Editing?". Routes under /edit, every one behind the editor keys:
 //
 //   GET  /edit                                 to the front page; an event is edited from its own Muuda button
+//   GET  /edit/events/new, POST                a blank form, then an insert
 //   GET  /edit/events/{id}, POST               the form from D1, then a save
 //   GET  /edit/pages/new, POST                 a blank form, then an insert
 //   GET  /edit/pages/{id}, POST                the form from D1, then a save
 //
-// There is no /edit/events/new since 2026-09-29, asked as "rm ... edit/event/new",
-// and with it went the Add button on the public events list: an event is
-// edited from its own Muuda button and nothing here makes one. A text page
-// still has /edit/pages/new, which was not asked away.
+// /edit/events/new went 2026-09-29, asked as "rm ... edit/event/new", with
+// the Add button on the public events list that was its only door, on the
+// day the editor was opened to anyone. It is back since 2026-11-06 behind
+// the editor keys, reached from the New event card on /admin and not from
+// the public list, which is the same page for every visitor. A new event is
+// a draft until its status says otherwise.
 //
 // A save is one D1 batch, which is one transaction: every statement is
 // guarded by the event's rev as the form saw it, and the event UPDATE that
@@ -181,7 +184,9 @@ async function save(db, v, before, who) {
     const ins = await db.prepare(`INSERT INTO event (${EVENT_COLS}, updated_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`).bind(...eventValues(v), by(who)).run();
     const id = ins.meta.last_row_id;
     const stmts = texts.map((l) => db.prepare('INSERT INTO event_text (event_id, lang, slug, title, body) VALUES (?,?,?,?,?)').bind(id, l, v[l].slug, v[l].title, v[l].body))
-      .concat(credits.map((c) => db.prepare('INSERT INTO event_credit (event_id, position, role_key, label_et, label_en, people, orgs) VALUES (?,?,?,?,?,?,?)').bind(id, c.position, c.role_key, c.label_et, c.label_en, c.people, c.orgs)));
+      .concat(credits.map((c) => db.prepare('INSERT INTO event_credit (event_id, position, role_key, label_et, label_en, people, orgs) VALUES (?,?,?,?,?,?,?)').bind(id, c.position, c.role_key, c.label_et, c.label_en, c.people, c.orgs)))
+      // the picture's descriptions and scheme, as a save stores them, with nothing to guard on a new row
+      .concat(mediaStmts(db, v, '1', []));
     if (stmts.length) await db.batch(stmts);
     return { id };
   }
@@ -337,12 +342,12 @@ async function preview(db, v, lang, before, roles, media, url) {
 
 async function form(request, env, url, id, who) {
   const db = env.DB;
-  const before = await load(db, +id);
+  const before = id === 'new' ? { ev: null, texts: [], creditRows: [], values: fromRows(null, [], []) } : await load(db, +id);
   if (!before) return reply(errorPage({ status: 404 }), 404);
   const { roles, media } = await lookups(db);
-  // where Cancel goes: the event itself, Estonian first
+  // where Cancel goes: the event itself, Estonian first, or /admin for a new one, where its card is
   const home = before.texts.find((x) => x.lang === 'et') || before.texts.find((x) => x.lang === 'en');
-  const cancel = home ? eventPath(home.lang, home.slug) : '/et/sundmused';
+  const cancel = home ? eventPath(home.lang, home.slug) : id === 'new' ? '/admin' : '/et/sundmused';
   if (request.method !== 'POST') return reply(editorForm({ v: padded(before.values), roles, media, cancel }));
   const fd = await request.formData();
   const v = parse(fd, before.values);
@@ -372,7 +377,7 @@ export async function editor(request, env, url, who = null) {
   const p = url.pathname;
   try {
     if (p === '/edit') return redirect('/');
-    const m = /^\/edit\/events\/(\d+)$/.exec(p);
+    const m = /^\/edit\/events\/(new|\d+)$/.exec(p);
     if (m) return form(request, env, url, m[1], who);
     const pm = /^\/edit\/pages\/(new|\d+)$/.exec(p);
     if (pm) return pageRoute(request, env, url, pm[1], who);

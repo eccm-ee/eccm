@@ -1,5 +1,5 @@
 // ld.mjs: schema.org JSON-LD for the head, the MusicEvent on an event page and
-// the Organization on both front pages (docs/migration.md, Search basics).
+// the Organization on both front pages (plans/plan-eccm-migration.md, Search basics).
 // The JSON sits inside a script element, so a "<" is written \u003c, which
 // keeps "</script>" and "<!--" out of it, and U+2028 and U+2029 are escaped
 // for the parsers that still read them as line ends.

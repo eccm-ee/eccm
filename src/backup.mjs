@@ -1,4 +1,4 @@
-// backup.mjs: the daily copy of the database (docs/migration.md, Backups).
+// backup.mjs: the daily copy of the database (plans/plan-eccm-migration.md, Backups).
 // Cloudflare keeps 7 days of D1 history and nothing once the database or the
 // account is gone, so the five-minute cron, once per UTC day, reads every
 // table and writes one JSON file into the R2 bucket bound as BACKUP, at

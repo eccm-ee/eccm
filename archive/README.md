@@ -3,6 +3,13 @@
 What was removed, and where to find it again. A tag names the last commit
 that still has a thing; `git checkout <tag> -- <path>` brings a file back.
 
+## The notices to phones, removed 2026-11-06, tag `notices-last`
+
+- **/items**, **/teated/{n}** and **/en/notices/{n}**, the Items Durable
+  Object, Web Push and the Luba teated bar: `notices.md`, with the two test
+  notices staging held and the restore steps. ECCM never asked for it, and
+  its Väin use went to v2in.
+
 ## The research pages, removed 2026-10-07, tag `research-last`
 
 - **/type** (`public/type.html`): the faces weighed for the body and the

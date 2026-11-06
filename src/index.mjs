@@ -30,10 +30,7 @@ import { renderSitemap, renderFeed } from './render/feeds.mjs';
 import { serveMedia } from './media.mjs';
 import { useTransforms } from './render/pic.mjs';
 import { renderIcs } from './render/ics.mjs';
-import { itemsRoute, ask as askItems } from './items.mjs';
-import { renderNotice } from './render/notice.mjs';
 import { renderAdmin } from './render/admin.mjs';
-import { renderDocs, renderDoc } from './render/docs.mjs';
 import { backup } from './backup.mjs';
 import { newsletter, drain } from './newsletter.mjs';
 import { contact, CONTACT_PATHS } from './contact.mjs';
@@ -41,7 +38,6 @@ import { ogRoute } from './og/route.mjs';
 import { legacy } from './redirects.mjs';
 import { passthrough } from './passthrough.mjs';
 import { gate, isProtected, isStatic, login, logout } from './auth.mjs';
-export { Items } from './items.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
 const EVENT = { et: /^\/et\/sundmused\/([a-z0-9-]+)$/, en: /^\/en\/events\/([a-z0-9-]+)$/ };
@@ -123,7 +119,7 @@ async function calendar(env, lang, slug, url) {
 const robots = () => new Response(`User-agent: *\nAllow: /\n\nSitemap: ${origin()}/sitemap.xml\n`, { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
 
 // x-robots-tag: noindex on every response the Worker returns while NOINDEX is "on" (staging), the one place
-// it is set for the whole site (docs/migration.md, Noindex on every page until cutover). A response with
+// it is set for the whole site (plans/plan-eccm-migration.md, Noindex on every page until cutover). A response with
 // immutable headers (a fetched one) is copied first; a WebSocket upgrade is left alone
 const noindex = (res) => {
   if (!res || res.webSocket) return res;
@@ -195,20 +191,9 @@ const routes = {
     if (CONTACT_PATHS.includes(p.replace(/\/$/, ''))) return contact(request, env, url, ctx);
     const pm = PAGE.exec(p);
     if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }
-    // a published notice's own page, the link Väin keeps (src/render/notice.mjs), since 2026-10-07
-    const nm = /^\/(?:teated|en\/notices)\/(\d+)$/.exec(p);
-    if (nm) {
-      const it = (await askItems(env, '/published')).items.find((x) => String(x.num) === nm[1]);
-      const lang = p.startsWith('/en/') ? 'en' : 'et';
-      return it ? reply(renderNotice({ lang, it, origin: origin() })) : reply(notFound(lang, p), 404);
-    }
-    // the notices and their push subscriptions (src/items.mjs), since 2026-10-01
-    if (p === '/items' || p.startsWith('/items/')) { const out = await itemsRoute(request, env, url); if (out) return out; }
+    // the notices to phones (/items, /teated/{n}, /en/notices/{n}, the Items Durable Object and Web Push) went 2026-11-06 (archive/notices.md)
     // the tools, one card each (src/render/admin.mjs), since 2026-10-01
-    // the docs, an index and the plan for moving eccm.ee here (src/render/docs.mjs), since 2026-10-07
-    if (p === '/docs' || p === '/docs/') return new Response(String(renderDocs()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
-    // each doc is a Markdown file under docs/ (src/render/docs.mjs)
-    { const d = /^\/docs\/([a-z0-9-]+)$/.exec(p); const out = d && renderDoc(d[1]); if (out) return new Response(String(out), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } }); }
+    // /docs, the migration plan and the presence notes drawn from Markdown, went 2026-11-06; the plan is plans/plan-eccm-migration.md
     if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin({ who, editors: (await env.DB.prepare('SELECT id, name, created_at, last_used FROM editor WHERE revoked_at IS NULL ORDER BY id').all()).results })), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     // the Revoke button of /admin's Editors list
     { const r = request.method === 'POST' && /^\/admin\/editors\/(\d+)\/revoke$/.exec(p); if (r) { await env.DB.prepare("UPDATE editor SET revoked_at = strftime('%Y-%m-%dT%H:%M:%SZ','now') WHERE id = ? AND revoked_at IS NULL").bind(+r[1]).run(); return new Response(null, { status: 303, headers: { location: '/admin', 'cache-control': 'no-store' } }); } }

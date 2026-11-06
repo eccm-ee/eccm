@@ -13,8 +13,6 @@ Moving eccm.ee onto this site. Measured on 7 October 2026. Each task says who do
 | Events | Everything to the end of 2026 is entered on eccm.ee. A few dates will change. |
 | Admin | Behind editor keys since 6 November 2026, one per person, made with `tools/editors.mjs`. |
 
-<!-- contents -->
-
 ## 1. Staging
 
 The site tasks, on [staging](https://eccm-staging.kristjan-jansen.workers.dev/). Every agent prompt assumes the agent reads `CLAUDE.md` first, which has the run, deploy and push commands.
@@ -50,7 +48,7 @@ the site is on staging. Add a var NOINDEX ("on" in env.staging, absent in
 production) and set the header on every response leaving the fetch handler,
 including redirects and 404s, in one place, not per route. Remove the
 per-route noindex headers that become redundant. Verify with curl -sI on /,
-an event page and /docs, then deploy staging and push.
+an event page and /admin, then deploy staging and push.
 ```
 
 ### Redirects from the old Joomla addresses
@@ -88,7 +86,7 @@ done
 
 ```text
 In eccm, implement the Joomla redirects of plans/plan-eccm-urls-sitemap-rss.md
-section 3, with the event pattern in docs/migration.md (it allows zero to two
+section 3, with the event pattern in plans/plan-eccm-migration.md (it allows zero to two
 menu segments before the id). One 301 hop each, looked up in D1 by
 (lang, legacy_id) and page_text.legacy_path. Add a redirect_miss table in a new
 migration (path, count, last_seen) and log every /index.php path that matches
@@ -129,7 +127,7 @@ skills first. Check at 375 and 1280, deploy staging, push.
 
 **Ask ECCM:** approve the text, or send corrections.
 
-The site collects newsletter addresses, contact messages and push subscriptions, so it needs a privacy notice in both languages. See Privacy and consent below for what it has to say.
+The site collects newsletter addresses and contact messages, so it needs a privacy notice in both languages. See Privacy and consent below for what it has to say.
 
 **Prompt**
 
@@ -190,7 +188,7 @@ Results Test, deploy staging, push.
 
 **Who:** agent. **State:** done on staging, editor keys in `src/auth.mjs`.
 
-Each editor has a key of their own, typed once at `/login`, then a cookie for 90 days. It guards `/admin`, `/edit`, `/items`, `/docs`, `/ds`, `/logo` and `/social`; everything else stays public. Ten wrong keys an hour from one address, then a wait. Saves name the editor.
+Each editor has a key of their own, typed once at `/login`, then a cookie for 90 days. It guards `/admin`, `/edit`, `/ds`, `/logo` and `/social`; everything else stays public. Ten wrong keys an hour from one address, then a wait. Saves name the editor.
 
 ```sh
 node tools/editors.mjs create "Name" --remote --env staging   # prints the key once
@@ -253,6 +251,14 @@ Library and Radio. Write archive/radio.md:
 what it was, the tag, and the exact restore steps. Deploy staging, push the tag
 and the commit.
 ```
+
+### Remove the notices to phones
+
+**Who:** agent. **State:** done 6 November 2026, `archive/notices.md`, the tag `notices-last`.
+
+`/items`, `/teated/{n}`, `/en/notices/{n}`, the Items Durable Object, Web Push and the Luba teated bar. ECCM never asked for them, and their Väin use went to v2in. The class is deleted by the tag `v5` in `wrangler.jsonc`, which empties staging's object: two test notices, kept by title in the archive note, and the push subscriptions.
+
+The privacy pages' notices section (4. Teated, 4. Notifications) was taken out the same day, on staging and in `data/seed-step8-privacy.sql`, and the sections after it renumbered.
 
 ### Research pages to git history
 
@@ -378,7 +384,7 @@ env -u CF_API_TOKEN -u CLOUDFLARE_API_TOKEN npx wrangler ... (CLAUDE.md, Deploy)
    pictures under public/ deploy with the site.
 5. npx wrangler deploy --env production, to the workers.dev address only
    (routes stay commented out), and check: the front page in both
-   languages, an event, /docs, /robots.txt, a login, the contact form.
+   languages, an event, /robots.txt, a login, the contact form.
    Mail from uudiskiri@eccm.ee works only after Email sending from eccm.ee.
 Report the account, ids and what was copied, with row counts against staging.
 ```
@@ -387,7 +393,7 @@ What the throwaway deploy found:
 
 - `env.production` has its own `"migrations": []`. Wrangler takes a list per environment, and the empty one replaces the top-level list, which is staging's history. The new Worker got no Durable Object at all.
 - Replaying staging's tags on a new Worker works too: v1 to v4, the radio's classes made and deleted in one upload, were accepted. The empty list is the plainer of the two.
-- When staging drops Items, its `deleted_classes: ["Items"]` tag goes on the top-level list (or a list of staging's own). Production's empty list is untouched by it, and a class production needs later starts its own tags there.
+- Staging dropped Items on 6 November 2026 with a `deleted_classes: ["Items"]` tag, `v5`, on the top-level list. Production's empty list is untouched by it, and a class production needs later starts its own tags there.
 - On an empty database `/` shows "Ühtegi tulevast sündmust ei ole." and `/en/` "No upcoming events.", both 200. `/robots.txt` names `https://eccm.ee/sitemap.xml`. On workers.dev the pictures are the originals, since `/cdn-cgi/image/` exists only on a zone.
 
 ### Email sending from eccm.ee
@@ -504,8 +510,8 @@ curl -sI https://eccm.ee/radio1965/streams/tarmo-20261025-184903.mp3   # 200, au
 | Does the site need a cookie banner? | No. Visitors get no cookies; the only thing kept in their browser is the theme they pick. Editors get one login cookie, strictly necessary. | Nobody | Done |
 | Analytics. | [Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/): no cookies, counts only, so no consent. Never Google Analytics or the Meta pixel, which would need a banner. | ECCM turns it on | After migration |
 | Third parties. | None on the site: no outside scripts, fonts from the site itself. /nan/'s Google Fonts move to the site, Konkursid's YouTube embed uses youtube-nocookie.com or loads on click. | Agent | To do |
-| Personal data: newsletter, contact, push. | A privacy notice per language (GDPR article 13): who is responsible, what and why, how long, Cloudflare as processor, rights, complaints to the [Data Protection Inspectorate](https://www.aki.ee/). | ECCM writes, agent builds | To do |
-| Proof of consent. | Double opt-in and one-click unsubscribe on the newsletter, the browser's own permission for push. | Nobody | Done |
+| Personal data: newsletter, contact. | A privacy notice per language (GDPR article 13): who is responsible, what and why, how long, Cloudflare as processor, rights, complaints to the [Data Protection Inspectorate](https://www.aki.ee/). | ECCM writes, agent builds | To do |
+| Proof of consent. | Double opt-in and one-click unsubscribe on the newsletter. | Nobody | Done |
 | Processor agreement. | Cloudflare's [Data Processing Addendum](https://www.cloudflare.com/cloudflare-customer-dpa/) is part of its terms, nothing to sign. | ECCM | At account setup |
 | EULA or terms of use. | A website needs no EULA, terms are optional unless ECCM sells online. | Nobody | Decided |
 | Accessibility. | Estonia's rules bind public bodies, not an NGO, but build to WCAG 2.2 AA anyway. | Agent | Ongoing |

@@ -1,6 +1,6 @@
 -- seed-step10-archive-2026.sql: eccm.ee's past events of 2026 up to 12 May, the day before the earliest event seed-step6.sql brought, read once each off its public
 -- pages on 2026-10-07 (the four list pages and each event page, one request a second,
--- cached), docs/migration.md "Import the archive". 20 events, 31 texts, 12 new pictures.
+-- cached), plans/plan-eccm-migration.md "Import the archive". 20 events, 31 texts, 12 new pictures.
 --
 -- The shape, decided for the whole archive (seed-step10-archive-2024.sql to
 -- -2026.sql) rather than by hand per event:

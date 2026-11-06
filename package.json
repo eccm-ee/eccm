@@ -16,7 +16,6 @@
     "@cloudflare/workerd-darwin-arm64": "1.20260701.1"
   },
   "dependencies": {
-    "@resvg/resvg-wasm": "2.6.2",
-    "marked": "18.1.0"
+    "@resvg/resvg-wasm": "2.6.2"
   }
 }

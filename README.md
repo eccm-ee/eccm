@@ -1,11 +1,11 @@
 # eccm
 
 The website of ECCM, the Estonian Centre of Contemporary Music, for eccm.ee.
-Events, text pages, a newsletter and notices, in Estonian and English, edited
+Events, text pages and a newsletter, in Estonian and English, edited
 in the browser by ECCM's own people.
 
-Start here. `docs/migration.md` is the plan for moving eccm.ee onto this site,
-task by task, and is also served at `/docs/migration`.
+Start here. `plans/plan-eccm-migration.md` is the plan for moving eccm.ee onto
+this site, task by task.
 
 ## What runs where
 
@@ -18,7 +18,6 @@ Everything is on Cloudflare, in one account per environment.
 | D1 database (`DB`) | Events, pages, pictures' details, subscribers, newsletter issues, the mail outbox, editors. Schema in `migrations/`. |
 | R2 bucket (`MEDIA`) | Uploaded pictures, one file per picture, named by its content hash. |
 | R2 bucket (`BACKUP`) | A copy of the database every day, kept 30 days. |
-| Durable Object (`ITEMS`) | The notices at `/items`, their timer, and the browsers subscribed to push notifications. |
 | Email (`EMAIL`) | Sends the newsletter, sign-up confirmations and contact form mail through Cloudflare Email Sending. |
 | Cron, every five minutes | Sends mail that did not go at once, and takes the daily backup. |
 
@@ -45,8 +44,8 @@ npx wrangler d1 execute eccm-staging --local --env staging --file data/seed-step
 Or load a copy of the live database (see Backups below) with `--local`.
 
 Secrets the Worker reads, for local use in a `.dev.vars` file (git-ignored):
-`SESSION_SECRET` for logins and `VAPID_JWK` for push notifications. Without
-them the site runs, but logging in and push do not.
+`SESSION_SECRET` for logins. Without it the site runs, but logging in does
+not.
 
 ## Deploy
 
@@ -55,10 +54,10 @@ npx wrangler d1 migrations apply eccm --remote --env production   # only when mi
 npx wrangler deploy --env production
 ```
 
-The same with `eccm-staging` and `--env staging` for staging. The two
-secrets are set once per environment, with
-`npx wrangler secret put SESSION_SECRET --env production` and the same for
-`VAPID_JWK`. `docs/migration.md`, Set up production, has the first deploy. A `.env` file in
+The same with `eccm-staging` and `--env staging` for staging. The secret is
+set once per environment, with
+`npx wrangler secret put SESSION_SECRET --env production`.
+`plans/plan-eccm-migration.md`, Set up production, has the first deploy. A `.env` file in
 this directory overrides wrangler's login, so keep none here.
 
 ## Editors and logging in
@@ -75,8 +74,7 @@ directory with `tools/editors.mjs`:
 Run `node tools/editors.mjs` with no arguments for the exact commands. A lost
 key is revoked and a new one created.
 
-Behind the login: `/admin`, `/edit`, `/items`, `/docs`, `/ds`, `/logo` and
-`/social`. Everything else is public.
+Behind the login: `/admin`, `/edit`, `/ds`, `/logo` and `/social`. Everything else is public.
 
 ## Editing
 
@@ -86,12 +84,14 @@ Behind the login: `/admin`, `/edit`, `/items`, `/docs`, `/ds`, `/logo` and
   Draft is hidden from visitors. Two people saving the same page at once
   cannot overwrite each other: the second gets the form back with their text
   kept.
-- **New pages** start at `/edit/pages/new`. There is no form for a new event
-  yet: events so far were imported from the old site into `data/`.
+- **New events** start from the New event card on `/admin`, at
+  `/edit/events/new`, and are saved as a draft until set to Published. A
+  title already used by another event gets the date added to its address.
+- **New pages** start at `/edit/pages/new`.
 - **Pictures** are uploaded in the edit form and resized by Cloudflare on the
   way to visitors.
-- **`/admin`** links to everything else: the events, the notices, the
-  newsletter, the docs, and the design pages (`/ds`, `/logo`, `/social`).
+- **`/admin`** links to everything else: the events, a new event, the
+  newsletter, and the design pages (`/ds`, `/logo`, `/social`).
 
 ## Newsletter
 
@@ -146,7 +146,7 @@ address.
 
 ## Where to read more
 
-- `docs/migration.md`: moving eccm.ee here, and what is decided.
+- `plans/plan-eccm-migration.md`: moving eccm.ee here, and what is decided.
 - `CLAUDE.md`: the layout of the code, file by file, and the house rules, for a
   person or a coding agent.
 - `plans/`: why things are the way they are.

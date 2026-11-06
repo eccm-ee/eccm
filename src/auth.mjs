@@ -1,5 +1,5 @@
 // auth.mjs: who may edit, in place of the Cloudflare Access the migration
-// plan had (docs/migration.md, Login on admin and editing). Each editor has a
+// plan had (plans/plan-eccm-migration.md, Login on admin and editing). Each editor has a
 // key of their own, a row in editor (migrations/0009_editor.sql) made by
 // tools/editors.mjs, typed once at /login; the reply is a cookie for 90 days
 // holding a session signed with the secret SESSION_SECRET, naming the row.
@@ -12,9 +12,7 @@
 // D1 (login_fail), since a Workers rate limit binding counts over 10 or 60
 // seconds only and this one is over an hour.
 //
-// Behind it: /admin, /edit, /items (but /items/key, /items/subscribe and
-// /items/unsubscribe, which public/push.mjs calls from public pages), /docs,
-// and the static /ds, /logo and /social, which assets.run_worker_first sends
+// Behind it: /admin, /edit, and the static /ds, /logo and /social, which assets.run_worker_first sends
 // here first. A GET without a session goes to /login?next=..., anything else
 // is 401.
 import { renderLogin } from './render/login.mjs';
@@ -36,12 +34,10 @@ const sha256 = (s) => crypto.subtle.digest('SHA-256', enc.encode(s));
 
 // the protected paths, by the path with its trailing slash dropped
 const STATIC = ['/ds', '/ds.html', '/logo', '/logo.html', '/social', '/social.html'];
-const OPEN_ITEMS = ['/items/key', '/items/subscribe', '/items/unsubscribe'];
 export const isStatic = (p) => STATIC.includes(p.replace(/\/$/, ''));
 export const isProtected = (path) => {
   const p = path.replace(/\/$/, '') || '/';
-  if (OPEN_ITEMS.includes(p)) return false;
-  return isStatic(p) || /^\/(admin|edit|items|docs)(\/|$)/.test(p);
+  return isStatic(p) || /^\/(admin|edit)(\/|$)/.test(p);
 };
 
 const hmacKey = (secret) => crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']);

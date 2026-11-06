@@ -29,12 +29,13 @@
   "observability": { "enabled": true },
   // the share images' faces (src/og/render.mjs), bundled as bytes; the
   // resvg wasm needs no rule, a .wasm import is a compiled module by default
-  // and the docs (src/render/docs.mjs), each Markdown file bundled as its text
-  "rules": [{ "type": "Data", "globs": ["**/*.ttf"], "fallthrough": true }, { "type": "Text", "globs": ["**/*.md"], "fallthrough": true }],
+  "rules": [{ "type": "Data", "globs": ["**/*.ttf"], "fallthrough": true }],
   // SQLite-backed, the shape positron's workers/items proved
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Items"] }, { "tag": "v2", "new_sqlite_classes": ["Radio"] }, { "tag": "v3", "new_sqlite_classes": ["Schedule", "Library"] },
     // the radio's three went 2026-10-07 with their state, saved first in v2in's archive/eccm-radio/ (tags radio-last and radio-archive)
-    { "tag": "v4", "deleted_classes": ["Radio", "Schedule", "Library"] }],
+    { "tag": "v4", "deleted_classes": ["Radio", "Schedule", "Library"] },
+    // the notices' object went 2026-11-06 with its notices and push subscriptions (archive/notices.md)
+    { "tag": "v5", "deleted_classes": ["Items"] }],
   "env": {
     "staging": {
       "name": "eccm-staging",
@@ -55,13 +56,6 @@
       // Image Transformations are on for positron.studio since 2026-09-30
       // (dashboard, Images, Transformations, "This zone only"); "off" makes
       // src/render/pic.mjs draw the originals, as a zone without them needs
-      // the notices of /items (src/items.mjs), one Durable Object holding
-      // the list, its alarm and the browsers' subscriptions, since 2026-10-01
-      "durable_objects": { "bindings": [{ "name": "ITEMS", "class_name": "Items" }] },
-      // VAPID_PUBLIC is the public half of the key Web Push is signed with
-      // (src/push.mjs) and VAPID_SUB the contact a push service sees; the
-      // private half is the secret VAPID_JWK (wrangler secret put VAPID_JWK
-      // --env staging). A new key means every browser subscribes again.
       // The editors' sessions are signed with the secret SESSION_SECRET (src/auth.mjs,
       // wrangler secret put SESSION_SECRET --env staging); a new one logs every editor out.
       // the newsletter's mail (src/mail.mjs): the send_email binding, the
@@ -72,7 +66,7 @@
       "triggers": { "crons": ["*/5 * * * *"] },
       // NOINDEX "on" sends x-robots-tag: noindex on every Worker response (src/index.mjs), absent in production;
       // SITE_ORIGIN is the address canonical, og:url, the sitemap, the feeds and robots.txt name
-      "vars": { "NOINDEX": "on", "SITE_ORIGIN": "https://eccm.positron.studio", "IMAGE_TRANSFORMS": "on", "CONTACT_TO": "info@eccm.ee", "MAIL_FROM": "ECCM <uudiskiri@eccm.positron.studio>", "VAPID_PUBLIC": "BMFK4ASgBxY0RNxBPRoJTUHFf3pTkyx9lR3jIYG_miJdtrc7a_moyVkig2QlFVBr5d5BuacnyV6skIeaxvTGHM4", "VAPID_SUB": "https://eccm.positron.studio/" }
+      "vars": { "NOINDEX": "on", "SITE_ORIGIN": "https://eccm.positron.studio", "IMAGE_TRANSFORMS": "on", "CONTACT_TO": "info@eccm.ee", "MAIL_FROM": "ECCM <uudiskiri@eccm.positron.studio>" }
     },
     "production": {
       "name": "eccm",
@@ -82,7 +76,7 @@
       "account_id": "FILL-ECCM-ACCOUNT-ID",
       // the workers.dev address until cutover, then false
       "workers_dev": true,
-      // at cutover, once ECCM says the zone is active (docs/migration.md, Cutover):
+      // at cutover, once ECCM says the zone is active (plans/plan-eccm-migration.md, Cutover):
       // "routes": [{ "pattern": "eccm.ee", "custom_domain": true }, { "pattern": "www.eccm.ee", "custom_domain": true }],
       // database_id after wrangler d1 create eccm --env production on ECCM's account
       "d1_databases": [{ "binding": "DB", "database_name": "eccm", "migrations_dir": "migrations" }],

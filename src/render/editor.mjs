@@ -5,9 +5,9 @@
 // are a fixed set reached from their own Muuda buttons; the events list went
 // the same evening, asked as "rm https://eccm.positron.studio/edit/events page.
 // only events themselves are access ppoint to edit", so an event is reached
-// from its own Muuda button, and since 2026-09-29 only from there, the Add
-// button and /edit/events/new asked away with it) and the page that says a
-// thing is not there. The event form is
+// from its own Muuda button; the Add button and /edit/events/new were asked
+// away 2026-09-29 and the form for a new event is back since 2026-11-06,
+// reached from /admin) and the page that says a thing is not there. The event form is
 // public/edit.html's form grown to the schema (plans/plan-eccm-cms-step-1.md
 // section 2): the shared facts first, then the two languages side by side
 // where the frame allows it, then the credits as one line per role, then
@@ -90,13 +90,14 @@ const READ_PICTURE = `      const { read, contract } = await import('/scheme.mjs
 // cancel: where Cancel goes, the event itself or the public list (src/editor.mjs)
 export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmused' }) => {
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
-  const action = `/edit/events/${v.id}`;
+  const isNew = !v.id;
+  const action = isNew ? '/edit/events/new' : `/edit/events/${v.id}`;
   const roleOpts = [['', 'free role, name it alongside']].concat(roles.map((r) => [r.key, r.label_en || r.label_et]));
   // the picture as a text field for now, the file name under public/ (asked 2026-09-28: "put pilt textfield for now");
   // the name is resolved against the media rows on save, and the figure shows the row the event has
   const pic = media.find((m) => String(m.id) === String(v.image_id));
   const imageKey = v.image_key ?? (pic ? pic.key : '');
-  const title = v.et.title || v.en.title || 'Event';
+  const title = isNew ? 'New event' : (v.et.title || v.en.title || 'Event');
   // one credit block under its own subheader (asked 2026-09-29: "tegijad. add Tegija 1 etc subheaders"),
   // so the role field is labelled Roll and the number is said once; k is the index in the names and ids,
   // a string so the template below can carry a placeholder

@@ -1,5 +1,5 @@
 // redirects.mjs: eccm.ee's old Joomla addresses, answered before anything else
-// (plans/plan-eccm-urls-sitemap-rss.md section 3, docs/migration.md
+// (plans/plan-eccm-urls-sitemap-rss.md section 3, plans/plan-eccm-migration.md
 // "Redirects from the old Joomla addresses"). Only /index.php, /images/ and
 // /administrator reach here; every other path gets null at once. Each answer is
 // one hop: a 301 to a page that answers 200 itself, a 410 for Joomla's login,
