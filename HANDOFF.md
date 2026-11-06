@@ -1,4 +1,4 @@
-# Handoff, 2026-11-06
+# Handoff, 2026-11-07
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
 committed on `main` of **https://github.com/kristjanjansen/eccm**, private,
@@ -11,6 +11,31 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 2026-10-09 `curl` reached it. If it blocks again, check through
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
 
+
+## 2026-11-06, late, and 2026-11-07: editor, newsletter, both languages, Lighthouse
+
+All deployed to staging and pushed (last `d86194a`).
+
+- **One ECCM editor key** (`c256491`): staging's is set; the login cookie is Lax and a browser can save the key
+  (`fa57fe3`). /admin has New event, Newsletter, Components, Logo, Social (no Events card, `140bee0`).
+- **Event form** (`88aa990`): Publishing first; Start, End and Duration at their own widths.
+- **Newsletter** (`4fef6a9`): "New newsletter" with a weeks choice (2 to 12); Sent to as a column;
+  `/edit/uudiskiri/tellijad` imports a pasted BCC list as confirmed (source import, migration 0011, the owner: "its
+  existing list"), lists everyone with Remove.
+- **Both languages fixed** (`a99c805`, seed step 12, migration 0012): every event in et and en, 51 texts translated
+  and listed for ECCM to review (in the commit's agent report, not in the site); a venue per language with a Venue in
+  English field; `src/render/lead.mjs` skips openings that repeat the title or are a date line; no map link for an
+  empty venue; 42 old English slugs 301.
+- **RSS and the calendar** named in every public page's head (`0280785`).
+- **Meta descriptions** on every public page; the first list picture eager, the body font preloaded, partner logos
+  sized (`d86194a`). Lighthouse on the front page: mobile and desktop Performance 100, Accessibility 100, Best
+  practices 100, SEO 69 only for staging's noindex (100 without it). eccm.ee: mobile 78, 92, 96, 92.
+- **Left for ECCM or the owner:** U:'s 29.12 at 23:42 as eccm.ee has it; ten "Schönbergi sari. ..." titles repeat the
+  series label; Residentuu:r 4's venue differs between eccm.ee's languages.
+- **VÄIN no longer depends on eccm.ee** once Tarmo merges [#3 v2in: broadcasting with the app's login, destinations and pools from v2in, recordings off eccm.ee](https://github.com/tarmoj/radio1965/pull/3)
+  and runs its server steps: the new eccm.ee forwards only `/radio1965/streams/*` to v2in (recordings), the three
+  pages and the emails' link move to v2in.stream, the Joomla API is no longer read. Only his account mail still goes
+  through ECCM's mail server. v2in's HANDOFF has the rest.
 
 ## 2026-11-06: Väin goes to v2in, no old.eccm.ee
 
