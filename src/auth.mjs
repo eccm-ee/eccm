@@ -54,7 +54,8 @@ const cookieOf = (request) => {
   const m = new RegExp(`(?:^|;\\s*)${COOKIE}=([^;]+)`).exec(request.headers.get('cookie') || '');
   return m ? m[1] : null;
 };
-const setCookie = (value, maxAge) => `${COOKIE}=${value}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Strict`;
+// Lax, not Strict: a link from a mail or a chat to /admin carries the cookie, a form posted from another site still does not
+const setCookie = (value, maxAge) => `${COOKIE}=${value}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`;
 
 // whether the request carries a live session: signature and expiry
 export async function loggedIn(request, env) {
@@ -94,7 +95,8 @@ export async function login(request, env, url) {
   const next = safeNext(url.searchParams.get('next'));
   const show = (err, status = 200) => new Response(String(renderLogin({ lang, next: url.searchParams.get('next') ? next : '', err })), { status, headers: { ...NOSTORE, 'content-type': 'text/html; charset=utf-8' } });
   if (!ready(env)) return show('off', 503);
-  if (request.method !== 'POST') return show();
+  // already in: on to where the editor was going (asked 2026-11-06: "when i have key recorded why your prompt login again")
+  if (request.method !== 'POST') return (await loggedIn(request, env)) ? new Response(null, { status: 303, headers: { ...NOSTORE, location: next } }) : show();
 
   const ipHash = hex(await sha256(`eccm-login:${request.headers.get('cf-connecting-ip') || ''}`));
   const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM login_fail WHERE ip_hash = ? AND at > strftime('%Y-%m-%dT%H:%M:%SZ','now','-1 hour')").bind(ipHash).first();

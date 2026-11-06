@@ -17,7 +17,9 @@ export const renderLogin = ({ lang, next, err }) => {
   const body = html`  <article class="page-text news-page">
     <h1>${t.title}</h1>
     <form class="form" method="post" action="${href(lang, next)}">
-      ${field({ id: 'l-key', label: t.key, err: err && t[err], hint: t.hint, control: input('l-key', 'key', '', ' autocomplete="current-password" autocapitalize="off" spellcheck="false" required autofocus') })}
+      <!-- a username for the browser's password manager, so it saves the key once and fills it after -->
+      <input type="text" name="username" value="ECCM" autocomplete="username" hidden>
+      ${field({ id: 'l-key', label: t.key, err: err && t[err], hint: t.hint, control: input('l-key', 'key', '', ' type="password" autocomplete="current-password" autocapitalize="off" spellcheck="false" required autofocus') })}
       <div class="actions"><button class="btn btn-pri" type="submit">${t.go}</button></div>
     </form>
   </article>`;
