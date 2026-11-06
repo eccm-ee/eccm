@@ -104,6 +104,7 @@ unsubscribe link that works in one click.
 Editors write issues at `/edit/uudiskiri`: a new issue is filled in from the
 coming events, a test goes to one address, then Send goes to everyone in that
 language. Sent issues stay readable at the sign-up address.
+`/edit/uudiskiri/tellijad` imports a pasted list of addresses as confirmed subscribers, lists everyone and removes one.
 
 Mail is written to the `outbox` table first and then sent; what fails is
 retried by the cron three times. `/edit/uudiskiri/postkast` shows the outbox.

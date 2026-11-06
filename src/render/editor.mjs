@@ -43,8 +43,8 @@ export const input = (id, name, value, attrs = '') => html`<input id="${id}" nam
 // a choice of a few as native radio buttons in a row, each with its label (asked 2026-09-28: "make it radiobutton
 // [ Mustand | Avaldatud ]", then "make classic horiz radions (o) () instead of radiobuttons"); a fieldset with the
 // field's look, its legend where the label sits
-const segment = (name, options, value) => html`<div class="radios">${options.map(([v, label]) => html`<label><input type="radio" name="${name}" value="${v}"${String(v) === String(value ?? '') ? raw(' checked') : ''}> ${label}</label>`)}</div>`;
-const group = ({ label, hint, err, control }) => html`<fieldset class="field">
+export const segment = (name, options, value) => html`<div class="radios">${options.map(([v, label]) => html`<label><input type="radio" name="${name}" value="${v}"${String(v) === String(value ?? '') ? raw(' checked') : ''}> ${label}</label>`)}</div>`;
+export const group = ({ label, hint, err, control }) => html`<fieldset class="field">
         <legend>${label}</legend>
         ${control}
         ${err ? html`<p class="hint err">${err}</p>` : hint ? html`<p class="hint">${hint}</p>` : ''}

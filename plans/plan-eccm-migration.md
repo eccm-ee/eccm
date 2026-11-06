@@ -298,9 +298,9 @@ The missing events, the archive, the changed dates.
 
 ### Existing subscribers
 
-**Who:** ECCM. **State:** ask.
+**Who:** ECCM pastes the list. **State:** built; the owner said the list is the existing one ECCM writes to, so confirmed (6 November 2026: "use confirmed. its existing list").
 
-**Ask ECCM:** whether a list of people you already write to exists, and whether they agreed to get the newsletter. Only people who agreed may be imported; anyone else signs up again with the double opt-in.
+At `/edit/uudiskiri/tellijad`, paste the To or BCC field of the last mail as it is, pick the language and press Check, then Add. The new addresses become confirmed subscribers marked as imported, with no mail sent; addresses already subscribed or unsubscribed are skipped. The same page lists everyone and removes one, which unsubscribes them so a later paste does not add them back. `tools/clear-test-rows.mjs` keeps imported rows when the content moves to production.
 
 ### Import the archive
 
@@ -374,7 +374,7 @@ env -u CF_API_TOKEN -u CLOUDFLARE_API_TOKEN npx wrangler ... (CLAUDE.md, Deploy)
    npx wrangler secret put SESSION_SECRET --env production      (a new random value, openssl rand -hex 32)
    npx wrangler secret put TURNSTILE_SITEKEY --env production   (a Turnstile widget in ECCM's account for eccm.ee and the workers.dev address)
    npx wrangler secret put TURNSTILE_SECRET --env production    (the same widget's secret, for the contact form)
-3. Move the content without staging's test rows (subscribers, drafts,
+3. Move the content without staging's test rows (subscribers other than the imported list, drafts,
    outbox, contact messages, redirect misses and login failures), with
    tools/clear-test-rows.mjs:
    npx wrangler d1 export eccm-staging --remote --env staging --no-schema --output tmp/staging.sql
@@ -512,7 +512,7 @@ curl -sI https://eccm.ee/radio1965/streams/tarmo-20261025-184903.mp3   # 200, au
 | Analytics. | [Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/): no cookies, counts only, so no consent. Never Google Analytics or the Meta pixel, which would need a banner. | ECCM turns it on | After migration |
 | Third parties. | None on the site: no outside scripts, fonts from the site itself. /nan/'s Google Fonts move to the site, Konkursid's YouTube embed uses youtube-nocookie.com or loads on click. | Agent | To do |
 | Personal data: newsletter, contact. | A privacy notice per language (GDPR article 13): who is responsible, what and why, how long, Cloudflare as processor, rights, complaints to the [Data Protection Inspectorate](https://www.aki.ee/). | ECCM writes, agent builds | To do |
-| Proof of consent. | Double opt-in and one-click unsubscribe on the newsletter. | Nobody | Done |
+| Proof of consent. | Double opt-in and one-click unsubscribe on the newsletter. The list ECCM already writes to is imported as confirmed (source `import`, with its date), by the owner's word that it is their existing list. | Nobody | Done |
 | Processor agreement. | Cloudflare's [Data Processing Addendum](https://www.cloudflare.com/cloudflare-customer-dpa/) is part of its terms, nothing to sign. | ECCM | At account setup |
 | EULA or terms of use. | A website needs no EULA, terms are optional unless ECCM sells online. | Nobody | Decided |
 | Accessibility. | Estonia's rules bind public bodies, not an NGO, but build to WCAG 2.2 AA anyway. | Agent | Ongoing |

@@ -8,7 +8,7 @@
 import { PAGE_TITLES } from '../og/card.mjs';
 import { html, raw } from './html.mjs';
 import { page, OTHER } from './chrome.mjs';
-import { field, input } from './editor.mjs';
+import { field, input, group, segment } from './editor.mjs';
 import { md } from './md.mjs';
 import { dateLong } from './dates.mjs';
 import { table } from './table.mjs';
@@ -73,14 +73,18 @@ export const renderArchive = ({ lang, issue, draft = false }) => {
 const LANG = { et: 'Estonian', en: 'English' };
 const STATE = (i) => (i.status === 'sent' ? `Sent ${sentDay(i.sent_at, 'en')} to ${i.sent_count} ${i.sent_count === 1 ? 'subscriber' : 'subscribers'}.` : 'Draft.');
 
+// the choices of how many weeks of events a new newsletter is filled with
+export const WEEKS = [2, 4, 6, 8, 12];
 export const renderIssues = ({ issues, counts }) => {
   const c = (lang, status) => counts.find((r) => r.lang === lang && r.status === status)?.n || 0;
   const body = html`  <h1>Newsletter</h1>
   <p class="note">Confirmed subscribers: ${c('et', 'confirmed')} in Estonian, ${c('en', 'confirmed')} in English. Awaiting confirmation: ${c('et', 'pending') + c('en', 'pending')}. The sign-up pages are <a href="${NL.et}">${NL.et}</a> and <a href="${NL.en}">${NL.en}</a>.</p>
   <div class="items">
     <form class="form" method="post" action="/edit/uudiskiri/new">
-      <h2>New letter</h2>
-      <p class="hint">The letter comes filled in with the next six weeks of events. The greeting, one paragraph and the signature are yours to write.</p>
+      <h2>New newsletter</h2>
+      <p class="hint">The newsletter comes filled in with the events of the weeks chosen below. The greeting, one paragraph and the signature are yours to write.</p>
+      <!-- how many weeks of events it is filled with, six by default (asked 2026-11-06: "make num of weeks a dropdown") -->
+      ${field({ id: 'f-weeks', label: 'Events from the next', control: html`<select id="f-weeks" name="weeks">${WEEKS.map((w) => html`<option value="${w}"${w === 6 ? raw(' selected') : ''}>${w} weeks</option>`)}</select>` })}
       <div class="actions">
         <button class="btn" type="submit" name="lang" value="et">In Estonian</button>
         <button class="btn" type="submit" name="lang" value="en">In English</button>
@@ -88,9 +92,9 @@ export const renderIssues = ({ issues, counts }) => {
     </form>
     <section class="items-list">
       <h2>Letters</h2>
-      ${issues.length ? table({ label: 'Letters', cols: [{ label: 'Date' }, { label: 'Subject', cls: 'main' }, { label: 'Language' }, { label: 'Status' }], rows: issues.map((i) => ({ current: i.status === 'draft', cells: [html`<time datetime="${i.sent_at || i.updated_at}">${sentDay(i.sent_at || i.updated_at, 'en')}</time>`, html`<a href="/edit/uudiskiri/${i.id}">${i.subject || '(no subject)'}</a>`, i.lang === 'et' ? 'Estonian' : 'English', i.status === 'sent' ? html`${badge('Sent', 'done')} <span class="small">${i.sent_count}</span>` : badge('Draft', 'neutral')] })) }) : html`<p class="note">No letters yet.</p>`}
+      ${issues.length ? table({ label: 'Letters', cols: [{ label: 'Date' }, { label: 'Subject', cls: 'main' }, { label: 'Language' }, { label: 'Status' }, { label: 'Sent to', cls: 'num' }], rows: issues.map((i) => ({ current: i.status === 'draft', cells: [html`<time datetime="${i.sent_at || i.updated_at}">${sentDay(i.sent_at || i.updated_at, 'en')}</time>`, html`<a href="/edit/uudiskiri/${i.id}">${i.subject || '(no subject)'}</a>`, i.lang === 'et' ? 'Estonian' : 'English', i.status === 'sent' ? badge('Sent', 'done') : badge('Draft', 'neutral'), i.status === 'sent' ? String(i.sent_count) : ''] })) }) : html`<p class="note">No letters yet.</p>`}
     </section>
-    <p><a href="/edit/uudiskiri/postkast">Outbox</a>: every mail, sent and unsent.</p>
+    <p><a href="/edit/uudiskiri/tellijad">Subscribers</a>: add a list, see everyone, remove one.<br><a href="/edit/uudiskiri/postkast">Outbox</a>: every mail, sent and unsent.</p>
   </div>`;
   return page({ wide: true, lang: 'en', title: 'Newsletter.', body });
 };
@@ -99,7 +103,7 @@ export const renderIssueForm = ({ issue, form = issue, errors = [], say, mail, t
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
   const sent = issue.status === 'sent';
   const body = html`  <p class="crumb"><a href="/edit/uudiskiri">Newsletter</a></p>
-  <h1>${issue.subject || 'New letter'}</h1>
+  <h1>${issue.subject || 'New newsletter'}</h1>
   <p class="note">A letter in ${LANG[issue.lang]}. ${STATE(issue)}${sent ? html` <a href="${NL[issue.lang]}/${issue.slug}">On the web</a>.` : ''}</p>
   ${errors.length ? html`<div class="errors" role="alert"><p>That did not work. Please fix:</p><ul>${errors.map((e) => html`<li>${e.msg}</li>`)}</ul></div>` : ''}
   ${say ? html`<p class="news-say" role="status">${say}</p>` : ''}
@@ -120,7 +124,49 @@ export const renderIssueForm = ({ issue, form = issue, errors = [], say, mail, t
   </form>`}
   <h2 class="mail-head">How it looks in the inbox</h2>
   <iframe class="mail-preview" title="The letter in the inbox" srcdoc="${mail}"></iframe>`;
-  return page({ wide: true, lang: 'en', title: `${issue.subject || 'New letter'}.`, body });
+  return page({ wide: true, lang: 'en', title: `${issue.subject || 'New newsletter'}.`, body });
+};
+
+// the subscribers (asked 2026-11-06 with the list ECCM already writes to: "use confirmed. its existing list"):
+// the count, a pasted list checked and then added as confirmed, and every row with a Remove that unsubscribes
+const SUB_STATE = { confirmed: ['Confirmed', 'done'], pending: ['Awaiting confirmation', 'progress'], unsubscribed: ['Unsubscribed', 'neutral'] };
+const SOURCE = { signup: 'Sign-up', import: 'Import' };
+const few = (list) => html` <span class="small">${list.slice(0, 20).join(', ')}${list.length > 20 ? ` and ${list.length - 20} more` : ''}</span>`;
+export const renderSubscribers = ({ rows, form = {}, err, preview: v, say }) => {
+  const n = (lang, status) => rows.filter((r) => (!lang || r.lang === lang) && r.status === status).length;
+  const lang = form.lang === 'en' ? 'en' : 'et';
+  const adds = v ? v.fresh.length + v.pending.length : 0;
+  const body = html`  <p class="crumb"><a href="/edit/uudiskiri">Newsletter</a></p>
+  <h1>Subscribers</h1>
+  <p class="note">Confirmed: ${n('et', 'confirmed')} in Estonian, ${n('en', 'confirmed')} in English. Awaiting confirmation: ${n(null, 'pending')}. Unsubscribed: ${n(null, 'unsubscribed')}.</p>
+  ${say ? html`<p class="news-say" role="status">${say}</p>` : ''}
+  <div class="items">
+    <form class="form" method="post" action="/edit/uudiskiri/tellijad">
+      <h2>Add subscribers</h2>
+      <p class="hint">For people who already get ECCM’s mail. They are added as confirmed and get no mail now.</p>
+      ${field({ id: 's-list', label: 'Addresses', err, hint: 'Paste the To or BCC field as it is. Names, commas, semicolons and new lines are fine.', control: html`<textarea id="s-list" name="list" rows="8">${form.list || ''}</textarea>` })}
+      ${group({ label: 'Language of the letters', control: segment('lang', [['et', 'Estonian'], ['en', 'English']], lang) })}
+      ${v ? html`<div class="flow" role="status">
+        <p>Found ${v.found} ${v.found === 1 ? 'address' : 'addresses'}${v.dupes ? `, ${v.dupes} of them repeated and counted once` : ''}.</p>
+        <ul>
+          <li>New: ${v.fresh.length}.</li>
+          ${v.pending.length ? html`<li>Awaiting confirmation: ${v.pending.length}, confirmed by this.${few(v.pending)}</li>` : ''}
+          <li>Already subscribed, skipped: ${v.confirmed.length}.</li>
+          ${v.unsubscribed.length ? html`<li>Unsubscribed, skipped: ${v.unsubscribed.length}.${few(v.unsubscribed)}</li>` : ''}
+          ${v.invalid.length ? html`<li>Not valid, skipped: ${v.invalid.length}.${few(v.invalid)}</li>` : ''}
+        </ul>
+      </div>` : ''}
+      <div class="actions">
+        ${v && adds ? html`<button class="btn btn-pri" type="submit" name="do" value="add">Add ${adds} in ${LANG[lang]}</button>` : ''}
+        <button class="btn" type="submit" name="do" value="check">${v ? 'Check again' : 'Check'}</button>
+      </div>
+    </form>
+    <section class="items-list">
+      <h2>Everyone</h2>
+      ${rows.length ? html`<form method="post" action="/edit/uudiskiri/tellijad">${table({ label: 'Subscribers', cols: [{ label: 'Email', cls: 'main' }, { label: 'Language' }, { label: 'Status' }, { label: 'Source' }, { label: 'Added' }, { label: '' }], rows: rows.map((r) => [r.email, LANG[r.lang], badge(...SUB_STATE[r.status]), SOURCE[r.source] || '', html`<time datetime="${r.created_at}">${sentDay(r.created_at, 'en')}</time>`, r.status === 'unsubscribed' ? '' : html`<button class="btn btn-sm" type="submit" name="remove" value="${r.id}">Remove</button>`]) })}</form>` : html`<p class="note">No subscribers yet.</p>`}
+    </section>
+  </div>`;
+  return page({ wide: true, lang: 'en', title: 'Subscribers.', body });
 };
 
 // a@b.ee as a***@b.ee: the outbox shows that a mail went and to whom roughly, never the list

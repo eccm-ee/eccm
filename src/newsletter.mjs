@@ -14,6 +14,7 @@
 //   GET  /edit/uudiskiri, POST /edit/uudiskiri/new     the issues; a new one, composed
 //   GET  /edit/uudiskiri/{id}, POST             one issue: save, delete, a test, the send
 //   GET  /edit/uudiskiri/postkast               the outbox, masked
+//   GET  /edit/uudiskiri/tellijad, POST         the subscribers: a pasted list imported as confirmed, and Remove
 //
 // The sign-up is not linked from the menu: the list starts at cutover, never
 // on staging (plans/plan-eccm-presence.md item 5). On the Workers Free plan
@@ -21,7 +22,7 @@
 // what happens to the rest.
 import { queue, drain } from './mail.mjs';
 import { renderIssueMail, confirmMail } from './render/mail.mjs';
-import { NL, NOTICE, renderSignup, renderNotice, renderArchive, renderIssues, renderIssueForm, renderOutbox } from './render/newsletter.mjs';
+import { NL, NOTICE, WEEKS, renderSignup, renderNotice, renderArchive, renderIssues, renderIssueForm, renderOutbox, renderSubscribers } from './render/newsletter.mjs';
 import { slugify } from './editor.mjs';
 
 const PUB = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' };
@@ -54,9 +55,9 @@ const COPY = {
   et: { hi: 'Tere!', para: 'Kirjuta siia üks lõik: mis lähinädalatel ECCM-is toimub ja miks tulla.', head: 'Tulemas', none: 'Lähinädalatel sündmusi ei ole.', more: 'Loe lähemalt', ticket: 'pilet', end: 'Kohtumiseni!\nNimi' },
   en: { hi: 'Hello!', para: 'Write one paragraph here: what is on at ECCM in the coming weeks and why to come.', head: 'Coming up', none: 'No events in the coming weeks.', more: 'Read more', ticket: 'ticket', end: 'See you there!\nName' },
 };
-export async function compose(env, lang, origin) {
+export async function compose(env, lang, origin, weeks = 6) {
   const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn' }).format(new Date());
-  const until = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn' }).format(new Date(Date.now() + 42 * 864e5));
+  const until = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn' }).format(new Date(Date.now() + weeks * 7 * 864e5));
   const { results } = await env.DB.prepare(`SELECT e.starts_at, e.venue, e.ticket_url, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et'
     WHERE e.status = 'published' AND substr(e.starts_at, 1, 10) BETWEEN ? AND ? AND COALESCE(t1.title, t0.title) IS NOT NULL ORDER BY e.starts_at`).bind(lang, today, until).all();
@@ -79,8 +80,8 @@ async function signup(request, env, url, ctx, lang) {
   if (row?.status === 'confirmed') return reply(renderSignup({ lang, issues: [], say: t.already(email) }));
   // a new address, one that never confirmed or one that left: a fresh token, pending, and the confirm mail
   const tok = token();
-  await env.DB.prepare(`INSERT INTO subscriber (email, lang, status, token) VALUES (?, ?, 'pending', ?)
-    ON CONFLICT (email) DO UPDATE SET lang = excluded.lang, status = 'pending', token = excluded.token, unsubscribed_at = NULL`).bind(email, lang, tok).run();
+  await env.DB.prepare(`INSERT INTO subscriber (email, lang, status, token, source) VALUES (?, ?, 'pending', ?, 'signup')
+    ON CONFLICT (email) DO UPDATE SET lang = excluded.lang, status = 'pending', token = excluded.token, source = 'signup', unsubscribed_at = NULL`).bind(email, lang, tok).run();
   const m = confirmMail(lang, `${url.origin}/uudiskiri/kinnita/${tok}`);
   await queue(env, [{ kind: 'confirm', to: email, subject: m.subject, text: m.text }]);
   later(ctx, env);
@@ -158,6 +159,77 @@ async function issuePage(request, env, url, ctx, id) {
   return go(`/edit/uudiskiri/${id}`);
 }
 
+// ── the subscribers ──────────────────────────────────────────────────────
+// a BCC field pasted as is (asked 2026-11-06, the list ECCM already writes to: "use confirmed. its existing
+// list"): entries split on commas, semicolons and line ends outside quotes and angle brackets; in an entry the
+// addresses in <...> and every other word with an @ in it, so a display name is never an address.
+// An entry with no address at all is listed as not valid, as is any candidate the sign-up's pattern refuses.
+export function parseList(text) {
+  const entries = [];
+  let cur = '', q = false, a = false;
+  for (const ch of String(text || '')) {
+    if (ch === '"' && !a) q = !q;
+    else if (ch === '<' && !q) a = true;
+    else if (ch === '>' && !q) a = false;
+    if (!q && !a && /[,;\n\r]/.test(ch)) { entries.push(cur); cur = ''; } else cur += ch;
+  }
+  entries.push(cur);
+  const found = [], invalid = [];
+  for (const e of entries.map((x) => x.trim()).filter(Boolean)) {
+    const angled = [...e.matchAll(/<([^<>]*)>/g)].map((m) => m[1]);
+    // outside the brackets, a bare address beside a named one when only spaces part them; a quoted part is a name
+    const at = (t) => t.split(/\s+/).filter((w) => w.includes('@'));
+    const bare = at(e.replace(/<[^<>]*>/g, ' ').replace(/"[^"]*"/g, ' '));
+    const words = angled.length || bare.length ? [...angled, ...bare] : at(e);
+    if (!words.length) { invalid.push(e); continue; }
+    for (const w of words) {
+      const addr = w.trim().replace(/^mailto:/i, '').replace(/^['"(\[]+|['")\].]+$/g, '').toLowerCase();
+      if (EMAIL.test(addr) && addr.length <= 200) found.push(addr); else invalid.push(w.trim() || e);
+    }
+  }
+  const unique = [...new Set(found)];
+  return { found: found.length, unique, dupes: found.length - unique.length, invalid };
+}
+
+// the paste against the table: new, pending (the import confirms them), already confirmed, unsubscribed (left alone)
+async function sortList(env, unique) {
+  const have = new Map();
+  for (let i = 0; i < unique.length; i += 90) {
+    const part = unique.slice(i, i + 90);
+    const { results } = await env.DB.prepare(`SELECT email, status FROM subscriber WHERE email IN (${part.map(() => '?').join(',')})`).bind(...part).all();
+    for (const r of results) have.set(r.email.toLowerCase(), r.status);
+  }
+  const by = (st) => unique.filter((e) => have.get(e) === st);
+  return { fresh: unique.filter((e) => !have.has(e)), pending: by('pending'), confirmed: by('confirmed'), unsubscribed: by('unsubscribed') };
+}
+
+async function subscribers(request, env) {
+  const list = async () => (await env.DB.prepare('SELECT id, email, lang, status, source, created_at, confirmed_at, unsubscribed_at FROM subscriber ORDER BY created_at DESC, id DESC').all()).results;
+  const show = async (extra = {}, status = 200) => reply(renderSubscribers({ rows: await list(), ...extra }), status, EDIT);
+  if (request.method !== 'POST') return show();
+  const f = await form(request);
+  if (f.remove) {
+    // the same as the unsubscribe link: the row stays, so a later import skips it
+    const r = await env.DB.prepare(`UPDATE subscriber SET status = 'unsubscribed', unsubscribed_at = ${NOW} WHERE id = ? AND status != 'unsubscribed' RETURNING email`).bind(Number(f.remove)).first();
+    return show({ say: r ? `Removed ${r.email}. No more letters go to it.` : 'That subscriber was already removed.' });
+  }
+  const lang = f.lang === 'en' ? 'en' : 'et';
+  const parsed = parseList(f.list);
+  if (!parsed.found && !parsed.invalid.length) return show({ form: f, err: 'Paste at least one address.' }, 400);
+  const sorted = await sortList(env, parsed.unique);
+  if (f.do !== 'add') return show({ form: { ...f, lang }, preview: { ...parsed, ...sorted, lang } });
+  // confirmed now with no mail, each with its own token so its unsubscribe link works; a race with the
+  // sign-up is settled by the UNIQUE email, which DO NOTHING leaves to the row already there
+  const stmts = [
+    ...sorted.fresh.map((e) => env.DB.prepare(`INSERT INTO subscriber (email, lang, status, token, source, confirmed_at) VALUES (?, ?, 'confirmed', ?, 'import', ${NOW}) ON CONFLICT (email) DO NOTHING`).bind(e, lang, token())),
+    ...sorted.pending.map((e) => env.DB.prepare(`UPDATE subscriber SET status = 'confirmed', confirmed_at = ${NOW} WHERE email = ? AND status = 'pending'`).bind(e)),
+  ];
+  let added = 0;
+  for (let i = 0; i < stmts.length; i += 200) for (const r of await env.DB.batch(stmts.slice(i, i + 200))) added += r.meta.changes || 0;
+  const skipped = [sorted.confirmed.length && `${sorted.confirmed.length} already subscribed`, sorted.unsubscribed.length && `${sorted.unsubscribed.length} unsubscribed`, parsed.invalid.length && `${parsed.invalid.length} not valid`].filter(Boolean);
+  return show({ say: `Added ${added} ${added === 1 ? 'subscriber' : 'subscribers'} in ${lang === 'et' ? 'Estonian' : 'English'}, confirmed, with no mail sent.${skipped.length ? ` Skipped: ${skipped.join(', ')}.` : ''}` });
+}
+
 export async function newsletter(request, env, url, ctx) {
   const p = url.pathname.replace(/\/$/, '');
   for (const lang of ['et', 'en']) {
@@ -185,10 +257,12 @@ export async function newsletter(request, env, url, ctx) {
     return reply(renderIssues({ issues, counts }), 200, EDIT);
   }
   if (p === '/edit/uudiskiri/new' && request.method === 'POST') {
-    const lang = (await form(request)).lang === 'en' ? 'en' : 'et';
-    const r = await env.DB.prepare('INSERT INTO issue (lang, body) VALUES (?, ?) RETURNING id').bind(lang, await compose(env, lang, url.origin)).first();
+    const f = await form(request), lang = f.lang === 'en' ? 'en' : 'et';
+    const weeks = WEEKS.includes(+f.weeks) ? +f.weeks : 6;   // the dropdown's choice, six when absent or unknown
+    const r = await env.DB.prepare('INSERT INTO issue (lang, body) VALUES (?, ?) RETURNING id').bind(lang, await compose(env, lang, url.origin, weeks)).first();
     return go(`/edit/uudiskiri/${r.id}`);
   }
+  if (p === '/edit/uudiskiri/tellijad') return subscribers(request, env);
   if (p === '/edit/uudiskiri/postkast') {
     return reply(renderOutbox({ rows: (await env.DB.prepare('SELECT * FROM outbox ORDER BY id DESC LIMIT 100').all()).results }), 200, EDIT);
   }

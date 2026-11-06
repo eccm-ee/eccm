@@ -7,7 +7,9 @@
 //   npx wrangler d1 execute eccm --remote --env production --file tmp/production.sql
 //
 // Cleared by default, each one's INSERTs dropped and its CREATE TABLE kept:
-//   subscriber      sign-ups made while testing the newsletter (migrations/0005_newsletter.sql)
+//   subscriber      sign-ups made while testing the newsletter (migrations/0005_newsletter.sql); a row
+//                   imported at /edit/uudiskiri/tellijad, source 'import' (0011_subscriber_source.sql),
+//                   is ECCM's real list and is kept
 //   issue           newsletter drafts and test sends, a sent one would show in the archive (0005)
 //   outbox          every mail queued or sent: confirmations, issues, contact copies (0005, 0008)
 //   contact         messages sent through the contact form (0008_contact.sql)
@@ -64,13 +66,38 @@ const target = (stmt) => {
   return m ? (m[1]?.replace(/""/g, '"') ?? m[2] ?? m[3] ?? m[4]) : null;
 };
 
+// one INSERT's values as written, quotes respected; with no column list, source is subscriber's last column
+// (0011 added it with ALTER TABLE, which appends)
+const values = (stmt) => {
+  const m = /\bVALUES\s*\(([\s\S]*)\)\s*;?\s*$/i.exec(stmt);
+  if (!m) return [];
+  const out = [];
+  let cur = '', q = false;
+  for (let i = 0; i < m[1].length; i++) {
+    const c = m[1][i];
+    if (c === "'") { if (q && m[1][i + 1] === "'") { cur += c; i++; } else q = !q; continue; }
+    if (c === ',' && !q) { out.push(cur.trim()); cur = ''; } else cur += c;
+  }
+  out.push(cur.trim());
+  return out;
+};
+const columns = (stmt) => {
+  const m = /^\s*INSERT\s+(?:OR\s+\w+\s+)?INTO\s+\S+\s*\(([^)]*)\)\s*VALUES/i.exec(stmt);
+  return m ? m[1].split(',').map((c) => c.trim().replace(/^["`\[]|["`\]]$/g, '')) : null;
+};
+const imported = (stmt) => {
+  const v = values(stmt), cols = columns(stmt);
+  return (cols ? v[cols.indexOf('source')] : v[v.length - 1]) === 'import';
+};
+const KEEP_ROW = { subscriber: imported };
+
 const src = readFileSync(input, 'utf8');
 const removed = Object.fromEntries([...clear].map((t) => [t, 0]));
 const kept = {};
 const out = [];
 for (const s of statements(src)) {
   const t = target(s);
-  if (t && clear.has(t)) { removed[t]++; continue; }
+  if (t && clear.has(t) && !KEEP_ROW[t]?.(s)) { removed[t]++; continue; }
   if (t) kept[t] = (kept[t] || 0) + 1;
   out.push(s);
 }

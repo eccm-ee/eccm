@@ -530,6 +530,8 @@
   .fields > .field-row.short > .field { flex: 0 1 auto; }
   .fields > .field-row.short input[type="datetime-local"] { inline-size: 16rem; max-inline-size: 100%; }
   .fields > .field-row.short input[type="number"] { inline-size: 8rem; }
+  /* the newsletter's weeks choice is a short word, at its own width rather than the form's */
+  .form select[name="weeks"] { inline-size: auto; min-inline-size: 10rem; }
   .fields input[type="datetime-local"] { max-inline-size: 16rem; }
   .fields input[type="number"] { max-inline-size: 8rem; }
   .form input, .form select, .form textarea { inline-size: 100%; border: 1px solid var(--eccm-rule-strong); border-radius: 0; background: var(--eccm-ground); color: var(--eccm-ink); padding: var(--eccm-s-3) var(--eccm-s-4); font: inherit; }
