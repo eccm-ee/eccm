@@ -27,11 +27,11 @@ const PATH = (kind, id, l, v) => (kind === 'e' ? cardPath(id, l, v) : tallPath(i
 async function rows(db, id, lang) {
   const ev = await db.prepare("SELECT * FROM event WHERE id = ? AND status = 'published'").bind(id).first();
   if (!ev) return null;
-  const text = await db.prepare('SELECT title FROM event_text WHERE event_id = ? AND lang = ?').bind(id, lang).first()
-    || await db.prepare("SELECT title FROM event_text WHERE event_id = ? AND lang = 'et'").bind(id).first();
+  const text = await db.prepare('SELECT title, venue FROM event_text WHERE event_id = ? AND lang = ?').bind(id, lang).first()
+    || await db.prepare("SELECT title, venue FROM event_text WHERE event_id = ? AND lang = 'et'").bind(id).first();
   if (!text) return null;
   const media = ev.image_id ? await db.prepare('SELECT scheme, key FROM media WHERE id = ?').bind(ev.image_id).first() : null;
-  return cardInput({ lang, title: text.title, ev, scheme: media && media.scheme, pic: media && media.key });
+  return cardInput({ lang, title: text.title, ev: { ...ev, venue: text.venue || ev.venue }, scheme: media && media.scheme, pic: media && media.key });
 }
 
 // a page's card: its title, from the page's own row when it has one; null for
@@ -152,7 +152,7 @@ async function pictureUri(env, url, key) {
 async function list(env, url) {
   // one query for every card, where it was the event page's four per card
   // (2026-10-02: /social sat on "Loading the events." for seconds over 50)
-  const all = (await env.DB.prepare(`SELECT e.*, t.lang, t.slug, t.title, m.scheme, m.key AS pic_key FROM event e
+  const all = (await env.DB.prepare(`SELECT e.*, COALESCE(NULLIF(t.venue, ''), e.venue) AS venue, t.lang, t.slug, t.title, m.scheme, m.key AS pic_key FROM event e
     JOIN event_text t ON t.event_id = e.id LEFT JOIN media m ON m.id = e.image_id
     WHERE e.status = 'published' ORDER BY e.starts_at DESC, e.id, t.lang`).all()).results;
   const out = all.map((r) => {

@@ -9,6 +9,7 @@ import { T, OTHER, page } from './chrome.mjs';
 import { dayMonth, whenLine, mapsUrl } from './dates.mjs';
 import { poster } from './pic.mjs';
 import { jsonLd, organizer } from './ld.mjs';
+import { opening } from './lead.mjs';
 import { cardInput, cardVersion, cardPath, cardAlt, W as CARD_W, H as CARD_H } from '../og/card.mjs';
 
 // the Open Graph head of plans/plan-eccm-event-markup.md section 4, with the
@@ -16,15 +17,14 @@ import { cardInput, cardVersion, cardPath, cardAlt, W as CARD_W, H as CARD_H } f
 // first paragraph as plain text, cut at a word under 200 characters
 const SITE_NAME = { et: 'Eesti Nüüdismuusika Keskus', en: 'Estonian Centre of Contemporary Music' };
 const LOCALE = { et: 'et_EE', en: 'en_GB' };
-const firstPara = (body) => {
-  const p = (body || '').split(/\n\s*\n/).map((s) => s.trim()).find((s) => s && !/^(#|[-*] |\d+\. )/.test(s)) || '';
-  const plain = p.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/[*_`>#]/g, '').replace(/\s+/g, ' ').trim();
+const firstPara = (body, ctx) => {
+  const plain = opening(body, ctx);
   return plain.length <= 200 ? plain : plain.slice(0, 200).replace(/\s+\S*$/, '') + '…';
 };
 const ogHead = ({ lang, title, body, ev, media, origin, canonical, textLang }) => {
   // the same input the card route builds, picture included, so og:image names the hash the route renders and no scraper takes a 302 first
   const input = cardInput({ lang, title, ev, scheme: media && media.scheme, pic: media && media.key });
-  const desc = firstPara(body);
+  const desc = firstPara(body, { title, venue: ev.venue, address: ev.address, series: CATEGORY[ev.category] && CATEGORY[ev.category][textLang] });
   const image = origin + cardPath(ev.id, lang, cardVersion(input));
   return html`${eventLd({ lang, title, desc, ev, origin, canonical, image, textLang })}
 <meta property="og:type" content="website">
@@ -58,7 +58,7 @@ const eventLd = ({ lang, title, desc, ev, origin, canonical, image, textLang = l
     ...(endLocal ? { endDate: `${endLocal}:00${offsetFor(endLocal)}` } : {}),
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-    location: { '@type': 'Place', name: ev.venue || ev.address, address: ev.address || ev.venue },
+    ...(ev.venue || ev.address ? { location: { '@type': 'Place', name: ev.venue || ev.address, address: ev.address || ev.venue } } : {}),
     organizer: organizer(origin),
     image: [image],
     ...(ev.ticket_url ? { offers: { '@type': 'Offer', url: ev.ticket_url } } : {}),
@@ -155,7 +155,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
         <h1 lang="${textLang}">${title}</h1>
         <dl class="facts">
           <div><dt>${t.when}</dt><dd><time datetime="${ev.starts_at}${off}">${whenLine(ev.starts_at, ev.ends_at, lang)}</time>${ev.duration_min ? html`, <time datetime="PT${ev.duration_min}M">${ev.duration_min} ${t.min}</time>` : ''}</dd></div>
-          <div><dt>${t.where}</dt><dd><a class="place" href="${mapsUrl(where)}">${where}</a></dd></div>
+          ${where ? html`<div><dt>${t.where}</dt><dd><a class="place" href="${mapsUrl(where)}">${where}</a></dd></div>` : ''}
           ${ev.category !== 'eccm' ? html`<div><dt>${t.series}</dt><dd>${CATEGORY[ev.category][lang]}</dd></div>` : ''}
           ${ev.website_url ? html`<div><dt>${t.website}</dt><dd><a href="${ev.website_url}">${host(ev.website_url)}</a></dd></div>` : ''}
           <div><dt>${t.calendar}</dt><dd><a href="${gcal}">Google</a> <a href="${outlook}">Outlook</a> <a href="${eventPath(textLang, text.slug)}.ics">iCal</a></dd></div>
@@ -184,7 +184,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
     <section class="next">
       <h2>${t.next}</h2>
       <ol class="next-list">
-        ${next.map((n) => html`<li><time datetime="${n.starts_at}${offsetFor(n.starts_at)}">${dayMonth(n.starts_at, lang)}</time><span><a href="${eventPath(n.tlang, n.slug)}"${n.tlang !== lang ? raw(` lang="${n.tlang}"`) : ''}>${n.title}</a><small>${n.venue}</small></span></li>`)}
+        ${next.map((n) => html`<li><time datetime="${n.starts_at}${offsetFor(n.starts_at)}">${dayMonth(n.starts_at, lang)}</time><span><a href="${eventPath(n.tlang, n.slug)}"${n.tlang !== lang ? raw(` lang="${n.tlang}"`) : ''}>${n.title}</a>${n.venue ? html`<small>${n.venue}</small>` : ''}</span></li>`)}
       </ol>
     </section>` : ''}
   </article>`;

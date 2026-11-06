@@ -64,10 +64,12 @@ const local = (v) => { v = String(v ?? '').trim(); return /^\d{4}-\d{2}-\d{2}T\d
 const isLocal = (v) => LOCAL.test(v) && new Date(v + ':00Z').toISOString().slice(0, 16) === v;
 
 const text = (rows, lang) => { const r = rows.find((t) => t.lang === lang); return { title: r?.title ?? '', slug: r?.slug ?? '', body: r?.body ?? '', exists: !!r }; };
+// the English venue lives on the English text row (migration 0012); empty means the Estonian one is shown
+const venueEn = (rows) => rows.find((t) => t.lang === 'en')?.venue ?? '';
 export const fromRows = (ev, texts, credits) => ({
   id: ev?.id, rev: ev?.rev ?? 0,
   starts_at: ev?.starts_at ?? '', ends_at: ev?.ends_at ?? '', duration_min: ev?.duration_min ?? '',
-  venue: ev?.venue ?? 'ECCM saal', address: ev?.address ?? 'Pühavaimu 9, Tallinn',
+  venue: ev?.venue ?? 'ECCM saal', venue_en: ev ? venueEn(texts) : 'ECCM hall', address: ev?.address ?? 'Pühavaimu 9, Tallinn',
   ticket_url: ev?.ticket_url ?? '', website_url: ev?.website_url ?? '', category: ev?.category ?? 'eccm',
   image_id: ev?.image_id ?? '', status: ev?.status ?? 'draft', publish_at: ev?.publish_at ?? '',
   et: text(texts, 'et'), en: text(texts, 'en'),
@@ -89,7 +91,7 @@ export const parse = (fd, before) => {
   const v = {
     id: before.id, rev: parseInt(s(fd, 'rev'), 10) || 0,
     starts_at: local(s(fd, 'starts_at')), ends_at: local(s(fd, 'ends_at')), duration_min: s(fd, 'duration_min'),
-    venue: s(fd, 'venue'), address: s(fd, 'address'), ticket_url: s(fd, 'ticket_url'), website_url: s(fd, 'website_url'),
+    venue: s(fd, 'venue'), venue_en: s(fd, 'venue_en'), address: s(fd, 'address'), ticket_url: s(fd, 'ticket_url'), website_url: s(fd, 'website_url'),
     category: s(fd, 'category'), image_key: s(fd, 'image_key'), image_id: '', status: s(fd, 'status'), publish_at: local(s(fd, 'publish_at')),
     alt_et: s(fd, 'alt_et'), alt_en: s(fd, 'alt_en'), image_scheme: cleanScheme(s(fd, 'image_scheme')),
     et: { title: s(fd, 'title_et'), slug: s(fd, 'slug_et').toLowerCase(), body: s(fd, 'body_et'), exists: before.et.exists },
@@ -131,6 +133,7 @@ export async function validate(v, db, roles, media) {
       if (lang === 'et') bad('title_et', 'Estonian title is empty.');
       else if (t.exists) bad('title_en', 'English title is empty, but the English text exists and cannot be removed here.');
       else if (t.slug || t.body) bad('title_en', 'English title is empty, but the slug or description is filled in.');
+      else if (v.venue_en && v.venue_en !== 'ECCM hall') bad('venue_en', 'The English venue needs an English title to belong to.');
       continue;
     }
     const derived = !t.slug;
@@ -183,7 +186,7 @@ async function save(db, v, before) {
   if (!v.id) {
     const ins = await db.prepare(`INSERT INTO event (${EVENT_COLS}, updated_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`).bind(...eventValues(v), BY).run();
     const id = ins.meta.last_row_id;
-    const stmts = texts.map((l) => db.prepare('INSERT INTO event_text (event_id, lang, slug, title, body) VALUES (?,?,?,?,?)').bind(id, l, v[l].slug, v[l].title, v[l].body))
+    const stmts = texts.map((l) => db.prepare('INSERT INTO event_text (event_id, lang, slug, title, body, venue) VALUES (?,?,?,?,?,?)').bind(id, l, v[l].slug, v[l].title, v[l].body, l === 'en' ? v.venue_en || null : null))
       .concat(credits.map((c) => db.prepare('INSERT INTO event_credit (event_id, position, role_key, label_et, label_en, people, orgs) VALUES (?,?,?,?,?,?,?)').bind(id, c.position, c.role_key, c.label_et, c.label_en, c.people, c.orgs)))
       // the picture's descriptions and scheme, as a save stores them, with nothing to guard on a new row
       .concat(mediaStmts(db, v, '1', []));
@@ -194,7 +197,7 @@ async function save(db, v, before) {
   // its changed-row count says whether anything happened at all
   const guard = 'EXISTS (SELECT 1 FROM event WHERE id = ? AND rev = ?)';
   const g = [v.id, v.rev];
-  const stmts = texts.map((l) => db.prepare(`INSERT INTO event_text (event_id, lang, slug, title, body) SELECT ?,?,?,?,? WHERE ${guard} ON CONFLICT (event_id, lang) DO UPDATE SET slug = excluded.slug, title = excluded.title, body = excluded.body`).bind(v.id, l, v[l].slug, v[l].title, v[l].body, ...g))
+  const stmts = texts.map((l) => db.prepare(`INSERT INTO event_text (event_id, lang, slug, title, body, venue) SELECT ?,?,?,?,?,? WHERE ${guard} ON CONFLICT (event_id, lang) DO UPDATE SET slug = excluded.slug, title = excluded.title, body = excluded.body, venue = CASE WHEN excluded.lang = 'en' THEN excluded.venue ELSE event_text.venue END`).bind(v.id, l, v[l].slug, v[l].title, v[l].body, l === 'en' ? v.venue_en || null : null, ...g))
     .concat([db.prepare(`DELETE FROM event_credit WHERE event_id = ? AND ${guard}`).bind(v.id, ...g)])
     .concat(credits.map((c) => db.prepare(`INSERT INTO event_credit (event_id, position, role_key, label_et, label_en, people, orgs) SELECT ?,?,?,?,?,?,? WHERE ${guard}`).bind(v.id, c.position, c.role_key, c.label_et, c.label_en, c.people, c.orgs, ...g)))
     .concat(mediaStmts(db, v, guard, g))
@@ -328,12 +331,13 @@ const lookups = async (db) => ({
 async function preview(db, v, lang, before, roles, media, url) {
   if (!v[lang].title) lang = 'et';
   const ev = { id: v.id, rev: v.rev, ...Object.fromEntries(EVENT_COLS.split(', ').map((k, i) => [k, eventValues(v)[i]])) };
+  if (lang === 'en' && v.venue_en) ev.venue = v.venue_en;
   const text = { event_id: v.id, lang, slug: v[lang].slug, title: v[lang].title, body: v[lang].body };
   const other = lang === 'et' ? 'en' : 'et';
   const twin = v[other].title ? { lang: other, slug: v[other].slug } : null;
   const credits = creditRows(v, before.creditRows).map((c) => { const r = roles.find((x) => x.key === c.role_key); return { ...c, role_et: r?.label_et, role_en: r?.label_en }; });
   const pic = media.find((m) => m.id === ev.image_id) || null;
-  const next = (await db.prepare(`SELECT e.starts_at, e.venue, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang
+  const next = (await db.prepare(`SELECT e.starts_at, COALESCE(NULLIF(t1.venue, ''), e.venue) AS venue, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et'
     WHERE e.status = 'published' AND e.starts_at > ? AND e.id != ? ORDER BY e.starts_at LIMIT 3`).bind(lang, ev.starts_at, v.id ?? 0).all()).results;
   const notice = 'Preview. Nothing is saved. Close this tab and save from the form.';

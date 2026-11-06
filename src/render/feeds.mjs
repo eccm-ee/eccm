@@ -13,6 +13,7 @@ import { T } from './chrome.mjs';
 import { LIST, HOME } from './events.mjs';
 import { pagePath } from './page.mjs';
 import { whenLine } from './dates.mjs';
+import { opening } from './lead.mjs';
 
 const XML_ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' };
 export const xmlEsc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => XML_ESC[c]);
@@ -44,14 +45,7 @@ export const renderSitemap = ({ origin, events, pages }) => {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls.join('\n')}\n</urlset>\n`;
 };
 
-// the first paragraph of a body as plain text, whole, the heading, list,
-// bold, italic and link marks of md.mjs taken off
-const firstPara = (body) => {
-  const para = String(body || '').split(/\r?\n\s*\r?\n/).map((x) => x.trim()).find((x) => x && !x.startsWith('#'));
-  if (!para) return '';
-  return para.replace(/^\s*(?:[-*]|\d+[.)])\s+/gm, '').replace(/\*\*([^*]+)\*\*/g, '$1').replace(/(^|\s)_([^_\n]+)_/g, '$1$2')
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\s+/g, ' ');
-};
+// the opening of a body as plain text, whole (src/render/lead.mjs)
 const TYPE = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', avif: 'image/avif', gif: 'image/gif' };
 const rfc822 = (utc) => new Date(utc).toUTCString();
 
@@ -61,7 +55,7 @@ const rfc822 = (utc) => new Date(utc).toUTCString();
 const item = (origin, lang, r) => {
   const link = origin + eventPath(lang, r.slug);
   const facts = [whenLine(r.starts_at, r.ends_at, lang), r.venue, r.ticket_url && `${T[lang].ticket}: ${r.ticket_url}`].filter(Boolean).join(', ');
-  const desc = [facts, firstPara(r.body)].filter(Boolean).join('\n\n');
+  const desc = [facts, opening(r.body, { title: r.title, venue: r.venue, address: r.address })].filter(Boolean).join('\n\n');
   const type = r.key && TYPE[r.key.split('.').pop().toLowerCase()];
   const enclosure = type ? `<enclosure url="${xmlEsc(origin + '/' + r.key)}" type="${type}"${r.bytes != null ? ` length="${xmlEsc(r.bytes)}"` : ''}/>` : '';
   return `<item><title>${xmlEsc(r.title)}</title><link>${xmlEsc(link)}</link><guid isPermaLink="true">${xmlEsc(link)}</guid><pubDate>${rfc822(r.created_at)}</pubDate><description>${xmlEsc(desc)}</description>${enclosure}</item>`;

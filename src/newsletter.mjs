@@ -58,7 +58,7 @@ const COPY = {
 export async function compose(env, lang, origin, weeks = 6) {
   const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn' }).format(new Date());
   const until = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn' }).format(new Date(Date.now() + weeks * 7 * 864e5));
-  const { results } = await env.DB.prepare(`SELECT e.starts_at, e.venue, e.ticket_url, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang
+  const { results } = await env.DB.prepare(`SELECT e.starts_at, COALESCE(NULLIF(t1.venue, ''), e.venue) AS venue, e.ticket_url, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et'
     WHERE e.status = 'published' AND substr(e.starts_at, 1, 10) BETWEEN ? AND ? AND COALESCE(t1.title, t0.title) IS NOT NULL ORDER BY e.starts_at`).bind(lang, today, until).all();
   const c = COPY[lang];

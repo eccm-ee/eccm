@@ -57,12 +57,17 @@ async function event(env, lang, slug, url) {
   // Estonian slug when no twin exists
   if (!text && lang !== 'et') { text = await db.prepare('SELECT * FROM event_text WHERE lang = ? AND slug = ?').bind('et', slug).first(); fallback = !!text; }
   if (!text) return null;
-  const ev = await db.prepare("SELECT * FROM event WHERE id = ? AND status = 'published'").bind(text.event_id).first();
-  if (!ev) return null;
+  const row = await db.prepare("SELECT * FROM event WHERE id = ? AND status = 'published'").bind(text.event_id).first();
+  if (!row) return null;
+  // the venue in the text's language when it has one (migration 0012), else the event's own
+  const ev = { ...row, venue: text.venue || row.venue };
   const media = ev.image_id ? await db.prepare('SELECT * FROM media WHERE id = ?').bind(ev.image_id).first() : null;
   const credits = (await db.prepare('SELECT c.*, r.label_et AS role_et, r.label_en AS role_en FROM event_credit c LEFT JOIN role r ON r.key = c.role_key WHERE c.event_id = ? ORDER BY c.position').bind(ev.id).all()).results;
   const twin = await db.prepare('SELECT lang, slug FROM event_text WHERE event_id = ? AND lang = ?').bind(ev.id, OTHER[lang]).first();
-  const next = (await db.prepare(`SELECT e.starts_at, e.venue, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang
+  // an English address carrying the Estonian slug, the fallback's, once the event has an English text of its
+  // own (seed-step12-english.sql gave 42 events one): 301 to that text, so the old links keep working
+  if (fallback) { const own = await db.prepare('SELECT slug FROM event_text WHERE event_id = ? AND lang = ?').bind(ev.id, lang).first(); if (own) return { moved: `/en/events/${own.slug}` }; }
+  const next = (await db.prepare(`SELECT e.starts_at, COALESCE(NULLIF(t1.venue, ''), e.venue) AS venue, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et'
     WHERE e.status = 'published' AND e.starts_at > ? AND e.id != ? ORDER BY e.starts_at LIMIT 3`).bind(lang, ev.starts_at, ev.id).all()).results;
   return renderEvent({ lang, text, fallback, ev, media, credits, twin, next, origin: origin(), path: url.pathname });
@@ -72,7 +77,7 @@ async function event(env, lang, slug, url) {
 // its Estonian text when it has none, the picture joined; the ones still to
 // come in date order, the ones that have been newest first
 async function eventsList(env, lang, url, home = false) {
-  const rows = (await env.DB.prepare(`SELECT e.id, e.starts_at, e.venue, e.category, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang, COALESCE(t1.body, t0.body) AS body, m.key AS pic, m.width, m.height
+  const rows = (await env.DB.prepare(`SELECT e.id, e.starts_at, COALESCE(NULLIF(t1.venue, ''), e.venue) AS venue, e.category, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang, COALESCE(t1.body, t0.body) AS body, m.key AS pic, m.width, m.height
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et' LEFT JOIN media m ON m.id = e.image_id
     WHERE e.status = 'published' AND COALESCE(t1.title, t0.title) IS NOT NULL ORDER BY e.starts_at`).bind(lang).all()).results;
   const today = tallinnToday();
@@ -99,12 +104,12 @@ async function textPage(env, lang, slug, url) {
 const ICS = { 'content-type': 'text/calendar; charset=utf-8', 'cache-control': 'public, max-age=300' };
 const CALNAME = { et: 'ECCM sündmused', en: 'ECCM events' };
 async function calendar(env, lang, slug, url) {
-  const q = `SELECT e.id, e.starts_at, e.ends_at, e.duration_min, e.venue, e.address, e.ticket_url, e.updated_at, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang, COALESCE(t1.body, t0.body) AS body
+  const q = `SELECT e.id, e.starts_at, e.ends_at, e.duration_min, COALESCE(NULLIF(t1.venue, ''), e.venue) AS venue, e.address, e.ticket_url, e.updated_at, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang, COALESCE(t1.body, t0.body) AS body
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et'
     WHERE e.status = 'published' AND COALESCE(t1.title, t0.title) IS NOT NULL`;
   let rows;
   if (slug) {
-    rows = (await env.DB.prepare(`${q} AND (t1.slug = ? OR (t1.slug IS NULL AND t0.slug = ?))`).bind(lang, slug, slug).all()).results;
+    rows = (await env.DB.prepare(`${q} AND (t1.slug = ? OR t0.slug = ?) ORDER BY t1.slug = ? DESC LIMIT 1`).bind(lang, slug, slug, slug).all()).results;
     if (!rows.length) return null;
   } else {
     const since = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn' }).format(new Date(Date.now() - 90 * 864e5));
@@ -170,14 +175,14 @@ const routes = {
     // the sitemap and the feeds (src/render/feeds.mjs), at SITE_ORIGIN; robots.txt names the sitemap
     if (p === '/sitemap.xml') return new Response(renderSitemap({ origin: origin(), events: (await env.DB.prepare("SELECT e.id, e.updated_at, t.lang, t.slug FROM event e JOIN event_text t ON t.event_id = e.id WHERE e.status = 'published'").all()).results, pages: (await env.DB.prepare("SELECT p.id, p.updated_at, t.lang, t.slug FROM page p JOIN page_text t ON t.page_id = p.id WHERE p.status = 'published'").all()).results }), { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, s-maxage=86400, stale-while-revalidate=86400' } });
     const fm = /^\/(et|en)\/feed\.xml$/.exec(p);
-    if (fm) return new Response(renderFeed({ origin: origin(), lang: fm[1], rows: (await env.DB.prepare("SELECT m.*, e.*, t.slug, t.title, t.body FROM event e JOIN event_text t ON t.event_id = e.id AND t.lang = ? LEFT JOIN media m ON m.id = e.image_id WHERE e.status = 'published' ORDER BY e.created_at DESC, e.id DESC LIMIT 20").bind(fm[1]).all()).results }), { headers: { 'content-type': 'application/rss+xml; charset=utf-8', 'cache-control': 'public, max-age=60' } });
+    if (fm) return new Response(renderFeed({ origin: origin(), lang: fm[1], rows: (await env.DB.prepare("SELECT m.*, e.*, COALESCE(NULLIF(t.venue, ''), e.venue) AS venue, t.slug, t.title, t.body FROM event e JOIN event_text t ON t.event_id = e.id AND t.lang = ? LEFT JOIN media m ON m.id = e.image_id WHERE e.status = 'published' ORDER BY e.created_at DESC, e.id DESC LIMIT 20").bind(fm[1]).all()).results }), { headers: { 'content-type': 'application/rss+xml; charset=utf-8', 'cache-control': 'public, max-age=60' } });
     // the calendars (src/render/ics.mjs), session 1's last piece since 2026-10-01: one event at its page's
     // address plus .ics, and a feed per language at the list's, the coming events and the last ninety days
     const ic = /^\/(et\/sundmused|en\/events)(?:\/([a-z0-9-]+))?\.ics$/.exec(p);
     if (ic) { const out = await calendar(env, ic[1] === 'et/sundmused' ? 'et' : 'en', ic[2], url); if (out) return out; }
     for (const lang of ['et', 'en']) {
       const m = EVENT[lang].exec(p);
-      if (m) { const out = await event(env, lang, m[1], url); if (out) return reply(out); break; }
+      if (m) { const out = await event(env, lang, m[1], url); if (out?.moved) return new Response(null, { status: 301, headers: { location: url.origin + out.moved } }); if (out) return reply(out); break; }
     }
     // the front pages, both from D1 since 2026-10-03 (asked: "do estonian front page"); public/index.html, the static one, is in git at 5977631
     if (p === '/') return reply(await eventsList(env, 'et', url, true));

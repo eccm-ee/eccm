@@ -9,6 +9,7 @@
 // and a UTC instant is the same moment in every one of them. RFC 5545: CRLF
 // line ends, text escaped, lines folded at 75 octets. No library.
 import { offsetFor } from './event.mjs';
+import { opening } from './lead.mjs';
 
 const toUtc = (local) => { const off = offsetFor(local); const sign = off[0] === '-' ? 1 : -1; const [h, m] = off.slice(1).split(':').map(Number); return new Date(new Date(local + ':00Z').getTime() + sign * (h * 60 + m) * 60000); };
 const stamp = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
@@ -26,10 +27,6 @@ const fold = (line) => {
   out.push(cur);
   return out.join('\r\n ');
 };
-// the body's first paragraph as plain text: links to their words, no marks
-const firstPara = (md) => (String(md ?? '').split(/\r?\n\s*\r?\n/).find((b) => b.trim() && !/^#/.test(b.trim())) || '')
-  .replace(/\[([^\]\n]+)\]\([^)]+\)/g, '$1').replace(/\*\*|__|(^|\s)_|_(?=\s|$)/g, '$1').replace(/\s+/g, ' ').trim();
-
 const PATH = { et: (s) => `/et/sundmused/${s}`, en: (s) => `/en/events/${s}` };
 const TICKET = { et: 'Piletid', en: 'Tickets' };
 
@@ -41,7 +38,7 @@ export const renderIcs = ({ rows, origin, lang, name }) => {
   for (const e of rows) {
     const start = toUtc(e.starts_at);
     const end = e.ends_at ? toUtc(e.ends_at) : new Date(start.getTime() + (e.duration_min || 60) * 60000);
-    const desc = [firstPara(e.body), e.ticket_url ? `${TICKET[lang]}: ${e.ticket_url}` : ''].filter(Boolean).join('\n\n');
+    const desc = [opening(e.body, { title: e.title, venue: e.venue, address: e.address }), e.ticket_url ? `${TICKET[lang]}: ${e.ticket_url}` : ''].filter(Boolean).join('\n\n');
     lines.push('BEGIN:VEVENT', `UID:event-${e.id}@eccm.ee`, `DTSTAMP:${now}`, `DTSTART:${stamp(start)}`, `DTEND:${stamp(end)}`,
       `SUMMARY:${text(e.title)}`);
     const where = [e.venue, e.address].filter(Boolean).join(', ');

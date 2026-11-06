@@ -21,17 +21,17 @@ import { T, OTHER, page } from './chrome.mjs';
 import { dateLong, dateShort, clock, hasClock, mapsUrl } from './dates.mjs';
 import { offsetFor, CATEGORY } from './event.mjs';
 import { listImg } from './pic.mjs';
+import { opening } from './lead.mjs';
 import { jsonLd, organization } from './ld.mjs';
 
 export const LIST = { et: '/et/sundmused', en: '/en/events' };
 const eventPath = (l, slug) => (l === 'et' ? `/et/sundmused/${slug}` : `/en/events/${slug}`);
 
-// the first paragraph of a body as plain text, its first sentence when the
-// paragraph runs long, the bold and link marks of md.mjs taken off
-const lead = (body) => {
-  const para = String(body || '').split(/\n\s*\n/).map((x) => x.trim()).find((x) => x && !x.startsWith('#'));
-  if (!para) return '';
-  const plain = para.replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\s+/g, ' ');
+// the opening of a body as plain text (src/render/lead.mjs: a first line
+// repeating the title or saying only when and where is passed over), its
+// first sentence when it runs long
+const lead = (e, lang) => {
+  const plain = opening(e.body, { title: e.title, venue: e.venue, address: e.address, series: CATEGORY[e.category] && CATEGORY[e.category][e.tlang] });
   if (plain.length <= 220) return plain;
   const m = /^(.{40,219}?[.!?])(\s|$)/.exec(plain);
   return m ? m[1] : plain.slice(0, 220).replace(/\s+\S*$/, '') + '…';
@@ -40,11 +40,11 @@ const lead = (body) => {
 const row = (e, lang) => {
   const href = eventPath(e.tlang, e.slug);
   const foreign = e.tlang !== lang ? raw(` lang="${e.tlang}"`) : '';
-  const summary = lead(e.body);
+  const summary = lead(e, lang);
   return html`<li class="ev">
       ${e.pic ? html`<a class="ev-pic" href="${href}" tabindex="-1" aria-hidden="true">${listImg(e.pic, e.width, e.height)}</a>` : html`<span class="ev-pic ev-blank" aria-hidden="true"></span>`}
       <div class="ev-body">
-        <p class="ev-kicker"><time datetime="${e.starts_at}${offsetFor(e.starts_at)}"><span class="d-long">${dateLong(e.starts_at, lang)}</span><span class="d-short">${dateShort(e.starts_at, lang)}</span></time>${hasClock(e.starts_at) ? html`<time>${clock(e.starts_at, lang)}</time>` : ''}<span><a class="place" href="${mapsUrl(e.venue)}">${e.venue}</a></span>${e.category !== 'eccm' && CATEGORY[e.category] ? html`<span>${CATEGORY[e.category][lang]}</span>` : ''}</p>
+        <p class="ev-kicker"><time datetime="${e.starts_at}${offsetFor(e.starts_at)}"><span class="d-long">${dateLong(e.starts_at, lang)}</span><span class="d-short">${dateShort(e.starts_at, lang)}</span></time>${hasClock(e.starts_at) ? html`<time>${clock(e.starts_at, lang)}</time>` : ''}${e.venue ? html`<span><a class="place" href="${mapsUrl(e.venue)}">${e.venue}</a></span>` : ''}${e.category !== 'eccm' && CATEGORY[e.category] ? html`<span>${CATEGORY[e.category][lang]}</span>` : ''}</p>
         <h2 class="ev-title"><a href="${href}"${foreign}>${e.title}</a></h2>
         ${summary ? html`<p class="ev-summary prose"${foreign}>${summary}</p>` : ''}
       </div>

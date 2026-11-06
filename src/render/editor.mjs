@@ -162,7 +162,10 @@ export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmus
         ${field({ id: 'f-end', label: 'End', err: err('ends_at'), hint: 'Empty for a single evening.', control: input('f-end', 'ends_at', v.ends_at, ' type="datetime-local"') })}
         ${field({ id: 'f-duration', label: 'Duration in minutes', err: err('duration_min'), control: input('f-duration', 'duration_min', v.duration_min, ' type="number" min="1" max="1440" inputmode="numeric"') })}
       </div>
-      ${field({ id: 'f-venue', label: 'Venue', control: input('f-venue', 'venue', v.venue) })}
+      <div class="field-row">
+        ${field({ id: 'f-venue', label: 'Venue', control: input('f-venue', 'venue', v.venue) })}
+        ${field({ id: 'f-venue-en', label: 'Venue, in English', err: err('venue_en'), hint: 'Empty shows the venue above on English pages.', control: input('f-venue-en', 'venue_en', v.venue_en) })}
+      </div>
       ${field({ id: 'f-address', label: 'Address', control: input('f-address', 'address', v.address) })}
       ${field({ id: 'f-tickets', label: 'Tickets', err: err('ticket_url'), control: input('f-tickets', 'ticket_url', v.ticket_url, ' type="url" inputmode="url"') })}
       ${field({ id: 'f-website', label: 'Website', err: err('website_url'), control: input('f-website', 'website_url', v.website_url, ' type="url" inputmode="url"') })}
