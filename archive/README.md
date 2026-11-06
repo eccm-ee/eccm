@@ -20,10 +20,9 @@ that still has a thing; `git checkout <tag> -- <path>` brings a file back.
   the index of studies, and the radio tools research, common structure, views
   and tools with who is best at each.
 
-## The radio, removed 2026-10-07, tag `radio-last`
+## The radio, removed 2026-10-07
 
-The station, the recorder, /radio, /admin/files and eccm-files:
-`archive/radio.md`, with the state saved in `archive/radio/`.
+The radio archive moved to v2in `archive/eccm-radio/` on 2026-11-06; the code is under the tags `radio-last` and `radio-archive`.
 
 ## Earlier
 

@@ -136,7 +136,7 @@ export default {
     return env.NOINDEX === 'on' ? noindex(res) : res;
   },
   // the cron of wrangler.jsonc, every five minutes: the outbox's retry (src/mail.mjs) and the daily backup (src/backup.mjs); the radio's recorder
-  // and the station's sweep ran here until 2026-10-07 (archive/radio.md)
+  // and the station's sweep ran here until 2026-10-07 (v2in's archive/eccm-radio/radio.md)
   async scheduled(event, env, ctx) { ctx.waitUntil(backup(env, event.scheduledTime)); ctx.waitUntil(drain(env)); },
 };
 
@@ -158,7 +158,7 @@ const routes = {
     { const out = await legacy(request, env, url, ctx); if (out) return out; }
     // the radio1965 recordings, /radio1965/streams/*, from v2in.stream (src/passthrough.mjs)
     { const out = await passthrough(request, env, url); if (out) return out; }
-    // the radio (/stream, /files/*, /admin/files, /radio, /station) went 2026-10-07, restorable from the tag radio-last (archive/radio.md)
+    // the radio (/stream, /files/*, /admin/files, /radio, /station) went 2026-10-07, restorable from the tag radio-last (v2in's archive/eccm-radio/radio.md)
     // the uploaded pictures from R2, /media/{sha256}.{ext} (src/media.mjs)
     if (p.startsWith('/media/')) { const out = await serveMedia(env, p); if (out) return out; }
     // the event share images and their list for /ds (src/og/route.mjs), since 2026-10-01

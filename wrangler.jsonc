@@ -31,7 +31,7 @@
   "rules": [{ "type": "Data", "globs": ["**/*.ttf"], "fallthrough": true }, { "type": "Text", "globs": ["**/*.md"], "fallthrough": true }],
   // SQLite-backed, the shape positron's workers/items proved
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Items"] }, { "tag": "v2", "new_sqlite_classes": ["Radio"] }, { "tag": "v3", "new_sqlite_classes": ["Schedule", "Library"] },
-    // the radio's three went 2026-10-07 with their state, saved first in archive/radio/ (archive/radio.md)
+    // the radio's three went 2026-10-07 with their state, saved first in v2in's archive/eccm-radio/ (tags radio-last and radio-archive)
     { "tag": "v4", "deleted_classes": ["Radio", "Schedule", "Library"] }],
   "env": {
     "staging": {
@@ -45,7 +45,7 @@
       "d1_databases": [{ "binding": "DB", "database_name": "eccm-staging", "database_id": "3be30799-baa1-4844-937c-b4c6858fc915", "migrations_dir": "migrations" }],
       // the uploaded pictures, one original per sha256 (src/media.mjs), created
       // 2026-09-30 with wrangler r2 bucket create eccm-media-staging
-      // the radio's audio left with its bucket on 2026-11-03, now in v2in-media/eccm-radio/ (archive/radio.md)
+      // the radio's audio left with its bucket on 2026-11-03, now in v2in-media/eccm-radio/ (v2in's archive/eccm-radio/radio.md)
       "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "eccm-media-staging" },
         // the daily copy of every D1 table (src/backup.mjs), d1/YYYY-MM-DD.json, 30 days kept;
         // created 2026-10-07 with wrangler r2 bucket create eccm-backup-staging

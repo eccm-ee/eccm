@@ -6,7 +6,7 @@ Moving eccm.ee onto this site. Measured on 7 October 2026. Each task says who do
 
 | What | Decided |
 | --- | --- |
-| Radio | Removed from the site for now, kept in git so it can come back in about an hour. |
+| Radio | Not on this site: the radio and Väin live in [v2in](https://v2in.stream/). |
 | Newsletter | Needed at launch. The last issue took a week by hand. |
 | Calendar | Members add events one at a time today. Each language gets a feed to subscribe to once. |
 | Domain | eccm.ee is replaced directly, since the current site is a test too. uus.eccm.ee is optional. |
@@ -197,7 +197,8 @@ Anyone can edit events and upload pictures today. Cloudflare Access puts a login
 ```text
 In eccm, write the steps to put Cloudflare Access (one-time PIN by email) in
 front of /admin*, /edit*, /items* and /docs* on the production zone,
-keeping /items.json and the public pages outside it. Do not apply Access yourself: give ECCM the dashboard steps and the
+keeping /items/key, /items/subscribe and /items/unsubscribe (the
+site's notification bar calls them) and the public pages outside it. Do not apply Access yourself: give ECCM the dashboard steps and the
 list of paths.
 ```
 
@@ -225,9 +226,9 @@ the local database. Deploy staging, push.
 
 ### Remove the radio, keep it restorable
 
-**Who:** agent. **State:** done 7 October 2026, the tag `radio-last`, the restore steps in `archive/radio.md`.
+**Who:** agent. **State:** done 7 October 2026, the tag `radio-last`, the restore steps in v2in's `archive/eccm-radio/radio.md` since 6 November 2026 (here under the tag `radio-archive`).
 
-The radio is the station, the recorder, the files Worker and `/radio`. Removing its Durable Objects destroys their state, so the state is saved first. The 46 MB of audio stays in its bucket, free.
+The radio is the station, the recorder, the files Worker and `/radio`. Removing its Durable Objects destroys their state, so the state is saved first. The 46 MB of audio stayed in the bucket `eccm-files-staging` until 3 November 2026, then moved to `v2in-media/eccm-radio/` and the bucket was deleted.
 
 ```sh
 B=https://eccm-staging.kristjan-jansen.workers.dev
@@ -236,7 +237,7 @@ curl -s $B/radio/state.json > archive/radio/state.json
 git tag radio-last && git push origin radio-last
 ```
 
-To bring it back: `git checkout radio-last -- src/station src/radio.mjs src/files.mjs workers/files ...`, a new migration tag with `new_sqlite_classes` for Schedule, Library and Radio, the secrets `STATION_TOKEN` and `FILES_TOKEN`, deploy `workers/files` first, then load the JSON.
+To bring it back: the code from the tag `radio-last`, the saved state from the tag `radio-archive` (or v2in's `archive/eccm-radio/`), the audio from `v2in-media/eccm-radio/` into a new bucket, and the steps in v2in's `archive/eccm-radio/radio.md`.
 
 **Prompt**
 
@@ -246,7 +247,7 @@ In eccm, remove the radio from the site and keep it restorable. First save
 staging into archive/radio/, and tag the current commit radio-last. Then remove
 the station, recorder, files routes, the Radio card, workers/files, their
 bindings and cron calls, and add a deleted_classes migration for Schedule,
-Library and Radio. Keep the bucket eccm-files-staging. Write archive/radio.md:
+Library and Radio. Write archive/radio.md:
 what it was, the tag, and the exact restore steps. Deploy staging, push the tag
 and the commit.
 ```
@@ -363,13 +364,17 @@ eccm.ee until ECCM says the zone is active.
    npx wrangler r2 bucket create eccm-media
    npx wrangler r2 bucket create eccm-backup
    npx wrangler d1 export eccm-staging --remote --env staging --no-schema --output /tmp/eccm.sql
+   (staging's test rows come with it: delete the INSERTs for subscriber,
+   contact, redirect_miss and outbox from /tmp/eccm.sql before the import)
    npx wrangler d1 execute eccm --remote --env production --file /tmp/eccm.sql
    npx wrangler secret put VAPID_JWK --env production     (the staging value, so subscribed phones stay subscribed)
+   npx wrangler secret put TURNSTILE_SITEKEY --env production   (a Turnstile widget for eccm.ee in ECCM's account)
+   npx wrangler secret put TURNSTILE_SECRET --env production    (the same widget's secret, for the contact form)
 3. Copy what staging holds in its media bucket under media/ (uploaded
    pictures) to eccm-media; og/ is a cache and rebuilds itself. The event
    pictures under public/ deploy with the site.
 4. Deploy to the workers.dev address only and check: the front page, an
-   event, /docs, /api/index.php/v1/content/articles, the contact form.
+   event, /docs, the contact form.
 Report the account, ids and what was copied, with row counts against staging.
 ```
 
@@ -429,7 +434,7 @@ DMARC is set to reject, so one wrong mail record bounces everything. Every recor
 
 1. Check that Tarmo has made [his changes](#what-tarmo-changes-before-cutover).
 2. Delete the A record for eccm.ee and the CNAME for www.
-3. Deploy production, which attaches eccm.ee and www.eccm.ee to the Worker.
+3. Deploy production, which attaches eccm.ee and www.eccm.ee to the Worker. In the same deploy, delete the two noindex lines (`/*` and `X-Robots-Tag: noindex`) at the top of `public/_headers`: static files bypass the Worker's `NOINDEX`.
 4. Turn on Image Transformations for the zone.
 5. Check: the front page, an event, an old Joomla address, the newsletter sign-up, a file under /radio1965/streams.
 6. To go back: recreate the A and CNAME records. Minutes.

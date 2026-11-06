@@ -14,7 +14,7 @@ import { page } from './chrome.mjs';
 // in English since 2026-10-02 ("convert all admin pages to english only"), and the type study moved under
 // Research the same day with the radio tools ("in admin page to reseach card link"), and the design system is
 // three cards since that evening ("split ds into components logo and social, separate cards in admin. 4 col cards").
-// Radio, Files, Icons and Research went 2026-10-07 with what they led to (archive/radio.md, archive/README.md)
+// Radio, Files, Icons and Research went 2026-10-07 with what they led to (archive/README.md, v2in's archive/eccm-radio/radio.md)
 const TOOLS = [
   // first while the migration is the work at hand (asked 2026-10-07: "move to /docs/migration instead and make docs index page")
   ['/docs', 'Docs', 'Plans and reports, starting with the migration of eccm.ee.'],

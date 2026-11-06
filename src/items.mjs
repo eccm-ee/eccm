@@ -20,7 +20,7 @@
 // Open like the editor: nobody logs in (src/editor.mjs says since when).
 // A published notice is also public at /teated/{num} and /en/notices/{num}.
 // From 2026-10-07 to 2026-11-06 a notice ticked Väin was also in a Joomla API for Väin's server;
-// that went to v2in, and the vain column stays, written 0.
+// that went to v2in; staging's object still has the vain column, unread, and a fresh object never gets it.
 import { send } from './push.mjs';
 import { renderItems, renderItemEdit, itemsList, local } from './render/items.mjs';
 
@@ -47,11 +47,9 @@ export class Items {
     this.sql.exec(`CREATE TABLE IF NOT EXISTS subs (
       endpoint TEXT PRIMARY KEY, p256dh TEXT NOT NULL, auth TEXT NOT NULL, created_at INTEGER NOT NULL
     )`);
-    // added 2026-10-07: vain (unused since 2026-11-06), num the notice's public number (/teated/{num})
-    // and updated_at its last edit; an older
+    // added 2026-10-07: num the notice's public number (/teated/{num}) and updated_at its last edit; an older
     // object gets the columns here and a number for every notice it already holds, oldest first
     const cols = new Set([...this.sql.exec(`PRAGMA table_info(items)`)].map((c) => c.name));
-    if (!cols.has('vain')) this.sql.exec(`ALTER TABLE items ADD COLUMN vain INTEGER NOT NULL DEFAULT 0`);
     if (!cols.has('num')) this.sql.exec(`ALTER TABLE items ADD COLUMN num INTEGER`);
     if (!cols.has('updated_at')) this.sql.exec(`ALTER TABLE items ADD COLUMN updated_at INTEGER`);
     this.sql.exec(`CREATE TABLE IF NOT EXISTS counter (name TEXT PRIMARY KEY, n INTEGER NOT NULL)`);
