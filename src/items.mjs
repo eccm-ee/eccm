@@ -17,7 +17,7 @@
 //   GET  /items/{id}, POST   one notice's form, then a save or a delete
 //   GET  /items/key          the public VAPID key a browser subscribes with (public/push.mjs)
 //
-// Open like the editor: nobody logs in (src/editor.mjs says since when).
+// Behind the editor keys (src/auth.mjs) but for /items/key, /items/subscribe and /items/unsubscribe.
 // A published notice is also public at /teated/{num} and /en/notices/{num}.
 // From 2026-10-07 to 2026-11-06 a notice ticked Väin was also in a Joomla API for Väin's server;
 // that went to v2in; staging's object still has the vain column, unread, and a fresh object never gets it.

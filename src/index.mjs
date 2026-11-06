@@ -5,9 +5,10 @@
 // in both languages, with the fallback of section 2 when the English text row
 // is missing. The URL words are plans/plan-eccm-urls-sitemap-rss.md section 2.
 // The editor (src/editor.mjs) answers /edit/events* and /edit/pages*, and
-// /edit itself goes to the front page. Nothing in front of it asks who is
-// there: the gate, /login and /logout went 2026-09-29, asked as "rm
-// login/session stuff. all is free for editing". Before that /edit was the
+// /edit itself goes to the front page. In front of it and the other tools
+// since 2026-11-06, editor keys, /login and /logout (src/auth.mjs); the
+// first gate went 2026-09-29, asked as "rm login/session stuff. all is free
+// for editing". Before that /edit was the
 // static public/edit.html, the form that saved nothing, removed 2026-09-28
 // (asked as "rm https://eccm.positron.studio/edit, make real edit stff").
 // Since 2026-09-28 the text pages the menu names, /et/{slug} and /en/{slug},
@@ -39,6 +40,7 @@ import { contact, CONTACT_PATHS } from './contact.mjs';
 import { ogRoute } from './og/route.mjs';
 import { legacy } from './redirects.mjs';
 import { passthrough } from './passthrough.mjs';
+import { gate, isProtected, isStatic, login, logout } from './auth.mjs';
 export { Items } from './items.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
@@ -154,6 +156,13 @@ const routes = {
     // SITE_ORIGIN from wrangler.jsonc, the request's origin only where it is not set
     useOrigin(env.SITE_ORIGIN || url.origin);
     if (p === '/robots.txt') return robots();
+    // the editors' login, and the gate in front of the tools (src/auth.mjs); who is the editor, named on a save
+    if (p === '/login') return login(request, env, url, ctx);
+    if (p === '/logout') return logout();
+    let who = null;
+    if (isProtected(p)) { const g = await gate(request, env, url, ctx); if (g.res) return g.res; who = g.who; }
+    // /ds, /logo and /social are files under public/, sent here first by assets.run_worker_first so the gate sees them
+    if (isStatic(p)) return env.ASSETS.fetch(request);
     // eccm.ee's old Joomla addresses: 301, 410, or the 404 with the miss logged (src/redirects.mjs)
     { const out = await legacy(request, env, url, ctx); if (out) return out; }
     // the radio1965 recordings, /radio1965/streams/*, from v2in.stream (src/passthrough.mjs)
@@ -200,8 +209,10 @@ const routes = {
     if (p === '/docs' || p === '/docs/') return new Response(String(renderDocs()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     // each doc is a Markdown file under docs/ (src/render/docs.mjs)
     { const d = /^\/docs\/([a-z0-9-]+)$/.exec(p); const out = d && renderDoc(d[1]); if (out) return new Response(String(out), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } }); }
-    if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
-    if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
+    if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin({ who, editors: (await env.DB.prepare('SELECT id, name, created_at, last_used FROM editor WHERE revoked_at IS NULL ORDER BY id').all()).results })), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
+    // the Revoke button of /admin's Editors list
+    { const r = request.method === 'POST' && /^\/admin\/editors\/(\d+)\/revoke$/.exec(p); if (r) { await env.DB.prepare("UPDATE editor SET revoked_at = strftime('%Y-%m-%dT%H:%M:%SZ','now') WHERE id = ? AND revoked_at IS NULL").bind(+r[1]).run(); return new Response(null, { status: 303, headers: { location: '/admin', 'cache-control': 'no-store' } }); } }
+    if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url, who); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
   },

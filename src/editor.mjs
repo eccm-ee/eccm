@@ -20,9 +20,10 @@
 // The text pages (page and page_text, the five of data/seed-step3.sql) have
 // the same three routes, the same guard and the same preview since 2026-09-28
 // ("page from d1 and with edit?"), with nothing an event has: no facts, no
-// picture, no credits. Nobody logs in: the gate, /login, /logout and the
-// editor cookie went 2026-09-29, asked as "rm login/session stuff. all is
-// free for editing", so anyone who reaches a form may save from it. Every
+// picture, no credits. Every route is behind the editor keys of
+// src/auth.mjs since 2026-11-06, and a save names the editor in updated_by
+// (the first login went 2026-09-29, asked as "rm login/session stuff. all is
+// free for editing"). Every
 // reply here is still no-store and noindex; nothing under /edit is a page for
 // a visitor or a crawler.
 import { renderEvent, cleanScheme } from './render/event.mjs';
@@ -35,9 +36,9 @@ const HEAD = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-
 const reply = (body, status = 200, extra = {}) => new Response(String(body), { status, headers: { ...HEAD, ...extra } });
 const redirect = (to, extra = {}) => new Response(null, { status: 303, headers: { ...HEAD, location: to, ...extra } });
 const NOW = "strftime('%Y-%m-%dT%H:%M:%SZ','now')";
-// updated_by named whoever the gate identified (migrations/0002_editing.sql).
-// With no login there is nobody to name, so an insert leaves it and a save
-// clears whatever an earlier one wrote.
+const by = (who) => (who ? who.name : null);
+// updated_by is the name of the editor who saved last (src/auth.mjs), null
+// when no editor is known.
 
 // ── the form's values, from rows and from a POST ────────────────────────────
 const LOCAL = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
@@ -173,11 +174,11 @@ const mediaStmts = (db, v, guard, g) => (v.image_id ? [
   ...(v.image_scheme ? [db.prepare(`UPDATE media SET scheme = ?, scheme_v = ? WHERE id = ? AND scheme IS NULL AND ${guard}`).bind(v.image_scheme, JSON.parse(v.image_scheme).v, +v.image_id, ...g)] : []),
 ] : []);
 
-async function save(db, v, before) {
+async function save(db, v, before, who) {
   const credits = creditRows(v, before.creditRows);
   const texts = ['et', 'en'].filter((l) => v[l].title);
   if (!v.id) {
-    const ins = await db.prepare(`INSERT INTO event (${EVENT_COLS}) VALUES (?,?,?,?,?,?,?,?,?,?,?)`).bind(...eventValues(v)).run();
+    const ins = await db.prepare(`INSERT INTO event (${EVENT_COLS}, updated_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`).bind(...eventValues(v), by(who)).run();
     const id = ins.meta.last_row_id;
     const stmts = texts.map((l) => db.prepare('INSERT INTO event_text (event_id, lang, slug, title, body) VALUES (?,?,?,?,?)').bind(id, l, v[l].slug, v[l].title, v[l].body))
       .concat(credits.map((c) => db.prepare('INSERT INTO event_credit (event_id, position, role_key, label_et, label_en, people, orgs) VALUES (?,?,?,?,?,?,?)').bind(id, c.position, c.role_key, c.label_et, c.label_en, c.people, c.orgs)));
@@ -192,7 +193,7 @@ async function save(db, v, before) {
     .concat([db.prepare(`DELETE FROM event_credit WHERE event_id = ? AND ${guard}`).bind(v.id, ...g)])
     .concat(credits.map((c) => db.prepare(`INSERT INTO event_credit (event_id, position, role_key, label_et, label_en, people, orgs) SELECT ?,?,?,?,?,?,? WHERE ${guard}`).bind(v.id, c.position, c.role_key, c.label_et, c.label_en, c.people, c.orgs, ...g)))
     .concat(mediaStmts(db, v, guard, g))
-    .concat([db.prepare(`UPDATE event SET starts_at = ?, ends_at = ?, duration_min = ?, venue = ?, address = ?, ticket_url = ?, website_url = ?, category = ?, image_id = ?, status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = NULL, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(...eventValues(v), ...g)]);
+    .concat([db.prepare(`UPDATE event SET starts_at = ?, ends_at = ?, duration_min = ?, venue = ?, address = ?, ticket_url = ?, website_url = ?, category = ?, image_id = ?, status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = ?, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(...eventValues(v), by(who), ...g)]);
   const results = await db.batch(stmts);
   return { id: v.id, stale: results[results.length - 1].meta.changes !== 1 };
 }
@@ -247,10 +248,10 @@ export async function validatePage(v, db) {
   return errors;
 }
 
-async function savePage(db, v) {
+async function savePage(db, v, who) {
   const texts = ['et', 'en'].filter((l) => v[l].title);
   if (!v.id) {
-    const ins = await db.prepare('INSERT INTO page (key, status, publish_at) VALUES (?,?,?)').bind(v.key, v.status, v.publish_at || null).run();
+    const ins = await db.prepare('INSERT INTO page (key, status, publish_at, updated_by) VALUES (?,?,?,?)').bind(v.key, v.status, v.publish_at || null, by(who)).run();
     const id = ins.meta.last_row_id;
     await db.batch(texts.map((l) => db.prepare('INSERT INTO page_text (page_id, lang, slug, title, body) VALUES (?,?,?,?,?)').bind(id, l, v[l].slug, v[l].title, v[l].body)));
     return { id };
@@ -260,7 +261,7 @@ async function savePage(db, v) {
   const guard = 'EXISTS (SELECT 1 FROM page WHERE id = ? AND rev = ?)';
   const g = [v.id, v.rev];
   const stmts = texts.map((l) => db.prepare(`INSERT INTO page_text (page_id, lang, slug, title, body) SELECT ?,?,?,?,? WHERE ${guard} ON CONFLICT (page_id, lang) DO UPDATE SET slug = excluded.slug, title = excluded.title, body = excluded.body`).bind(v.id, l, v[l].slug, v[l].title, v[l].body, ...g))
-    .concat([db.prepare(`UPDATE page SET status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = NULL, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(v.status, v.publish_at || null, ...g)]);
+    .concat([db.prepare(`UPDATE page SET status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = ?, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(v.status, v.publish_at || null, by(who), ...g)]);
   const results = await db.batch(stmts);
   return { id: v.id, stale: results[results.length - 1].meta.changes !== 1 };
 }
@@ -289,7 +290,7 @@ async function loadPage(db, id) {
 const pageHome = (texts) => { const t = texts.find((x) => x.lang === 'et') || texts.find((x) => x.lang === 'en'); return t ? pagePath(t.lang, t.slug) : null; };
 const landing = (v, path) => (v.status === 'published' && (v.et.title || v.en.title) ? path(v.et.title ? 'et' : 'en', v.et.title ? v.et.slug : v.en.slug) : null);
 
-async function pageRoute(request, env, url, id) {
+async function pageRoute(request, env, url, id, who) {
   const db = env.DB;
   const before = id === 'new' ? { pg: null, texts: [], values: pageFromRows(null, []) } : await loadPage(db, +id);
   if (!before) return reply(errorPage({ status: 404, reason: 'page' }), 404);
@@ -301,7 +302,7 @@ async function pageRoute(request, env, url, id) {
   const errors = await validatePage(v, db);
   if (errors.length) return reply(pageForm({ v, errors, cancel }), 422);
   if (action.startsWith('preview')) return previewPage(v, action.endsWith('en') ? 'en' : 'et', url);
-  const out = await savePage(db, v);
+  const out = await savePage(db, v, who);
   if (out.stale) return reply(pageForm({ v, errors: [{ field: 'rev', msg: 'Someone else saved this page in the meantime. Open it in a new tab, compare, and make the change again.' }], cancel }), 409);
   return redirect(landing(v, pagePath) || `/edit/pages/${out.id}`);
 }
@@ -334,7 +335,7 @@ async function preview(db, v, lang, before, roles, media, url) {
   return reply(renderEvent({ lang, text, fallback: false, ev, media: pic, credits, twin, next, origin: origin(), path: eventPath(lang, text.slug), notice, editHref: v.id ? `/edit/events/${v.id}` : '/edit/events/new' }));
 }
 
-async function form(request, env, url, id) {
+async function form(request, env, url, id, who) {
   const db = env.DB;
   const before = await load(db, +id);
   if (!before) return reply(errorPage({ status: 404 }), 404);
@@ -361,20 +362,20 @@ async function form(request, env, url, id) {
   const errors = upErrors.concat(await validate(v, db, roles, media));
   if (errors.length) return reply(editorForm({ v: padded(v), errors, roles, media, cancel }), 422);
   if (action.startsWith('preview')) return preview(db, v, action.endsWith('en') ? 'en' : 'et', before, roles, media, url);
-  const out = await save(db, v, before);
+  const out = await save(db, v, before, who);
   if (out.stale) return reply(editorForm({ v: padded(v), errors: [{ field: 'rev', msg: 'Someone else saved this event in the meantime. Open it in a new tab, compare, and make the change again.' }], roles, media, cancel }), 409);
   // the event page when it is published, else the form again, as a page save lands
   return redirect(landing(v, eventPath) || `/edit/events/${out.id}`);
 }
 
-export async function editor(request, env, url) {
+export async function editor(request, env, url, who = null) {
   const p = url.pathname;
   try {
     if (p === '/edit') return redirect('/');
     const m = /^\/edit\/events\/(\d+)$/.exec(p);
-    if (m) return form(request, env, url, m[1]);
+    if (m) return form(request, env, url, m[1], who);
     const pm = /^\/edit\/pages\/(new|\d+)$/.exec(p);
-    if (pm) return pageRoute(request, env, url, pm[1]);
+    if (pm) return pageRoute(request, env, url, pm[1], who);
     return null;
   } catch (e) {
     // a plain sentence, never a stack: the likeliest cause on a fresh deploy

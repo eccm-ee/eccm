@@ -11,7 +11,7 @@ Moving eccm.ee onto this site. Measured on 7 October 2026. Each task says who do
 | Calendar | Members add events one at a time today. Each language gets a feed to subscribe to once. |
 | Domain | eccm.ee is replaced directly, since the current site is a test too. uus.eccm.ee is optional. |
 | Events | Everything to the end of 2026 is entered on eccm.ee. A few dates will change. |
-| Admin | Open for now, closed soon. |
+| Admin | Behind editor keys since 6 November 2026, one per person, made with `tools/editors.mjs`. |
 
 <!-- contents -->
 
@@ -188,18 +188,20 @@ Results Test, deploy staging, push.
 
 ### Login on admin and editing
 
-**Who:** agent, ECCM adds the people. **State:** right after migration.
+**Who:** agent. **State:** done on staging, editor keys in `src/auth.mjs`.
 
-Anyone can edit events and upload pictures today. Cloudflare Access puts a login by emailed code in front of `/admin`, `/edit`, `/items` and `/docs`, with nothing to build in the Worker.
+Each editor has a key of their own, typed once at `/login`, then a cookie for 90 days. It guards `/admin`, `/edit`, `/items`, `/docs`, `/ds`, `/logo` and `/social`; everything else stays public. Ten wrong keys an hour from one address, then a wait. Saves name the editor.
 
-**Prompt**
+```sh
+node tools/editors.mjs create "Name" --remote --env staging   # prints the key once
+node tools/editors.mjs list --remote --env staging
+node tools/editors.mjs revoke 3 --remote --env staging        # or Revoke on /admin
+```
 
-```text
-In eccm, write the steps to put Cloudflare Access (one-time PIN by email) in
-front of /admin*, /edit*, /items* and /docs* on the production zone,
-keeping /items/key, /items/subscribe and /items/unsubscribe (the
-site's notification bar calls them) and the public pages outside it. Do not apply Access yourself: give ECCM the dashboard steps and the
-list of paths.
+**Check**
+
+```sh
+curl -sI https://eccm-staging.kristjan-jansen.workers.dev/admin | grep -i location   # /login?next=%2Fadmin
 ```
 
 ### Backups
@@ -344,39 +346,49 @@ Cloudflare account, Workers Paid, production, the data copied.
 
 ### Set up production
 
-**Who:** agent. **State:** after the account.
+**Who:** agent. **State:** after the account. `env.production` in `wrangler.jsonc` is filled in except ECCM's account_id and the database id, and a fresh deploy of that shape was proven on a throwaway Worker on 6 November 2026.
 
-One prompt does it all: the agent fills in the production settings, then runs the commands below in this order and checks each step. ECCM only has to be logged in to its own Cloudflare account in the terminal (`npx wrangler login`).
+One prompt does it all: the agent runs the commands below in this order and checks each step. ECCM only has to be logged in to its own Cloudflare account in the terminal (`npx wrangler login`).
 
 ```text
 In eccm, set up production in ECCM's Cloudflare account; do not deploy to
-eccm.ee until ECCM says the zone is active.
+eccm.ee until ECCM says the zone is active. Every wrangler command runs as
+env -u CF_API_TOKEN -u CLOUDFLARE_API_TOKEN npx wrangler ... (CLAUDE.md, Deploy).
 
-1. In wrangler.jsonc env.production: ECCM's account_id; vars SITE_ORIGIN
-   https://eccm.ee, IMAGE_TRANSFORMS on, MAIL_FROM "ECCM <uudiskiri@eccm.ee>",
-   CONTACT_TO info@eccm.ee, VAPID_PUBLIC and VAPID_SUB as in staging,
-   no NOINDEX; the D1, R2 (MEDIA, BACKUP) and Durable Object bindings as staging
-   has them; routes eccm.ee and www.eccm.ee as custom domains, commented out
-   until cutover.
-2. Run, checking each:
-   npx wrangler d1 create eccm --env production          (put its id in wrangler.jsonc)
+1. npx wrangler whoami, and put that account id in env.production's
+   account_id in place of FILL-ECCM-ACCOUNT-ID. Never leave it empty:
+   wrangler drops an empty one and deploys to staging's account.
+2. Create the resources and the secrets, checking each:
+   npx wrangler d1 create eccm --env production          (put its database_id in env.production's d1_databases)
    npx wrangler d1 migrations apply eccm --remote --env production
    npx wrangler r2 bucket create eccm-media
    npx wrangler r2 bucket create eccm-backup
-   npx wrangler d1 export eccm-staging --remote --env staging --no-schema --output /tmp/eccm.sql
-   (staging's test rows come with it: delete the INSERTs for subscriber,
-   contact, redirect_miss and outbox from /tmp/eccm.sql before the import)
-   npx wrangler d1 execute eccm --remote --env production --file /tmp/eccm.sql
-   npx wrangler secret put VAPID_JWK --env production     (the staging value, so subscribed phones stay subscribed)
-   npx wrangler secret put TURNSTILE_SITEKEY --env production   (a Turnstile widget for eccm.ee in ECCM's account)
+   npx wrangler secret put SESSION_SECRET --env production      (a new random value, openssl rand -hex 32)
+   npx wrangler secret put TURNSTILE_SITEKEY --env production   (a Turnstile widget in ECCM's account for eccm.ee and the workers.dev address)
    npx wrangler secret put TURNSTILE_SECRET --env production    (the same widget's secret, for the contact form)
-3. Copy what staging holds in its media bucket under media/ (uploaded
+3. Move the content without staging's test rows (subscribers, drafts,
+   outbox, contact messages, redirect misses, login failures and staging's
+   editor keys), with tools/clear-test-rows.mjs:
+   npx wrangler d1 export eccm-staging --remote --env staging --no-schema --output tmp/staging.sql
+   node tools/clear-test-rows.mjs tmp/staging.sql tmp/production.sql
+   npx wrangler d1 execute eccm --remote --env production --file tmp/production.sql
+   node tools/editors.mjs create "Name" --remote --env production   (one per editor ECCM names, each key handed over privately)
+4. Copy what staging holds in its media bucket under media/ (uploaded
    pictures) to eccm-media; og/ is a cache and rebuilds itself. The event
    pictures under public/ deploy with the site.
-4. Deploy to the workers.dev address only and check: the front page, an
-   event, /docs, the contact form.
+5. npx wrangler deploy --env production, to the workers.dev address only
+   (routes stay commented out), and check: the front page in both
+   languages, an event, /docs, /robots.txt, a login, the contact form.
+   Mail from uudiskiri@eccm.ee works only after Email sending from eccm.ee.
 Report the account, ids and what was copied, with row counts against staging.
 ```
+
+What the throwaway deploy found:
+
+- `env.production` has its own `"migrations": []`. Wrangler takes a list per environment, and the empty one replaces the top-level list, which is staging's history. The new Worker got no Durable Object at all.
+- Replaying staging's tags on a new Worker works too: v1 to v4, the radio's classes made and deleted in one upload, were accepted. The empty list is the plainer of the two.
+- When staging drops Items, its `deleted_classes: ["Items"]` tag goes on the top-level list (or a list of staging's own). Production's empty list is untouched by it, and a class production needs later starts its own tags there.
+- On an empty database `/` shows "Ühtegi tulevast sündmust ei ole." and `/en/` "No upcoming events.", both 200. `/robots.txt` names `https://eccm.ee/sitemap.xml`. On workers.dev the pictures are the originals, since `/cdn-cgi/image/` exists only on a zone.
 
 ### Email sending from eccm.ee
 
@@ -489,7 +501,7 @@ curl -sI https://eccm.ee/radio1965/streams/tarmo-20261025-184903.mp3   # 200, au
 
 | Problem | Solution | Who | State |
 | --- | --- | --- | --- |
-| Does the site need a cookie banner? | No. It sets no cookies. The only thing kept in the browser is the theme a visitor picks, their own choice. | Nobody | Done |
+| Does the site need a cookie banner? | No. Visitors get no cookies; the only thing kept in their browser is the theme they pick. Editors get one login cookie, strictly necessary. | Nobody | Done |
 | Analytics. | [Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/): no cookies, counts only, so no consent. Never Google Analytics or the Meta pixel, which would need a banner. | ECCM turns it on | After migration |
 | Third parties. | None on the site: no outside scripts, fonts from the site itself. /nan/'s Google Fonts move to the site, Konkursid's YouTube embed uses youtube-nocookie.com or loads on click. | Agent | To do |
 | Personal data: newsletter, contact, push. | A privacy notice per language (GDPR article 13): who is responsible, what and why, how long, Cloudflare as processor, rights, complaints to the [Data Protection Inspectorate](https://www.aki.ee/). | ECCM writes, agent builds | To do |
@@ -514,5 +526,4 @@ This is a reading of the rules, not legal advice. ECCM approves the privacy text
 | [Email Service](https://developers.cloudflare.com/email-service/) | Sending the newsletter from eccm.ee |
 | [Image transformations](https://developers.cloudflare.com/images/transform-images/) | Resizing pictures on the zone |
 | [D1 Time Travel](https://developers.cloudflare.com/d1/reference/time-travel/) | Cloudflare's own database history |
-| [Access](https://developers.cloudflare.com/cloudflare-one/policies/access/) | The login in front of admin and editing |
 | [Turnstile](https://developers.cloudflare.com/turnstile/) | Keeping bots off the contact form |

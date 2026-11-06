@@ -6,10 +6,13 @@
 // level"). /derive, the study the picture detector came
 // out of, has no card: the detector runs on upload now (public/scheme.mjs)
 // and nobody editing needs the page (asked: "is derive needed as we have
-// content done?"). In Estonian, like the
-// editor, and open like it: nobody logs in (src/editor.mjs says since when).
+// content done?"). Behind the editor keys (src/auth.mjs) since 2026-11-06,
+// with the Editors list under the cards: who has a key, and Revoke; a new key
+// is made with tools/editors.mjs, which prints it once.
 import { html } from './html.mjs';
 import { page } from './chrome.mjs';
+import { table } from './table.mjs';
+import { dateShort } from './dates.mjs';
 
 // in English since 2026-10-02 ("convert all admin pages to english only"), and the type study moved under
 // Research the same day with the radio tools ("in admin page to reseach card link"), and the design system is
@@ -26,10 +29,23 @@ const TOOLS = [
   ['/social', 'Social', 'The share image of every published event, as a scraper sees it.'],
 ];
 
-export const renderAdmin = () => page({
+const day = (iso) => (iso ? html`<time datetime="${iso}">${dateShort(iso, 'en')}</time>` : 'Never');
+
+export const renderAdmin = ({ who, editors = [] } = {}) => page({
   wide: 'root', lang: 'en', title: 'Admin.',
   body: html`  <h1>Admin</h1>
   <div class="cards">
     ${TOOLS.map(([href, title, desc]) => html`<a class="card" href="${href}"><span class="card-title">${title}</span><span class="card-desc">${desc}</span></a>`)}
-  </div>`,
+  </div>
+  <section>
+    <h2>Editors</h2>
+    ${who ? html`<p class="note">Logged in as ${who.name}. <a href="/logout">Log out</a></p>` : ''}
+    ${table({
+      label: 'Editors',
+      cols: [{ label: 'Name', cls: 'main' }, { label: 'Created' }, { label: 'Last used' }, { label: '' }],
+      rows: editors.map((e) => [e.name, day(e.created_at), day(e.last_used),
+        html`<form method="post" action="/admin/editors/${e.id}/revoke"><button class="btn btn-sm" type="submit">Revoke</button></form>`]),
+    })}
+    <p class="note">A new key: <code>node tools/editors.mjs create "Name"</code>, which prints it once.</p>
+  </section>`,
 });

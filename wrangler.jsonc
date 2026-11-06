@@ -22,7 +22,9 @@
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none",
     // the site's own files from inside the Worker: the share card's picture layout reads a seeded picture through it
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    // the three design pages go to the Worker first, which serves them through ASSETS only to a logged-in editor (src/auth.mjs)
+    "run_worker_first": ["/ds", "/ds.html", "/logo", "/logo.html", "/social", "/social.html"]
   },
   "observability": { "enabled": true },
   // the share images' faces (src/og/render.mjs), bundled as bytes; the
@@ -60,6 +62,8 @@
       // (src/push.mjs) and VAPID_SUB the contact a push service sees; the
       // private half is the secret VAPID_JWK (wrangler secret put VAPID_JWK
       // --env staging). A new key means every browser subscribes again.
+      // The editors' sessions are signed with the secret SESSION_SECRET (src/auth.mjs,
+      // wrangler secret put SESSION_SECRET --env staging); a new one logs every editor out.
       // the newsletter's mail (src/mail.mjs): the send_email binding, the
       // address it sends from on eccm.positron.studio, the sending domain the
       // owner onboarded 2026-10-01 (Email Sending, Enabled, 1,000 a day), and
@@ -72,10 +76,27 @@
     },
     "production": {
       "name": "eccm",
-      // no NOINDEX here, eccm.ee is indexed
-      "vars": { "SITE_ORIGIN": "https://eccm.ee" }
-      // ECCM's account_id, eccm.ee and www.eccm.ee go here at cutover
-      // (plans/plan-eccm-setup.md section 8); until then this deploys nowhere
+      // ECCM's account, the one value left to fill (wrangler whoami on their
+      // login). A placeholder and not "": wrangler drops an empty account_id
+      // and inherits the top-level one, which would deploy to staging's account
+      "account_id": "FILL-ECCM-ACCOUNT-ID",
+      // the workers.dev address until cutover, then false
+      "workers_dev": true,
+      // at cutover, once ECCM says the zone is active (docs/migration.md, Cutover):
+      // "routes": [{ "pattern": "eccm.ee", "custom_domain": true }, { "pattern": "www.eccm.ee", "custom_domain": true }],
+      // database_id after wrangler d1 create eccm --env production on ECCM's account
+      "d1_databases": [{ "binding": "DB", "database_name": "eccm", "migrations_dir": "migrations" }],
+      // wrangler r2 bucket create eccm-media and eccm-backup on ECCM's account
+      "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "eccm-media" }, { "binding": "BACKUP", "bucket_name": "eccm-backup" }],
+      // no Durable Objects: this list replaces the top-level one, which is
+      // staging's history, so a new Worker gets no class (a throwaway deploy
+      // proved it 2026-11-06). A future class starts its own tags here
+      "migrations": [],
+      "send_email": [{ "name": "EMAIL" }],
+      "triggers": { "crons": ["*/5 * * * *"] },
+      // no NOINDEX here, eccm.ee is indexed.
+      // Secrets: SESSION_SECRET, TURNSTILE_SITEKEY, TURNSTILE_SECRET (wrangler secret put ... --env production)
+      "vars": { "SITE_ORIGIN": "https://eccm.ee", "IMAGE_TRANSFORMS": "on", "CONTACT_TO": "info@eccm.ee", "MAIL_FROM": "ECCM <uudiskiri@eccm.ee>" }
     }
   }
 }

@@ -10,3 +10,5 @@ tmp/
 .DS_Store
 **/.chrome-verify/
 .claude/worktrees/
+# what is true only of one machine and its accounts (CLAUDE.md says so)
+CLAUDE.local.md
