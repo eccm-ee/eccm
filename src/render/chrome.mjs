@@ -22,10 +22,11 @@ export const origin = () => ORIGIN;
 // (asked 2026-10-09: "lets not have them for amdin and docs")
 // og: { key, title, lang } names the page's own card (src/og/card.mjs, pageInput), the site card otherwise; lang
 // is the card's when it differs from the page's, a text page shown in its other language
-const siteOg = (lang, title, og, canonical) => html`<meta property="og:type" content="website">
+const siteOg = (lang, title, og, canonical, description) => html`<meta property="og:type" content="website">
 ${canonical ? html`<meta property="og:url" content="${canonical}">` : ''}
 <meta property="og:site_name" content="ECCM">
 <meta property="og:title" content="${title}">
+${description ? html`<meta property="og:description" content="${description}">` : ''}
 <meta property="og:image" content="${ORIGIN + (og ? pagePath(og.key, og.lang || lang) : sitePath(lang))}">
 <meta property="og:image:width" content="${OG_W}">
 <meta property="og:image:height" content="${OG_H}">
@@ -64,6 +65,8 @@ export const LABEL = { et: 'ET', en: 'EN' };
 // pairs when both texts exist (plans/plan-eccm-event-markup.md section 4)
 // notice: one line above main, ruled under, which the editor's preview uses
 // to say nothing is saved (src/editor.mjs); absent on every public page
+// the two latin subsets every page draws, the headings' Instrument Sans and the body's Public Sans, are preloaded so
+// neither waits for the stylesheet before its request (the body's since 2026-11-06, Lighthouse's Speed Index)
 // head: preloads the page itself knows it needs, the event's poster
 // (src/render/pic.mjs, src/render/event.mjs)
 // wide: a tool page (asked 2026-10-01: "admin pages full w"), its forms, tables and grids over the whole frame
@@ -72,7 +75,33 @@ export const LABEL = { et: 'ET', en: 'EN' };
 const FEED_TITLE = { et: 'ECCM sündmused', en: 'ECCM events' };
 const CAL_TITLE = { et: 'ECCM sündmuste kalender', en: 'ECCM events calendar' };
 const CAL = { et: '/et/sundmused.ics', en: '/en/events.ics' };
-export const page = ({ lang, title, alternate, canonical, alternates, body, notice, head, wide, og }) => {
+// description: one sentence in the page's language for a search result and a share preview, the meta description
+// and the site card's og:description (asked 2026-11-06, Lighthouse's SEO); a page whose head names its own share
+// image writes its own og:description (src/render/event.mjs); never on admin and tool pages
+export const DESCRIPTION = {
+  home: {
+    et: 'Eesti Nüüdismuusika Keskus on Tallinnas tegutsev platvorm ja tugi nüüdismuusika valdkonna uuenemiseks ja arenguks.',
+    en: 'The Estonian Centre of Contemporary Music in Tallinn coordinates and develops contemporary and experimental music in Estonia.',
+  },
+  events: {
+    et: 'Eesti Nüüdismuusika Keskuse tulevased ja toimunud kontserdid ning muud sündmused.',
+    en: 'Upcoming and past concerts and other events of the Estonian Centre of Contemporary Music.',
+  },
+  newsletter: {
+    et: 'Eesti Nüüdismuusika Keskuse kava ja uudised e-postiga, koos varasemate kirjadega.',
+    en: 'The programme and news of the Estonian Centre of Contemporary Music by email, with the earlier letters.',
+  },
+  contact: {
+    et: 'Kirjuta või helista Eesti Nüüdismuusika Keskusele Pühavaimu 9, Tallinn.',
+    en: 'Write to or call the Estonian Centre of Contemporary Music at Pühavaimu 9, Tallinn.',
+  },
+  login: {
+    et: 'Eesti Nüüdismuusika Keskuse toimetajate sisselogimine.',
+    en: 'The login for editors of the Estonian Centre of Contemporary Music.',
+  },
+};
+export const page = ({ lang, title, alternate, canonical, alternates, body, notice, head, wide, og, description }) => {
+  if (wide) description = '';
   const t = T[lang];
   // every tool page leads back to /admin (asked 2026-10-01: "all admin pages should have upper link back to
   // /admin"): in front of the page's own crumb when it has one, as a crumb of its own when not; /admin
@@ -93,6 +122,7 @@ export const page = ({ lang, title, alternate, canonical, alternates, body, noti
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title} ECCM</title>
+${description ? html`<meta name="description" content="${description}">` : ''}
 ${canonical ? html`<link rel="canonical" href="${canonical}">` : ''}
 ${(alternates || []).map((a) => html`<link rel="alternate" hreflang="${a.hreflang}" href="${a.href}">`)}
 ${wide ? '' : html`<link rel="alternate" type="application/rss+xml" title="${FEED_TITLE[lang]}" href="/${lang}/feed.xml">
@@ -110,8 +140,9 @@ ${wide ? '' : html`<link rel="alternate" type="application/rss+xml" title="${FEE
 ${raw(THEME_HEAD)}
 <link rel="stylesheet" href="/eccm.css">
 <link rel="preload" href="/vendor/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/vendor/public-sans/latin.woff2" as="font" type="font/woff2" crossorigin>
 ${head || ''}
-${wide || String(head || '').includes('og:image') ? '' : siteOg(lang, `${title} ECCM`, og, canonical)}
+${wide || String(head || '').includes('og:image') ? '' : siteOg(lang, `${title} ECCM`, og, canonical, description)}
 </head>
 <body>
 ${raw(SYMBOL)}

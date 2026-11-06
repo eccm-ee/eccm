@@ -9,29 +9,25 @@ import { T, OTHER, page } from './chrome.mjs';
 import { dayMonth, whenLine, mapsUrl } from './dates.mjs';
 import { poster } from './pic.mjs';
 import { jsonLd, organizer } from './ld.mjs';
-import { opening } from './lead.mjs';
+import { opening, clip } from './lead.mjs';
 import { cardInput, cardVersion, cardPath, cardAlt, W as CARD_W, H as CARD_H } from '../og/card.mjs';
 
 // the Open Graph head of plans/plan-eccm-event-markup.md section 4, with the
 // versioned share image of src/og/card.mjs; the description is the body's
-// first paragraph as plain text, cut at a word under 200 characters
+// first paragraph as plain text, cut at a word under 155 characters, the one
+// page() writes as the meta description too
 const SITE_NAME = { et: 'Eesti Nüüdismuusika Keskus', en: 'Estonian Centre of Contemporary Music' };
 const LOCALE = { et: 'et_EE', en: 'en_GB' };
-const firstPara = (body, ctx) => {
-  const plain = opening(body, ctx);
-  return plain.length <= 200 ? plain : plain.slice(0, 200).replace(/\s+\S*$/, '') + '…';
-};
-const ogHead = ({ lang, title, body, ev, media, origin, canonical, textLang }) => {
+const describe = ({ title, body, ev, textLang }) => clip(opening(body, { title, venue: ev.venue, address: ev.address, series: CATEGORY[ev.category] && CATEGORY[ev.category][textLang] }));
+const ogHead = ({ lang, title, desc, ev, media, origin, canonical, textLang }) => {
   // the same input the card route builds, picture included, so og:image names the hash the route renders and no scraper takes a 302 first
   const input = cardInput({ lang, title, ev, scheme: media && media.scheme, pic: media && media.key });
-  const desc = firstPara(body, { title, venue: ev.venue, address: ev.address, series: CATEGORY[ev.category] && CATEGORY[ev.category][textLang] });
   const image = origin + cardPath(ev.id, lang, cardVersion(input));
   return html`${eventLd({ lang, title, desc, ev, origin, canonical, image, textLang })}
 <meta property="og:type" content="website">
 <meta property="og:url" content="${canonical}">
 <meta property="og:title" content="${title}">
-${desc ? html`<meta name="description" content="${desc}">
-<meta property="og:description" content="${desc}">` : ''}
+${desc ? html`<meta property="og:description" content="${desc}">` : ''}
 <meta property="og:site_name" content="${SITE_NAME[lang]}">
 <meta property="og:locale" content="${LOCALE[lang]}">
 <meta property="og:locale:alternate" content="${LOCALE[OTHER[lang]]}">
@@ -145,7 +141,8 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
   // the poster is the page's LCP, so it is asked for before the stylesheet finds it
   // (asked 2026-09-30: "i saw font change jump ... can we optimize / preload?")
   const pic = media ? poster(media, media[`alt_${lang}`] || media.alt_et) : null;
-  const head = html`${ogHead({ lang, title, body: text.body, ev, media, origin, canonical, textLang })}${pic ? pic.preload : ''}`;
+  const description = describe({ title, body: text.body, ev, textLang });
+  const head = html`${ogHead({ lang, title, desc: description, ev, media, origin, canonical, textLang })}${pic ? pic.preload : ''}`;
 
   const body = html`  <article class="event"${scheme ? raw(` data-scheme="${scheme.mode}" style="${scheme.style}"`) : ''}>
     <header class="event-top">
@@ -188,5 +185,5 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
       </ol>
     </section>` : ''}
   </article>`;
-  return page({ lang, title, alternate, canonical, alternates, body, notice, head });
+  return page({ lang, title, alternate, canonical, alternates, body, notice, head, description });
 };

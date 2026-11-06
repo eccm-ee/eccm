@@ -17,7 +17,7 @@
 // page at / is the same since 2026-10-03, in place of public/index.html.
 import { PAGE_TITLES } from '../og/card.mjs';
 import { html, raw } from './html.mjs';
-import { T, OTHER, page } from './chrome.mjs';
+import { T, OTHER, page, DESCRIPTION } from './chrome.mjs';
 import { dateLong, dateShort, clock, hasClock, mapsUrl } from './dates.mjs';
 import { offsetFor, CATEGORY } from './event.mjs';
 import { listImg } from './pic.mjs';
@@ -37,12 +37,12 @@ const lead = (e, lang) => {
   return m ? m[1] : plain.slice(0, 220).replace(/\s+\S*$/, '') + '…';
 };
 
-const row = (e, lang) => {
+const row = (e, lang, first = false) => {
   const href = eventPath(e.tlang, e.slug);
   const foreign = e.tlang !== lang ? raw(` lang="${e.tlang}"`) : '';
   const summary = lead(e, lang);
   return html`<li class="ev">
-      ${e.pic ? html`<a class="ev-pic" href="${href}" tabindex="-1" aria-hidden="true">${listImg(e.pic, e.width, e.height)}</a>` : html`<span class="ev-pic ev-blank" aria-hidden="true"></span>`}
+      ${e.pic ? html`<a class="ev-pic" href="${href}" tabindex="-1" aria-hidden="true">${listImg(e.pic, e.width, e.height, first)}</a>` : html`<span class="ev-pic ev-blank" aria-hidden="true"></span>`}
       <div class="ev-body">
         <p class="ev-kicker"><time datetime="${e.starts_at}${offsetFor(e.starts_at)}"><span class="d-long">${dateLong(e.starts_at, lang)}</span><span class="d-short">${dateShort(e.starts_at, lang)}</span></time>${hasClock(e.starts_at) ? html`<time>${clock(e.starts_at, lang)}</time>` : ''}${e.venue ? html`<span><a class="place" href="${mapsUrl(e.venue)}">${e.venue}</a></span>` : ''}${e.category !== 'eccm' && CATEGORY[e.category] ? html`<span>${CATEGORY[e.category][lang]}</span>` : ''}</p>
         <h2 class="ev-title"><a href="${href}"${foreign}>${e.title}</a></h2>
@@ -65,7 +65,7 @@ export const renderEvents = ({ lang, upcoming, past, origin, path, home = false 
   const body = html`  <article class="event">
     ${home ? html`<h1 class="vh">${t.upcoming}</h1>` : html`<h1>${t.events}</h1>`}
     ${upcoming.length ? html`<ol class="events">
-    ${upcoming.map((e) => row(e, lang))}
+    ${upcoming.map((e, i) => row(e, lang, i === 0))}
     </ol>` : html`<p class="note">${t.noEvents}</p>`}
     ${past.length && !home ? html`
     <section class="next">
@@ -75,5 +75,5 @@ export const renderEvents = ({ lang, upcoming, past, origin, path, home = false 
       </ol>
     </section>` : ''}
   </article>`;
-  return page({ lang, title: home ? t.upcoming : t.events, alternate, canonical: origin + path, alternates, body, head: home ? jsonLd(organization(origin, lang)) : null, og: home ? { key: 'home', title: PAGE_TITLES.home[lang] } : { key: 'events', title: PAGE_TITLES.events[lang] } });
+  return page({ lang, title: home ? t.upcoming : t.events, alternate, canonical: origin + path, alternates, body, head: home ? jsonLd(organization(origin, lang)) : null, og: home ? { key: 'home', title: PAGE_TITLES.home[lang] } : { key: 'events', title: PAGE_TITLES.events[lang] }, description: DESCRIPTION[home ? 'home' : 'events'][lang] });
 };

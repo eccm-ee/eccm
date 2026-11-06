@@ -18,6 +18,7 @@
 import { html, raw } from './html.mjs';
 import { md } from './md.mjs';
 import { T, OTHER, page } from './chrome.mjs';
+import { opening, firstSentence, clip } from './lead.mjs';
 
 export const pagePath = (lang, slug) => `/${lang}/${slug}`;
 
@@ -62,5 +63,5 @@ export const renderPage = ({ lang, text, fallback, twin, origin, path, notice, e
       ${text.page_key === 'ulysses' ? euEmblem(lang) : ''}
     </div>
   </article>`;
-  return page({ lang, title: text.title, alternate, canonical, alternates, body, notice, og: { key: text.slug, title: text.title, lang: textLang } });
+  return page({ lang, title: text.title, alternate, canonical, alternates, body, notice, og: { key: text.slug, title: text.title, lang: textLang }, description: clip(firstSentence(opening(text.body, { title: text.title }))) });
 };

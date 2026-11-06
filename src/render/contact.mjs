@@ -3,7 +3,7 @@
 // when the Worker has the keys, the Turnstile widget. Beside the form the
 // address and the phone the footer prints; on a phone they follow it.
 import { html, raw } from './html.mjs';
-import { page, OTHER } from './chrome.mjs';
+import { page, OTHER, DESCRIPTION } from './chrome.mjs';
 import { field, input } from './editor.mjs';
 
 export const CONTACT = { et: '/et/kontakt', en: '/en/contact' };
@@ -47,5 +47,5 @@ export const renderContact = ({ lang, sitekey, form = {}, errors = {}, done }) =
     </div></div>
   </article>`;
   const head = sitekey && !done ? raw('<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>') : '';
-  return page({ lang, title: `${t.title}.`, alternate: { lang: OTHER[lang], href: CONTACT[OTHER[lang]] }, body, head });
+  return page({ lang, title: `${t.title}.`, alternate: { lang: OTHER[lang], href: CONTACT[OTHER[lang]] }, body, head, description: DESCRIPTION.contact[lang] });
 };

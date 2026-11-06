@@ -2,7 +2,7 @@
 // (src/auth.mjs). In Estonian, and in English with ?lang=en, the language
 // switch in the header carrying next across; the newsletter page's shape.
 import { html } from './html.mjs';
-import { page, OTHER } from './chrome.mjs';
+import { page, OTHER, DESCRIPTION } from './chrome.mjs';
 import { field, input } from './editor.mjs';
 
 export const T = {
@@ -23,5 +23,5 @@ export const renderLogin = ({ lang, next, err }) => {
       <div class="actions"><button class="btn btn-pri" type="submit">${t.go}</button></div>
     </form>
   </article>`;
-  return page({ lang, title: `${t.title}.`, alternate: { lang: OTHER[lang], href: href(OTHER[lang], next) }, body });
+  return page({ lang, title: `${t.title}.`, alternate: { lang: OTHER[lang], href: href(OTHER[lang], next) }, body, description: DESCRIPTION.login[lang] });
 };

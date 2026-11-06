@@ -7,7 +7,8 @@
 // editor is open to anyone.
 import { PAGE_TITLES } from '../og/card.mjs';
 import { html, raw } from './html.mjs';
-import { page, OTHER } from './chrome.mjs';
+import { page, OTHER, DESCRIPTION } from './chrome.mjs';
+import { opening, clip } from './lead.mjs';
 import { field, input, group, segment } from './editor.mjs';
 import { md } from './md.mjs';
 import { dateLong } from './dates.mjs';
@@ -43,7 +44,7 @@ export const renderSignup = ({ lang, issues, form = {}, say, err }) => {
     </form>`}
     ${issues.length ? html`<section class="news-past"><h2>${t.past}</h2>${table({ label: t.past, cols: [{ label: t.date }, { label: t.letter, cls: 'main' }], rows: issues.map((i) => [html`<time datetime="${i.sent_at}">${sentDay(i.sent_at, lang)}</time>`, html`<a href="${NL[lang]}/${i.slug}">${i.subject}</a>`]) })}</section>` : ''}
   </article>`;
-  return page({ lang, title: `${t.title}.`, alternate: alt(lang), body, og: { key: 'newsletter', title: PAGE_TITLES.newsletter[lang] } });
+  return page({ lang, title: `${t.title}.`, alternate: alt(lang), body, og: { key: 'newsletter', title: PAGE_TITLES.newsletter[lang] }, description: DESCRIPTION.newsletter[lang] });
 };
 
 // the page a confirm or unsubscribe link lands on
@@ -54,7 +55,7 @@ export const renderNotice = ({ lang, text, form }) => {
     <p class="news-say" role="status">${text}</p>
     ${form ? html`<form class="form" method="post" action="${form}"><div class="actions"><button class="btn btn-pri" type="submit">${t.leave}</button></div></form>` : html`<p><a href="${NL[lang]}">${t.back}</a></p>`}
   </article>`;
-  return page({ lang, title: `${t.title}.`, alternate: alt(lang), body, og: { key: 'newsletter', title: PAGE_TITLES.newsletter[lang] } });
+  return page({ lang, title: `${t.title}.`, alternate: alt(lang), body, og: { key: 'newsletter', title: PAGE_TITLES.newsletter[lang] }, description: DESCRIPTION.newsletter[lang] });
 };
 export const NOTICE = T;
 
@@ -66,7 +67,7 @@ export const renderArchive = ({ lang, issue, draft = false }) => {
     <h1>${issue.subject || T[lang].title}</h1>
     <div class="prose flow">${raw(md(issue.body))}</div>
   </article>`;
-  return page({ lang, title: `${issue.subject || T[lang].title}.`, alternate: alt(lang), body, notice: draft ? T[lang].draft : undefined });
+  return page({ lang, title: `${issue.subject || T[lang].title}.`, alternate: alt(lang), body, notice: draft ? T[lang].draft : undefined, description: clip(opening(issue.body, { title: issue.subject })) || DESCRIPTION.newsletter[lang] });
 };
 
 // ── the editor ───────────────────────────────────────────────────────────

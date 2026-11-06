@@ -54,3 +54,16 @@ export const opening = (body, ctx = {}) => {
   }
   return first;
 };
+
+// a meta description from plain text: whole when it fits, else cut at the last word under max characters with an
+// ellipsis, so a search result shows a sentence rather than a word broken off (asked 2026-11-06, Lighthouse's SEO)
+export const clip = (s, max = 155) => {
+  const t = String(s || '').replace(/\s+/g, ' ').trim();
+  return t.length <= max ? t : t.slice(0, max - 1).replace(/[\s,;:.]+\S*$/, '') + '…';
+};
+// the first sentence of a text: up to the first full stop, question or exclamation mark followed by a capital
+export const firstSentence = (s) => {
+  const t = String(s || '').trim();
+  const m = t.match(/^.+?[.!?…]["”»)]?(?=\s+["„«(]?\p{Lu})/u);
+  return m ? m[0] : t;
+};
