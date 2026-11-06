@@ -1,4 +1,4 @@
-# Handoff, 2026-11-03
+# Handoff, 2026-11-06
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
 committed on `main` of **https://github.com/kristjanjansen/eccm**, private,
@@ -11,6 +11,22 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 2026-10-09 `curl` reached it. If it blocks again, check through
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
 
+
+## 2026-11-06: Väin goes to v2in, no old.eccm.ee
+
+Asked: "Joomla API, category 47 -- this goes to v2in, we already imported envents / cards. no old.eccm".
+
+- **`7f53010`, deployed to staging (`615854c0`) and pushed:** the Joomla API shim (`src/joomla.mjs`) and the
+  notices' Väin tick are gone (the `vain` column stays, written 0); `src/passthrough.mjs` fetches
+  `/radio1965/streams/*` from `https://v2in.stream`, which holds the 44 recordings; `OLD_ORIGIN` and old.eccm.ee are
+  out of the code, `wrangler.jsonc` and `docs/migration.md`. Checked on staging: a recording answers 206
+  `audio/mpeg`, `/api/index.php/...` 404.
+- **What VÄIN still ties to eccm.ee** is planned in v2in, `plans/plan-unblock-eccm.md` (`62b8ff3`): Tarmo's
+  hooks rsync new recordings to eccm.ee by ssh (v2in to take them with an rrsync-only user), one recording v2in lacks
+  (`video/stream-1793914592-20261105-233632.mp4`), the article event `joomla_56` that Tarmo's server opens through
+  eccm.ee's Joomla on every tap, his contributor and editor pages, and his mail through `mail.eccm.ee`.
+- **Next:** that plan's steps 1 to 3 in v2in; Tarmo's steps 4 and 5; a background read of what to remove from eccm
+  before production was started.
 
 ## 2026-11-03: the radio's audio left eccm; Väin and KCMD work moved to v2in
 
