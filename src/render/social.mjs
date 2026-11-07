@@ -16,7 +16,7 @@ const ICONS = '/vendor/icons/feather/icons.svg';
 const download = (href, name) => html`<a class="btn btn-sm btn-ico" href="${href}" download="${name}"><svg class="ico" aria-hidden="true"><use href="${ICONS}#download"/></svg><span class="vh">Download ${name}</span></a>`;
 const fig = (cls, src, w, h, cap, name, alt, extra = '') => html`<figure class="${cls}"${raw(extra)}>
           <img src="${src}" width="${w}" height="${h}" alt="${alt}" decoding="async">
-          <figcaption><span>${cap}</span>${download(src, name)}</figcaption>
+          <figcaption>${download(src, name)}<span>${cap}</span></figcaption>
         </figure>`;
 
 // id, lang, slug: the event; input: its cardInput; fields: the fourth card's words as stored or defaulted;
