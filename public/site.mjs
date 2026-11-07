@@ -23,13 +23,20 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', themeSync)
 themeSync();
 // The YouTube player (src/render/md.mjs): a click on the picture puts the youtube-nocookie iframe into the same 16:9 box,
 // which is the first request the page makes to YouTube; without this script the picture is a plain link to the video.
+// A Vimeo box (data-vimeo, asked 2026-11-07: "Vimeo videos support") gets player.vimeo.com the same way, with dnt=1 so
+// the player sets no tracking cookie, the unlisted hash as h= and the start as #t=.
 document.addEventListener('click', (e) => {
-  const a = e.target.closest('.yt-face'), box = a?.closest('.yt[data-yt]');
+  const a = e.target.closest('.yt-face'), box = a?.closest('.yt[data-yt], .yt[data-vimeo]');
   if (!box || e.metaKey || e.ctrlKey || e.shiftKey) return;
   e.preventDefault();
-  const f = document.createElement('iframe');
-  f.src = `https://www.youtube-nocookie.com/embed/${box.dataset.yt}?autoplay=1${box.dataset.start ? `&start=${box.dataset.start}` : ''}`;
-  f.title = 'YouTube';
+  const f = document.createElement('iframe'), d = box.dataset;
+  if (d.vimeo) {
+    f.src = `https://player.vimeo.com/video/${d.vimeo}?autoplay=1&dnt=1${d.h ? `&h=${d.h}` : ''}${d.start ? `#t=${d.start}s` : ''}`;
+    f.title = 'Vimeo';
+  } else {
+    f.src = `https://www.youtube-nocookie.com/embed/${d.yt}?autoplay=1${d.start ? `&start=${d.start}` : ''}`;
+    f.title = 'YouTube';
+  }
   f.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
   f.allowFullscreen = true;
   box.replaceChildren(f);

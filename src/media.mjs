@@ -85,6 +85,34 @@ async function ytThumb(env, id) {
   return new Response(bytes, { headers: { 'content-type': 'image/jpeg', 'cache-control': IMMUTABLE } });
 }
 
+// GET /media/vimeo/{id}.jpg or /media/vimeo/{id}-{hash}.jpg: a Vimeo video's
+// picture for the same player (asked 2026-11-07: "Vimeo videos support").
+// Vimeo has no fixed thumbnail address, so the Worker asks its oEmbed
+// (vimeo.com/api/oembed.json, no key, the hash in the URL for an unlisted
+// video) for thumbnail_url at 1280 px, fetches that once and keeps it in R2
+// under vimeo/{id}.jpg, beside YouTube's. The page itself stays fast and asks
+// Vimeo for nothing: the picture is a request of its own to this site, and a
+// miss (a private video, Vimeo down) is a 404 never cached, which leaves the
+// box empty with the play button on it, still a link to the video.
+const VIMEO = /^\/media\/vimeo\/(\d{5,12})(?:-([0-9a-f]{6,20}))?\.jpg$/;
+async function vimeoThumb(env, id, hash) {
+  const key = `vimeo/${id}.jpg`;
+  const hit = env.MEDIA ? await env.MEDIA.get(key) : null;
+  if (hit) return new Response(hit.body, { headers: { 'content-type': hit.httpMetadata?.contentType ?? 'image/jpeg', 'cache-control': IMMUTABLE } });
+  const miss = () => new Response('Not found', { status: 404, headers: { 'cache-control': 'no-store' } });
+  const page = `https://vimeo.com/${id}${hash ? `/${hash}` : ''}`;
+  const o = await fetch(`https://vimeo.com/api/oembed.json?width=1280&url=${encodeURIComponent(page)}`);
+  if (!o.ok) return miss();
+  const thumb = (await o.json().catch(() => ({}))).thumbnail_url;
+  if (!thumb || !/^https:\/\/i\.vimeocdn\.com\//.test(thumb)) return miss();
+  const res = await fetch(thumb);
+  if (!res.ok) return miss();
+  const type = (res.headers.get('content-type') ?? '').startsWith('image/') ? res.headers.get('content-type') : 'image/jpeg';
+  const bytes = new Uint8Array(await res.arrayBuffer());
+  if (env.MEDIA) await env.MEDIA.put(key, bytes, { httpMetadata: { contentType: type, cacheControl: IMMUTABLE } });
+  return new Response(bytes, { headers: { 'content-type': type, 'cache-control': IMMUTABLE } });
+}
+
 // GET /media/{sha256}.{ext}: the original from R2, immutable under its hash;
 // a miss is a 404 that is never cached, so a link asked for early does not
 // stay broken (the images plan, section 4, Caching)
@@ -92,6 +120,8 @@ const KEY = /^\/(media\/[0-9a-f]{64}\.(?:jpg|png|webp|gif))$/;
 export async function serveMedia(env, path) {
   const y = YT.exec(path);
   if (y) return ytThumb(env, y[1]);
+  const v = VIMEO.exec(path);
+  if (v) return vimeoThumb(env, v[1], v[2]);
   const m = KEY.exec(path);
   if (!m) return null;
   const obj = env.MEDIA ? await env.MEDIA.get(m[1]) : null;

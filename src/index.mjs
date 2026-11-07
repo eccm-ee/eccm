@@ -26,6 +26,7 @@ import { renderPage } from './render/page.mjs';
 import { renderEvents, LIST } from './render/events.mjs';
 import { notFound, OTHER, useOrigin, origin } from './render/chrome.mjs';
 import { editor } from './editor.mjs';
+import { social, socialRow } from './social.mjs';
 import { renderSitemap, renderFeed } from './render/feeds.mjs';
 import { serveMedia } from './media.mjs';
 import { useTransforms } from './render/pic.mjs';
@@ -37,7 +38,7 @@ import { contact, CONTACT_PATHS } from './contact.mjs';
 import { ogRoute } from './og/route.mjs';
 import { legacy } from './redirects.mjs';
 import { passthrough } from './passthrough.mjs';
-import { gate, isProtected, isStatic, login, logout } from './auth.mjs';
+import { gate, isProtected, isStatic, login, logout, loggedIn } from './auth.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
 const EVENT = { et: /^\/et\/sundmused\/([a-z0-9-]+)$/, en: /^\/en\/events\/([a-z0-9-]+)$/ };
@@ -47,8 +48,11 @@ const LIST_LANG = Object.fromEntries(Object.entries(LIST).map(([l, p]) => [p, l]
 const tallinnToday = () => new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn' }).format(new Date());
 
 const reply = (body, status = 200) => new Response(String(body), { status, headers: HTML });
+// a public page that differs for a logged-in editor (the edit button, the social preview): never kept by a
+// browser or a cache for the editor, and kept per cookie for everyone else
+const replyFor = (body, editor) => new Response(String(body), { headers: editor ? { 'content-type': HTML['content-type'], 'cache-control': 'private, no-store' } : { ...HTML, vary: 'cookie' } });
 
-async function event(env, lang, slug, url) {
+async function event(env, lang, slug, url, editor = false) {
   const db = env.DB;
   let text = await db.prepare('SELECT * FROM event_text WHERE lang = ? AND slug = ?').bind(lang, slug).first();
   let fallback = false;
@@ -70,7 +74,9 @@ async function event(env, lang, slug, url) {
   const next = (await db.prepare(`SELECT e.starts_at, COALESCE(NULLIF(t1.venue, ''), e.venue) AS venue, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et'
     WHERE e.status = 'published' AND e.starts_at > ? AND e.id != ? ORDER BY e.starts_at LIMIT 3`).bind(lang, ev.starts_at, ev.id).all()).results;
-  return renderEvent({ lang, text, fallback, ev, media, credits, twin, next, origin: origin(), path: url.pathname });
+  // an editor sees the event's social previews under it, the fourth Instagram card's words with them (src/social.mjs)
+  const sp = editor ? { row: await socialRow(db, ev.id, lang) } : null;
+  return renderEvent({ lang, text, fallback, ev, media, credits, twin, next, origin: origin(), path: url.pathname, editor, social: sp });
 }
 
 // the events list: every published event with a text in this language, or
@@ -182,7 +188,7 @@ const routes = {
     if (ic) { const out = await calendar(env, ic[1] === 'et/sundmused' ? 'et' : 'en', ic[2], url); if (out) return out; }
     for (const lang of ['et', 'en']) {
       const m = EVENT[lang].exec(p);
-      if (m) { const out = await event(env, lang, m[1], url); if (out?.moved) return new Response(null, { status: 301, headers: { location: url.origin + out.moved } }); if (out) return reply(out); break; }
+      if (m) { const editor = await loggedIn(request, env); const out = await event(env, lang, m[1], url, editor); if (out?.moved) return new Response(null, { status: 301, headers: { location: url.origin + out.moved } }); if (out) return replyFor(out, editor); break; }
     }
     // the front pages, both from D1 since 2026-10-03 (asked: "do estonian front page"); public/index.html, the static one, is in git at 5977631
     if (p === '/') return reply(await eventsList(env, 'et', url, true));
@@ -199,6 +205,8 @@ const routes = {
     // the tools, one card each (src/render/admin.mjs), since 2026-10-01
     // /docs, the migration plan and the presence notes drawn from Markdown, went 2026-11-06; the plan is plans/plan-eccm-migration.md
     if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
+    // the fourth Instagram card's preview and its words, under the event page since 2026-11-07 (src/social.mjs)
+    if (p.startsWith('/edit/og/') || p.startsWith('/edit/social/')) { const out = await social(request, env, url); if (out) return out; }
     if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);

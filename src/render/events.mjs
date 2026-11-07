@@ -37,8 +37,9 @@ const lead = (e, lang) => {
   return m ? m[1] : plain.slice(0, 220).replace(/\s+\S*$/, '') + '…';
 };
 
-const row = (e, lang, first = false) => {
-  const href = eventPath(e.tlang, e.slug);
+// href: where the title and the picture lead, the public page unless the
+// drafts list below sends them to the editor
+const row = (e, lang, first = false, href = eventPath(e.tlang, e.slug)) => {
   const foreign = e.tlang !== lang ? raw(` lang="${e.tlang}"`) : '';
   const summary = lead(e, lang);
   return html`<li class="ev">
@@ -77,3 +78,19 @@ export const renderEvents = ({ lang, upcoming, past, origin, path, home = false 
   </article>`;
   return page({ lang, title: home ? t.upcoming : t.events, alternate, canonical: origin + path, alternates, body, head: home ? jsonLd(organization(origin, lang)) : null, og: home ? { key: 'home', title: PAGE_TITLES.home[lang] } : { key: 'events', title: PAGE_TITLES.events[lang] }, description: DESCRIPTION[home ? 'home' : 'events'][lang] });
 };
+
+// the drafts list at /edit/events/drafts, asked 2026-11-07 as "drafts list.
+// re-use events list but with Drafts header and dim them in listing view":
+// every event that is not published, in the rows above, each leading to its
+// editor because a draft has no public page. Newest first by when it was
+// made, so the draft just saved from New event is on top. In English like
+// every admin page, and dimmed by the class on the list (public/eccm.css).
+export const renderDrafts = ({ drafts }) => page({
+  wide: true, lang: 'en', title: 'Drafts.',
+  body: html`  <article class="event">
+    <h1>Drafts</h1>
+    ${drafts.length ? html`<ol class="events events-drafts">
+    ${drafts.map((e, i) => row({ ...e, title: e.title || 'Untitled' }, 'en', i === 0, `/edit/events/${e.id}`))}
+    </ol>` : html`<p class="note">No drafts.</p>`}
+  </article>`,
+});

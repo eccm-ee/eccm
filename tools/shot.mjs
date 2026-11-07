@@ -94,9 +94,12 @@ const OUT = flag('out', 'tmp/shots');
 // --dark emulates prefers-color-scheme: dark, the system setting the site's dark mode follows when nothing is
 // stored, and names the file -dark (added in eccm, 2026-10-02, for the dark mode)
 const DARK = argv.includes('--dark');
+// --cookie name=value sends one cookie with every request, so a page can be shot as a logged-in editor sees it
+// (added in eccm, 2026-11-07, for the social previews under an event page)
+const COOKIE = flag('cookie', '');
 
 if (!slug) {
-  console.error('usage: node tools/shot.mjs <URL or slug> [width ...] [--base URL] [--hash id] [--clip px] [--from px] [--wait ms] [--out dir] [--dark]');
+  console.error('usage: node tools/shot.mjs <URL or slug> [width ...] [--base URL] [--hash id] [--clip px] [--from px] [--wait ms] [--out dir] [--dark] [--cookie name=value]');
   process.exit(2);
 }
 
@@ -153,6 +156,7 @@ const { sessionId } = await send('Target.attachToTarget', { targetId, flatten: t
 const S = (m, p) => send(m, p, sessionId);
 await S('Page.enable');
 await S('Runtime.enable');
+if (COOKIE) await S('Network.setExtraHTTPHeaders', { headers: { cookie: COOKIE } }).then(() => S('Network.enable'));
 if (DARK) await S('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'dark' }] });
 
 await mkdir(OUT, { recursive: true });

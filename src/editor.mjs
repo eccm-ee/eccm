@@ -3,6 +3,7 @@
 //
 //   GET  /edit                                 to the front page; an event is edited from its own Muuda button
 //   GET  /edit/events/new, POST                a blank form, then an insert
+//   GET  /edit/events/drafts                   every event not yet published, each to its form
 //   GET  /edit/events/{id}, POST               the form from D1, then a save
 //   GET  /edit/pages/new, POST                 a blank form, then an insert
 //   GET  /edit/pages/{id}, POST                the form from D1, then a save
@@ -34,6 +35,7 @@ import { storeUpload } from './media.mjs';
 import { renderPage, pagePath } from './render/page.mjs';
 import { OTHER, origin } from './render/chrome.mjs';
 import { editorForm, pageForm, errorPage, CATEGORIES, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
+import { renderDrafts } from './render/events.mjs';
 
 const HEAD = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' };
 const reply = (body, status = 200, extra = {}) => new Response(String(body), { status, headers: { ...HEAD, ...extra } });
@@ -280,7 +282,7 @@ function previewPage(v, lang, url) {
   const other = OTHER[lang];
   const twin = v[other].title ? { lang: other, slug: v[other].slug } : null;
   const notice = 'Preview. Nothing is saved. Close this tab and save from the form.';
-  return reply(renderPage({ lang, text, fallback: false, twin, origin: origin(), path: pagePath(lang, text.slug), notice, editHref: v.id ? `/edit/pages/${v.id}` : '/edit/pages/new' }));
+  return reply(renderPage({ lang, text, fallback: false, twin, origin: origin(), path: pagePath(lang, text.slug), notice, editor: true, editHref: v.id ? `/edit/pages/${v.id}` : '/edit/pages/new' }));
 }
 
 async function loadPage(db, id) {
@@ -341,7 +343,7 @@ async function preview(db, v, lang, before, roles, media, url) {
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et'
     WHERE e.status = 'published' AND e.starts_at > ? AND e.id != ? ORDER BY e.starts_at LIMIT 3`).bind(lang, ev.starts_at, v.id ?? 0).all()).results;
   const notice = 'Preview. Nothing is saved. Close this tab and save from the form.';
-  return reply(renderEvent({ lang, text, fallback: false, ev, media: pic, credits, twin, next, origin: origin(), path: eventPath(lang, text.slug), notice, editHref: v.id ? `/edit/events/${v.id}` : '/edit/events/new' }));
+  return reply(renderEvent({ lang, text, fallback: false, ev, media: pic, credits, twin, next, origin: origin(), path: eventPath(lang, text.slug), notice, editor: true, editHref: v.id ? `/edit/events/${v.id}` : '/edit/events/new' }));
 }
 
 async function form(request, env, url, id) {
@@ -377,10 +379,22 @@ async function form(request, env, url, id) {
   return redirect(landing(v, eventPath) || `/edit/events/${out.id}`);
 }
 
+// the drafts list (asked 2026-11-07: "drafts list. re-use events list but
+// with Drafts header and dim them in listing view"): every event whose status
+// is not published, its Estonian text or else its English one, the picture
+// joined, the one made last first
+async function drafts(env) {
+  const rows = (await env.DB.prepare(`SELECT e.id, e.starts_at, COALESCE(NULLIF(t0.venue, ''), e.venue) AS venue, e.address, e.category, COALESCE(t0.title, t1.title) AS title, COALESCE(t0.lang, t1.lang, 'et') AS tlang, COALESCE(t0.body, t1.body) AS body, m.key AS pic, m.width, m.height
+    FROM event e LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et' LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = 'en' LEFT JOIN media m ON m.id = e.image_id
+    WHERE e.status != 'published' ORDER BY e.created_at DESC, e.id DESC`).all()).results;
+  return reply(renderDrafts({ drafts: rows }));
+}
+
 export async function editor(request, env, url) {
   const p = url.pathname;
   try {
     if (p === '/edit') return redirect('/');
+    if (p === '/edit/events/drafts') return drafts(env);
     const m = /^\/edit\/events\/(new|\d+)$/.exec(p);
     if (m) return form(request, env, url, m[1]);
     const pm = /^\/edit\/pages\/(new|\d+)$/.exec(p);

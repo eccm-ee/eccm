@@ -10,11 +10,13 @@
 // section 3); an event without one takes the site's own white and ink.
 import { SYMBOL, HEADER } from '../render/mark.mjs';
 import { whenLine } from '../render/dates.mjs';
+import { opening, clip } from '../render/lead.mjs';
 import M from './metrics.mjs';
 
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
-export const TEMPLATE_V = 17;
+// 18 since 2026-11-07: the panorama runs one strip further, onto the fourth card (STRIP says why)
+export const TEMPLATE_V = 18;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
@@ -83,8 +85,12 @@ const TALL_TITLE = 100;
 // around 10 pecent of image left side and make it work in carousel"): the text card shows the picture's first
 // 108 px, a tenth of its width, at its right edge, and the two picture cards the rest, so a swipe from the
 // text card carries on into the same picture. MEASURED: the title still holds at 100 in the narrower column
+// The panorama's right edge also runs onto the fourth card, the text card at the carousel's end, the same
+// 108 px at that card's left edge (asked 2026-11-07: "For ig add fourth slide with 2-3 fields header / body /
+// footer (see ../positron social composers). image right edge will also ovelap 4th image"), so the picture is
+// two cards and two strips wide and both text cards show a tenth of it, the first its left edge, the last its right
 const STRIP = 108;
-const PANO_W = 2 * TALL_W + STRIP;
+const PANO_W = 2 * TALL_W + 2 * STRIP;
 const LAYOUTS = {
   wide: { w: W, h: H, top: PAD, markTop: MARK_TOP, measure: MEASURE, steps: STEPS },
   tall: { w: TALL_W, h: TALL_H, top: PAD, markTop: Math.round(TALL_H - PAD - TALL_MARK_H), k: TALL_K, measure: TALL_W - 2 * PAD, steps: [TALL_TITLE], meta: TALL_META },
@@ -261,6 +267,75 @@ export const cardSvg = (input, picture = null, tall = false, part = 1) => {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${L.w}" height="${L.h}" viewBox="0 0 ${L.w} ${L.h}">`
     + `<rect width="${L.w}" height="${L.h}" fill="${input.ground}"/>${L.strip ? pano(picture, TALL_W - STRIP) : ''}${out.join('')}${markSvg(input.ink, L.markTop, L.k)}${input.plate === false ? '' : plateSvg(input.ink, input.lang, L.markTop, L.k)}`
     + '</svg>';
+};
+
+// ── the fourth Instagram card ───────────────────────────────────────────────
+// A text card at the carousel's end, three fields the editor fills in under the event page (asked 2026-11-07:
+// "For ig add fourth slide with 2-3 fields header / body / footer (see ../positron social composers)"): the
+// header in the title's size, stepped down when the words need the room, the body under it at the date and
+// venue's size in the ink, and the footer on the bottom margin in the second ink, where the first card has
+// its nameplate. positron's composers (demo/social/typist) do the same with a large typed text at the top
+// and a small lower line at the foot, each a labelled field beside the frame. The panorama's last strip is
+// at the card's left edge when the event has a picture, and the text starts past it.
+// Each field is kept per event and language in event_social (migrations/0013_event_social.sql); an event
+// without a row shows the defaults: its title, the opening of its text, and eccm.ee.
+const SLIDE_STEPS = [TALL_TITLE, 80, 64];
+export const SLIDE_MAX = { header: 200, body: 600, footer: 120 };
+export const slideDefaults = ({ title, body, ev, series }) => ({
+  header: title || '',
+  body: clip(opening(body, { title, venue: ev && ev.venue, address: ev && ev.address, series })),
+  footer: 'eccm.ee',
+});
+// a stored row as it is, an empty field left empty (a footer is optional), and the defaults when there is no row
+export const slideFields = (row, defaults) => (row ? Object.fromEntries(Object.keys(SLIDE_MAX).map((k) => [k, String(row[k] ?? '').slice(0, SLIDE_MAX[k])])) : defaults);
+export const slideVersion = (input, fields) => cardVersion({ ...input, layout: 'tall4', fields });
+export const slidePath = (id, lang, v) => `/og/t4/${id}-${lang}-${v}.png`;
+// a field's own line breaks, then each paragraph wrapped to the measure
+const wrapText = (text, fs, measure, bal = false) => String(text || '').replace(/\r/g, '').trim().split('\n')
+  .flatMap((para) => {
+    if (!para.trim()) return [''];
+    const ps = fitPieces(pieces(para), 'sans', fs, measure);
+    return bal ? balance(ps, 'sans', fs, measure) : wrapAt(ps, 'sans', fs, measure);
+  });
+const ellipsis = (lines, n, fs, measure) => {
+  const out = lines.slice(0, n);
+  if (lines.length <= n || !n) return out;
+  let last = out[n - 1] + '…';
+  while (last.length > 2 && width(last, 'sans', fs) > measure) last = last.slice(0, -2).trimEnd() + '…';
+  out[n - 1] = last;
+  return out;
+};
+export const slideSvg = (input, fields, picture = null) => {
+  const x = PAD + (picture ? STRIP : 0), measure = TALL_W - 2 * PAD - (picture ? STRIP : 0);
+  const cap = M.sans.cap, mfs = TALL_META, mlh = META_LH * mfs;
+  // the footer from the bottom margin up, its last baseline on it as the mark's foot is on the first card
+  const foot = wrapText(fields.footer, mfs, measure).slice(-3);
+  const footTop = TALL_H - PAD - (foot.length - 1) * mlh - cap * mfs;
+  const limit = foot.length ? footTop - AIR : TALL_H - PAD;
+  // the largest header size whose header and body both fit above the footer; at the smallest the body ends in an ellipsis
+  const place = (fs) => {
+    const head = wrapText(fields.header, fs, measure, true);
+    const headBottom = head.length ? PAD + cap * fs + (head.length - 1) * TITLE_LH * fs + 0.25 * fs : PAD;
+    const bodyTop = head.length ? headBottom + GROUP : PAD;
+    const body = wrapText(fields.body, mfs, measure);
+    const bodyBottom = body.length ? bodyTop + cap * mfs + (body.length - 1) * mlh + 0.25 * mfs : bodyTop;
+    return { fs, head, bodyTop, body, fits: bodyBottom <= limit && headBottom <= limit };
+  };
+  let L = SLIDE_STEPS.map(place).find((l) => l.fits);
+  if (!L) {
+    L = place(SLIDE_STEPS[SLIDE_STEPS.length - 1]);
+    const fs = L.fs;
+    L.head = ellipsis(L.head, Math.max(1, 1 + Math.floor((limit - 0.25 * fs - PAD - cap * fs) / (TITLE_LH * fs))), fs, measure);
+    L.bodyTop = PAD + cap * fs + (L.head.length - 1) * TITLE_LH * fs + 0.25 * fs + GROUP;
+    L.body = ellipsis(L.body, Math.max(0, 1 + Math.floor((limit - 0.25 * mfs - L.bodyTop - cap * mfs) / mlh)), mfs, measure);
+  }
+  const out = [];
+  const line = (l, y, fs, fill) => { if (l) out.push(`<text x="${x}" y="${y.toFixed(1)}" font-family="${M.sans.family}" font-size="${fs}" fill="${fill}">${xml(l)}</text>`); };
+  L.head.forEach((l, i) => line(l, PAD + cap * L.fs + i * TITLE_LH * L.fs, L.fs, input.ink));
+  L.body.forEach((l, i) => line(l, L.bodyTop + cap * mfs + i * mlh, mfs, input.ink));
+  foot.forEach((l, i) => line(l, footTop + cap * mfs + i * mlh, mfs, input.ink2));
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${TALL_W}" height="${TALL_H}" viewBox="0 0 ${TALL_W} ${TALL_H}">`
+    + `<rect width="${TALL_W}" height="${TALL_H}" fill="${input.ground}"/>${picture ? pano(picture, -STRIP - 2 * TALL_W) : ''}${out.join('')}</svg>`;
 };
 
 // the words a reader of the card's alt hears: the title, then the meta line

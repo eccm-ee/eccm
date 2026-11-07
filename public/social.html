@@ -75,14 +75,19 @@
     .og-row img { display: block; inline-size: 100%; block-size: auto; }
     .og-row figcaption { margin-block-start: var(--eccm-s-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
     .og-share { max-inline-size: 28rem; }
-    /* no gap between the three on a desk either: the picture runs from the text card's edge into the other two */
-    .og-ig { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 28rem); column-gap: 0; align-items: start; }
-    .og-pair { display: grid; grid-template-columns: 1fr 1fr; column-gap: 0; }
+    /* no gap between the four on a desk either: the picture runs from the text card's edge through the other two
+       into the last text card (asked 2026-11-07: "image right edge will also ovelap 4th image"), each card 14rem */
+    .og-ig { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 14rem); column-gap: 0; align-items: start; }
+    .og-pair { display: contents; }
+    /* each image's caption a row of two ends, its name and its download button (asked 2026-11-07: "social
+       images should have download icons") */
+    .og-row figcaption { display: flex; align-items: center; justify-content: space-between; gap: var(--eccm-s-3); padding-inline-end: var(--eccm-s-4); }
     /* on a phone the Instagram cards are a carousel as Instagram shows them: each card the column's full width, a
        swipe to the next, snapping a card at a time, the picture's two halves meeting with no gap so the swipe
        shows it whole (asked 2026-10-02: "In mibile show full ig w and make carousel with 3 images") */
     @media (max-width: 48rem) {
-      .og-ig { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; column-gap: 0; scrollbar-width: none; }
+      /* relative, so the download buttons' hidden words (.vh, absolute) stay inside the scroller */
+      .og-ig { position: relative; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; column-gap: 0; scrollbar-width: none; }
       .og-ig::-webkit-scrollbar { display: none; }
       .og-ig > figure, .og-pair > figure { flex: 0 0 100%; scroll-snap-align: start; }
       .og-pair { display: contents; }
@@ -208,7 +213,7 @@
   <div id="og-pages"><p class="ds-cap">Loading the pages.</p></div>
   <h2>Events</h2>
   <div class="prose flow">
-    <p>Each event: its share card, and on the line under it its Instagram cards at 1080 by 1350, Instagram's 4:5, the text card and the picture split across two cards, so a carousel's swipe shows it whole, the text card's type larger since a feed is read on a phone. The share card is the image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
+    <p>Each event: its share card, and on the line under it its Instagram cards at 1080 by 1350, Instagram's 4:5, the text card, the picture split across two cards, so a carousel's swipe shows it whole, and a last text card whose words are written under the event's own page when logged in. The share card is the image an event page names as its og:image, 1200 by 630 PNG, rendered by the Worker from the event's own rows: the title in Instrument Sans, then the date, time and venue in the second ink, and the mark at the foot with its own short stave, all on the scheme's ground. Below are the real images for every published event in each language it has a text in, read from the database as this page opens.</p>
   </div>
   <div class="ds-og" id="og-cards"><p class="ds-cap">Loading the events.</p></div>
 
@@ -249,7 +254,14 @@ try {
     a.append(img);
     const cap = document.createElement('figcaption');
     // the Instagram cards say only where they sit in the carousel; the share card above says the rest
-    cap.textContent = short ? what : `${what}: ${c.lang.toUpperCase()} on ${c.ground}`;
+    const say = document.createElement('span');
+    say.textContent = short ? what : `${what}: ${c.lang.toUpperCase()} on ${c.ground}`;
+    // the download, a file named after the image's address without its version: eccm-t-12-et.png
+    const name = 'eccm-' + src.split('?')[0].replace(/^\/og\//, '').replace(/\//g, '-').replace(/-[0-9a-f]{8}\.png$/, '.png');
+    const dl = document.createElement('a'); dl.className = 'btn btn-sm btn-ico'; dl.href = src; dl.download = name;
+    dl.innerHTML = '<svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#download"/></svg><span class="vh"></span>';
+    dl.querySelector('.vh').textContent = `Download ${name}`;
+    cap.append(say, dl);
     f.append(a, cap); return f;
   };
   // the pages, each its share card and its Instagram text card, in the events' own shape
@@ -276,13 +288,15 @@ try {
     const row = document.createElement('div'); row.className = 'og-row';
     const share = fig(c, c.image, 'Share card'); share.classList.add('og-share');
     const ig = document.createElement('div'); ig.className = 'og-ig';
-    const n = c.tallPictures ? 3 : 1;
+    // the fourth card, the text the editor writes under the event page, last (2026-11-07)
+    const n = (c.tallPictures ? 3 : 1) + (c.tallText ? 1 : 0);
     ig.append(fig(c, c.tall, `Instagram 1/${n}, text`, 1080, 1350, true));
     if (c.tallPictures) {
       const pair = document.createElement('div'); pair.className = 'og-pair';
-      c.tallPictures.forEach((src, i) => pair.append(fig(c, src, `Instagram ${i + 2}/3, picture`, 1080, 1350, true)));
+      c.tallPictures.forEach((src, i) => pair.append(fig(c, src, `Instagram ${i + 2}/${n}, picture`, 1080, 1350, true)));
       ig.append(pair);
     }
+    if (c.tallText) ig.append(fig(c, c.tallText, `Instagram ${n}/${n}, text`, 1080, 1350, true));
     row.append(share, ig);
     return row;
   }));

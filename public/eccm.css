@@ -317,6 +317,12 @@
      2026-09-26 with a crop: "feels like these need biiit more vert space in
      between"): 12 px under the small line, 16 px under the title */
   .ev-summary { margin-block-start: var(--eccm-s-4); }
+  /* the drafts list at /edit/events/drafts, dimmed (asked 2026-11-07: "dim
+     them in listing view"): the title and summary in the meta line's ink and the picture
+     faded, never the whole row at an opacity, which would take the small
+     lines under 4.5 : 1 (eccm-ui §2, every pair computed against white) */
+  .events-drafts .ev-title, .events-drafts .ev-summary { color: var(--eccm-ink-2); }
+  .events-drafts .ev-pic { opacity: 0.5; }
 
   /* ── the event page and the edit form, HTML only ─────────────────────────── */
   /* a crumb above a title: the page this one came from, small, in the muted ink */
@@ -719,6 +725,30 @@
   .yt-face > .btn { position: relative; }
   .yt-face:hover > .btn { outline: 1px solid var(--ev-on-btn, var(--eccm-ground)); outline-offset: -2px; }
   .yt > iframe { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; border: 0; }
+
+  /* the event's social previews under its page, for a logged-in editor (asked 2026-11-07: "move social preview
+     under the post preview / public view when admin. og and ig"), src/render/social.mjs: the share card at
+     /social's size, then the Instagram cards side by side with no gap, since the picture runs across them,
+     then the last card's fields. The section sits as far under the article as the next events do, space and
+     no rule; each caption is a row of two ends, the card's place and its download button */
+  .social { margin-block: calc(var(--eccm-s-24) * 1.5) var(--eccm-s-16); }   /* the bottom its own: main drops its padding under an article with a scheme */
+  .social h2 { font-size: var(--eccm-t-l); margin-block-end: var(--eccm-s-4); }
+  .social-note { max-inline-size: var(--eccm-measure); margin-block-end: var(--eccm-s-6); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+  .social figure { margin: 0; }
+  .social img { display: block; inline-size: 100%; block-size: auto; }
+  .social figcaption { display: flex; align-items: center; justify-content: space-between; gap: var(--eccm-s-3); margin-block-start: var(--eccm-s-2); padding-inline-end: var(--eccm-s-4); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+  .social > .social-og { max-inline-size: 28rem; margin-block-end: var(--eccm-s-12); }
+  .social-ig { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 15rem); column-gap: 0; align-items: start; }
+  .social-form { margin-block-start: var(--eccm-s-12); }
+  /* on a phone the Instagram cards are a carousel as Instagram shows them, a swipe and a snap per card, each
+     card most of the column so the next one shows at the edge and says there is more (positron-compose §4) */
+  @media (max-width: 48rem) {
+    /* relative, so the download buttons' hidden words (.vh, absolute) are held inside the scroller rather than
+       placed against the page, which MEASURED 777 px of sideways overflow at 375 */
+    .social-ig { position: relative; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+    .social-ig::-webkit-scrollbar { display: none; }
+    .social-ig > figure { flex: 0 0 85%; scroll-snap-align: start; }
+  }
 
   /* the docs' rules (.doc, .doc-toc, .doc-code) went 2026-11-06 with /docs */
 }

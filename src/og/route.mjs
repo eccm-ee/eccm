@@ -8,8 +8,9 @@
 // og/e/, and a render that fills both after the response. A stale v answers
 // 302 to the current card and a missing event 404, both no-store, so a
 // fetch made before the content exists cannot poison the URL.
-import { cardInput, cardVersion, cardPath, tallVersion, tallPath, cardSvg, siteSvg, PAGE_TITLES, schemeColors, pageColorMap, SITE_CARD, pageInput, pagePath, pageVersion, TEMPLATE_V, SITE_V, W, TALL_W } from './card.mjs';
+import { cardInput, cardVersion, cardPath, tallVersion, tallPath, cardSvg, slideSvg, slideVersion, slidePath, slideDefaults, slideFields, SLIDE_MAX, siteSvg, PAGE_TITLES, schemeColors, pageColorMap, SITE_CARD, pageInput, pagePath, pageVersion, TEMPLATE_V, SITE_V, W, TALL_W } from './card.mjs';
 import { renderPng } from './render.mjs';
+import { CATEGORY } from '../render/event.mjs';
 
 const CC = 'public, max-age=31536000, immutable';
 const png = (body, from) => new Response(body, { headers: { 'content-type': 'image/png', 'cache-control': CC, 'x-og': from } });
@@ -17,21 +18,39 @@ const none = (status, headers = {}) => new Response(null, { status, headers: { '
 // /og/e/ the share card, /og/t/ and /og/tp/ the tall 4:5 pair for Instagram
 // (2026-10-02); /og/p/, a wide picture layout, came and went the same day
 // and /og/tp1/ and /og/tp2/ the picture's two halves since the same evening
-const CARD = /^\/og\/(e|t|tp1|tp2)\/(\d+)-(et|en)-([0-9a-f]{8})\.png$/;
-const PART = { e: 0, t: 0, tp1: 1, tp2: 2 };
-const VERSION = (kind, i) => (kind === 'e' ? cardVersion(i) : tallVersion(i, PART[kind]));
-const PATH = (kind, id, l, v) => (kind === 'e' ? cardPath(id, l, v) : tallPath(id, l, v, PART[kind]));
+// and /og/t4/ the fourth, the text card at the carousel's end whose words the editor writes (2026-11-07)
+const CARD = /^\/og\/(e|t|tp1|tp2|t4)\/(\d+)-(et|en)-([0-9a-f]{8})\.png$/;
+const PART = { e: 0, t: 0, tp1: 1, tp2: 2, t4: 0 };
+const VERSION = (kind, i, fields) => (kind === 'e' ? cardVersion(i) : kind === 't4' ? slideVersion(i, fields) : tallVersion(i, PART[kind]));
+const PATH = (kind, id, l, v) => (kind === 'e' ? cardPath(id, l, v) : kind === 't4' ? slidePath(id, l, v) : tallPath(id, l, v, PART[kind]));
 
 // the card's rows for one event in one language, the queries the event page
-// makes: its text in that language or the Estonian one, the picture's scheme
-async function rows(db, id, lang) {
+// makes: its text in that language or the Estonian one, the picture's scheme;
+// with slide, also the fourth card's words, the stored ones or the defaults
+async function rows(db, id, lang, slide = false) {
   const ev = await db.prepare("SELECT * FROM event WHERE id = ? AND status = 'published'").bind(id).first();
   if (!ev) return null;
-  const text = await db.prepare('SELECT title, venue FROM event_text WHERE event_id = ? AND lang = ?').bind(id, lang).first()
-    || await db.prepare("SELECT title, venue FROM event_text WHERE event_id = ? AND lang = 'et'").bind(id).first();
+  const text = await db.prepare('SELECT title, venue, body FROM event_text WHERE event_id = ? AND lang = ?').bind(id, lang).first()
+    || await db.prepare("SELECT title, venue, body FROM event_text WHERE event_id = ? AND lang = 'et'").bind(id).first();
   if (!text) return null;
   const media = ev.image_id ? await db.prepare('SELECT scheme, key FROM media WHERE id = ?').bind(ev.image_id).first() : null;
-  return cardInput({ lang, title: text.title, ev: { ...ev, venue: text.venue || ev.venue }, scheme: media && media.scheme, pic: media && media.key });
+  const e = { ...ev, venue: text.venue || ev.venue };
+  const input = cardInput({ lang, title: text.title, ev: e, scheme: media && media.scheme, pic: media && media.key });
+  if (!slide) return input;
+  const row = await db.prepare('SELECT header, body, footer FROM event_social WHERE event_id = ? AND lang = ?').bind(id, lang).first();
+  return { input, fields: slideFields(row, slideDefaults({ title: text.title, body: text.body, ev: e, series: CATEGORY[ev.category] && CATEGORY[ev.category][lang] })) };
+}
+
+// the fourth card drawn from words in the address, for the editor's preview as they type: under /edit, so
+// behind the login (src/auth.mjs), never stored and never cached, so no one else can put words on a card
+export async function slidePreview(env, url, id, lang) {
+  const r = await rows(env.DB, id, lang, true);
+  if (!r) return none(404);
+  const q = url.searchParams;
+  const fields = Object.fromEntries(Object.keys(SLIDE_MAX).map((k) => [k, (q.has(k) ? q.get(k) : r.fields[k]).slice(0, SLIDE_MAX[k])]));
+  const picture = r.input.pic ? await pictureUri(env, url, r.input.pic) : null;
+  const bytes = await renderPng(slideSvg(r.input, fields, picture), TALL_W);
+  return new Response(bytes, { headers: { 'content-type': 'image/png', 'cache-control': 'private, no-store', 'x-og': 'preview' } });
 }
 
 // a page's card: its title, from the page's own row when it has one; null for
@@ -114,17 +133,18 @@ export async function ogRoute(request, env, url, ctx) {
     ctx.waitUntil(cache.put(request, png(bytes, 'cache')));
     return png(bytes, 'r2');
   }
-  const input = await rows(env.DB, Number(id), lang);
-  if (!input) return none(404);
+  const got = await rows(env.DB, Number(id), lang, kind === 't4');
+  if (!got) return none(404);
+  const { input, fields } = kind === 't4' ? got : { input: got };
   const withPic = PART[kind] > 0, tall = kind !== 'e';
   if (withPic && !input.pic) return none(404);
-  // the tall text card of an event with a picture carries the panorama's first strip
-  const strip = kind === 't' && !!input.pic;
-  const now = VERSION(kind, input);
+  // the tall text cards of an event with a picture carry the panorama's first strip and its last
+  const strip = (kind === 't' || kind === 't4') && !!input.pic;
+  const now = VERSION(kind, input, fields);
   if (now !== v) return none(302, { location: PATH(kind, id, lang, now) });
   const picture = withPic || strip ? await pictureUri(env, url, input.pic) : null;
   if (withPic && !picture) return none(404);
-  const bytes = await renderPng(cardSvg(input, picture, tall, strip ? 0 : PART[kind] || 1), tall ? TALL_W : W);
+  const bytes = await renderPng(kind === 't4' ? slideSvg(input, fields, picture) : cardSvg(input, picture, tall, strip ? 0 : PART[kind] || 1), tall ? TALL_W : W);
   // after the response, and a failure said in the log rather than dropped (trip's lib/bg.ts)
   const keep = (what, p) => ctx.waitUntil(p.catch((e) => console.error(JSON.stringify({ msg: 'og-keep-failed', what, key, err: String(e) }))));
   if (env.MEDIA) keep('r2', env.MEDIA.put(key, bytes, { httpMetadata: { contentType: 'image/png', cacheControl: CC } }));
@@ -152,16 +172,20 @@ async function pictureUri(env, url, key) {
 async function list(env, url) {
   // one query for every card, where it was the event page's four per card
   // (2026-10-02: /social sat on "Loading the events." for seconds over 50)
-  const all = (await env.DB.prepare(`SELECT e.*, COALESCE(NULLIF(t.venue, ''), e.venue) AS venue, t.lang, t.slug, t.title, m.scheme, m.key AS pic_key FROM event e
-    JOIN event_text t ON t.event_id = e.id LEFT JOIN media m ON m.id = e.image_id
+  const all = (await env.DB.prepare(`SELECT e.*, COALESCE(NULLIF(t.venue, ''), e.venue) AS venue, t.lang, t.slug, t.title, t.body AS text_body, m.scheme, m.key AS pic_key,
+    s.event_id AS s_id, s.header AS s_header, s.body AS s_body, s.footer AS s_footer FROM event e
+    JOIN event_text t ON t.event_id = e.id LEFT JOIN media m ON m.id = e.image_id LEFT JOIN event_social s ON s.event_id = e.id AND s.lang = t.lang
     WHERE e.status = 'published' ORDER BY e.starts_at DESC, e.id, t.lang`).all()).results;
   const out = all.map((r) => {
     const input = cardInput({ lang: r.lang, title: r.title, ev: r, scheme: r.scheme, pic: r.pic_key });
+    const fields = slideFields(r.s_id ? { header: r.s_header, body: r.s_body, footer: r.s_footer } : null,
+      slideDefaults({ title: r.title, body: r.text_body, ev: r, series: CATEGORY[r.category] && CATEGORY[r.category][r.lang] }));
     return {
       id: r.id, lang: r.lang, title: input.title, ground: input.ground,
       page: r.lang === 'et' ? `/et/sundmused/${r.slug}` : `/en/events/${r.slug}`,
       image: cardPath(r.id, r.lang, cardVersion(input)), tall: tallPath(r.id, r.lang, tallVersion(input)),
       ...(input.pic ? { tallPictures: [1, 2].map((n) => tallPath(r.id, r.lang, tallVersion(input, n), n)) } : {}),
+      tallText: slidePath(r.id, r.lang, slideVersion(input, fields)), slug: r.slug,
     };
   });
   return new Response(JSON.stringify(out), { headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=60' } });

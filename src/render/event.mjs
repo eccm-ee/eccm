@@ -10,7 +10,8 @@ import { dayMonth, whenLine, mapsUrl } from './dates.mjs';
 import { poster } from './pic.mjs';
 import { jsonLd, organizer } from './ld.mjs';
 import { opening, clip } from './lead.mjs';
-import { cardInput, cardVersion, cardPath, cardAlt, W as CARD_W, H as CARD_H } from '../og/card.mjs';
+import { cardInput, cardVersion, cardPath, cardAlt, slideDefaults, slideFields, W as CARD_W, H as CARD_H } from '../og/card.mjs';
+import { renderSocial } from './social.mjs';
 
 // the Open Graph head of plans/plan-eccm-event-markup.md section 4, with the
 // versioned share image of src/og/card.mjs; the description is the body's
@@ -117,8 +118,11 @@ const creditValue = (c, lang) => {
 const creditLabel = (c, lang) => c[`role_${lang}`] || c[`label_${lang}`] || c.role_et || c.label_et || '';
 
 // editHref: where the edit button goes, the row's own editor page unless the
-// caller says otherwise (a preview of an unsaved event); notice: chrome.mjs
-export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, next, origin, path, notice, editHref }) => {
+// caller says otherwise (a preview of an unsaved event); notice: chrome.mjs;
+// editor: a logged-in editor is looking (src/auth.mjs loggedIn), the only one shown the edit button;
+// social: { row } for a logged-in editor on the published page, its social previews under the article
+// (src/render/social.mjs), row being the fourth Instagram card's stored words or null
+export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, next, origin, path, notice, editHref, editor = false, social = null }) => {
   const t = T[lang];
   const textLang = fallback ? 'et' : lang;             // the language the text row is in
   const off = offsetFor(ev.starts_at);
@@ -160,7 +164,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
         </dl>
         <p class="event-actions">
           ${ev.ticket_url ? html`<a class="btn btn-pri" href="${ev.ticket_url}">${t.ticket}</a>` : ''}
-          <a class="btn" href="${editHref || `/edit/events/${ev.id}`}">${t.edit}</a>
+          ${editor ? html`<a class="btn" href="${editHref || `/edit/events/${ev.id}`}">${t.edit}</a>` : ''}
         </p>
       </div>
       ${media ? html`<figure class="event-pic">
@@ -184,6 +188,10 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
         ${next.map((n) => html`<li><time datetime="${n.starts_at}${offsetFor(n.starts_at)}">${dayMonth(n.starts_at, lang)}</time><span><a href="${eventPath(n.tlang, n.slug)}"${n.tlang !== lang ? raw(` lang="${n.tlang}"`) : ''}>${n.title}</a>${n.venue ? html`<small>${n.venue}</small>` : ''}</span></li>`)}
       </ol>
     </section>` : ''}
-  </article>`;
+  </article>${social ? renderSocial({
+    id: ev.id, lang, slug: text.slug, path, stored: !!social.row,
+    input: cardInput({ lang, title, ev, scheme: media && media.scheme, pic: media && media.key }),
+    fields: slideFields(social.row, slideDefaults({ title, body: text.body, ev, series: CATEGORY[ev.category] && CATEGORY[ev.category][lang] })),
+  }) : ''}`;
   return page({ lang, title, alternate, canonical, alternates, body, notice, head, description });
 };

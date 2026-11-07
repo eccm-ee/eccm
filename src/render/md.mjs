@@ -44,8 +44,38 @@ export const video = ({ id, start, name }) => `<div class="yt" data-yt="${id}"${
   + `<span class="btn btn-pri btn-ico"><svg class="ico" aria-hidden="true"><use href="${ICONS}#play"/></svg><span class="vh">${name ? esc(name) : 'YouTube'}</span></span>`
   + `</a></div>`;
 
-// opts.video: lift a lone YouTube URL into the player, asked for event and
-// page bodies; the newsletter's email keeps the plain text
+// A Vimeo video (asked 2026-11-07: "Vimeo videos support"), lifted the same
+// way as YouTube's: a lone URL on vimeo.com/{id}, /channels/x/{id},
+// /groups/x/videos/{id}, /showcase/n/video/{id} or player.vimeo.com/video/{id}.
+// An unlisted video carries its hash as vimeo.com/{id}/{hash} or ?h={hash},
+// and it is kept, since the player refuses the video without it; #t= is the
+// start, as 90, 90s or 1m30s, kept as seconds.
+export const vimeoId = (s) => {
+  const m = /vimeo\.com\/(?:video\/|channels\/[\w-]+\/|groups\/[\w-]+\/videos\/|(?:showcase|album)\/\d+\/video\/)?(\d{5,12})(?:\/([0-9a-f]{6,20}))?(?=[/?#]|$)/.exec(s);
+  if (!m) return null;
+  const out = { id: m[1] };
+  const h = m[2] ?? /[?&]h=([0-9a-f]{6,20})(?![0-9a-z])/i.exec(s)?.[1];
+  if (h) out.hash = h.toLowerCase();
+  const t = /#t=(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/.exec(s);
+  const start = t ? (+(t[1] ?? 0)) * 3600 + (+(t[2] ?? 0)) * 60 + (+(t[3] ?? 0)) : 0;
+  if (start) out.start = start;
+  return out;
+};
+
+// The Vimeo player is the same facade in the same box: the picture is this
+// site's own copy again (/media/vimeo/{id}.jpg, or {id}-{hash}.jpg for an
+// unlisted one, which the Worker finds through Vimeo's oEmbed, src/media.mjs),
+// the link goes to vimeo.com, and public/site.mjs puts player.vimeo.com in on
+// a click with dnt=1, so until then the page has asked Vimeo for nothing. The
+// id is digits and the hash lowercase hex, safe unescaped.
+export const vimeo = ({ id, hash, start, name }) => `<div class="yt" data-vimeo="${id}"${hash ? ` data-h="${hash}"` : ''}${start ? ` data-start="${start}"` : ''}>`
+  + `<a class="yt-face" href="https://vimeo.com/${id}${hash ? `/${hash}` : ''}${start ? `#t=${start}s` : ''}" rel="noopener">`
+  + `<img src="/media/vimeo/${id}${hash ? `-${hash}` : ''}.jpg" alt="" width="480" height="270" loading="lazy" decoding="async">`
+  + `<span class="btn btn-pri btn-ico"><svg class="ico" aria-hidden="true"><use href="${ICONS}#play"/></svg><span class="vh">${name ? esc(name) : 'Vimeo'}</span></span>`
+  + `</a></div>`;
+
+// opts.video: lift a lone YouTube or Vimeo URL into the player, asked for
+// event and page bodies; the newsletter's email keeps the plain text
 export const md = (text, opts = {}) => {
   const out = [];
   for (const block of String(text ?? '').split(/\r?\n\s*\r?\n/)) {
@@ -53,6 +83,8 @@ export const md = (text, opts = {}) => {
     const lone = opts.video ? /^(?:https?:\/\/\S+|\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\))$/.exec(block.trim()) : null;
     const yt = lone ? youtubeId(lone[2] ?? lone[0]) : null;
     if (yt) { out.push(video({ ...yt, name: lone[1] })); continue; }
+    const vm = lone && !yt ? vimeoId(lone[2] ?? lone[0]) : null;
+    if (vm) { out.push(vimeo({ ...vm, name: lone[1] })); continue; }
     const lines = block.split(/\r?\n/);
     let i = 0;
     while (i < lines.length) {
