@@ -12,6 +12,42 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
 
 
+## 2026-11-07, night: drafts, social under events, Vimeo, /ui, logos, layout; production half set up
+
+All deployed to staging and pushed (last `35ec5c2`). Remote staging has migrations 0013 to 0015.
+
+- **Drafts** (`5044440`): /edit/events/drafts, every unpublished event in the list's rows, dimmed, opening in the
+  editor; a Drafts card first on /admin.
+- **Edit button only for a logged-in editor** (`5044440`): such a page is `private, no-store`; visitors' copies
+  `vary: cookie`.
+- **Social under the event page** (`5044440`): a logged-in editor sees the share card and the Instagram carousel
+  under the event, every image with a download button; a fourth Instagram card with Header, Body and Footer (migration
+  0013, `event_social`), the picture's right edge running onto it. Open: no logo on the fourth card; not in the
+  editor's unsaved preview.
+- **Vimeo** (`5044440`): a lone Vimeo link is the click-to-load box like YouTube, its picture through
+  `/media/vimeo/{id}.jpg` (oEmbed once, kept in R2). /ui shows "EMA ensemble in Studio Tallinn 1965".
+- **One design page, /ui** (`46d594c`, `0680601`): the components, then the logo last. `/social` dropped, `/ds` and
+  `/logo` gone with no redirects (asked: "not needed").
+- **Logos** (`13fb11e`, migration 0014): /edit/partners, name (the alt) and link; an SVG sanitized and kept, its
+  b/w every colour to currentColor; a PNG or JPEG trimmed and scaled to 192 px tall in the browser, its b/w a mask.
+  The event editor picks them in a grid (`src/render/partners.mjs` partnerPicker), colour or b/w, shown under the
+  credits. Open: Tallinn and the EU emblem are a tile per language, so both get ticked for both pages.
+- **Layout** (`91f038b`, migration 0015): /edit/layout, a tick and menu words in both languages per page, and the
+  same logo grid for the footer. No ordering (asked: "i do not care about menu order atm"); a page or logo ticked
+  later goes last. The header menu and the footer's links come from it; with the seeded rows the HTML is identical
+  to before.
+- **Production, half done** (`35ec5c2`): ECCM's account_id and the database `eccm`
+  (`ffdd830e-81a4-427a-9dc2-c3543e49df64`) in `env.production`, all migrations applied, the content copied without
+  test rows, counts equal to staging (95 events, 190 texts, 70 media rows, 7 pages, 5 logos). **Blocked:** R2 is
+  not enabled on ECCM's account (code 10042). The owner chose to enable it later (a card can be swapped afterwards
+  under Billing). Then: `r2 bucket create eccm-media` and `eccm-backup`, the secrets `EDITOR_KEY` (new, shown to
+  the owner once) and `SESSION_SECRET`, copy staging's `media/` objects to `eccm-media`, `deploy --env production`
+  to workers.dev only. If staging's content changes before then, the copy is redone: `DELETE` the content tables
+  in production first, and load parents first (role, media, page, page_text, partner, event, event_text,
+  event_credit), since D1's file import does not honour `defer_foreign_keys`; skip `d1_migrations` and
+  `sqlite_sequence`.
+- **Gotcha:** a remote D1 command once answered `7403 not authorized` on staging and worked on the retry.
+
 ## 2026-11-07, evening: ECCM's accounts exist, production is next
 
 - **Cloudflare:** ECCM opened its account, "Info@eccm.ee's Account", id `47bdc40605b72aa6cd3d6caf5eb9a92e`; the owner
