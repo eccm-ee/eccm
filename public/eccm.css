@@ -716,7 +716,9 @@
   /* the Logos page, /edit/partners: the tiles in the cards' grid, each pair of versions side by side, the
      colour one on the ground and the black-and-white one in the ink; the form's three file fields a row */
   .logo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: var(--eccm-s-8) var(--eccm-s-6); }
-  .logo-tile { display: grid; align-content: start; gap: var(--eccm-s-2); }
+  /* a column, the Edit button on the row's common bottom however long the name above it (asked 2026-11-07: "align edits to bottom") */
+  .logo-tile { display: flex; flex-direction: column; gap: var(--eccm-s-2); }
+  .logo-tile > :last-child { margin-block-start: auto; padding-block-start: var(--eccm-s-2); }
   .logo-pair { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--eccm-rule); margin-block-end: var(--eccm-s-2); }
   .logo-cell { display: grid; place-items: center; min-inline-size: 0; block-size: 6rem; padding: var(--eccm-s-4); }
   .logo-cell + .logo-cell { border-inline-start: 1px solid var(--eccm-rule); }
