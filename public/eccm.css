@@ -812,7 +812,6 @@
   .social figcaption { display: flex; align-items: center; justify-content: space-between; gap: var(--eccm-s-3); margin-block-start: var(--eccm-s-2); padding-inline-end: var(--eccm-s-4); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
   /* the download buttons bare, the icon alone (asked 2026-11-07: "rm bordrs on download nuttonns") */
   .social figcaption .btn { border-color: transparent; background: none; }
-  .social-btns { display: flex; }
   .social [data-slide] img { cursor: text; }
   .social > .social-og { max-inline-size: 28rem; margin-block-end: var(--eccm-s-12); }
   .social-ig { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 15rem); column-gap: 0; align-items: start; }
