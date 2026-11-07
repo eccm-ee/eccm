@@ -14,11 +14,9 @@ import { cardPath, cardVersion, tallPath, tallVersion, slidePath, slideVersion, 
 
 const ICONS = '/vendor/icons/feather/icons.svg';
 const download = (href, name) => html`<a class="btn btn-sm btn-ico" href="${href}" download="${name}"><svg class="ico" aria-hidden="true"><use href="${ICONS}#download"/></svg><span class="vh">Download ${name}</span></a>`;
-// the fourth card's own pencil beside its download, to its fields (asked 2026-11-07: "i need it editable")
-const editBtn = html`<a class="btn btn-sm btn-ico" href="#sl-header"><svg class="ico" aria-hidden="true"><use href="${ICONS}#edit"/></svg><span class="vh">Edit the last card's words</span></a>`;
-const fig = (cls, src, w, h, cap, name, alt, extra = '', edit = false) => html`<figure class="${cls}"${raw(extra)}>
+const fig = (cls, src, w, h, cap, name, alt, extra = '') => html`<figure class="${cls}"${raw(extra)}>
           <img src="${src}" width="${w}" height="${h}" alt="${alt}" decoding="async">
-          <figcaption><span>${cap}</span><span class="social-btns">${edit ? editBtn : ''}${download(src, name)}</span></figcaption>
+          <figcaption><span>${cap}</span>${download(src, name)}</figcaption>
         </figure>`;
 
 // id, lang, slug: the event; input: its cardInput; fields: the fourth card's words as stored or defaulted;
@@ -37,7 +35,7 @@ export const renderSocial = ({ id, lang, slug, input, fields, stored, path }) =>
     <div class="social-ig">
       ${fig('', tallPath(id, lang, tallVersion(input)), TALL_W, TALL_H, `Instagram 1/${n}`, `${base}-ig-1.png`, input.title)}
       ${pics.map((src, i) => fig('', src, TALL_W, TALL_H, `Instagram ${i + 2}/${n}`, `${base}-ig-${i + 2}.png`, `${input.title}, picture`))}
-      ${fig('', last, TALL_W, TALL_H, `Instagram ${n}/${n}`, `${base}-ig-${n}.png`, fields.header || input.title, ' data-slide', true)}
+      ${fig('', last, TALL_W, TALL_H, `Instagram ${n}/${n}`, `${base}-ig-${n}.png`, fields.header || input.title, ' data-slide')}
     </div>
     <form class="form social-form" method="post" action="/edit/social/${id}/${lang}" data-preview="/edit/og/t4/${id}-${lang}.png">
       <input type="hidden" name="back" value="${path}">
@@ -52,7 +50,7 @@ export const renderSocial = ({ id, lang, slug, input, fields, stored, path }) =>
       const form = document.querySelector('.social-form');
       const fig = document.querySelector('.social-ig [data-slide]');
       const img = fig.querySelector('img'), dl = fig.querySelector('a[download]');
-      // a click on the card itself goes to its first field, the way the pencil does
+      // a click on the card itself goes to its first field (asked 2026-11-07: "i need it editable"; no pencil, "no need edit button")
       img.addEventListener('click', () => { form.elements.header.focus(); form.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
       let t = 0;
       form.addEventListener('input', () => {
