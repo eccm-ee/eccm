@@ -12,6 +12,25 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
 
 
+## 2026-11-07, evening: ECCM's accounts exist, production is next
+
+- **Cloudflare:** ECCM opened its account; the owner is a member. `wrangler whoami` still lists only the owner's own
+  account (`dc1ee8d7...`), so the first step is `env -u CF_API_TOKEN -u CLOUDFLARE_API_TOKEN npx wrangler login` again
+  (an old login token does not see an account joined later), then `whoami` shows ECCM's. Then run the prompt in
+  `plans/plan-eccm-migration.md`, "Set up production": workers.dev only, eccm.ee untouched.
+- **Still for ECCM in the dashboard:** a second Super Administrator, two-factor on, a backup login email not on
+  eccm.ee, Workers Paid ($5 a month on ECCM's card). The plan's state line says so (`815258d`).
+- **GitHub:** organizations `eccm-ee` and `v2in-stream` exist; the owner is **member**, not owner, of both (MEASURED
+  with `gh api user/memberships/orgs`). Transferring `kristjanjansen/eccm` into `eccm-ee` needs owner (or repo
+  creation rights there): ask her to make the owner an Owner, then Settings, Transfer, then update the remote, README
+  and `CLAUDE.local.md`. v2in's repo to `v2in-stream` the same way.
+- **Mail stays at Virtuaal:** MX `mail.eccm.ee` on 185.169.68.37, the same cPanel server as Joomla, webmail at
+  https://webmail.eccm.ee/ (200). At the DNS move every mail and cPanel name is recreated grey cloud; before cancelling
+  the hosting, ask Virtuaal for a mail-only plan.
+- **v2in, not this repo:** the /live redesign is uncommitted in v2in's working tree, waiting for the owner's keep or
+  revert (`git checkout -- web/live/index.html web/v2in.css`); `8e281ed` (one control height) is pushed and its
+  deploy is the owner's to run. v2in's HANDOFF has the detail.
+
 ## 2026-11-06, late, and 2026-11-07: editor, newsletter, both languages, Lighthouse
 
 All deployed to staging and pushed (last `d86194a`).
