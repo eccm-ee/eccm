@@ -87,16 +87,16 @@ export function attach(form) {
     const f = color.files[0];
     put(auto, null);
     if (!f) return;
-    if (!RASTER.test(f.type) || f.processed) { show(form, 'color_file', f); if (!own.files[0]) show(form, 'bw_file', f, true); return; }
+    if (!RASTER.test(f.type) || f.processed) { show(form, 'color_file', f); if (!own?.files[0]) show(form, 'bw_file', f, true); return; }
     const c = await scaled(f);
     const cf = asFile(await blobOf(c), f.name); cf.processed = true;
     put(color, cf);
     show(form, 'color_file', cf);
     const m = await blobOf(mask(c));
     put(auto, asFile(m, `${f.name}-bw`));
-    if (!own.files[0]) show(form, 'bw_file', m, true);
+    if (!own?.files[0]) show(form, 'bw_file', m, true);
   }));
-  own.addEventListener('change', () => step(async () => {
+  own?.addEventListener('change', () => step(async () => {
     const f = own.files[0];
     if (!f) return;
     if (!RASTER.test(f.type) || f.processed) { show(form, 'bw_file', f, true); return; }
@@ -104,7 +104,7 @@ export function attach(form) {
     put(own, m);
     show(form, 'bw_file', m, true);
   }));
-  dark.addEventListener('change', () => step(async () => {
+  dark?.addEventListener('change', () => step(async () => {
     const f = dark.files[0];
     if (!f) return;
     if (!RASTER.test(f.type) || f.processed) { show(form, 'dark_file', f); return; }

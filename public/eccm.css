@@ -384,11 +384,12 @@
      black-and-white one is the file's shape as a mask over currentColor, so it is the ink of the ground it
      sits on, the site's or an event's own */
   .logo { --ph: 3rem; display: block; block-size: var(--ph); inline-size: auto; min-inline-size: 0; max-inline-size: min(100%, 14rem); object-fit: contain; }
-  .logo-bw { background: currentColor; -webkit-mask: var(--src) center / contain no-repeat; mask: var(--src) center / contain no-repeat; }
-  .logo-neg { display: none; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .logo-pos { display: none; } :root:not([data-theme="light"]) .logo-neg { display: block; } }
+  .logo-bw, .logo-dark { background: currentColor; -webkit-mask: var(--src) center / contain no-repeat; mask: var(--src) center / contain no-repeat; }
+  /* a dark ground draws every logo in monochrome, the light ink (asked 2026-11-07: "in dark mode always use monocrome and invert") */
+  .logo-dark { display: none; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .logo-pos { display: none; } :root:not([data-theme="light"]) .logo-dark { display: block; } }
   :root[data-theme="dark"] .logo-pos, .event[data-scheme="dark"] .logo-pos { display: none; }
-  :root[data-theme="dark"] .logo-neg, .event[data-scheme="dark"] .logo-neg { display: block; }
+  :root[data-theme="dark"] .logo-dark, .event[data-scheme="dark"] .logo-dark { display: block; }
   /* an event's logos, one row under the credits, a group of its own two lines down like the EU emblem,
      wrapping as a cluster (asked 2026-11-07: "eccm wants each post to contain list of partner logo(s)") */
   .partners { --eccm-flow: 2lh; display: flex; flex-wrap: wrap; align-items: center; gap: var(--eccm-s-6) var(--eccm-s-8); }
@@ -696,11 +697,11 @@
   .pick-lang { color: var(--eccm-ink-2); }
   .picker-wrap .logo-bw, .picker-wrap:has([value="color"]:checked) .pick .logo-bw { display: none; }
   .picker-wrap:has([value="bw"]:checked) .pick .logo-bw { display: block; }
-  .picker-wrap:has([value="bw"]:checked) .pick :is(.logo-pos, .logo-neg, img.logo) { display: none; }
+  .picker-wrap:has([value="bw"]:checked) .pick :is(.logo-pos, .logo-dark, img.logo) { display: none; }
   /* the Layout page, /edit/layout (asked 2026-11-07): the footer's grid always in black and white, as the
      footer draws its logos; the menu a row a page, its tick and title, then its words in the two languages */
   .picker-bw .pick .logo-bw { display: block; }
-  .picker-bw .pick :is(.logo-pos, .logo-neg, img.logo) { display: none; }
+  .picker-bw .pick :is(.logo-pos, .logo-dark, img.logo) { display: none; }
   .menu-picks { list-style: none; margin: 0; padding: 0; display: grid; }
   .menu-head, .menu-pick { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--eccm-s-2) var(--eccm-s-4); align-items: center; }
   .menu-head { display: none; font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); padding-block-end: var(--eccm-s-2); }

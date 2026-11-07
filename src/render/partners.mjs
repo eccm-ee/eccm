@@ -15,14 +15,17 @@ const LANGS = [['', 'Both'], ['et', 'Estonian only'], ['en', 'English only']];
 const LANG_TAG = { et: 'ET', en: 'EN' };
 const host = (url) => { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; } };
 
-// one logo. Colour is the file as an img, with its dark-ground twin beside it when there is one, CSS showing
-// the one the ground needs (eccm.css .logo-pos, .logo-neg). Black and white is the black-and-white file as a
+// one logo. Colour is the file as an img, with a twin beside it, CSS showing
+// the black-and-white one on a dark ground (eccm.css .logo-pos, .logo-dark). Black and white is the black-and-white file as a
 // CSS mask over currentColor, so it is drawn in the ink of whatever it sits on: the site's in either theme,
 // an event's own scheme on its page. The paths are the row's own, written by src/partners.mjs or the seed
 export const logo = (p, version) => {
   if (version === 'bw') return html`<span class="logo logo-bw" role="img" aria-label="${p.name}" style="--src: url('${p.bw_src}'); aspect-ratio: ${p.bw_w} / ${p.bw_h}"></span>`;
   const img = (src, cls) => html`<img class="logo ${cls}" src="${src}" alt="${p.name}" width="${p.color_w}" height="${p.color_h}" loading="lazy" decoding="async">`;
-  return p.dark_src ? html`${img(p.color_src, 'logo-pos')}${img(p.dark_src, 'logo-neg')}` : img(p.color_src, '');
+  // on a dark ground, the site's dark theme or an event's dark scheme, the colour version gives way to the
+  // black-and-white one in the light ink (asked 2026-11-07: "in dark mode always use monocrome and invert"),
+  // so dark_src, the uploaded negative, is no longer drawn
+  return html`${img(p.color_src, 'logo-pos')}<span class="logo logo-dark" aria-hidden="true" style="--src: url('${p.bw_src}'); aspect-ratio: ${p.bw_w} / ${p.bw_h}"></span>`;
 };
 const linked = (p, inner, cls) => (p.url ? html`<a class="${cls}" href="${p.url}">${inner}</a>` : html`<span class="${cls}">${inner}</span>`);
 const slugClass = (p) => `partner${p.slug ? ` partner-${p.slug}` : ''}`;
@@ -72,11 +75,8 @@ const fields = (v, err, row) => html`<div class="fields">
       </div>
       ${group({ label: 'Language', hint: 'A logo drawn in one language, like Tallinn’s, has a row per language.', control: segment('lang', LANGS, v.lang) })}
       <div class="logo-files">
-        ${fileField('color_file', row ? 'Replace the colour version' : 'Logo', err('color_file'), row ? 'SVG, PNG or JPEG. Its black-and-white version is made again unless one is given below.' : 'SVG, PNG or JPEG, up to 2 MB. An SVG is kept as it is, a PNG or JPEG is scaled to 192 px tall.', row && logo(row, 'color'))}
-        ${fileField('bw_file', 'Own black-and-white version', err('bw_file'), 'Optional. Without one it is made from the logo: every colour in the ink, or for a PNG or JPEG its dark parts.', row && logo(row, 'bw'))}
-        ${fileField('dark_file', 'Colour version for a dark ground', err('dark_file'), 'Optional, like the EU emblem’s negative. Shown in place of the colour version in the dark theme.', row && row.dark_src ? html`<img class="logo" src="${row.dark_src}" alt="" width="${row.color_w}" height="${row.color_h}">` : '', true)}
+        ${fileField('color_file', row ? 'Replace the colour version' : 'Logo', err('color_file'), row ? 'SVG, PNG or JPEG. Its black-and-white version is made again from it.' : 'SVG, PNG or JPEG, up to 2 MB. An SVG is kept as it is, a PNG or JPEG is scaled to 192 px tall.', row && logo(row, 'color'))}
       </div>
-      ${row && row.dark_src ? html`<label class="check"><input type="checkbox" name="dark_clear" value="1"> Remove the dark-ground version</label>` : ''}
       <input class="vh" type="file" name="bw_auto" tabindex="-1" aria-hidden="true">
     </div>`;
 const fileField = (name, label, err, hint, current, dark = false) => html`<div class="field logo-file">
