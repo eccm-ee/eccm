@@ -273,7 +273,7 @@ export const cardSvg = (input, picture = null, tall = false, part = 1) => {
 // A text card at the carousel's end, three fields the editor fills in under the event page (asked 2026-11-07:
 // "For ig add fourth slide with 2-3 fields header / body / footer (see ../positron social composers)"): the
 // header in the title's size, stepped down when the words need the room, the body under it at the date and
-// venue's size in the ink, and the footer on the bottom margin in the second ink, where the first card has
+// venue's size in the ink, both on the bottom since the same evening, and the footer on the bottom margin in the second ink, where the first card has
 // its nameplate. positron's composers (demo/social/typist) do the same with a large typed text at the top
 // and a small lower line at the foot, each a labelled field beside the frame. The panorama's last strip is
 // at the card's left edge when the event has a picture, and the text starts past it.
@@ -288,7 +288,8 @@ export const slideDefaults = ({ title, body, ev, series }) => ({
 });
 // a stored row as it is, an empty field left empty (a footer is optional), and the defaults when there is no row
 export const slideFields = (row, defaults) => (row ? Object.fromEntries(Object.keys(SLIDE_MAX).map((k) => [k, String(row[k] ?? '').slice(0, SLIDE_MAX[k])])) : defaults);
-export const slideVersion = (input, fields) => cardVersion({ ...input, layout: 'tall4', fields });
+// 'tall4b' since the words sat on the bottom (2026-11-07), so every fourth card got a new address and no stored one is shown
+export const slideVersion = (input, fields) => cardVersion({ ...input, layout: 'tall4b', fields });
 export const slidePath = (id, lang, v) => `/og/t4/${id}-${lang}-${v}.png`;
 // a field's own line breaks, then each paragraph wrapped to the measure
 const wrapText = (text, fs, measure, bal = false) => String(text || '').replace(/\r/g, '').trim().split('\n')
@@ -329,10 +330,15 @@ export const slideSvg = (input, fields, picture = null) => {
     L.bodyTop = PAD + cap * fs + (L.head.length - 1) * TITLE_LH * fs + 0.25 * fs + GROUP;
     L.body = ellipsis(L.body, Math.max(0, 1 + Math.floor((limit - 0.25 * mfs - L.bodyTop - cap * mfs) / mlh)), mfs, measure);
   }
+  // the header and the body as one block on the bottom, its last line a group's air over the footer (asked
+  // 2026-11-07: "align 4th card texts to the bottom"); the steps above measured them from the top, so the block moves down by what is left
+  const headEnd = L.head.length ? PAD + cap * L.fs + (L.head.length - 1) * TITLE_LH * L.fs + 0.25 * L.fs : PAD;
+  const blockEnd = L.body.length ? L.bodyTop + cap * mfs + (L.body.length - 1) * mlh + 0.25 * mfs : headEnd;
+  const down = Math.max(0, limit - blockEnd);
   const out = [];
   const line = (l, y, fs, fill) => { if (l) out.push(`<text x="${x}" y="${y.toFixed(1)}" font-family="${M.sans.family}" font-size="${fs}" fill="${fill}">${xml(l)}</text>`); };
-  L.head.forEach((l, i) => line(l, PAD + cap * L.fs + i * TITLE_LH * L.fs, L.fs, input.ink));
-  L.body.forEach((l, i) => line(l, L.bodyTop + cap * mfs + i * mlh, mfs, input.ink));
+  L.head.forEach((l, i) => line(l, down + PAD + cap * L.fs + i * TITLE_LH * L.fs, L.fs, input.ink));
+  L.body.forEach((l, i) => line(l, down + L.bodyTop + cap * mfs + i * mlh, mfs, input.ink));
   foot.forEach((l, i) => line(l, footTop + cap * mfs + i * mlh, mfs, input.ink2));
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${TALL_W}" height="${TALL_H}" viewBox="0 0 ${TALL_W} ${TALL_H}">`
     + `<rect width="${TALL_W}" height="${TALL_H}" fill="${input.ground}"/>${picture ? pano(picture, -STRIP - 2 * TALL_W) : ''}${out.join('')}</svg>`;
