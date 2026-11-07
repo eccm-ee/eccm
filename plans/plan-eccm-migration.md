@@ -343,9 +343,7 @@ Cloudflare account, Workers Paid, production, the data copied.
 
 ### Create the Cloudflare account
 
-**Who:** ECCM. **State:** ask.
-
-**Ask ECCM:** who opens the account, and who pays the $5 a month.
+**Who:** ECCM. **State:** the account exists since 7 November 2026; the members and Workers Paid to confirm.
 
 1. Sign up at [dash.cloudflare.com](https://dash.cloudflare.com/sign-up) with an ECCM address, not a person's own.
 2. Invite a second admin from ECCM, and the developer, under Manage Account, Members.
