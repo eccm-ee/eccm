@@ -14,10 +14,10 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 
 ## 2026-11-07, evening: ECCM's accounts exist, production is next
 
-- **Cloudflare:** ECCM opened its account; the owner is a member. `wrangler whoami` still lists only the owner's own
-  account (`dc1ee8d7...`), so the first step is `env -u CF_API_TOKEN -u CLOUDFLARE_API_TOKEN npx wrangler login` again
-  (an old login token does not see an account joined later), then `whoami` shows ECCM's. Then run the prompt in
-  `plans/plan-eccm-migration.md`, "Set up production": workers.dev only, eccm.ee untouched.
+- **Cloudflare:** ECCM opened its account, "Info@eccm.ee's Account", id `47bdc40605b72aa6cd3d6caf5eb9a92e`; the owner
+  is a member and wrangler sees it since a fresh `wrangler login --browser=false` (MEASURED with `whoami`). Next: put
+  that id in `env.production`'s account_id and run the prompt in `plans/plan-eccm-migration.md`, "Set up production":
+  workers.dev only, eccm.ee untouched.
 - **Still for ECCM in the dashboard:** a second Super Administrator, two-factor on, a backup login email not on
   eccm.ee, Workers Paid ($5 a month on ECCM's card). The plan's state line says so (`815258d`).
 - **GitHub:** organizations `eccm-ee` and `v2in-stream` exist; the owner is **member**, not owner, of both (MEASURED
