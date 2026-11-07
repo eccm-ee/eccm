@@ -351,7 +351,7 @@ Cloudflare account, Workers Paid, production, the data copied.
 
 ### Set up production
 
-**Who:** agent. **State:** after the account. `env.production` in `wrangler.jsonc` is filled in except ECCM's account_id and the database id, and a fresh deploy of that shape was proven on a throwaway Worker on 6 November 2026.
+**Who:** agent. **State:** steps 1 to 3 done on 7 November 2026: ECCM's account_id and the database `eccm` (`ffdd830e-81a4-427a-9dc2-c3543e49df64`, EEUR) are in `env.production`, all migrations applied, and the content copied without staging's test rows (95 events, 190 texts, 38 credits, 70 media rows, 7 pages, 12 page texts, 11 roles, 5 logos, the same counts as staging). Waiting on ECCM: R2 is not enabled on the account (`Please enable R2 through the Cloudflare Dashboard`, code 10042), so the buckets, the secrets, the media copy and the deploy wait for it.
 
 One prompt does it all: the agent runs the commands below in this order and checks each step. ECCM only has to be logged in to its own Cloudflare account in the terminal (`npx wrangler login`).
 

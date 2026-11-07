@@ -78,8 +78,8 @@
       "workers_dev": true,
       // at cutover, once ECCM says the zone is active (plans/plan-eccm-migration.md, Cutover):
       // "routes": [{ "pattern": "eccm.ee", "custom_domain": true }, { "pattern": "www.eccm.ee", "custom_domain": true }],
-      // database_id after wrangler d1 create eccm --env production on ECCM's account
-      "d1_databases": [{ "binding": "DB", "database_name": "eccm", "migrations_dir": "migrations" }],
+      // eccm in ECCM's account, created 2026-11-07
+      "d1_databases": [{ "binding": "DB", "database_name": "eccm", "database_id": "ffdd830e-81a4-427a-9dc2-c3543e49df64", "migrations_dir": "migrations" }],
       // wrangler r2 bucket create eccm-media and eccm-backup on ECCM's account
       "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "eccm-media" }, { "binding": "BACKUP", "bucket_name": "eccm-backup" }],
       // no Durable Objects: this list replaces the top-level one, which is
