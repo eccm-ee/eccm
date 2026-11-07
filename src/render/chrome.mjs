@@ -19,7 +19,20 @@ export const origin = () => ORIGIN;
 // (asked 2026-11-07: "footer logos should use same system"); null keeps the marks typed into mark.mjs's FOOTER
 let FOOT = null;
 export const useFooter = (rows) => { FOOT = rows; };
-const footer = (lang) => (FOOT ? FOOTER[lang].replace(/<div class="end">[\s\S]*?<\/div>\n  <\/div><\/div>/, () => `${footerPartners(FOOT, lang)}\n  </div></div>`) : FOOTER[lang]);
+// the menu's pages, the page rows the Layout page ticks, set once per request by src/layout.mjs loadLayout (asked
+// 2026-11-07: "perhaps a Admin > Layout where you can pick what pages to link"); null keeps mark.mjs's menu.
+// Events first, then each page under its menu words or its title, at its slug in this language or the other's
+let NAV = null;
+export const useNav = (rows) => { NAV = rows; };
+const navItems = (lang) => [[lang === 'et' ? '/' : '/en/', T[lang].events]].concat(NAV.map((p) => [`/${lang}/${p[`slug_${lang}`] || p[`slug_${OTHER[lang]}`]}`, p[`menu_title_${lang}`] || p[`title_${lang}`] || p[`title_${OTHER[lang]}`]]));
+const navLis = (lang) => navItems(lang).map(([href, label]) => `<li><a href="${esc(href)}">${esc(label)}</a></li>`).join('');
+const header = (lang) => (NAV ? HEADER[lang].replace(/(<ul class="nav">)[\s\S]*?(<li class="lang-in">)/, (m, a, b) => a + navLis(lang) + b) : HEADER[lang]);
+const footer = (lang) => {
+  let f = FOOT ? FOOTER[lang].replace(/<div class="end">[\s\S]*?<\/div>\n  <\/div><\/div>/, () => `${footerPartners(FOOT, lang)}\n  </div></div>`) : FOOTER[lang];
+  // the footer's list of links is the menu's
+  if (NAV) f = f.replace(/(<ul class="two">)[\s\S]*?(<\/ul>)/, (m, a, b) => a + navLis(lang) + b);
+  return f;
+};
 // every page that names no share image of its own names the site's card, the
 // logo (asked 2026-10-01: "make eccm default social card", "just original
 // logo"): a link to such a page used to preview as whatever picture a scraper
@@ -152,7 +165,7 @@ ${wide || String(head || '').includes('og:image') ? '' : siteOg(lang, `${title} 
 </head>
 <body>
 ${raw(SYMBOL)}
-${raw(alternate ? HEADER[lang].replace(/<a href="[^"]*" lang="(?:en|et)">/g, `<a href="${alternate.href}" hreflang="${alternate.lang}" lang="${alternate.lang}">`) : HEADER[lang])}
+${raw(alternate ? header(lang).replace(/<a href="[^"]*" lang="(?:en|et)">/g, `<a href="${alternate.href}" hreflang="${alternate.lang}" lang="${alternate.lang}">`) : header(lang))}
 
 ${notice ? html`<div class="notice"><p class="frame">${notice}</p></div>` : ''}
 <main class="frame${wide ? ' admin' : ''}">

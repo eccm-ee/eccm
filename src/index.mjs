@@ -38,7 +38,8 @@ import { contact, CONTACT_PATHS } from './contact.mjs';
 import { ogRoute } from './og/route.mjs';
 import { legacy } from './redirects.mjs';
 import { passthrough } from './passthrough.mjs';
-import { partners, loadFooter, eventPartners } from './partners.mjs';
+import { partners, eventPartners } from './partners.mjs';
+import { layout, loadLayout } from './layout.mjs';
 import { gate, isProtected, isStatic, login, logout, loggedIn } from './auth.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
@@ -169,7 +170,7 @@ const routes = {
     // the editors' login, and the gate in front of the tools (src/auth.mjs)
     // the footer's logos from the partner table before any page is drawn (src/partners.mjs), asked 2026-11-07
     // as "footer logos should use same system"; not for the files and images below, which draw no footer
-    if (!p.startsWith('/media/') && !p.startsWith('/og/')) await loadFooter(env);
+    if (!p.startsWith('/media/') && !p.startsWith('/og/')) await loadLayout(env);
     if (p === '/login') return login(request, env, url);
     if (p === '/logout') return logout();
     if (isProtected(p)) { const out = await gate(request, env, url); if (out) return out; }
@@ -213,6 +214,8 @@ const routes = {
     if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     // the fourth Instagram card's preview and its words, under the event page since 2026-11-07 (src/social.mjs)
     if (p.startsWith('/edit/og/') || p.startsWith('/edit/social/')) { const out = await social(request, env, url); if (out) return out; }
+    // the Layout page, the menu's pages and the footer's logos (src/layout.mjs), since 2026-11-07
+    if (p === '/edit/layout') { const out = await layout(request, env, url); if (out) return out; }
     // the Logos page, the partners' logos (src/partners.mjs), since 2026-11-07
     if (p === '/edit/partners' || p.startsWith('/edit/partners/')) { const out = await partners(request, env, url); if (out) return out; }
     if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }

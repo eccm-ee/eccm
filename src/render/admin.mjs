@@ -25,6 +25,8 @@ const TOOLS = [
   // the partners' logos, upload, edit and delete (asked 2026-11-07: "make a admin page to upload logos"), called
   // Logos the same day; before User interface, which stays last
   ['/edit/partners', 'Logos', 'Partners’ logos for event pages and the footer, in colour and in black and white.'],
+  // the menu's pages and the footer's logos (asked 2026-11-07: "perhaps a Admin > Layout where you can pick what pages to link and what logos go to footer?")
+  ['/edit/layout', 'Layout', 'Which pages the menu links and which logos the footer shows.'],
   // one card since 2026-11-07 (asked: "drop social. mv logo to User interface (/ui) with components. last item"),
   // each event's share cards under its own page for an editor
   ['/ui', 'User interface', 'Type, colour, space, buttons, tables, cards, video and the logo with every icon size.'],
