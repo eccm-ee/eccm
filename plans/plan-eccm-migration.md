@@ -351,7 +351,7 @@ Cloudflare account, Workers Paid, production, the data copied.
 
 ### Set up production
 
-**Who:** agent. **State:** steps 1 to 3 done on 7 November 2026: ECCM's account_id and the database `eccm` (`ffdd830e-81a4-427a-9dc2-c3543e49df64`, EEUR) are in `env.production`, all migrations applied, and the content copied without staging's test rows (95 events, 190 texts, 38 credits, 70 media rows, 7 pages, 12 page texts, 11 roles, 5 logos, the same counts as staging). Waiting on ECCM: R2 is not enabled on the account (`Please enable R2 through the Cloudflare Dashboard`, code 10042), so the buckets, the secrets, the media copy and the deploy wait for it.
+**Who:** agent. **State:** steps 1 to 3 done on 7 November 2026: ECCM's account_id and the database `eccm` (`ffdd830e-81a4-427a-9dc2-c3543e49df64`, EEUR) are in `env.production`, all migrations applied, and the content copied without staging's test rows (95 events, 190 texts, 38 credits, 70 media rows, 7 pages, 12 page texts, 11 roles, 5 logos, the same counts as staging). Steps 2 and 4 done the same night once R2 was on: the buckets `eccm-media` and `eccm-backup`, the secrets `EDITOR_KEY` (a new key, given to the owner) and `SESSION_SECRET`, and the 9 uploaded pictures under `media/` copied. Step 5: the Worker `eccm` is uploaded, but the account has no workers.dev subdomain yet, so it has no address; ECCM registers one under Workers and Pages, then `deploy --env production` again. Turnstile is not set; the contact form works without it.
 
 One prompt does it all: the agent runs the commands below in this order and checks each step. ECCM only has to be logged in to its own Cloudflare account in the terminal (`npx wrangler login`).
 
