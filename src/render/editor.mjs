@@ -19,6 +19,7 @@
 import { html, raw } from './html.mjs';
 import { page } from './chrome.mjs';
 import { dateShort, clock } from './dates.mjs';
+import { partnerPicker } from './partners.mjs';
 
 // a blank credit block, the one the form shows when an event has none and the one Add credit adds
 export const BLANK_CREDIT = () => ({ role_key: '', label_et: '', label_en: '', people: '', orgs_et: '', orgs_en: '' });
@@ -88,7 +89,8 @@ const READ_PICTURE = `      const { read, contract } = await import('/scheme.mjs
 // updated_at when the page follows a save; texts: the saved text rows, for
 // the public links
 // cancel: where Cancel goes, the event itself or the public list (src/editor.mjs)
-export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmused' }) => {
+// partners: every logo, for the picker (src/render/partners.mjs)
+export const editorForm = ({ v, errors = [], roles, media, partners = [], cancel = '/et/sundmused' }) => {
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
   const isNew = !v.id;
   const action = isNew ? '/edit/events/new' : `/edit/events/${v.id}`;
@@ -183,6 +185,10 @@ export const editorForm = ({ v, errors = [], roles, media, cancel = '/et/sundmus
       ${v.credits.map((c, i) => credit(c, i))}
     </div>
     <p class="add-credit"><button class="btn" type="submit" name="do" value="add-credit" formnovalidate>Add credit</button></p>
+    <!-- the logos under the credits, where the page shows them (asked 2026-11-07: "allow editing to pick from
+         logos. make it a grid, multiple select") -->
+    <h2>Partners</h2>
+    ${partnerPicker({ partners, selected: v.partners || [], version: v.partner_version || 'bw', label: 'Logos', err: err('partner') || err('partner_version') })}
     <template id="credit-tpl">${credit(BLANK_CREDIT(), v.credits.length, '__i__')}</template>
     <script type="module">
 ${raw(SAME_HEIGHT)}
@@ -258,7 +264,9 @@ export const errorPage = ({ status, reason }) => {
   const what = status === 404
     ? (reason === 'page'
       ? ['No such page.', html`The pages are in the menu, and each has an Edit button.`]
-      : ['No such event.', html`The events are in <a href="/et/sundmused">the list</a>.`])
+      : reason === 'logo'
+        ? ['No such logo.', html`The logos are on <a href="/edit/partners">the Logos page</a>.`]
+        : ['No such event.', html`The events are in <a href="/et/sundmused">the list</a>.`])
     : ['The editor is not answering.', 'The database answered with an error. On a fresh deploy the cause is usually a migration not yet applied, migrations/0002_editing.sql or 0003_page_editing.sql.'];
   return page({ wide: true, lang: 'en', title: `${what[0]}`, body: html`  <p class="crumb">Edit</p>
   <h1>${what[0]}</h1>

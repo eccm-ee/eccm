@@ -38,6 +38,7 @@ import { contact, CONTACT_PATHS } from './contact.mjs';
 import { ogRoute } from './og/route.mjs';
 import { legacy } from './redirects.mjs';
 import { passthrough } from './passthrough.mjs';
+import { partners, loadFooter, eventPartners } from './partners.mjs';
 import { gate, isProtected, isStatic, login, logout, loggedIn } from './auth.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
@@ -76,7 +77,9 @@ async function event(env, lang, slug, url, editor = false) {
     WHERE e.status = 'published' AND e.starts_at > ? AND e.id != ? ORDER BY e.starts_at LIMIT 3`).bind(lang, ev.starts_at, ev.id).all()).results;
   // an editor sees the event's social previews under it, the fourth Instagram card's words with them (src/social.mjs)
   const sp = editor ? { row: await socialRow(db, ev.id, lang) } : null;
-  return renderEvent({ lang, text, fallback, ev, media, credits, twin, next, origin: origin(), path: url.pathname, editor, social: sp });
+  // the logos the event chose, in this page's language (src/partners.mjs)
+  const logos = await eventPartners(db, ev.id, lang);
+  return renderEvent({ lang, text, fallback, ev, media, credits, twin, next, origin: origin(), path: url.pathname, editor, social: sp, partners: logos });
 }
 
 // the events list: every published event with a text in this language, or
@@ -164,6 +167,9 @@ const routes = {
     useOrigin(env.SITE_ORIGIN || url.origin);
     if (p === '/robots.txt') return robots();
     // the editors' login, and the gate in front of the tools (src/auth.mjs)
+    // the footer's logos from the partner table before any page is drawn (src/partners.mjs), asked 2026-11-07
+    // as "footer logos should use same system"; not for the files and images below, which draw no footer
+    if (!p.startsWith('/media/') && !p.startsWith('/og/')) await loadFooter(env);
     if (p === '/login') return login(request, env, url);
     if (p === '/logout') return logout();
     if (isProtected(p)) { const out = await gate(request, env, url); if (out) return out; }
@@ -207,6 +213,8 @@ const routes = {
     if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     // the fourth Instagram card's preview and its words, under the event page since 2026-11-07 (src/social.mjs)
     if (p.startsWith('/edit/og/') || p.startsWith('/edit/social/')) { const out = await social(request, env, url); if (out) return out; }
+    // the Logos page, the partners' logos (src/partners.mjs), since 2026-11-07
+    if (p === '/edit/partners' || p.startsWith('/edit/partners/')) { const out = await partners(request, env, url); if (out) return out; }
     if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);

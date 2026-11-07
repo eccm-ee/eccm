@@ -254,19 +254,25 @@
   .site-foot .cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto; gap: var(--eccm-s-8); }
   .site-foot .two { display: grid; grid-template-columns: repeat(2, max-content); column-gap: var(--eccm-s-12); row-gap: var(--eccm-s-2); }
   .site-foot .contact p + p { margin-block-start: var(--eccm-s-3); }
-  .site-foot .end { justify-self: end; display: flex; align-items: center; gap: var(--eccm-s-8); }
+  /* the logos at the end are partner rows since 2026-11-07 ("footer logos should use same system"), each
+     the black-and-white file under the theme's invert (src/render/partners.mjs footerPartners); a logo with
+     no hand-set rule below is 2.5rem tall at its own width, and more than fit wrap as a cluster */
+  .site-foot .end { justify-self: end; display: flex; flex-wrap: wrap; align-items: center; gap: var(--eccm-s-8); }
+  .site-foot .partner { display: block; }
+  .site-foot .partner img { display: block; block-size: 2.5rem; inline-size: auto; max-inline-size: 10rem; object-fit: contain; filter: var(--eccm-mark-filter); }
+  /* the two seeded marks keep their hand-set sizes, named by partner.slug */
   /* ULYSSES Platform beside Tallinn's mark (asked 2026-10-01: "put olyssus image to partners", then
      "make ulyssus smaller and vert align with other logo"): 4.5rem, its box its ink, and centred on the
      City of Music mark's ink. That mark's file carries white round its ink, which its own negative
      margins trim, so its ink centre sits half a top margin above the box flex centres; the same top
      margin here moves this mark's centre by the same half, and the two inks share one middle line */
-  .site-foot .partner.partner-uly { --pw: 4.5rem; margin: 0; margin-block-start: calc(4rem * -0.1355); }
-  .site-foot .partner { --pw: 4rem; display: block; inline-size: var(--pw); margin-block-start: calc(var(--pw) * -0.1355); margin-inline-end: calc(var(--pw) * -0.136); }
-  .site-foot .partner img { display: block; inline-size: 100%; block-size: auto; filter: var(--eccm-mark-filter); }
+  .site-foot .partner-ulysses { --pw: 4.5rem; inline-size: var(--pw); margin-block-start: calc(4rem * -0.1355); }
+  .site-foot .partner-tallinn { --pw: 4rem; inline-size: var(--pw); margin-block-start: calc(var(--pw) * -0.1355); margin-inline-end: calc(var(--pw) * -0.136); }
+  .site-foot :is(.partner-ulysses, .partner-tallinn) img { inline-size: 100%; block-size: auto; max-inline-size: none; }
   @media (max-width: 48rem) {
     .site-foot .cols { grid-template-columns: minmax(0, 1fr); }
     .site-foot .end { justify-self: start; }
-    .site-foot .partner { margin-inline: calc(var(--pw) * -0.136) 0; }
+    .site-foot .partner-tallinn { margin-inline: calc(var(--pw) * -0.136) 0; }
   }
   /* the wordmark's face, Instrument Sans medium at width 75 */
   .tag-is { font-family: 'Instrument Sans', Helvetica, Arial, sans-serif; font-stretch: 75%; font-variation-settings: 'wdth' 75; font-weight: 500; }
@@ -372,6 +378,23 @@
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .eu-emblem .eu-pos { display: none; } :root:not([data-theme="light"]) .eu-emblem .eu-neg { display: block; } }
   :root[data-theme="dark"] .eu-emblem .eu-pos { display: none; }
   :root[data-theme="dark"] .eu-emblem .eu-neg { display: block; }
+  /* a logo (src/render/partners.mjs, asked 2026-11-07: "have bw and color optoins"): 3rem tall at its own
+     width, as the EU emblem is, so a flag in it clears the 1cm its rule sets. The colour version is the
+     file, its dark-ground twin shown instead in the dark theme and on an event whose picture is dark; the
+     black-and-white one is the file's shape as a mask over currentColor, so it is the ink of the ground it
+     sits on, the site's or an event's own */
+  .logo { --ph: 3rem; display: block; block-size: var(--ph); inline-size: auto; min-inline-size: 0; max-inline-size: min(100%, 14rem); object-fit: contain; }
+  .logo-bw { background: currentColor; -webkit-mask: var(--src) center / contain no-repeat; mask: var(--src) center / contain no-repeat; }
+  .logo-neg { display: none; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .logo-pos { display: none; } :root:not([data-theme="light"]) .logo-neg { display: block; } }
+  :root[data-theme="dark"] .logo-pos, .event[data-scheme="dark"] .logo-pos { display: none; }
+  :root[data-theme="dark"] .logo-neg, .event[data-scheme="dark"] .logo-neg { display: block; }
+  /* an event's logos, one row under the credits, a group of its own two lines down like the EU emblem,
+     wrapping as a cluster (asked 2026-11-07: "eccm wants each post to contain list of partner logo(s)") */
+  .partners { --eccm-flow: 2lh; display: flex; flex-wrap: wrap; align-items: center; gap: var(--eccm-s-6) var(--eccm-s-8); }
+  .partners .partner { display: block; color: inherit; }
+  /* Tallinn's file carries about 13.5 per cent of air round its ink, trimmed so its ink is the row's height */
+  .partners .partner-tallinn .logo { --ph: 4rem; margin: calc(4rem * -0.1355) calc(4rem * -0.136); }
   /* the picture at its own size, its shape reserved from its own pixels so
      nothing moves while it arrives */
   .event-pic { max-inline-size: var(--eccm-measure); }
@@ -658,6 +681,37 @@
   @media (prefers-reduced-motion: reduce) { .card, .card .card-desc { transition: none; } }
   .card-title { font-size: var(--eccm-t-l); line-height: var(--eccm-lh-head); }
   .card-desc { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); max-inline-size: 32ch; }
+  /* the logo picker (src/render/partners.mjs partnerPicker), the event editor's and the Layout page's: a
+     grid of tiles each at least 11rem, a tile its logo over its name with the checkbox in its corner, a
+     ticked tile ruled in the ink; the tiles draw the version chosen under them, black and white by default */
+  .picker-wrap { display: grid; gap: 1lh; }
+  .picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr)); gap: var(--eccm-s-4); }
+  .pick { position: relative; display: grid; grid-template-rows: 5rem auto; gap: var(--eccm-s-3); padding: var(--eccm-s-4); border: 1px solid var(--eccm-rule); cursor: pointer; }
+  .pick:has(input:checked) { border-color: var(--eccm-ink); outline: 1px solid var(--eccm-ink); outline-offset: -2px; }
+  .pick:has(input:focus-visible) { outline: 2px solid var(--eccm-accent); outline-offset: 2px; }
+  .form .pick input { position: absolute; inset-block-start: var(--eccm-s-2); inset-inline-end: var(--eccm-s-2); inline-size: var(--eccm-s-6); block-size: var(--eccm-s-6); margin: 0; padding: 0; accent-color: var(--eccm-ink); }
+  .pick-logo { display: grid; place-items: center start; min-inline-size: 0; padding-inline-end: var(--eccm-s-6); }
+  .pick-logo .logo { --ph: 2.5rem; }
+  .pick-name { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink); }
+  .pick-lang { color: var(--eccm-ink-2); }
+  .picker-wrap .logo-bw, .picker-wrap:has([value="color"]:checked) .pick .logo-bw { display: none; }
+  .picker-wrap:has([value="bw"]:checked) .pick .logo-bw { display: block; }
+  .picker-wrap:has([value="bw"]:checked) .pick :is(.logo-pos, .logo-neg, img.logo) { display: none; }
+  /* the Logos page, /edit/partners: the tiles in the cards' grid, each pair of versions side by side, the
+     colour one on the ground and the black-and-white one in the ink; the form's three file fields a row */
+  .logo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: var(--eccm-s-8) var(--eccm-s-6); }
+  .logo-tile { display: grid; align-content: start; gap: var(--eccm-s-2); }
+  .logo-pair { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--eccm-rule); margin-block-end: var(--eccm-s-2); }
+  .logo-cell { display: grid; place-items: center; min-inline-size: 0; block-size: 6rem; padding: var(--eccm-s-4); }
+  .logo-cell + .logo-cell { border-inline-start: 1px solid var(--eccm-rule); }
+  .logo-cell .logo { --ph: 2.5rem; }
+  .logo-name { font-size: var(--eccm-t-m); line-height: var(--eccm-lh-body); }
+  .logo-meta { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+  .logo-add { font-size: var(--eccm-t-l); margin-block: var(--eccm-s-16) var(--eccm-s-6); }
+  .logo-files { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--eccm-s-6); }
+  .logo-prev { display: grid; place-items: center start; block-size: 5rem; }
+  .logo-prev:empty { display: none; }
+  .logo-prev .logo { --ph: 3rem; }
   .table { container: table / inline-size; max-inline-size: 60rem; }
   .table table { inline-size: 100%; border-collapse: collapse; }
   .table th, .table td { padding-block: var(--eccm-s-2); padding-inline: 0 var(--eccm-s-6); text-align: start; vertical-align: baseline; white-space: nowrap; }

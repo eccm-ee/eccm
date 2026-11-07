@@ -45,3 +45,21 @@ https://commission.europa.eu/document/download/3192a0ef-6bda-4e1a-81ca-65ade2ffa
 is one of the four it shows. The flag is about 86 per cent of these files'
 height, so the page draws them 3rem tall (a flag of about 41 CSS px, over
 1cm's 37.8).
+
+`eu-cofunded-{et,en}-bw.png` are the black-and-white versions the Logos page
+draws (`migrations/0014_partners.sql`), made on 2026-11-07 from the positive
+files with the mask an upload gets (`public/partners.mjs`): black on
+transparent, each pixel's opacity its opacity in the positive times its
+darkness, so the text and the flag are solid and the stars a lighter shape
+inside it. Drawn as a CSS mask in the ink, never as the EU's own monochrome
+version, which the zips do not carry as a PNG.
+
+## Uploaded logos
+
+Since 2026-11-07 a partner's logo is uploaded on the Logos page,
+`/edit/partners`, and stored in R2 under `partners/`, not here. The
+processing is the one above: an SVG kept as uploaded with only what could run
+or fetch taken out, its black-and-white version every fill and stroke set to
+`currentColor` (`src/partners.mjs`); a PNG or JPEG scaled down to 192 px tall
+in the editor's browser and given the mask above (`public/partners.mjs`). The
+files in this directory stay where they are and are the seeded rows.

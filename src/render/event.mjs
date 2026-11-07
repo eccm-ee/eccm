@@ -12,6 +12,7 @@ import { jsonLd, organizer } from './ld.mjs';
 import { opening, clip } from './lead.mjs';
 import { cardInput, cardVersion, cardPath, cardAlt, slideDefaults, slideFields, W as CARD_W, H as CARD_H } from '../og/card.mjs';
 import { renderSocial } from './social.mjs';
+import { partnerRow } from './partners.mjs';
 
 // the Open Graph head of plans/plan-eccm-event-markup.md section 4, with the
 // versioned share image of src/og/card.mjs; the description is the body's
@@ -122,7 +123,8 @@ const creditLabel = (c, lang) => c[`role_${lang}`] || c[`label_${lang}`] || c.ro
 // editor: a logged-in editor is looking (src/auth.mjs loggedIn), the only one shown the edit button;
 // social: { row } for a logged-in editor on the published page, its social previews under the article
 // (src/render/social.mjs), row being the fourth Instagram card's stored words or null
-export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, next, origin, path, notice, editHref, editor = false, social = null }) => {
+// partners: the logos the event chose in this language, each with its version (src/partners.mjs eventPartners)
+export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, next, origin, path, notice, editHref, editor = false, social = null, partners = [] }) => {
   const t = T[lang];
   const textLang = fallback ? 'et' : lang;             // the language the text row is in
   const off = offsetFor(ev.starts_at);
@@ -180,6 +182,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
       <dl class="credits" lang="${lang}">
         ${credits.map((c) => html`<div><dt>${creditLabel(c, lang)}</dt><dd>${creditValue(c, lang)}</dd></div>`)}
       </dl>` : ''}
+      ${partnerRow(partners, lang)}
     </div>
     ${next.length ? html`
     <section class="next">

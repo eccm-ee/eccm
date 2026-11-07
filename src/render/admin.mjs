@@ -22,6 +22,9 @@ const TOOLS = [
   // the one door to a new event's form (asked 2026-11-06), here since the public list is the same for every visitor
   ['/edit/events/new', 'New event', 'A blank event form. It is saved as a draft until set to Published.'],
   ['/edit/uudiskiri', 'Newsletter', 'Issues to subscribers: compose from events, send a test, send to all.'],
+  // the partners' logos, upload, edit and delete (asked 2026-11-07: "make a admin page to upload logos"), called
+  // Logos the same day; before User interface, which stays last
+  ['/edit/partners', 'Logos', 'Partners’ logos for event pages and the footer, in colour and in black and white.'],
   // one card since 2026-11-07 (asked: "drop social. mv logo to User interface (/ui) with components. last item"),
   // each event's share cards under its own page for an editor
   ['/ui', 'User interface', 'Type, colour, space, buttons, tables, cards, video and the logo with every icon size.'],

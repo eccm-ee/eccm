@@ -8,12 +8,18 @@
 import { html, raw, esc } from './html.mjs';
 import { SYMBOL, HEADER, FOOTER } from './mark.mjs';
 import { sitePath, siteAlt, pagePath, W as OG_W, H as OG_H } from '../og/card.mjs';
+import { footerPartners } from './partners.mjs';
 
 // the site's own origin, SITE_ORIGIN or else the request's, set once per request by src/index.mjs,
 // for the absolute address a share image needs
 let ORIGIN = '';
 export const useOrigin = (o) => { ORIGIN = o; };
 export const origin = () => ORIGIN;
+// the footer's logos, the partner rows the Layout page flags, set once per request by src/partners.mjs loadFooter
+// (asked 2026-11-07: "footer logos should use same system"); null keeps the marks typed into mark.mjs's FOOTER
+let FOOT = null;
+export const useFooter = (rows) => { FOOT = rows; };
+const footer = (lang) => (FOOT ? FOOTER[lang].replace(/<div class="end">[\s\S]*?<\/div>\n  <\/div><\/div>/, () => `${footerPartners(FOOT, lang)}\n  </div></div>`) : FOOTER[lang]);
 // every page that names no share image of its own names the site's card, the
 // logo (asked 2026-10-01: "make eccm default social card", "just original
 // logo"): a link to such a page used to preview as whatever picture a scraper
@@ -153,7 +159,7 @@ ${notice ? html`<div class="notice"><p class="frame">${notice}</p></div>` : ''}
 ${body}
 </main>
 
-${raw(FOOTER[lang])}
+${raw(footer(lang))}
 <script type="module" src="/site.mjs"></script>
 </body>
 </html>

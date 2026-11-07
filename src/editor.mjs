@@ -36,6 +36,8 @@ import { renderPage, pagePath } from './render/page.mjs';
 import { OTHER, origin } from './render/chrome.mjs';
 import { editorForm, pageForm, errorPage, CATEGORIES, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
 import { renderDrafts } from './render/events.mjs';
+import { allPartners } from './partners.mjs';
+import { VERSIONS } from './render/partners.mjs';
 
 const HEAD = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' };
 const reply = (body, status = 200, extra = {}) => new Response(String(body), { status, headers: { ...HEAD, ...extra } });
@@ -68,7 +70,8 @@ const isLocal = (v) => LOCAL.test(v) && new Date(v + ':00Z').toISOString().slice
 const text = (rows, lang) => { const r = rows.find((t) => t.lang === lang); return { title: r?.title ?? '', slug: r?.slug ?? '', body: r?.body ?? '', exists: !!r }; };
 // the English venue lives on the English text row (migration 0012); empty means the Estonian one is shown
 const venueEn = (rows) => rows.find((t) => t.lang === 'en')?.venue ?? '';
-export const fromRows = (ev, texts, credits) => ({
+// eps: the event's event_partner rows in order, the logos it shows and the one version they are drawn in
+export const fromRows = (ev, texts, credits, eps = []) => ({
   id: ev?.id, rev: ev?.rev ?? 0,
   starts_at: ev?.starts_at ?? '', ends_at: ev?.ends_at ?? '', duration_min: ev?.duration_min ?? '',
   venue: ev?.venue ?? 'ECCM saal', venue_en: ev ? venueEn(texts) : 'ECCM hall', address: ev?.address ?? 'Pühavaimu 9, Tallinn',
@@ -81,6 +84,7 @@ export const fromRows = (ev, texts, credits) => ({
     orgs_et: people(c.orgs).map((o) => o.et ?? '').join('; '),
     orgs_en: people(c.orgs).map((o) => o.en ?? '').join('; '),
   })),
+  partners: eps.map((r) => r.partner_id), partner_version: eps[0]?.version ?? 'bw',
 });
 // the credits that exist and nothing more, one blank block only when there are none; another is added by the
 // Add credit button, through the add-credit action below with no script and in place with one (asked
@@ -99,6 +103,8 @@ export const parse = (fd, before) => {
     et: { title: s(fd, 'title_et'), slug: s(fd, 'slug_et').toLowerCase(), body: s(fd, 'body_et'), exists: before.et.exists },
     en: { title: s(fd, 'title_en'), slug: s(fd, 'slug_en').toLowerCase(), body: s(fd, 'body_en'), exists: before.en.exists },
     credits: [],
+    // the logos ticked in the picker (src/render/partners.mjs partnerPicker), in the picker's order
+    partners: [...new Set(fd.getAll('partner').map((x) => parseInt(x, 10)).filter((x) => x > 0))], partner_version: s(fd, 'partner_version') || 'bw',
   };
   for (let i = 0; i < count; i++) {
     v.credits.push({ role_key: s(fd, `c${i}_role`), label_et: s(fd, `c${i}_label_et`), label_en: s(fd, `c${i}_label_en`), people: s(fd, `c${i}_people`), orgs_et: s(fd, `c${i}_orgs_et`), orgs_en: s(fd, `c${i}_orgs_en`) });
@@ -107,7 +113,7 @@ export const parse = (fd, before) => {
 };
 
 // the messages, in words; every one names the field it is about
-export async function validate(v, db, roles, media) {
+export async function validate(v, db, roles, media, partners = []) {
   const errors = [];
   const bad = (field, msg) => errors.push({ field, msg });
   if (!v.starts_at) bad('starts_at', 'Start is empty.');
@@ -126,6 +132,8 @@ export async function validate(v, db, roles, media) {
     v.image_id = m ? String(m.id) : '';
   } else if (v.image_id && !media.some((m) => String(m.id) === v.image_id)) bad('image_id', 'No such picture.');
   if (v.publish_at && !isLocal(v.publish_at)) bad('publish_at', 'Publish from is not a date and time.');
+  if (v.partners.some((id) => !partners.some((p) => p.id === id))) bad('partner', 'One of the ticked logos is no longer there. Tick them again.');
+  if (!VERSIONS.some(([k]) => k === v.partner_version)) bad('partner_version', 'Choose colour or black and white for the logos.');
   // the texts: Estonian is required, English is optional but cannot be
   // emptied once it exists, because its row carries the Joomla id
   for (const lang of ['et', 'en']) {
@@ -191,7 +199,8 @@ async function save(db, v, before) {
     const stmts = texts.map((l) => db.prepare('INSERT INTO event_text (event_id, lang, slug, title, body, venue) VALUES (?,?,?,?,?,?)').bind(id, l, v[l].slug, v[l].title, v[l].body, l === 'en' ? v.venue_en || null : null))
       .concat(credits.map((c) => db.prepare('INSERT INTO event_credit (event_id, position, role_key, label_et, label_en, people, orgs) VALUES (?,?,?,?,?,?,?)').bind(id, c.position, c.role_key, c.label_et, c.label_en, c.people, c.orgs)))
       // the picture's descriptions and scheme, as a save stores them, with nothing to guard on a new row
-      .concat(mediaStmts(db, v, '1', []));
+      .concat(mediaStmts(db, v, '1', []))
+      .concat(v.partners.map((pid, i) => db.prepare('INSERT INTO event_partner (event_id, partner_id, position, version) VALUES (?,?,?,?)').bind(id, pid, i + 1, v.partner_version)));
     if (stmts.length) await db.batch(stmts);
     return { id };
   }
@@ -203,6 +212,9 @@ async function save(db, v, before) {
     .concat([db.prepare(`DELETE FROM event_credit WHERE event_id = ? AND ${guard}`).bind(v.id, ...g)])
     .concat(credits.map((c) => db.prepare(`INSERT INTO event_credit (event_id, position, role_key, label_et, label_en, people, orgs) SELECT ?,?,?,?,?,?,? WHERE ${guard}`).bind(v.id, c.position, c.role_key, c.label_et, c.label_en, c.people, c.orgs, ...g)))
     .concat(mediaStmts(db, v, guard, g))
+    // the logos as the picker left them (asked 2026-11-07: "allow editing to pick from logos"), replaced whole like the credits
+    .concat([db.prepare(`DELETE FROM event_partner WHERE event_id = ? AND ${guard}`).bind(v.id, ...g)])
+    .concat(v.partners.map((pid, i) => db.prepare(`INSERT INTO event_partner (event_id, partner_id, position, version) SELECT ?,?,?,? WHERE ${guard}`).bind(v.id, pid, i + 1, v.partner_version, ...g)))
     .concat([db.prepare(`UPDATE event SET starts_at = ?, ends_at = ?, duration_min = ?, venue = ?, address = ?, ticket_url = ?, website_url = ?, category = ?, image_id = ?, status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = ?, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(...eventValues(v), BY, ...g)]);
   const results = await db.batch(stmts);
   return { id: v.id, stale: results[results.length - 1].meta.changes !== 1 };
@@ -323,14 +335,16 @@ async function load(db, id) {
   if (!ev) return null;
   const texts = (await db.prepare('SELECT * FROM event_text WHERE event_id = ?').bind(id).all()).results;
   const creditRows = (await db.prepare('SELECT * FROM event_credit WHERE event_id = ? ORDER BY position').bind(id).all()).results;
-  return { ev, texts, creditRows, values: fromRows(ev, texts, creditRows) };
+  const eps = (await db.prepare('SELECT partner_id, version FROM event_partner WHERE event_id = ? ORDER BY position').bind(id).all()).results;
+  return { ev, texts, creditRows, values: fromRows(ev, texts, creditRows, eps) };
 }
 const lookups = async (db) => ({
   roles: (await db.prepare('SELECT * FROM role ORDER BY sort').bind().all()).results,
   media: (await db.prepare('SELECT id, key, width, height, alt_et, alt_en, scheme FROM media ORDER BY id').bind().all()).results,
+  partners: await allPartners(db),
 });
 
-async function preview(db, v, lang, before, roles, media, url) {
+async function preview(db, v, lang, before, roles, media, url, partners = []) {
   if (!v[lang].title) lang = 'et';
   const ev = { id: v.id, rev: v.rev, ...Object.fromEntries(EVENT_COLS.split(', ').map((k, i) => [k, eventValues(v)[i]])) };
   if (lang === 'en' && v.venue_en) ev.venue = v.venue_en;
@@ -343,18 +357,20 @@ async function preview(db, v, lang, before, roles, media, url) {
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et'
     WHERE e.status = 'published' AND e.starts_at > ? AND e.id != ? ORDER BY e.starts_at LIMIT 3`).bind(lang, ev.starts_at, v.id ?? 0).all()).results;
   const notice = 'Preview. Nothing is saved. Close this tab and save from the form.';
-  return reply(renderEvent({ lang, text, fallback: false, ev, media: pic, credits, twin, next, origin: origin(), path: eventPath(lang, text.slug), notice, editor: true, editHref: v.id ? `/edit/events/${v.id}` : '/edit/events/new' }));
+  // the ticked logos as the page would show them, this language's, in the version chosen
+  const logos = v.partners.map((id) => partners.find((p) => p.id === id)).filter((p) => p && (!p.lang || p.lang === lang)).map((p) => ({ ...p, version: v.partner_version }));
+  return reply(renderEvent({ lang, text, fallback: false, ev, media: pic, credits, twin, next, origin: origin(), path: eventPath(lang, text.slug), notice, editor: true, editHref: v.id ? `/edit/events/${v.id}` : '/edit/events/new', partners: logos }));
 }
 
 async function form(request, env, url, id) {
   const db = env.DB;
   const before = id === 'new' ? { ev: null, texts: [], creditRows: [], values: fromRows(null, [], []) } : await load(db, +id);
   if (!before) return reply(errorPage({ status: 404 }), 404);
-  const { roles, media } = await lookups(db);
+  const { roles, media, partners } = await lookups(db);
   // where Cancel goes: the event itself, Estonian first, or /admin for a new one, where its card is
   const home = before.texts.find((x) => x.lang === 'et') || before.texts.find((x) => x.lang === 'en');
   const cancel = home ? eventPath(home.lang, home.slug) : id === 'new' ? '/admin' : '/et/sundmused';
-  if (request.method !== 'POST') return reply(editorForm({ v: padded(before.values), roles, media, cancel }));
+  if (request.method !== 'POST') return reply(editorForm({ v: padded(before.values), roles, media, partners, cancel }));
   const fd = await request.formData();
   const v = parse(fd, before.values);
   const action = s(fd, 'do');
@@ -369,12 +385,12 @@ async function form(request, env, url, id) {
     else { v.image_key = up.row.key; if (!media.some((m) => m.id === up.row.id)) media.push(up.row); }
   }
   // one more blank credit block, the typed values kept, nothing validated and nothing saved
-  if (action === 'add-credit') return reply(editorForm({ v: { ...v, credits: v.credits.concat([BLANK_CREDIT()]) }, roles, media, cancel }));
-  const errors = upErrors.concat(await validate(v, db, roles, media));
-  if (errors.length) return reply(editorForm({ v: padded(v), errors, roles, media, cancel }), 422);
-  if (action.startsWith('preview')) return preview(db, v, action.endsWith('en') ? 'en' : 'et', before, roles, media, url);
+  if (action === 'add-credit') return reply(editorForm({ v: { ...v, credits: v.credits.concat([BLANK_CREDIT()]) }, roles, media, partners, cancel }));
+  const errors = upErrors.concat(await validate(v, db, roles, media, partners));
+  if (errors.length) return reply(editorForm({ v: padded(v), errors, roles, media, partners, cancel }), 422);
+  if (action.startsWith('preview')) return preview(db, v, action.endsWith('en') ? 'en' : 'et', before, roles, media, url, partners);
   const out = await save(db, v, before);
-  if (out.stale) return reply(editorForm({ v: padded(v), errors: [{ field: 'rev', msg: 'Someone else saved this event in the meantime. Open it in a new tab, compare, and make the change again.' }], roles, media, cancel }), 409);
+  if (out.stale) return reply(editorForm({ v: padded(v), errors: [{ field: 'rev', msg: 'Someone else saved this event in the meantime. Open it in a new tab, compare, and make the change again.' }], roles, media, partners, cancel }), 409);
   // the event page when it is published, else the form again, as a page save lands
   return redirect(landing(v, eventPath) || `/edit/events/${out.id}`);
 }

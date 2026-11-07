@@ -12,7 +12,7 @@ const TYPES = { jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'i
 export const MAX_BYTES = 10 * 1024 * 1024;
 
 // the format from the first bytes, never from the name or the browser's word
-const sniff = (b) => {
+export const sniff = (b) => {
   if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return 'jpg';
   if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return 'png';
   if (b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46) return 'gif';
@@ -21,7 +21,7 @@ const sniff = (b) => {
 };
 
 // width and height from the header of each of the four formats
-const size = (ext, b) => {
+export const size = (ext, b) => {
   const v = new DataView(b.buffer, b.byteOffset, b.byteLength);
   if (ext === 'png') return { width: v.getUint32(16), height: v.getUint32(20) };
   if (ext === 'gif') return { width: v.getUint16(6, true), height: v.getUint16(8, true) };
@@ -117,7 +117,23 @@ async function vimeoThumb(env, id, hash) {
 // a miss is a 404 that is never cached, so a link asked for early does not
 // stay broken (the images plan, section 4, Caching)
 const KEY = /^\/(media\/[0-9a-f]{64}\.(?:jpg|png|webp|gif))$/;
+// GET /media/partners/{sha256}.{ext}: an uploaded logo (src/partners.mjs), stored in R2 under partners/; an SVG
+// goes out with a policy that lets it run nothing and fetch nothing, so a file opened on its own is a picture
+// even if the sanitizer missed something
+const PARTNER = /^\/media\/(partners\/[0-9a-f]{64}\.(?:svg|png|jpg))$/;
+const SVG_POLICY = "default-src 'none'; style-src 'unsafe-inline'; img-src data:";
 export async function serveMedia(env, path) {
+  const pt = PARTNER.exec(path);
+  if (pt) {
+    const obj = env.MEDIA ? await env.MEDIA.get(pt[1]) : null;
+    if (!obj) return new Response('Not found', { status: 404, headers: { 'cache-control': 'no-store' } });
+    const headers = new Headers();
+    obj.writeHttpMetadata(headers);
+    headers.set('cache-control', IMMUTABLE);
+    headers.set('x-content-type-options', 'nosniff');
+    if (pt[1].endsWith('.svg')) headers.set('content-security-policy', SVG_POLICY);
+    return new Response(obj.body, { headers });
+  }
   const y = YT.exec(path);
   if (y) return ytThumb(env, y[1]);
   const v = VIMEO.exec(path);
