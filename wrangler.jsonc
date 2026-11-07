@@ -73,7 +73,7 @@
       // ECCM's account, the one value left to fill (wrangler whoami on their
       // login). A placeholder and not "": wrangler drops an empty account_id
       // and inherits the top-level one, which would deploy to staging's account
-      "account_id": "FILL-ECCM-ACCOUNT-ID",
+      "account_id": "47bdc40605b72aa6cd3d6caf5eb9a92e",
       // the workers.dev address until cutover, then false
       "workers_dev": true,
       // at cutover, once ECCM says the zone is active (plans/plan-eccm-migration.md, Cutover):
