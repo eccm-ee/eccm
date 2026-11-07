@@ -112,6 +112,11 @@ export function attach(form) {
     put(dark, d);
     show(form, 'dark_file', d);
   }));
+  // a file dragged over a dropzone rules it in the ink until it is dropped or leaves
+  for (const d of form.querySelectorAll('.drop')) {
+    const on = () => d.classList.add('over'), off = () => d.classList.remove('over');
+    d.addEventListener('dragenter', on); d.addEventListener('dragleave', off); d.addEventListener('drop', off);
+  }
   // the form waits for a picture still being processed, so what is sent is what the preview shows
   form.addEventListener('submit', (e) => {
     if (form.dataset.ready) return;

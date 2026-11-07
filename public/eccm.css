@@ -728,9 +728,16 @@
   .logo-meta { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
   .logo-add { font-size: var(--eccm-t-l); margin-block: var(--eccm-s-16) var(--eccm-s-6); }
   .logo-files { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--eccm-s-6); }
-  .logo-prev { display: grid; place-items: center start; block-size: 5rem; }
+  /* each file a dropzone, the logo it holds in its middle and the words under it (asked 2026-11-07: "where is
+     bw and color logos dropzones?"); the input covers the box, invisible, so a drop or a click is the browser's own */
+  .drop { position: relative; display: grid; place-items: center; align-content: center; gap: var(--eccm-s-3); min-block-size: 9rem; padding: var(--eccm-s-6); border: 1px dashed var(--eccm-rule); text-align: center; }
+  .drop:hover, .drop.over, .drop:focus-within { border-color: var(--eccm-ink); border-style: solid; }
+  .form .drop-input { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; margin: 0; padding: 0; border: 0; opacity: 0; cursor: pointer; }
+  .drop-text { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
+  .logo-prev { display: grid; place-items: center; block-size: 4rem; }
   .logo-prev:empty { display: none; }
   .logo-prev .logo { --ph: 3rem; }
+  .drop .logo-prev img.logo { display: block; block-size: 3rem; inline-size: auto; max-inline-size: 100%; object-fit: contain; }
   .table { container: table / inline-size; max-inline-size: 60rem; }
   .table table { inline-size: 100%; border-collapse: collapse; }
   .table th, .table td { padding-block: var(--eccm-s-2); padding-inline: 0 var(--eccm-s-6); text-align: start; vertical-align: baseline; white-space: nowrap; }

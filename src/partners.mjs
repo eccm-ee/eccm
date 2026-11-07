@@ -186,7 +186,7 @@ const uses = async (db) => Object.fromEntries((await db.prepare('SELECT partner_
 // when given. A row being edited keeps every file the form did not replace
 async function files(env, fd, row) {
   const errors = [], out = {};
-  const color = fd.get('color_file'), own = null, auto = fd.get('bw_auto'), dark = null;
+  const color = fd.get('color_file'), own = fd.get('bw_file'), auto = fd.get('bw_auto'), dark = null;
   if (given(color)) {
     const c = await store(env, color, 'colour');
     if (c.error) errors.push({ field: 'color_file', msg: c.error });
@@ -212,7 +212,7 @@ async function files(env, fd, row) {
     if (d.error) errors.push({ field: 'dark_file', msg: d.error });
     else out.dark_src = d.src;
   }
-  // the two fields for an own black-and-white file and a dark-ground file went 2026-11-07 ("2 drop fields"); a replaced logo drops its old negative
+  // the dark-ground file went 2026-11-07 ("in dark mode always use monocrome and invert"); a replaced logo drops its old negative
   if (given(color)) out.dark_src = null;
   return { errors, out };
 }

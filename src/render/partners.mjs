@@ -75,14 +75,21 @@ const fields = (v, err, row) => html`<div class="fields">
       </div>
       ${group({ label: 'Language', hint: 'A logo drawn in one language, like Tallinn’s, has a row per language.', control: segment('lang', LANGS, v.lang) })}
       <div class="logo-files">
-        ${fileField('color_file', row ? 'Replace the colour version' : 'Logo', err('color_file'), row ? 'SVG, PNG or JPEG. Its black-and-white version is made again from it.' : 'SVG, PNG or JPEG, up to 2 MB. An SVG is kept as it is, a PNG or JPEG is scaled to 192 px tall.', row && logo(row, 'color'))}
+        ${fileField('color_file', 'Colour', err('color_file'), row ? 'Drop a new file to replace it. SVG, PNG or JPEG, up to 2 MB.' : 'SVG, PNG or JPEG, up to 2 MB. A PNG or JPEG is scaled to 192 px tall.', row && html`<img class="logo" src="${row.color_src}" alt="" width="${row.color_w}" height="${row.color_h}">`)}
+        ${fileField('bw_file', 'Black and white', err('bw_file'), 'Optional. Without one it is made from the colour logo. The dark theme draws this one, inverted.', row && logo(row, 'bw'))}
       </div>
       <input class="vh" type="file" name="bw_auto" tabindex="-1" aria-hidden="true">
     </div>`;
-const fileField = (name, label, err, hint, current, dark = false) => html`<div class="field logo-file">
+// a dropzone (asked 2026-11-07: "where is bw and color logos dropzones?"): the file input itself, invisible,
+// covers the box, so a file dropped on it or a click anywhere in it is the browser's own, with or without script;
+// the box shows the file as it will be stored, or what is stored now
+const fileField = (name, label, err, hint, current) => html`<div class="field logo-file">
         <label for="f-${name}">${label}</label>
-        <div class="logo-prev${dark ? ' logo-prev-dark' : ''}" data-for="${name}">${current || ''}</div>
-        <input id="f-${name}" type="file" name="${name}" accept="image/svg+xml,image/png,image/jpeg">
+        <div class="drop">
+          <span class="logo-prev" data-for="${name}">${current || ''}</span>
+          <span class="drop-text">Drop a file here or click to choose</span>
+          <input class="drop-input" id="f-${name}" type="file" name="${name}" accept="image/svg+xml,image/png,image/jpeg">
+        </div>
         <p class="hint${err ? ' err' : ''}">${err || hint}</p>
       </div>`;
 
