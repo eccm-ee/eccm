@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>ECCM: components</title>
-<!-- split from ds.html on 2026-10-02 (asked: "split ds into components logo and social, separate cards in admin"): ds.html the components at /ds, logo.html the mark, wordmark and icons at /logo, social.html the share images at /social (asked: "logo.html / social.html"). Each has its own card on /admin. -->
+<title>ECCM: user interface</title>
+<!-- one page again since 2026-11-07, at /ui (asked: "drop social. mv logo to User interface (/ui) with components. last item"): the components, then the logo last; social.html went, each event's cards are under its page for an editor. Before that, split from ds.html on 2026-10-02 (asked: "split ds into components logo and social, separate cards in admin"): ds.html the components at /ds, logo.html the mark, wordmark and icons at /logo, social.html the share images at /social (asked: "logo.html / social.html"). Each has its own card on /admin. -->
 <!-- public/ds.html: the design system on one page, asked 2026-09-27 ("make
      /ds page for design system elements. typography, buttons, logo"). Every
      value here is eccm.css's own, read through the same classes the site's
@@ -138,6 +138,9 @@
     .locks figcaption { margin-block-start: var(--eccm-s-3); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); }
   }
   @layer page {
+    /* white on black is the negative artwork, so it keeps its own two values in the dark mode too (2026-10-02), as
+       the negative icons keep their black square; read from the tokens it turned black on white in the dark */
+    .locks svg.inv { background: #1a1a1a; color: #ffffff; }
   }
   /* unlayered on purpose: the bio heading's top margin comes from a heading rule the layers cannot outrank, and the name has to sit on the picture's top */
   .bio h2 { margin-block-start: 0; }
@@ -191,8 +194,8 @@
 </header>
 
 <main class="frame ds">
-  <p class="crumb crumb-trail"><a href="/admin">Admin</a><span class="crumb-sep" aria-hidden="true">/</span><span aria-current="page">Components</span></p>
-  <h1>Components</h1>
+  <p class="crumb crumb-trail"><a href="/admin">Admin</a><span class="crumb-sep" aria-hidden="true">/</span><span aria-current="page">User interface</span></p>
+  <h1>User interface</h1>
 
   <h2>Typography</h2>
   <div class="prose flow">
@@ -476,7 +479,7 @@
       <div class="cards">
         <a class="card" href="/et/sundmused"><span class="card-title">Events</span><span class="card-desc">Every event. Each one is edited from the Edit button on its own page.</span></a>
         <a class="card" href="/edit/events/new"><span class="card-title">New event</span><span class="card-desc">A blank event form. It is saved as a draft until set to Published.</span></a>
-        <a class="card" href="/logo"><span class="card-title">Logo</span><span class="card-desc">The square mark, the wordmark in both languages, and every icon size.</span></a>
+        <a class="card" href="/ui#logo"><span class="card-title">Logo</span><span class="card-desc">The square mark, the wordmark in both languages, and every icon size.</span></a>
         <a class="card" href="/edit/uudiskiri"><span class="card-title">Newsletter</span><span class="card-desc">Issues to subscribers: compose from events, send a test, send to all.</span></a>
       </div>
     </div>
@@ -489,6 +492,56 @@
     <p>A Vimeo link does the same, with the picture fetched once through this site and a click playing it from player.vimeo.com.</p>
     <div class="yt" data-vimeo="1227691667"><a class="yt-face" href="https://vimeo.com/1227691667" rel="noopener"><img src="/media/vimeo/1227691667.jpg" alt="" width="480" height="270" loading="lazy" decoding="async"><span class="btn btn-pri btn-ico"><svg class="ico" aria-hidden="true"><use href="/vendor/icons/feather/icons.svg#play"/></svg><span class="vh">EMA ensemble in Studio Tallinn 1965</span></span></a></div>
   </div>
+
+  <h2 id="logo">Square mark</h2>
+  <div class="prose flow">
+    <p>The square mark, no tagline, for icons and avatars, positive and negative; the outlined, plain and bold variants are files under icons/.</p>
+  </div>
+  <div class="ds-squares">
+    <figure><img src="./icons/logo-square.svg" width="354" height="354" alt=""></figure>
+    <figure><img src="./icons/logo-square-neg.svg" width="354" height="354" alt=""></figure>
+  </div>
+  <h2>Wordmark</h2>
+  <div class="wm">
+    <p class="ds-cap">Instrument Sans medium at width 75, lowercase, two lines a language, starting on the E, both languages at one size: under the mark at 40 units, one language or both, and beside the mark at 37 units after 28 units of air, one language or both side by side; each lockup plain, in a bordered frame and white on black, at 11rem of mark width.</p>
+    <div id="wm-cells"></div>
+  </div>
+  <h2>Icons</h2>
+  <div class="prose flow">
+    <p>The icon sizes: 16, 32, 48, 64, 128, 180, 192, 256 and 512 (the 256 not shown here), and a favicon.ico holding 16, 32 and 48. From 128 up each size is its own drawing with the hairlines snapped to whole pixels on an integer pitch, which is what keeps five stave lines one shade; at 48 and 64 the hairlines are dropped and the M is 12 units wider with its arms a stem wide, so its counters open; at 16 and 32 the letters are the bold set, stems of 20 units, the way eccm.ee's own favicon fills its square. At 16 a stem is 0.6 px and the letters are still four blobs; a true 16 px mark with whole-pixel strokes is a decision not taken here.</p>
+  </div>
+  <div class="ds-sizes">
+    <figure><img src="./icons/icon-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+    <figure><img src="./icons/icon-32.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+    <figure><img src="./icons/icon-48.png" width="48" height="48" alt=""><figcaption>48</figcaption></figure>
+    <figure><img src="./icons/icon-64.png" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+    <figure><img src="./icons/icon-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
+    <figure><img src="./icons/icon-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
+  </div>
+  <div class="ds-sizes ds-neg">
+    <figure><img src="./icons/icon-neg-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+    <figure><img src="./icons/icon-neg-32.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+    <figure><img src="./icons/icon-neg-48.png" width="48" height="48" alt=""><figcaption>48</figcaption></figure>
+    <figure><img src="./icons/icon-neg-64.png" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+    <figure><img src="./icons/icon-neg-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
+    <figure><img src="./icons/icon-neg-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
+  </div>
+  <div class="ds-sizes">
+    <figure><img src="./icons/stack-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+    <figure><img src="./icons/stack-32.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+    <figure><img src="./icons/stack-48.png" width="48" height="48" alt=""><figcaption>48</figcaption></figure>
+    <figure><img src="./icons/stack-64.png" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+    <figure><img src="./icons/stack-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
+    <figure><img src="./icons/stack-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
+  </div>
+  <div class="ds-sizes ds-neg">
+    <figure><img src="./icons/stack-neg-16.png" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+    <figure><img src="./icons/stack-neg-32.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+    <figure><img src="./icons/stack-neg-48.png" width="48" height="48" alt=""><figcaption>48</figcaption></figure>
+    <figure><img src="./icons/stack-neg-64.png" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+    <figure><img src="./icons/stack-neg-128.png" width="128" height="128" alt=""><figcaption>128</figcaption></figure>
+    <figure><img src="./icons/stack-neg-180.png" width="180" height="180" alt=""><figcaption>180</figcaption></figure>
+  </div>
 </main>
 
 <footer class="site-foot" lang="en">
@@ -500,5 +553,150 @@
   </div></div>
 </footer>
 <script type="module" src="./site.mjs"></script>
+<script type="module">
+const EN = 'estonian centre of contemporary music', ET = 'eesti nüüdismuusika keskus';
+const BLOCK = 298, LEFT = 35, TOP = 29, BOTTOM = 122, GAP = 12, CAP = 0.7, XH = 0.53, EBAR = 73.5, STAVE_END = 345, LH = 0.95;
+// the air after the stave, 18 until 2026-09-27 ("add more space between ECCM and beside wordmark"), and the air between two blocks set side by side
+const BESIDE_GAP = 28;
+// the two sizes, in units of the mark's 310, asked 2026-09-27: 40 under the mark, 37 beside it
+const UNDER = 40, BESIDE = 37;
+// a frame's margin from the ink, the square marks' 28 (asked 2026-09-27: "make versions inside square, 1px black border and white on black bg. for side titles a rectangle")
+const FRAME = 28;
+const NS = 'http://www.w3.org/2000/svg';
+const meter = document.createElementNS(NS, 'svg'); meter.setAttribute('width', '0'); meter.setAttribute('height', '0'); meter.style.position = 'absolute'; document.body.append(meter);
+const mt = document.createElementNS(NS, 'text'); mt.setAttribute('class', 'tag-is'); mt.setAttribute('font-size', '100'); meter.append(mt);
+// the meter takes the class of the text it measures for, so a line is measured in the face and width it is drawn in
+const widthOf = (s, cls = 'tag-is') => { mt.setAttribute('class', cls); mt.textContent = s; return mt.getComputedTextLength(); };
+const split2 = (s) => { const et = s.match(/^(.*nüüdis)(muusika keskus)$/i); if (et) return [et[1] + '-', et[2]]; const w = s.split(' '); let best = null; for (let i = 1; i < w.length; i++) { const a = w.slice(0, i).join(' '), b = w.slice(i).join(' '); const m = Math.max(a.length, b.length); if (!best || m < best.m) best = { a, b, m }; } return [best.a, best.b]; };
+const fitSize = (lines, cls) => 100 * BLOCK / Math.max(...lines.map((l) => widthOf(l, cls)));
+const blockWidth = (lines, size, cls) => Math.max(...lines.map((l) => widthOf(l, cls))) * size / 100;
+// one lockup of one or two languages: layout 'under' or 'beside', a size in units, the svg's width in rem;
+// 'columns' sets two languages side by side rather than one under the other
+// 'above' puts the first language over the mark and the rest under it
+const lockup = (texts, { layout, size, rem, columns = false, above = false, face = 'is' }) => {
+  const cls = 'tag-' + face;
+  const blocks = texts.map(split2);
+  const pitch = LH * size;
+  // from one block's last baseline to the next block's first: the descent, the same air the mark and the first line have, and a cap
+  const air = 0.25 * size + GAP + CAP * size;
+  const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('aria-hidden', 'true');
+  const use = document.createElementNS(NS, 'use'); use.setAttribute('href', '#mark'); use.setAttribute('x', '35'); use.setAttribute('y', '27'); use.setAttribute('width', '310'); use.setAttribute('height', '96.5'); svg.append(use);
+  const placed = []; // [x, baseline, line]
+  const stack = (x, y, list = blocks) => { for (const lines of list) { lines.forEach((l, i) => placed.push([x, y + i * pitch, l])); y += (lines.length - 1) * pitch + air; } };
+  const centred = (lines) => EBAR - (CAP * size + (lines.length - 1) * pitch) / 2 + CAP * size; // the first baseline of a block centred on the E's middle bar
+  let vb;
+  if (layout === 'under') {
+    if (above) {
+      // the air is read at the x-height on both sides: under the mark the 12 units reach the cap line and a lowercase line's
+      // bulk sits (CAP - XH) lower, so over the mark, where the line sits on its baseline, the baseline keeps that much more
+      // (reported 2026-09-27: "estonian needs mor space under it cause typography")
+      const [first, ...rest] = blocks;
+      const y1 = TOP - GAP - (CAP - XH) * size - (first.length - 1) * pitch;
+      first.forEach((l, i) => placed.push([LEFT, y1 + i * pitch, l]));
+      stack(LEFT, BOTTOM + GAP + CAP * size, rest);
+    } else stack(LEFT, BOTTOM + GAP + CAP * size);
+    const top = Math.min(27, Math.min(...placed.map(([, y]) => y)) - CAP * size - 2);
+    vb = [35, top, 310, placed[placed.length - 1][1] + 0.25 * size - top];
+  } else if (columns) {
+    let x = STAVE_END + BESIDE_GAP;
+    for (const lines of blocks) { const y1 = centred(lines); lines.forEach((l, i) => placed.push([x, y1 + i * pitch, l])); x += blockWidth(lines, size, cls) + BESIDE_GAP; }
+  } else {
+    // one block of lines, centred on the E's middle bar
+    stack(STAVE_END + BESIDE_GAP, centred(blocks.flat()));
+  }
+  if (!vb) {
+    const right = Math.max(...placed.map(([x, , l]) => x + widthOf(l, cls) * size / 100));
+    const top = Math.min(27, Math.min(...placed.map(([, y]) => y)) - CAP * size - 2);
+    const bottom = Math.max(123.5, Math.max(...placed.map(([, y]) => y)) + 0.25 * size);
+    vb = [35, top, right - 35, bottom - top];
+  }
+  svg.setAttribute('viewBox', vb.map((v) => +v.toFixed(1)).join(' '));
+  // the mark keeps one width: the svg is as many rem as its viewBox is wide against the mark's 310
+  svg.dataset.w = rem; svg.style.setProperty('--rem', rem + 'rem'); svg.style.setProperty('--k', (vb[2] / 310).toFixed(3));
+  // the lockup sits in the document while its lines are laid, since a detached text measures as zero
+  document.body.append(svg);
+  for (const [x, y, l] of placed) {
+    const t = document.createElementNS(NS, 'text'); t.setAttribute('class', cls); t.setAttribute('font-size', size.toFixed(2)); t.setAttribute('fill', 'currentColor'); t.setAttribute('x', x.toFixed(1)); t.setAttribute('y', y.toFixed(1)); t.setAttribute('text-anchor', 'start');
+    const hy = /-$/.test(l); t.textContent = hy ? l.slice(0, -1) : l; svg.append(t);
+    if (hy) {
+      // from the drawn line itself, so a browser that measures the face at another width still puts the dash after the s
+      const wText = t.getComputedTextLength(), len = size * 0.3, mid = y - XH * 0.5 * size;
+      const dash = document.createElementNS(NS, 'rect'); dash.setAttribute('x', (x + wText + size * 0.08).toFixed(1)); dash.setAttribute('y', (mid - 0.75).toFixed(2)); dash.setAttribute('width', len.toFixed(1)); dash.setAttribute('height', '1.5'); dash.setAttribute('fill', 'currentColor'); svg.append(dash);
+    }
+  }
+  svg.remove();
+  svg.dataset.box = vb.map((v) => +v.toFixed(1)).join(' ');
+  svg.dataset.size = size; svg.dataset.above = above ? '1' : ''; svg.dataset.face = face;
+  return svg;
+};
+// the same lockup in a frame: a square for the under layout, centred on the letters (35 to 333) so the stave reaches 12 units into
+// the margin as in the square marks; a rectangle round the whole ink for the beside layout. 'inv' draws it white on black
+// 'plain' gives the lockup the frame's box with no line round it, so the three of a set sit on one y (asked 2026-09-28: "similar samples: equal paddings just first has invisible border")
+const framed = (svg, { square, inv, plain = false }) => {
+  const f = svg.cloneNode(true);
+  const [x, y, w, h] = svg.dataset.box.split(' ').map(Number);
+  const ink = square ? { x: 35, y, w: 298, h } : { x, y, w, h };
+  const fw = square ? Math.max(ink.w, ink.h) + 2 * FRAME : ink.w + 2 * FRAME;
+  const fh = square ? fw : ink.h + 2 * FRAME;
+  const spread = square && svg.dataset.above;
+  // a square with a language over the mark and one under it is centred on the letters, and the two languages sit at the
+  // margin, 28 units from the edge as the letters are at the sides (asked 2026-09-27: "in square move eng up and est down
+  // so they have same y padding as they have x padding"); any other frame is centred on the lockup's box
+  const fy = spread ? (TOP + BOTTOM) / 2 - fh / 2 : ink.y + ink.h / 2 - fh / 2;
+  const box = [ink.x + ink.w / 2 - fw / 2, fy, fw, fh].map((v) => +v.toFixed(1));
+  if (spread) {
+    const size = +svg.dataset.size, runs = [...f.querySelectorAll('text, rect')].map((el) => [el, +el.getAttribute('y')]);
+    const over = runs.filter(([, yy]) => yy < TOP), under = runs.filter(([, yy]) => yy > BOTTOM);
+    const capTop = Math.min(...over.filter(([el]) => el.tagName === 'text').map(([, yy]) => yy)) - CAP * size;
+    const descent = Math.max(...under.filter(([el]) => el.tagName === 'text').map(([, yy]) => yy)) + 0.25 * size;
+    const up = capTop - (fy + FRAME), down = (fy + fh - FRAME) - descent;
+    for (const [el, yy] of over) el.setAttribute('y', (yy - up).toFixed(1));
+    for (const [el, yy] of under) el.setAttribute('y', (yy + down).toFixed(1));
+  }
+  f.setAttribute('viewBox', box.join(' ')); f.dataset.box = box.join(' ');
+  f.style.setProperty('--k', (fw / 310).toFixed(3));
+  f.classList.add(inv ? 'inv' : plain ? 'plain' : 'frame');
+  return f;
+};
+// a cell: a caption, then each set of languages at 20rem and 11rem, each plain, in a frame, and white on black; 'frames: false' keeps the plain one alone
+const cellOf = (id, capText, opts, sets, { frames = true } = {}) => {
+  const cell = document.createElement('div'); cell.className = 'cell'; cell.id = id;
+  const p = document.createElement('p'); p.className = 'cap'; p.textContent = capText;
+  const locks = document.createElement('div'); locks.className = 'locks';
+  const square = opts.layout === 'under', shape = square ? 'square' : 'rectangle';
+  const fig = (svg, text) => { const f = document.createElement('figure'); const fc = document.createElement('figcaption'); fc.textContent = text; f.append(svg, fc); locks.append(f); };
+  for (const set of sets) for (const rem of [11]) {
+    const svg = lockup(Array.isArray(set) ? set : set.texts, { ...opts, ...(Array.isArray(set) ? {} : set.opts), rem });
+    fig(framed(svg, { square, plain: true }), 'Black on white');
+    if (!frames) continue;
+    fig(framed(svg, { square, inv: true }), 'White on black');
+  }
+  cell.append(p, locks); return cell;
+};
+const draw = async () => {
+  // every face at once, and a face that fails to load leaves the page drawing in its fallback rather than not drawing
+  await document.fonts.load('500 100px "Instrument Sans"');
+  const cells = document.getElementById('wm-cells'); cells.replaceChildren();
+  const enFit = fitSize(split2(EN)), etFit = fitSize(split2(ET));
+  const px = (s) => `${s.toFixed(1)} units, ${(s * 176 / 310).toFixed(1)} px at 11rem`;
+  const section = (title) => { const h2 = document.createElement('h3'); h2.textContent = title; cells.append(h2); };
+  const ONE = [[EN], [ET]], BOTH = [[EN, ET]];
+  section('Under the mark');
+  cells.append(cellOf('under', `${px(UNDER)}, line height ${LH}: one language under the mark, then the English over the mark and the Estonian under it with the same air`, { layout: 'under', size: UNDER }, [[EN], [ET], { texts: [EN, ET], opts: { above: true } }]));
+  section('Beside the mark');
+  cells.append(cellOf('beside', `${px(BESIDE)}, line height ${LH}, 28 units after the stave, centred on the E's middle bar: one language, then both side by side 28 units apart`, { layout: 'beside', size: BESIDE, columns: true }, [[EN], [ET], [EN, ET]]));
+  // every 20rem lockup's box, in units, and the widest line of each language at each size against the letters' 298
+  const boxes = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="11"]:not(.frame):not(.inv)')].map((v) => v.dataset.box)]));
+  // in each bilingual square at 20rem, the air over the top language and under the bottom one, in units
+  const margins = Object.fromEntries([...cells.querySelectorAll('.cell')].filter((c) => c.querySelector('svg[data-above="1"]')).map((c) => {
+    const f = c.querySelector('svg[data-w="11"].plain'); const [, fy, , fh] = f.dataset.box.split(' ').map(Number); const size = +f.dataset.size;
+    const ys = [...f.querySelectorAll('text')].map((t) => +t.getAttribute('y'));
+    return [c.id, [+(Math.min(...ys) - CAP * size - fy).toFixed(1), +(fy + fh - Math.max(...ys) - 0.25 * size).toFixed(1)]];
+  }));
+  const frames = Object.fromEntries([...cells.querySelectorAll('.cell')].map((c) => [c.id, [...c.querySelectorAll('svg[data-w="11"].plain')].map((v) => v.dataset.box)]));
+  window.__wordmark = { count: cells.querySelectorAll('.cell').length, under: UNDER, beside: BESIDE, gap: BESIDE_GAP, enFit: +enFit.toFixed(1), etFit: +etFit.toFixed(1), enUnder: +blockWidth(split2(EN), UNDER).toFixed(1), etUnder: +blockWidth(split2(ET), UNDER).toFixed(1), enBeside: +blockWidth(split2(EN), BESIDE).toFixed(1), etBeside: +blockWidth(split2(ET), BESIDE).toFixed(1), boxes, frames, margins, instrument: document.fonts.check('500 100px "Instrument Sans"') };
+};
+draw();
+</script>
 </body>
 </html>

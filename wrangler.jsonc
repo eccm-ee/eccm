@@ -23,8 +23,8 @@
     "not_found_handling": "none",
     // the site's own files from inside the Worker: the share card's picture layout reads a seeded picture through it
     "binding": "ASSETS",
-    // the three design pages go to the Worker first, which serves them through ASSETS only to a logged-in editor (src/auth.mjs)
-    "run_worker_first": ["/ds", "/ds.html", "/logo", "/logo.html", "/social", "/social.html"]
+    // the design page, /ui, goes to the Worker first, which serves them through ASSETS only to a logged-in editor (src/auth.mjs)
+    "run_worker_first": ["/ui", "/ui.html"]
   },
   "observability": { "enabled": true },
   // the share images' faces (src/og/render.mjs), bundled as bytes; the

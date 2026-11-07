@@ -167,8 +167,10 @@ const routes = {
     if (p === '/login') return login(request, env, url);
     if (p === '/logout') return logout();
     if (isProtected(p)) { const out = await gate(request, env, url); if (out) return out; }
-    // /ds, /logo and /social are files under public/, sent here first by assets.run_worker_first so the gate sees them
+    // /ui is a file under public/, sent here first by assets.run_worker_first so the gate sees it
     if (isStatic(p)) return env.ASSETS.fetch(request);
+    // the design pages before 2026-11-07: /ds and /logo are /ui now, /social went (each event's cards are under its page)
+    { const old = { '/ds': '/ui', '/ds.html': '/ui', '/logo': '/ui#logo', '/logo.html': '/ui#logo', '/social': '/admin', '/social.html': '/admin' }[p.replace(/(.)\/$/, '$1')]; if (old) return new Response(null, { status: 301, headers: { location: old } }); }
     // eccm.ee's old Joomla addresses: 301, 410, or the 404 with the miss logged (src/redirects.mjs)
     { const out = await legacy(request, env, url, ctx); if (out) return out; }
     // the radio1965 recordings, /radio1965/streams/*, from v2in.stream (src/passthrough.mjs)

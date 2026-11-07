@@ -76,7 +76,7 @@ npx wrangler secret put EDITOR_KEY --env production   # paste the key printed ab
 To change it, put a new one the same way: every browser is logged out and
 needs the new key.
 
-Behind the login: `/admin`, `/edit`, `/ds`, `/logo` and `/social`. Everything else is public.
+Behind the login: `/admin`, `/edit` and `/ui`. Everything else is public.
 
 ## Editing
 
@@ -93,7 +93,7 @@ Behind the login: `/admin`, `/edit`, `/ds`, `/logo` and `/social`. Everything el
 - **Pictures** are uploaded in the edit form and resized by Cloudflare on the
   way to visitors.
 - **`/admin`** links to everything else: the events, a new event, the
-  newsletter, and the design pages (`/ds`, `/logo`, `/social`).
+  newsletter, and the design page (`/ui`, the components and the logo).
 
 ## Newsletter
 

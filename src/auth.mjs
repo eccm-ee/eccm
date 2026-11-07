@@ -17,7 +17,7 @@
 // key drawn from the 60-bit EDITOR_KEY alone would let whoever holds one
 // cookie test guesses offline, past the ten an hour.
 //
-// Behind it: /admin, /edit, and the static /ds, /logo and /social, which assets.run_worker_first sends
+// Behind it: /admin, /edit, and the static /ui, which assets.run_worker_first sends
 // here first. A GET without a session goes to /login?next=..., anything else
 // is 401.
 import { renderLogin } from './render/login.mjs';
@@ -38,7 +38,7 @@ const sha256 = (s) => crypto.subtle.digest('SHA-256', enc.encode(s));
 const ready = (env) => !!(env.EDITOR_KEY && env.SESSION_SECRET);
 
 // the protected paths, by the path with its trailing slash dropped
-const STATIC = ['/ds', '/ds.html', '/logo', '/logo.html', '/social', '/social.html'];
+const STATIC = ['/ui', '/ui.html'];
 export const isStatic = (p) => STATIC.includes(p.replace(/\/$/, ''));
 export const isProtected = (path) => {
   const p = path.replace(/\/$/, '') || '/';
