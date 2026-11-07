@@ -423,7 +423,7 @@ eccm.ee is ECCM's (registry code 80603988) until 18.03.2027. Registrar, DNS, hos
 
 **Who:** ECCM. **State:** ask.
 
-**Ask ECCM:** who holds the Virtuaal login (registrar, cPanel and mail are probably one account).
+**Ask ECCM:** who holds the Virtuaal login (registrar, cPanel and mail are probably one account). Answered 7 November 2026: the owner has ECCM's Virtuaal client account (MTÜ Eesti Nüüdismuusika Keskus), which holds eccm.ee and also v2in.stream.
 
 The old hosting can hold files nobody links to, and the archive's best source is Joomla's database. Neither is visible from outside.
 
@@ -433,7 +433,7 @@ The old hosting can hold files nobody links to, and the archive's best source is
 
 ### Move the DNS to Cloudflare
 
-**Who:** ECCM. **State:** to do.
+**Who:** ECCM, or the owner in their Virtuaal and Cloudflare accounts. **State:** to do. On 7 November 2026 eccm.ee's nameservers at Virtuaal are `ns1.virtuaal.com`, `ns2.virtuaal.com` and `ns3.virtuaal.com`, nothing changed yet. Production already runs at https://eccm.eccm.workers.dev/, so nothing waits on the site.
 
 DMARC is set to reject, so one wrong mail record bounces everything. Every record is recreated by hand, unproxied (grey cloud: the name points straight at Virtuaal and Cloudflare stays out of the way).
 
@@ -442,7 +442,7 @@ DMARC is set to reject, so one wrong mail record bounces everything. Every recor
 3. Add eccm.ee to ECCM's Cloudflare account on the Free plan.
 4. Recreate every record, grey cloud, still pointing at Virtuaal. Copy the DKIM key as one exact string.
 5. Compare: `dig +short MX eccm.ee @<cloudflare-ns>` and the same for each record against Virtuaal's answers.
-6. In Virtuaal's registrar panel, change the nameservers to the two Cloudflare names.
+6. In Virtuaal's client area, Domeenid, eccm.ee, Nimeserverid: keep "Kasuta võõraid nimeservereid", put the two Cloudflare names in Nimeserver 1 and 2, empty 3, and Muuda nimeserverid. Virtuaal says up to 24 hours. Only after step 5 matches: a missing mail record bounces every mail, since DMARC is reject.
 7. Check that mail still arrives and leaves. The site has not changed.
 
 ### Cutover
