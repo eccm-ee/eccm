@@ -491,6 +491,16 @@ To know:
 
 1. Once the mail has run through Cloudflare for two weeks, cancel the Joomla hosting at Virtuaal (next renewal 27.01.2027), keeping the domain registration (renews 08.03.2027). The `mail`, `webmail` and cPanel names in DNS go with it.
 
+### Before cancelling Virtuaal
+
+**Who:** the owner, from ECCM's cPanel. **State:** to do. What still lives in the Joomla hosting besides the site, the DNS and the mail; Tarmo's ties to eccm.ee are v2in's plan.
+
+1. The full cPanel backup ([Take a full backup first](#take-a-full-backup-first)): the file list of `public_html` goes to the developer, who marks the files old pages still link to (PDFs, press kits, article images, folders nobody remembers); the Joomla database dump is the archive.
+2. The zone export: every record, subdomains and verification records included, recreated in the DNS move.
+3. Google Search Console: how eccm.ee is verified. An HTML file or meta tag on the Joomla site breaks at the cutover; a DNS TXT record (a Domain property) survives it.
+4. cPanel cron jobs and mail forwarders: each forwarder becomes an Email Routing rule.
+5. v2in.stream is in the same Virtuaal account and stays.
+
 ### A preview address first?
 
 Not needed: the current site is a test too. If wanted, uus.eccm.ee can work before the zone move through [Cloudflare for SaaS](https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/) on positron.studio, with one CNAME at Virtuaal.
