@@ -30,7 +30,10 @@ export function recordView(request, env, url, res) {
   const ua = request.headers.get('user-agent') || '';
   if (!ua || BOT.test(ua) || request.cf?.verifiedBotCategory) return;
   let from = '';
-  try { const r = new URL(request.headers.get('referer') || ''); if (r.hostname !== url.hostname) from = r.hostname.replace(/^www\./, ''); } catch {}
+  // a newsletter's link says which issue it came from (src/render/mail.mjs), since mail apps send no referer
+  const tagged = url.searchParams.get('from');
+  if (tagged && /^uudiskiri-\d+$/.test(tagged)) from = tagged;
+  else try { const r = new URL(request.headers.get('referer') || ''); if (r.hostname !== url.hostname) from = r.hostname.replace(/^www\./, ''); } catch {}
   const lang = p.startsWith('/en') ? 'en' : 'et';
   try { env.VIEWS.writeDataPoint({ blobs: [p.slice(0, 200), from.slice(0, 100), String(request.cf?.country || ''), lang, 'page'], doubles: [1, 0], indexes: [lang] }); } catch {}
 }

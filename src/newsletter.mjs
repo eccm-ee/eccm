@@ -111,7 +111,7 @@ async function leave(request, env, url, tok) {
 // ── the editor ───────────────────────────────────────────────────────────
 // a sent issue's web page is its slug; a draft's, which a test letter links, is its preview
 const webFor = (issue, origin) => `${origin}${NL[issue.lang]}/${issue.status === 'sent' && issue.slug ? issue.slug : `eelvaade/${issue.id}`}`;
-const mailFor = (issue, origin, unsub = `${origin}/uudiskiri/lahku/test`) => renderIssueMail(issue, { web: webFor(issue, origin), unsub });
+const mailFor = (issue, origin, unsub = `${origin}/uudiskiri/lahku/test`) => renderIssueMail(issue, { web: webFor(issue, origin), unsub, origin });
 
 async function issuePage(request, env, url, ctx, id) {
   const issue = await env.DB.prepare('SELECT * FROM issue WHERE id = ?').bind(id).first();

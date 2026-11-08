@@ -41,3 +41,6 @@ document.addEventListener('click', (e) => {
   f.allowFullscreen = true;
   box.replaceChildren(f);
 });
+// a newsletter's link carries ?from=uudiskiri-{n} for the stats (src/stats.mjs); once the page has loaded it is
+// taken out of the address, so a reader who shares the page does not pass it on
+try { const u = new URL(location.href); if (u.searchParams.has('from')) { u.searchParams.delete('from'); history.replaceState(null, '', u.pathname + u.search + u.hash); } } catch {}

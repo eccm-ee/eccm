@@ -56,8 +56,27 @@ export const toText = (src) => String(src ?? '')
   .replace(/^#{1,3}\s+(.+)$/gm, (_, h) => h.toUpperCase())
   .trim();
 
-// one issue as { html, text }; web is the archive page, unsub this recipient's link
-export function renderIssueMail(issue, { web, unsub }) {
+// every link to the site itself carries ?from=uudiskiri-{issue id}, the same for every reader, so /admin/stats
+// can say how many readers each issue brought (asked 2026-11-08, "Do we have analytics for newsletters?", then
+// "No empty pixel scams"): no pixel, no redirect, nothing per person; links elsewhere and the leave link are left as they are
+const tagLinks = (s, origin, tag) => {
+  let host = ''; try { host = new URL(origin).host; } catch { return s; }
+  return s.replace(/https?:\/\/[^\s"'<>)]+/g, (u) => {
+    try { const x = new URL(u.replace(/&amp;/g, '&')); if (x.host !== host || x.searchParams.has('from')) return u; x.searchParams.set('from', tag); return u.includes('&amp;') ? x.href.replace(/&/g, '&amp;') : x.href; } catch { return u; }
+  });
+};
+
+// one issue as { html, text }; web is the archive page, unsub this recipient's link, origin the site's own
+export function renderIssueMail(issue, { web, unsub, origin = '' }) {
+  const tag = `uudiskiri-${issue.id}`;
+  const out = renderUntagged(issue, { web: origin ? tagLinks(web, origin, tag) : web, unsub });
+  if (!origin) return out;
+  // the leave link is put back untouched after the body's links are tagged
+  const keep = (s) => s.split(unsub).map((part) => tagLinks(part, origin, tag)).join(unsub);
+  return { html: keep(out.html), text: keep(out.text) };
+}
+
+function renderUntagged(issue, { web, unsub }) {
   const t = L[issue.lang];
   const pre = toText(issue.body).replace(/\s+/g, ' ').slice(0, 110);
   const foot = (c) => `<a href="${esc(web)}" style="color:${c}">${t.web}</a>&nbsp;&nbsp;&nbsp;<a href="${esc(unsub)}" style="color:${c}">${t.leave}</a>`;
