@@ -266,7 +266,8 @@
   /* the logos at the end are partner rows since 2026-11-07 ("footer logos should use same system"), each
      the black-and-white file under the theme's invert (src/render/partners.mjs footerPartners); a logo with
      no hand-set rule below is 2.5rem tall at its own width, and more than fit wrap as a cluster */
-  .site-foot .end { justify-self: end; display: flex; flex-wrap: wrap; align-items: center; gap: var(--eccm-s-8); }
+  /* the cluster on the footer's top line, the logos centred on one another (asked 2026-11-08: "align logos to top in footer, centered towards each other") */
+  .site-foot .end { justify-self: end; align-self: start; display: flex; flex-wrap: wrap; align-items: center; gap: var(--eccm-s-8); }
   .site-foot .partner { display: block; }
   .site-foot .partner img { display: block; block-size: 2.5rem; inline-size: auto; max-inline-size: 10rem; object-fit: contain; filter: var(--eccm-mark-filter); }
   /* the two seeded marks keep their hand-set sizes, named by partner.slug */

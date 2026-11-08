@@ -24,13 +24,13 @@ export const useFooter = (rows) => { FOOT = rows; };
 // Events first, then each page under its menu words or its title, at its slug in this language or the other's
 let NAV = null;
 export const useNav = (rows) => { NAV = rows; };
-const navItems = (lang) => [[lang === 'et' ? '/' : '/en/', T[lang].events]].concat(NAV.map((p) => [`/${lang}/${p[`slug_${lang}`] || p[`slug_${OTHER[lang]}`]}`, p[`menu_title_${lang}`] || p[`title_${lang}`] || p[`title_${OTHER[lang]}`]]));
-const navLis = (lang) => navItems(lang).map(([href, label]) => `<li><a href="${esc(href)}">${esc(label)}</a></li>`).join('');
-const header = (lang) => (NAV ? HEADER[lang].replace(/(<ul class="nav">)[\s\S]*?(<li class="lang-in">)/, (m, a, b) => a + navLis(lang) + b) : HEADER[lang]);
+const navItems = (lang, rows) => [[lang === 'et' ? '/' : '/en/', T[lang].events]].concat(rows.map((p) => [`/${lang}/${p[`slug_${lang}`] || p[`slug_${OTHER[lang]}`]}`, p[`menu_title_${lang}`] || p[`title_${lang}`] || p[`title_${OTHER[lang]}`]]));
+const navLis = (lang, rows) => navItems(lang, rows).map(([href, label]) => `<li><a href="${esc(href)}">${esc(label)}</a></li>`).join('');
+const header = (lang) => (NAV ? HEADER[lang].replace(/(<ul class="nav">)[\s\S]*?(<li class="lang-in">)/, (m, a, b) => a + navLis(lang, NAV.head) + b) : HEADER[lang]);
 const footer = (lang) => {
   let f = FOOT ? FOOTER[lang].replace(/<div class="end">[\s\S]*?<\/div>\n  <\/div><\/div>/, () => `${footerPartners(FOOT, lang)}\n  </div></div>`) : FOOTER[lang];
-  // the footer's list of links is the menu's
-  if (NAV) f = f.replace(/(<ul class="two">)[\s\S]*?(<\/ul>)/, (m, a, b) => a + navLis(lang) + b);
+  // the footer's list of links, chosen apart from the header's since 2026-11-08
+  if (NAV) f = f.replace(/(<ul class="two">)[\s\S]*?(<\/ul>)/, (m, a, b) => a + navLis(lang, NAV.foot) + b);
   return f;
 };
 // every page that names no share image of its own names the site's card, the

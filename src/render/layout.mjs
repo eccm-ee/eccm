@@ -13,16 +13,25 @@ const row = (p) => html`<li class="menu-pick">
         </span>
       </li>`;
 
+// the footer's links: a tick per page, under the words the header uses (asked 2026-11-08: "layout / header menu /
+// footer menu / footer logos")
+const footRow = (p) => html`<li class="menu-pick"><label class="menu-tick"><input type="checkbox" name="footmenu" value="${p.id}"${p.in_footer_menu ? raw(' checked') : ''}> ${p.title_et || p.title_en}${p.status !== 'published' ? html` <span class="pick-lang">Draft</span>` : ''}</label></li>`;
+
 export const layoutPage = ({ pages, partners, footer, saved }) => page({ wide: true, lang: 'en', title: 'Layout.', body: html`  <h1>Layout</h1>
   ${saved ? html`<p class="note" role="status">Saved. Every page shows it within a minute.</p>` : ''}
   <form class="form form-wide" method="post" action="/edit/layout">
-    <h2>Menu</h2>
-    <p class="hint">Events comes first, then every ticked page. The menu shows its words in Estonian and in English, or the page’s title when they are empty.</p>
+    <h2>Header menu</h2>
+    <p class="hint">Events comes first, then every ticked page. A page shows under its words in Estonian and in English, or its title when they are empty; the footer menu uses the same words.</p>
     <div class="menu-head" aria-hidden="true"><span>Page</span><span>Estonian</span><span>English</span></div>
     <ul class="menu-picks">
       ${pages.map(row)}
     </ul>
-    <h2>Footer</h2>
+    <h2>Footer menu</h2>
+    <p class="hint">Events comes first, then every ticked page.</p>
+    <ul class="menu-picks">
+      ${pages.map(footRow)}
+    </ul>
+    <h2>Footer logos</h2>
     <div class="picker-bw">
       ${partnerPicker({ partners, selected: footer, name: 'footer', version: null, label: 'Logos', hint: 'Tick every logo the footer shows, drawn in black and white. A logo for one language shows only on that language’s pages.' })}
     </div>
