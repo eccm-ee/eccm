@@ -329,13 +329,16 @@
      lines under 4.5 : 1 (eccm-ui §2, every pair computed against white) */
   .events-drafts .ev-title, .events-drafts .ev-summary { color: var(--eccm-ink-2); }
   .events-drafts .ev-pic { opacity: 0.5; }
-  /* /admin/stats (asked 2026-11-08: "A sinple web stats to admin page?"): views per day as bars in the ink, each
-     its day under it and its count over it, the tallest the row's full 8rem; on a phone the row scrolls */
-  .stats-days { list-style: none; margin: 0 0 var(--eccm-s-12); padding: 0; display: flex; align-items: end; gap: 2px; block-size: 11rem; overflow-x: auto; }
-  .stats-days li { flex: 1 0 1.25rem; display: grid; grid-template-rows: 1fr auto auto; justify-items: center; block-size: 100%; font-size: 0.6875rem; line-height: 1.2; color: var(--eccm-ink-2); font-variant-numeric: tabular-nums; }
-  .stats-bar { align-self: end; inline-size: 100%; block-size: calc(var(--h) * 8rem); min-block-size: 1px; background: var(--eccm-ink); order: 2; }
-  .stats-n { order: 1; align-self: end; }
-  .stats-d { order: 3; }
+  /* /admin/stats (asked 2026-11-08: "A sinple web stats to admin page?"): the last 90 days a thin column each, the bar
+     in the ink, a date under each first of the month ("show 3 months or smth and simle bars"); each list a section with the Logos
+     page's heading air ("vert spacing is a mess, no whitespace") */
+  .stats h2 { font-size: var(--eccm-t-l); margin-block: var(--eccm-s-16) var(--eccm-s-6); }
+  .stats .note + .stats-days { margin-block-start: var(--eccm-s-8); }
+  .stats-days { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(90, minmax(0, 1fr)); column-gap: clamp(1px, 0.15vw, 2px); align-items: end; block-size: 9rem; }
+  .stats-days li { display: grid; grid-template-rows: 1fr 1.25rem; align-items: end; block-size: 100%; min-inline-size: 0; }
+  .stats-bar { block-size: calc(var(--h) * 7.5rem); min-block-size: 1px; background: var(--eccm-ink); }
+  .stats-d { align-self: start; padding-block-start: var(--eccm-s-1); font-size: 0.6875rem; line-height: 1; color: var(--eccm-ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .stats .table + .note { margin-block-start: var(--eccm-s-6); }
 
   /* ── the event page and the edit form, HTML only ─────────────────────────── */
   /* a crumb above a title: the page this one came from, small, in the muted ink */

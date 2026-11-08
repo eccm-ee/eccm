@@ -51,7 +51,7 @@ const HEAD = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-
 export async function stats(request, env) {
   const ds = env.STATS_DATASET;
   if (!env.STATS_TOKEN || !env.STATS_ACCOUNT || !ds) return new Response(String(renderStats({ missing: true })), { headers: HEAD });
-  const since = "timestamp > NOW() - INTERVAL '30' DAY AND blob5 = 'page'";
+  const since = "timestamp > NOW() - INTERVAL '90' DAY AND blob5 = 'page'";
   const top = (blob, extra = '') => `SELECT ${blob} AS k, SUM(_sample_interval) AS n FROM ${ds} WHERE ${since}${extra} GROUP BY k ORDER BY n DESC LIMIT 20`;
   try {
     const [days, pages, from, countries, feeds] = await Promise.all([
@@ -60,7 +60,7 @@ export async function stats(request, env) {
       sql(env, top('blob2', " AND blob2 != ''")),
       sql(env, top('blob3', " AND blob3 != ''")),
       // each feed and calendar: its fetches, and per reader the most subscribers it reported in the period
-      sql(env, `SELECT blob1 AS path, blob2 AS who, SUM(_sample_interval) AS n, MAX(double2) AS subs FROM ${ds} WHERE timestamp > NOW() - INTERVAL '30' DAY AND blob5 = 'feed' GROUP BY path, who ORDER BY n DESC LIMIT 30`),
+      sql(env, `SELECT blob1 AS path, blob2 AS who, SUM(_sample_interval) AS n, MAX(double2) AS subs FROM ${ds} WHERE timestamp > NOW() - INTERVAL '90' DAY AND blob5 = 'feed' GROUP BY path, who ORDER BY n DESC LIMIT 30`),
     ]);
     return new Response(String(renderStats({ days, pages, from, countries, feeds })), { headers: HEAD });
   } catch (e) {
