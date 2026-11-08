@@ -256,8 +256,6 @@
   .site-foot .mk { display: block; color: var(--eccm-ink); }
   .site-foot .mk svg { display: block; inline-size: 6rem; }
   .site-foot .copy { margin-block-start: var(--eccm-s-6); }
-  /* the privacy link a line of its own under the registry code, one empty line above it (asked 2026-11-08: "One line before andmekaitsetingimused") */
-  .site-foot .privacy { margin-block-start: 1lh; }
   .site-foot .theme { margin-block-start: var(--eccm-s-3); }
   /* four content columns and the partner mark: the mark and the copyright, the menu in two, the two
      addresses, and the phone with the three links, which got their own column 2026-09-29 (asked as
