@@ -36,8 +36,9 @@ const euEmblem = (lang) => html`<p class="eu-emblem">${['', '-neg'].map((v) => h
 // is true, in the other one; twin: { lang, slug } of the other language's row
 // when it exists, which in the fallback case is the row shown; editHref:
 // where the edit button goes, the row's own editor page unless the caller
-// says otherwise (a preview of an unsaved page); notice: chrome.mjs
-export const renderPage = ({ lang, text, fallback, twin, origin, path, notice, editHref }) => {
+// says otherwise (a preview of an unsaved page); notice: chrome.mjs; editor: a logged-in editor is looking,
+// the only one shown the edit button, as on an event (src/render/event.mjs)
+export const renderPage = ({ lang, text, fallback, twin, origin, path, notice, editHref, editor = false }) => {
   const t = T[lang];
   const textLang = fallback ? text.lang : lang;
   const alternate = { lang: OTHER[lang], href: pagePath(OTHER[lang], twin ? twin.slug : text.slug) };
@@ -54,7 +55,7 @@ export const renderPage = ({ lang, text, fallback, twin, origin, path, notice, e
         ${fallback ? html`<p class="small">${t.fallback}</p>` : ''}
         <h1 lang="${textLang}">${text.title}</h1>
         <p class="event-actions">
-          <a class="btn" href="${editHref || `/edit/pages/${text.page_id}`}">${t.edit}</a>
+          ${editor ? html`<a class="btn" href="${editHref || `/edit/pages/${text.page_id}`}">${t.edit}</a>` : ''}
         </p>
       </div>
     </header>

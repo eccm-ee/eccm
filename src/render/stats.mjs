@@ -9,15 +9,21 @@ const num = (n) => Math.round(Number(n) || 0).toLocaleString('en').replace(/,/g,
 // whole row (reported 2026-11-08: "what is black box???", then "show 3 months or smth and simle bars"); a date
 // under the first of each month only
 const DAYS = 90;
+// the month under its first day as "1 Oct" (asked 2026-11-08: "1 Oct   1 Nov etc")
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const span = (rows) => {
   const by = new Map(rows.map((r) => [String(r.day).slice(0, 10), Number(r.n || 0)]));
   return Array.from({ length: DAYS }, (_, i) => {
     const t = new Date(Date.now() - (DAYS - 1 - i) * 864e5), key = t.toISOString().slice(0, 10);
-    return { key, label: `${t.getUTCDate()}.${t.getUTCMonth() + 1}`, n: by.get(key) || 0, first: t.getUTCDate() === 1 };
+    return { key, label: `${t.getUTCDate()} ${MON[t.getUTCMonth()]}`, n: by.get(key) || 0, first: t.getUTCDate() === 1 };
   });
 };
 const list = (label, head, rows) => html`<h2>${label}</h2>
   ${rows.length ? table({ label, cols: [{ label: head, cls: 'main' }, { label: 'Views', cls: 'num' }], rows: rows.map((r) => [r.k, num(r.n)]) }) : html`<p class="note">None yet.</p>`}`;
+
+// the RSS feeds and the calendars apart (asked 2026-11-08: "Feeds and calendars - split."), each fetch with its reader
+const readers = (label, head, rows) => html`<h2>${label}</h2>
+  ${rows.length ? table({ label, cols: [{ label: head, cls: '' }, { label: 'Reader', cls: 'main' }, { label: 'Fetches', cls: 'num' }, { label: 'Subscribers', cls: 'num' }], rows: rows.map((r) => [r.path, r.who || 'Unknown', num(r.n), Number(r.subs) ? num(r.subs) : '']) }) : html`<p class="note">None yet.</p>`}`;
 
 export const renderStats = ({ days = [], pages = [], from = [], countries = [], feeds = [], missing = false, error = '' }) => {
   const total = days.reduce((s, d) => s + Number(d.n || 0), 0);
@@ -37,8 +43,7 @@ export const renderStats = ({ days = [], pages = [], from = [], countries = [], 
   ${list('Pages', 'Page', pages)}
   ${list('Came from', 'Site', from)}
   ${list('Countries', 'Country', countries)}
-  <h2>Feeds and calendars</h2>
-  ${feeds.length ? table({ label: 'Feeds and calendars', cols: [{ label: 'Feed', cls: '' }, { label: 'Reader', cls: 'main' }, { label: 'Fetches', cls: 'num' }, { label: 'Subscribers', cls: 'num' }], rows: feeds.map((r) => [r.path, r.who || 'Unknown', num(r.n), Number(r.subs) ? num(r.subs) : '']) }) : html`<p class="note">None yet.</p>`}
-  <p class="note">A reader like Feedly fetches for all its subscribers at once and says how many it serves; one that does not say counts as its fetches.</p>`;
+  ${readers('Feeds', 'Feed', feeds.filter((r) => r.path.endsWith('.xml')))}
+  ${readers('Calendars', 'Calendar', feeds.filter((r) => r.path.endsWith('.ics')))}`;
   return page({ wide: true, lang: 'en', title: 'Stats.', body: html`<div class="stats">${body}</div>` });
 };

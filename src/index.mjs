@@ -100,7 +100,7 @@ async function eventsList(env, lang, url, home = false) {
 // a text page by (lang, slug), the same query shape as an event's: the text
 // row joined to its published page row; with no row in this language, the
 // other language's row under this language's chrome and the fallback line
-async function textPage(env, lang, slug, url) {
+async function textPage(env, lang, slug, url, editor = false) {
   const db = env.DB;
   const q = "SELECT t.*, p.key AS page_key FROM page_text t JOIN page p ON p.id = t.page_id WHERE t.lang = ? AND t.slug = ? AND p.status = 'published'";
   let text = await db.prepare(q).bind(lang, slug).first();
@@ -108,7 +108,7 @@ async function textPage(env, lang, slug, url) {
   if (!text) { text = await db.prepare(q).bind(OTHER[lang], slug).first(); fallback = !!text; }
   if (!text) return null;
   const twin = await db.prepare('SELECT lang, slug FROM page_text WHERE page_id = ? AND lang = ?').bind(text.page_id, OTHER[lang]).first();
-  return renderPage({ lang, text, fallback, twin, origin: origin(), path: url.pathname });
+  return renderPage({ lang, text, fallback, twin, origin: origin(), path: url.pathname, editor });
 }
 
 // an event's or a language's calendar; the rows are the list's query, one event or the window
@@ -210,7 +210,7 @@ const routes = {
     // the contact form, /et/kontakt and /en/contact (src/contact.mjs), since 2026-10-07; before the text pages, whose pattern it matches
     if (CONTACT_PATHS.includes(p.replace(/\/$/, ''))) return contact(request, env, url, ctx);
     const pm = PAGE.exec(p);
-    if (pm) { const out = await textPage(env, pm[1], pm[2], url); if (out) return reply(out); }
+    if (pm) { const editor = await loggedIn(request, env); const out = await textPage(env, pm[1], pm[2], url, editor); if (out) return replyFor(out, editor); }
     // the notices to phones (/items, /teated/{n}, /en/notices/{n}, the Items Durable Object and Web Push) went 2026-11-06 (archive/notices.md)
     // the tools, one card each (src/render/admin.mjs), since 2026-10-01
     // /docs, the migration plan and the presence notes drawn from Markdown, went 2026-11-06; the plan is plans/plan-eccm-migration.md

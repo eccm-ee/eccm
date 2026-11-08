@@ -206,6 +206,14 @@
      the markup and the attribute the head script set shows one, so the right word is there on first paint */
   .theme-btn { padding: 0; margin: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .theme-btn:hover { text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+  /* a moon in place of the words Auto, Light and Dark (asked 2026-11-08: "rename dark / auto / light to moon
+     icon"), the words kept for a screen reader: outlined in the second ink on Auto, outlined in the ink on
+     Light, filled on Dark, the same three steps a click goes through */
+  .theme-btn { display: inline-flex; padding: var(--eccm-s-1); margin: calc(var(--eccm-s-1) * -1); }
+  .theme-btn:hover { text-decoration-line: none; }
+  .theme-btn > .ico { inline-size: 1.25rem; block-size: 1.25rem; color: var(--eccm-ink-2); }
+  :root[data-theme] .theme-btn > .ico { color: var(--eccm-ink); }
+  :root[data-theme="dark"] .theme-btn > .ico { fill: currentColor; }
   .theme-btn > [data-t] { display: none; }
   :root:not([data-theme]) .theme-btn > [data-t="auto"], :root[data-theme="light"] .theme-btn > [data-t="light"], :root[data-theme="dark"] .theme-btn > [data-t="dark"] { display: inline; }
   /* the phone menu button: three 1px lines in a 3rem box (asked 2026-09-28:
