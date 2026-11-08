@@ -400,7 +400,7 @@ What the throwaway deploy found:
 **Who:** ECCM. **State:** after the zone move.
 
 1. In the dashboard, Email, Email Sending, add eccm.ee.
-2. Add the records it lists. They go beside the existing mail records: never touch MX, and never turn on Email Routing for eccm.ee, which replaces MX.
+2. Add the records it lists. They go beside the existing mail records and leave MX alone; Email Routing, which replaces MX, comes later in [Mail to Cloudflare](#mail-to-cloudflare-gmail-as-the-interface).
 3. Send a test issue to yourself from `/edit/uudiskiri`.
 
 ## 4. Domain and mail
@@ -456,14 +456,40 @@ DMARC is set to reject, so one wrong mail record bounces everything. Every recor
 5. Check: the front page, an event, an old Joomla address, the newsletter sign-up, a file under /radio1965/streams.
 6. To go back: recreate the A and CNAME records. Minutes.
 
+### Mail to Cloudflare, Gmail as the interface
+
+**Who:** the owner, in ECCM's Cloudflare account and the team's Gmail. **State:** decided 8 November 2026, after the cutover.
+
+ECCM's mail is two addresses, info@eccm.ee and eccm@eccm.ee, and the team reads both in one shared Gmail account and already sends as ECCM from it. Cloudflare has no mailboxes, which is fine: Email Routing forwards the two addresses to that Gmail, and Gmail's "Send mail as" sends through Cloudflare's SMTP. The team's work does not change, and the Joomla hosting at Virtuaal can then go, keeping only the domain.
+
+Its own step, on a quiet day, after the DNS move and the cutover, so a problem has one cause. Going back is restoring Virtuaal's MX record.
+
+Before:
+
+1. In the Gmail, Settings, Accounts, "Send mail as", edit each address and note its SMTP server. If it is `mail.eccm.ee`, sending depends on Virtuaal today and switches in step 4 below.
+2. Check that nothing lives only in the Virtuaal mailboxes. If everything was always forwarded to the Gmail, the archive is already there; if not, export it from cPanel first.
+
+The move:
+
+1. Email Service, Email Routing, eccm.ee: enable it. It replaces Virtuaal's MX, SPF and DKIM with Cloudflare's; keep the DMARC record.
+2. Add the team's Gmail as a destination and verify it, then two rules: info@eccm.ee and eccm@eccm.ee, both to that Gmail.
+3. Email Sending is on for eccm.ee already ([Email sending from eccm.ee](#email-sending-from-eccmee)). Make an account API token with only "Email Sending: Edit". It is a password: whoever holds it can send as any @eccm.ee address.
+4. In the Gmail, for each address in "Send mail as": SMTP server `smtp.mx.cloudflare.net`, port 465, SSL, username `api_token`, password the token.
+5. Test in both directions from an outside address, for each of the two addresses, and check the received headers say `dkim=pass` for eccm.ee.
+
+To know:
+
+- Cloudflare's SMTP submission is in beta since June 2026. If it misbehaves, Gmail can send through another SMTP relay; receiving is unaffected.
+- Forwarding can fail DMARC for senders with a strict policy, and Email Routing sends no bounce, so such a mail is lost quietly. Rare for a contact address.
+- The newsletter and the contact form already send through Cloudflare and do not change.
+
 ### After
 
 **Who:** ECCM. **State:** after.
 
-**Ask ECCM:** whether mail stays at Virtuaal, who runs the mailboxes, and whether Google Search Console is verified for eccm.ee, and by whom.
+**Ask ECCM:** whether Google Search Console is verified for eccm.ee, and by whom.
 
-1. Two weeks later, check that mail and webmail renewed their certificates, since the wildcard can no longer renew through Virtuaal's DNS.
-2. Before cancelling the Joomla hosting, ask Virtuaal whether mail survives it. Mail runs on the same server.
+1. Once the mail has run through Cloudflare for two weeks, cancel the Joomla hosting at Virtuaal (next renewal 27.01.2027), keeping the domain registration (renews 08.03.2027). The `mail`, `webmail` and cPanel names in DNS go with it.
 
 ### A preview address first?
 
@@ -478,7 +504,7 @@ Not needed: the current site is a test too. If wanted, uus.eccm.ee can work befo
 | The Joomla API, category 47, polled by his server every 5 minutes | Gone. ECCM's articles are already v2in events, and new ones are written there. |
 | The recordings in `/radio1965/streams/` | Copied to v2in. This site forwards the path there. |
 | The contributor and editor pages, `/radio1965/contributor/` and `/radio1965/editor/` | Tarmo's to move, to live.uuu.ee beside the API they call. Until then they answer 404. |
-| Sign-up and reset mail through `mail.eccm.ee` | Works while ECCM's mail stays at Virtuaal. |
+| Sign-up and reset mail through `mail.eccm.ee` | Works until ECCM's mail moves to Cloudflare; his server needs another SMTP before then. |
 
 ### The recordings from v2in
 
