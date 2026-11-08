@@ -8,18 +8,22 @@ document.documentElement.style.setProperty('--sbw', (innerWidth - document.docum
 // the system's setting changed; the head's one line puts a stored choice back before the stylesheet. The theme-color metas are
 // media-scoped for a page with no script, and once a theme is forced that is the wrong question, so both take the ground the
 // page resolved to, or an installed app shows a dark page under a light status bar.
-const THEMES = ['auto', 'light', 'dark'], THEME_KEY = 'eccm:theme';
-const themeNow = () => document.documentElement.getAttribute('data-theme') || 'auto';
+// Two steps since 2026-11-08 ("rm auto theme mode"): the moon turns the page Light or Dark, the opposite of what it
+// shows. Before the first click the page follows the system, as it did on Auto, so a reader who never clicks sees no
+// change; a click stores the choice.
+const THEME_KEY = 'eccm:theme';
+const DARK = matchMedia('(prefers-color-scheme: dark)');
+const themeNow = () => document.documentElement.getAttribute('data-theme') || (DARK.matches ? 'dark' : 'light');
 const themeSync = () => { const bg = getComputedStyle(document.documentElement).backgroundColor; document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', bg)); };
 document.addEventListener('click', (e) => {
   if (!e.target.closest('[data-theme-cycle]')) return;
-  const next = THEMES[(THEMES.indexOf(themeNow()) + 1) % THEMES.length];
-  try { if (next === 'auto') localStorage.removeItem(THEME_KEY); else localStorage.setItem(THEME_KEY, next); } catch { /* private window: the choice lasts the page */ }
-  if (next === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', next);
+  const next = themeNow() === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem(THEME_KEY, next); } catch { /* private window: the choice lasts the page */ }
+  document.documentElement.setAttribute('data-theme', next);
   themeSync();
 });
-// a forced theme survives the system flipping underneath it, Auto follows it
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change', themeSync);
+// a chosen theme survives the system flipping underneath it, a page not yet clicked follows it
+DARK.addEventListener('change', themeSync);
 themeSync();
 // The YouTube player (src/render/md.mjs): a click on the picture puts the youtube-nocookie iframe into the same 16:9 box,
 // which is the first request the page makes to YouTube; without this script the picture is a plain link to the video.

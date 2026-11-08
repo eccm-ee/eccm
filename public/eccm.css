@@ -202,20 +202,21 @@
   /* the theme switch, in the footer under the copyright since 2026-10-02 ("move theme selector to footer"),
      where tunniplaan has its own (asked the same day: "do dark mode in bg. see ../tunniplaan etc"): one word
      in the footer's size and second ink, as its links are, naming the state the page is in and moving to the
-     next on a press, Auto, then Light, then Dark. No box and no line until hovered. All three words are in
-     the markup and the attribute the head script set shows one, so the right word is there on first paint */
+     next on a press. No box and no line until hovered. A moon since 2026-11-08, and Light and Dark only,
+     below; the word for a screen reader is in the markup and CSS shows the one the page is in */
   .theme-btn { padding: 0; margin: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .theme-btn:hover { text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
-  /* a moon in place of the words Auto, Light and Dark (asked 2026-11-08: "rename dark / auto / light to moon
-     icon"), the words kept for a screen reader: outlined in the second ink on Auto, outlined in the ink on
-     Light, filled on Dark, the same three steps a click goes through */
+  /* a moon in place of the words (asked 2026-11-08: "rename dark / auto / light to moon icon"), the word kept for
+     a screen reader; two steps since the same day ("rm auto theme mode"): outlined on a light page, filled on a
+     dark one, whether the reader chose it or the system did */
   .theme-btn { display: inline-flex; padding: var(--eccm-s-1); margin: calc(var(--eccm-s-1) * -1); }
   .theme-btn:hover { text-decoration-line: none; }
-  .theme-btn > .ico { inline-size: 1.25rem; block-size: 1.25rem; color: var(--eccm-ink-2); }
-  :root[data-theme] .theme-btn > .ico { color: var(--eccm-ink); }
+  .theme-btn > .ico { inline-size: 1.25rem; block-size: 1.25rem; }
   :root[data-theme="dark"] .theme-btn > .ico { fill: currentColor; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .theme-btn > .ico { fill: currentColor; } }
   .theme-btn > [data-t] { display: none; }
-  :root:not([data-theme]) .theme-btn > [data-t="auto"], :root[data-theme="light"] .theme-btn > [data-t="light"], :root[data-theme="dark"] .theme-btn > [data-t="dark"] { display: inline; }
+  :root:not([data-theme="dark"]) .theme-btn > [data-t="light"], :root[data-theme="dark"] .theme-btn > [data-t="dark"] { display: inline; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme]) .theme-btn > [data-t="light"] { display: none; } :root:not([data-theme]) .theme-btn > [data-t="dark"] { display: inline; } }
   /* the phone menu button: three 1px lines in a 3rem box (asked 2026-09-28:
      "Do hamburger menu 3 lines in square", in place of the five stave lines).
      The box's own 1px rule went 2026-09-29 ("rm border around hamburger
