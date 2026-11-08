@@ -64,9 +64,11 @@
       // the cron that drains what did not go at once.
       "send_email": [{ "name": "EMAIL" }],
       "triggers": { "crons": ["*/5 * * * *"] },
+      // the page views (src/stats.mjs), read back at /admin/stats with the secret STATS_TOKEN (Account Analytics: Read)
+      "analytics_engine_datasets": [{ "binding": "VIEWS", "dataset": "eccm_views_staging" }],
       // NOINDEX "on" sends x-robots-tag: noindex on every Worker response (src/index.mjs), absent in production;
       // SITE_ORIGIN is the address canonical, og:url, the sitemap, the feeds and robots.txt name
-      "vars": { "NOINDEX": "on", "SITE_ORIGIN": "https://eccm.positron.studio", "IMAGE_TRANSFORMS": "on", "CONTACT_TO": "info@eccm.ee", "MAIL_FROM": "ECCM <uudiskiri@eccm.positron.studio>" }
+      "vars": { "STATS_ACCOUNT": "dc1ee8d72a1fb7da857c46479a8503b8", "STATS_DATASET": "eccm_views_staging", "NOINDEX": "on", "SITE_ORIGIN": "https://eccm.positron.studio", "IMAGE_TRANSFORMS": "on", "CONTACT_TO": "info@eccm.ee", "MAIL_FROM": "ECCM <uudiskiri@eccm.positron.studio>" }
     },
     "production": {
       "name": "eccm",
@@ -88,9 +90,11 @@
       "migrations": [],
       "send_email": [{ "name": "EMAIL" }],
       "triggers": { "crons": ["*/5 * * * *"] },
+      // the page views (src/stats.mjs); STATS_TOKEN is a token made in ECCM's account
+      "analytics_engine_datasets": [{ "binding": "VIEWS", "dataset": "eccm_views" }],
       // no NOINDEX here, eccm.ee is indexed.
-      // Secrets: EDITOR_KEY, SESSION_SECRET, TURNSTILE_SITEKEY, TURNSTILE_SECRET (wrangler secret put ... --env production)
-      "vars": { "SITE_ORIGIN": "https://eccm.ee", "IMAGE_TRANSFORMS": "on", "CONTACT_TO": "info@eccm.ee", "MAIL_FROM": "ECCM <uudiskiri@eccm.ee>" }
+      // Secrets: EDITOR_KEY, SESSION_SECRET, STATS_TOKEN, TURNSTILE_SITEKEY, TURNSTILE_SECRET (wrangler secret put ... --env production)
+      "vars": { "STATS_ACCOUNT": "47bdc40605b72aa6cd3d6caf5eb9a92e", "STATS_DATASET": "eccm_views", "SITE_ORIGIN": "https://eccm.ee", "IMAGE_TRANSFORMS": "on", "CONTACT_TO": "info@eccm.ee", "MAIL_FROM": "ECCM <uudiskiri@eccm.ee>" }
     }
   }
 }

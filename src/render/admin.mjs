@@ -26,6 +26,8 @@ const TOOLS = [
   // Logos the same day; before User interface, which stays last
   ['/edit/partners', 'Logos', 'Partners’ logos for event pages and the footer, in colour and in black and white.'],
   // the menu's pages and the footer's logos (asked 2026-11-07: "perhaps a Admin > Layout where you can pick what pages to link and what logos go to footer?")
+  // the page views (asked 2026-11-08: "A sinple web stats to admin page?")
+  ['/admin/stats', 'Stats', 'Page views of the last 30 days, the pages read most, and where readers came from.'],
   ['/edit/layout', 'Layout', 'Which pages the menu links and which logos the footer shows.'],
   // one card since 2026-11-07 (asked: "drop social. mv logo to User interface (/ui) with components. last item"),
   // each event's share cards under its own page for an editor

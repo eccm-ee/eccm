@@ -40,6 +40,7 @@ import { legacy } from './redirects.mjs';
 import { passthrough } from './passthrough.mjs';
 import { partners, eventPartners } from './partners.mjs';
 import { layout, loadLayout } from './layout.mjs';
+import { recordView, stats } from './stats.mjs';
 import { gate, isProtected, isStatic, login, logout, loggedIn } from './auth.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
@@ -146,6 +147,8 @@ const noindex = (res) => {
 export default {
   async fetch(request, env, ctx) {
     const res = await routes.fetch(request, env, ctx);
+    // one page view to Analytics Engine, for /admin/stats (src/stats.mjs)
+    recordView(request, env, new URL(request.url), res);
     return env.NOINDEX === 'on' ? noindex(res) : res;
   },
   // the cron of wrangler.jsonc, every five minutes: the outbox's retry (src/mail.mjs) and the daily backup (src/backup.mjs); the radio's recorder
@@ -211,6 +214,8 @@ const routes = {
     // the notices to phones (/items, /teated/{n}, /en/notices/{n}, the Items Durable Object and Web Push) went 2026-11-06 (archive/notices.md)
     // the tools, one card each (src/render/admin.mjs), since 2026-10-01
     // /docs, the migration plan and the presence notes drawn from Markdown, went 2026-11-06; the plan is plans/plan-eccm-migration.md
+    // the page views of the last 30 days (src/stats.mjs), since 2026-11-08
+    if (p === '/admin/stats') return stats(request, env);
     if (p === '/admin' || p === '/admin/') return new Response(String(renderAdmin()), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     // the fourth Instagram card's preview and its words, under the event page since 2026-11-07 (src/social.mjs)
     if (p.startsWith('/edit/og/') || p.startsWith('/edit/social/')) { const out = await social(request, env, url); if (out) return out; }
