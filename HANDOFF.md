@@ -1,4 +1,4 @@
-# Handoff, 2026-11-07
+# Handoff, 2026-11-09
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
 committed on `main` of **https://github.com/kristjanjansen/eccm**, private,
@@ -11,6 +11,34 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 2026-10-09 `curl` reached it. If it blocks again, check through
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
 
+
+## 2026-11-09: eccm.ee synced again, the Improtest mark, the picture field
+
+All on staging and production, pushed (last `b4abe51`). Production's deploy and seed steps were run by the owner,
+since this session's writes to production are refused by the permission check.
+
+- **Sync with eccm.ee** (`17336af`, `data/seed-step13-sync-2026-11-09.sql`): Improtest: Three Free Radicals
+  (20.11, iCagenda 169 and 170, event 1206) and Improtest: Taavo Remmel (EST) (10.12, 145 and 146, event 1207), and
+  Fienta ticket links on OPUS MIRUM and Performance etüüdid #9. Every other event and the menu pages unchanged;
+  143/144 and 128/129 still 404 and stay drafts. Read through **www.eccm.ee**, since bare `eccm.ee` does not
+  resolve on this laptop. The cutover list in `plans/plan-eccm-migration.md` now has a last sync as step 2.
+- **Improtest mark** (`e28ed84`, `b4abe51`, `data/seed-step14-improtest-mark.sql`):
+  `public/ic_large_w900h600q100_improtest.jpg` redrawn 900 by 600, the paper #f5f5f5 (asked "even ligher bg" after
+  #eeeeee), a fifth of the height above and below, scan noise dropped, drawn in headless Chrome (no ImageMagick or
+  PIL here). Same file name, so every event with it changed; the row's size, bytes and scheme (ground #ffffff) in
+  step 14. The other Improtest events use photos and were left alone.
+- **Picture field in the event editor** (`e28ed84`): one dropzone, the partners page's `.drop`, holding the picture
+  and the words; the inner box is gone. The old outer border was the partners `.drop` rule leaking onto this page.
+  "Existing picture" is now a field inside the zone, "Or one already here, by file name", with the media keys as a
+  datalist.
+- **Fix:** a paragraph starting "20. novembril" rendered as a numbered list and lost its date; step 14 moves the
+  date inside the sentence. A body line must not start with a number and a full stop.
+- **GitHub:** the owner is now **admin** of `eccm-ee` (MEASURED). The transfer of `kristjanjansen/eccm` is not done,
+  waiting for the owner's yes; then the remote, README, `CLAUDE.local.md` and this file.
+- **Open:** in the footer at 1280, "Andmekaitsetingimused" overlaps "Postiaadress" in the next column (from the
+  footer commits `63e2404` and `af9cfdf`). Still to do before cutover: Tarmo's three changes and a date, ECCM's
+  dashboard items, the full backup, the DNS move.
+- **Gotcha:** wrangler answered `fetch failed` twice today, a staging deploy and a production seed; the retry worked.
 
 ## 2026-11-07, night: drafts, social under events, Vimeo, /ui, logos, layout; production half set up
 
