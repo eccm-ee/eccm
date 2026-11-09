@@ -52,11 +52,24 @@ export const renderSocial = ({ id, lang, slug, input, fields, stored, path }) =>
       const img = fig.querySelector('img'), dl = fig.querySelector('a[download]');
       // a click on the card itself goes to its first field (asked 2026-11-07: "i need it editable"; no pencil, "no need edit button")
       img.addEventListener('click', () => { form.elements.header.focus(); form.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      // a card that failed is drawn again, up to five times a few seconds apart: on ECCM's free Workers plan a
+      // first render runs over the CPU limit about half the time, and one that succeeds is kept for good (2026-11-09)
+      const retry = (im) => {
+        const n = Number(im.dataset.tries || 0);
+        if (n >= 5) return;
+        im.dataset.tries = n + 1;
+        setTimeout(() => { const u = new URL(im.src); u.searchParams.set('try', n + 1); im.src = u; }, 1500 * (n + 1));
+      };
+      for (const im of document.querySelectorAll('.social figure img')) {
+        im.addEventListener('error', () => retry(im));
+        if (im.complete && !im.naturalWidth) retry(im);
+      }
       let t = 0;
       form.addEventListener('input', () => {
         clearTimeout(t);
         t = setTimeout(() => {
           const q = new URLSearchParams(['header', 'body', 'footer'].map((k) => [k, form.elements[k].value]));
+          delete img.dataset.tries;
           img.src = dl.href = form.dataset.preview + '?' + q;
         }, 400);
       });

@@ -40,6 +40,16 @@ earlier days (its Fortinet DNS filter answered with a block page); on
   Images binding: only the ladder's own transforms (anything else 302s to the original), the format from Accept,
   a day in the colo's cache, a failure to the original. MEASURED on staging's workers.dev host: 114 KB for the same
   twelve, AVIF. On the zone `/cdn-cgi/image/` is unchanged. Cutover step 5 still applies.
+- **Gotcha, production's address stuck on an old version:** after two `wrangler deploy --env production` runs
+  (`fb4cfee6`, `bb6a1ea4`) `eccm.eccm.workers.dev` kept serving `7d2cba72` for over 20 minutes, byte for byte, while
+  `deployments status` said `bb6a1ea4` at 100% and each version's own preview address (`{version}-eccm.eccm.workers.dev`)
+  was right. `wrangler versions deploy {id}@100% --env production -y` moved it at once. After a production deploy,
+  check the main address, not the deploy log. Then: the list's first twelve pictures 114 KB, AVIF (MEASURED).
+- **Cards on production, still the free plan's CPU limit:** of 922 cards, 561 rendered first time, 255 answered 1102
+  and 106 1101; text cards failed about half the time, the picture-only Instagram cards 2 and 3 about 17%. Four
+  rounds of retries left 33 (a rendered card is kept in R2). So the Social section now retries a failed card up to
+  five times (`src/render/social.mjs`). The thorough fix, offered and not chosen yet: every card composed by the
+  Images binding (its `.text()` with our TTF, the mark as a PNG), resvg gone from the Worker.
 - **Open:** the footer draws no partner logos at any width on staging (the `.end` column is empty); not looked into.
 
 ## 2026-11-09: eccm.ee synced again, the Improtest mark, the picture field
