@@ -48,7 +48,7 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 - **Cards on production, still the free plan's CPU limit:** of 922 cards, 561 rendered first time, 255 answered 1102
   and 106 1101; text cards failed about half the time, the picture-only Instagram cards 2 and 3 about 17%. Four
   rounds of retries left 33 (a rendered card is kept in R2). So the Social section now retries a failed card up to
-  five times (`src/render/social.mjs`). The thorough fix, offered and not chosen yet: every card composed by the
+  five times (`src/render/social.mjs`), on production since `c3c735df` and confirmed by the owner. The thorough fix, offered and not chosen yet: every card composed by the
   Images binding (its `.text()` with our TTF, the mark as a PNG), resvg gone from the Worker.
 - **Open:** the footer draws no partner logos at any width on staging (the `.end` column is empty); not looked into.
 
