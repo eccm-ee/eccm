@@ -259,8 +259,9 @@
   .site-foot .theme { margin-block-start: var(--eccm-s-3); }
   /* four content columns and the partner mark: the mark and the copyright, the menu in two, the two
      addresses, and the phone with the three links, which got their own column 2026-09-29 (asked as
-     "move Telefon ... to separate col, like page links in footer") */
-  .site-foot .cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto; gap: var(--eccm-s-8); }
+     "move Telefon ... to separate col, like page links in footer"); the menu's column is its own width, since
+     at an equal quarter "Andmekaitsetingimused" ran into the addresses (2026-11-09) */
+  .site-foot .cols { display: grid; grid-template-columns: minmax(0, 1fr) max-content repeat(2, minmax(0, 1fr)) auto; gap: var(--eccm-s-8); }
   .site-foot .two { display: grid; grid-template-columns: repeat(2, max-content); column-gap: var(--eccm-s-12); row-gap: var(--eccm-s-2); }
   .site-foot .contact p + p { margin-block-start: var(--eccm-s-3); }
   /* the logos at the end are partner rows since 2026-11-07 ("footer logos should use same system"), each
@@ -279,6 +280,12 @@
   .site-foot .partner-ulysses { --pw: 4.5rem; inline-size: var(--pw); margin-block-start: calc(4rem * -0.1355); }
   .site-foot .partner-tallinn { --pw: 4rem; inline-size: var(--pw); margin-block-start: calc(var(--pw) * -0.1355); margin-inline-end: calc(var(--pw) * -0.136); }
   .site-foot :is(.partner-ulysses, .partner-tallinn) img { inline-size: 100%; block-size: auto; max-inline-size: none; }
+  /* between the phone and the desk the four columns do not fit, so the mark and the copyright take a row of their own */
+  @media (min-width: 48rem) and (max-width: 64rem) {
+    .site-foot .cols { grid-template-columns: max-content repeat(2, minmax(0, 1fr)); }
+    .site-foot .cols > :first-child, .site-foot .end { grid-column: 1 / -1; }
+    .site-foot .end { justify-self: start; }
+  }
   @media (max-width: 48rem) {
     .site-foot .cols { grid-template-columns: minmax(0, 1fr); }
     .site-foot .end { justify-self: start; }
