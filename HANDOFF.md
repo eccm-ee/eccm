@@ -20,6 +20,11 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 - **Footer** (on staging): the menu's column is its own width, so "Andmekaitsetingimused" no longer runs into the
   addresses at 1280; from 48 to 64rem the mark and the copyright take a row of their own. Looked at 800, 1000
   and 1280. The local database is empty (`/` answers a 301 to `/join`), so the check was on staging.
+  **Production still has the old footer**: `deploy --env production` is the owner's to run.
+- **Author email:** 349 earlier commits carry the work address as author; the owner chose to leave them (a rewrite
+  would change every hash this file quotes). This clone's `git config --local user.email` is the personal address
+  since today, so new commits carry it.
+- **Open:** the footer draws no partner logos at any width on staging (the `.end` column is empty); not looked into.
 
 ## 2026-11-09: eccm.ee synced again, the Improtest mark, the picture field
 
