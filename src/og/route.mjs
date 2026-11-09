@@ -139,7 +139,8 @@ export async function ogRoute(request, env, url, ctx) {
   const withPic = PART[kind] > 0, tall = kind !== 'e';
   if (withPic && !input.pic) return none(404);
   // the tall text cards of an event with a picture carry the panorama's first strip and its last
-  const strip = (kind === 't' || kind === 't4') && !!input.pic;
+  // and since 2026-11-09 the share card its left edge
+  const strip = (kind === 't' || kind === 't4' || kind === 'e') && !!input.pic;
   const now = VERSION(kind, input, fields);
   if (now !== v) return none(302, { location: PATH(kind, id, lang, now) });
   const picture = withPic || strip ? await pictureUri(env, url, input.pic) : null;

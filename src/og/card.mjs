@@ -16,7 +16,8 @@ import M from './metrics.mjs';
 // bump on any visual change: it is in every card's hash, so each URL changes
 // and the stored images are orphaned, never purged
 // 18 since 2026-11-07: the panorama runs one strip further, onto the fourth card (STRIP says why)
-export const TEMPLATE_V = 18;
+// 19 since 2026-11-09: the share card shows the picture's left edge at its right edge (WIDE_STRIP says why)
+export const TEMPLATE_V = 19;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
@@ -91,8 +92,12 @@ const TALL_TITLE = 100;
 // two cards and two strips wide and both text cards show a tenth of it, the first its left edge, the last its right
 const STRIP = 108;
 const PANO_W = 2 * TALL_W + 2 * STRIP;
+// the share card the same way, a tenth of its width, the picture's left edge at its right edge (asked 2026-11-09:
+// "for og image make similar image-left-edge overlap as in first ig img")
+const WIDE_STRIP = 120;
 const LAYOUTS = {
   wide: { w: W, h: H, top: PAD, markTop: MARK_TOP, measure: MEASURE, steps: STEPS },
+  wideStrip: { w: W, h: H, top: PAD, markTop: MARK_TOP, measure: MEASURE - WIDE_STRIP, steps: STEPS, wideStrip: true },
   tall: { w: TALL_W, h: TALL_H, top: PAD, markTop: Math.round(TALL_H - PAD - TALL_MARK_H), k: TALL_K, measure: TALL_W - 2 * PAD, steps: [TALL_TITLE], meta: TALL_META },
   tallStrip: { w: TALL_W, h: TALL_H, top: PAD, markTop: Math.round(TALL_H - PAD - TALL_MARK_H), k: TALL_K, measure: TALL_W - 2 * PAD - STRIP, steps: [TALL_TITLE], meta: TALL_META, strip: true },
 };
@@ -248,7 +253,7 @@ const pano = (picture, x) => `<image x="${x}" y="0" width="${PANO_W}" height="${
 export const cardSvg = (input, picture = null, tall = false, part = 1) => {
   if (tall && picture && part > 0) return `<svg xmlns="http://www.w3.org/2000/svg" width="${TALL_W}" height="${TALL_H}" viewBox="0 0 ${TALL_W} ${TALL_H}">`
     + `<rect width="${TALL_W}" height="${TALL_H}" fill="${input.ground}"/>${pano(picture, -STRIP - (part - 1) * TALL_W)}</svg>`;
-  const L = tall ? (picture ? LAYOUTS.tallStrip : LAYOUTS.tall) : LAYOUTS.wide;
+  const L = tall ? (picture ? LAYOUTS.tallStrip : LAYOUTS.tall) : picture ? LAYOUTS.wideStrip : LAYOUTS.wide;
   // one face for the title and the meta, the sans (a serif title left on 2026-10-07, archive/serif-titles.md)
   const face = 'sans', metaFace = face;
   const meta = metaLines(input.meta, metaFace, L.meta || META, L.measure);
@@ -265,7 +270,7 @@ export const cardSvg = (input, picture = null, tall = false, part = 1) => {
     y += META_LH * metaFs;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${L.w}" height="${L.h}" viewBox="0 0 ${L.w} ${L.h}">`
-    + `<rect width="${L.w}" height="${L.h}" fill="${input.ground}"/>${L.strip ? pano(picture, TALL_W - STRIP) : ''}${out.join('')}${markSvg(input.ink, L.markTop, L.k)}${input.plate === false ? '' : plateSvg(input.ink, input.lang, L.markTop, L.k)}`
+    + `<rect width="${L.w}" height="${L.h}" fill="${input.ground}"/>${L.strip ? pano(picture, TALL_W - STRIP) : ''}${L.wideStrip ? `<image x="${W - WIDE_STRIP}" y="0" width="${Math.round(H * 1.5)}" height="${H}" preserveAspectRatio="xMinYMid slice" href="${picture}"/>` : ''}${out.join('')}${markSvg(input.ink, L.markTop, L.k)}${input.plate === false ? '' : plateSvg(input.ink, input.lang, L.markTop, L.k)}`
     + '</svg>';
 };
 

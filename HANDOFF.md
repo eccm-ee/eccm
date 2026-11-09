@@ -24,6 +24,11 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 - **Author email:** 349 earlier commits carry the work address as author; the owner chose to leave them (a rewrite
   would change every hash this file quotes). This clone's `git config --local user.email` is the personal address
   since today, so new commits carry it.
+- **Share card** (template 19): the picture's left edge at the right edge, 120 px, a tenth of the card as on
+  Instagram card 1, and the title's measure 120 px shorter. Event cards only; page and site cards unchanged.
+- **Fix, Instagram picture cards broken:** `src/og/render.mjs` never freed resvg's wasm objects, so each render left
+  its decoded picture in the isolate and a few later the next answered 503, `error code: 1102` (MEASURED on
+  production, 8 of 12 fresh renders failed). Freed by hand now; 30 fresh renders on staging all 200.
 - **Open:** the footer draws no partner logos at any width on staging (the `.end` column is empty); not looked into.
 
 ## 2026-11-09: eccm.ee synced again, the Improtest mark, the picture field

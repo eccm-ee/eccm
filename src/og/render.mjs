@@ -15,8 +15,12 @@ let fonts = null;
 export async function renderPng(svg, width) {
   await (ready ??= initWasm(wasm));
   fonts ??= [sans, tag].map((b) => new Uint8Array(b));
-  return new Resvg(svg, {
+  // both objects live in wasm memory, which the garbage collector never sees, so each is freed by hand: unfreed,
+  // every picture card left its decoded picture behind and a few renders later the isolate answered 1102 (2026-11-09)
+  const r = new Resvg(svg, {
     fitTo: { mode: 'width', value: width },
     font: { fontBuffers: fonts, loadSystemFonts: false, defaultFontFamily: 'Instrument Sans' },
-  }).render().asPng();
+  });
+  const img = r.render();
+  try { return img.asPng(); } finally { img.free(); r.free(); }
 }
