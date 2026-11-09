@@ -1,7 +1,7 @@
 # Handoff, 2026-11-09
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
-committed on `main` of **https://github.com/eccm-ee/eccm**, private,
+committed on `main` of **https://github.com/eccm-ee/eccm**, public,
 pushed. Push per CLAUDE.md and switch the account back. GitHub refused pushes
 with a 500 for about ten minutes on 2026-10-07 and then took them; retry
 before suspecting the commit.
@@ -14,7 +14,7 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 
 ## 2026-11-09, later: the repository is ECCM's, the footer fits
 
-- **Transferred** to **https://github.com/eccm-ee/eccm**, still private (MEASURED with `gh api repos/eccm-ee/eccm`).
+- **Transferred** to **https://github.com/eccm-ee/eccm**, then made public on the owner's ask (MEASURED with `gh api repos/eccm-ee/eccm`); a history scan first found no secret, only placeholders.
   The old address redirects; `origin` points at the new one. `CLAUDE.local.md` and `plans/plan-eccm-setup.md`
   section 8, step 7, say so. Pushing still runs under `kristjanjansen`, an admin of the organisation.
 - **Footer** (on staging): the menu's column is its own width, so "Andmekaitsetingimused" no longer runs into the

@@ -1,7 +1,7 @@
 # eccm
 
 The site for eccm.ee while it is being built, live at
-**https://eccm.positron.studio/**. Private repository; `README.md` is the
+**https://eccm.positron.studio/**. Public repository since 2026-11-09, so nothing secret is committed; `README.md` is the
 maintainer's introduction, and `CLAUDE.local.md`, git-ignored, holds what is
 true only of one machine and its accounts. It left the positron repository on 2026-09-27 with its history
 (https://github.com/kristjanjansen/positron, where it was `demo/eccm/`).
