@@ -614,27 +614,21 @@
      text size as textfiels, make radios bigger to match") */
   .radios label { display: inline-flex; align-items: center; gap: var(--eccm-s-2); cursor: pointer; font-size: var(--eccm-t-m); line-height: var(--eccm-lh-body); color: var(--eccm-ink); }
   .form .radios input[type="radio"] { inline-size: var(--eccm-s-6); block-size: var(--eccm-s-6); margin: 0; padding: 0; border: 0; accent-color: var(--eccm-ink); cursor: pointer; }
-  /* the picture field: the current picture and a drop field side by side,
-     each at least 14rem, one under the other when the measure cannot hold
-     both. The native input covers the whole field at zero opacity, so a drop
-     or a click anywhere on it is a drop or a click on the control, with no
-     script; the dashed rule is the affordance, solid ink is the hover, and
-     the accent ring is the keyboard's (asked 2026-09-26: "do proper file
-     styling with drop affodance") */
   /* a subheader inside a section, over a language's fields or over one credit: the body size in the ink,
      a step under the section's h2 and a step over a field's label, with the block's own gap under it and
      the wider gap between blocks above it, so it reads as a heading and not as one more label */
   .field-name { font-size: var(--eccm-t-m); line-height: var(--eccm-lh-body); color: var(--eccm-ink); }
-  .drop { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--eccm-s-4); }
-  .drop img { inline-size: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
-  .drop-zone { position: relative; display: grid; place-content: center; gap: var(--eccm-s-3); padding: var(--eccm-s-8); min-block-size: 12rem; text-align: center; border: 1px dashed var(--eccm-rule-strong); cursor: pointer; }
-  .drop-zone .drop-say { font-size: var(--eccm-t-m); line-height: var(--eccm-lh-body); }
-  .drop-zone .drop-say b { font-weight: 400; }
-  .drop-zone .hint { max-inline-size: 26ch; margin-inline: auto; }
-  .drop-zone:hover { border: 1px solid var(--eccm-ink); }
-  .drop-zone:has(input:focus-visible) { border: 1px solid var(--eccm-ink); outline: 2px solid var(--eccm-accent); outline-offset: 2px; }
-  .form .drop-zone input { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; opacity: 0; cursor: pointer; }
-  .drop-say { text-wrap: balance; }
+  /* the event's picture field is the partners page's dropzone below holding two columns, the picture and the words,
+     each at least 14rem and one under the other when the form cannot hold both; the file input covers the zone, and
+     the existing picture's name sits over it so it can be typed in (asked 2026-11-09: "rm extra border arond the ui
+     text", "can it not be in upload area?") */
+  .drop.drop-pic { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); place-items: stretch; align-items: center; gap: var(--eccm-s-6); }
+  .drop-pic img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 2; object-fit: cover; }
+  .drop-pic .drop-words { display: grid; gap: var(--eccm-s-3); justify-items: center; }
+  .drop-pic .drop-say { font-size: var(--eccm-t-m); line-height: var(--eccm-lh-body); text-wrap: balance; }
+  .drop-pic .hint { max-inline-size: 30ch; }
+  .drop-pic .drop-key { position: relative; z-index: 1; display: grid; gap: var(--eccm-s-1); inline-size: 100%; margin-block-start: var(--eccm-s-4); text-align: start; }
+  .drop-pic .drop-key .hint { max-inline-size: none; }
   .actions { display: flex; flex-wrap: wrap; gap: var(--eccm-s-3); margin-block-start: var(--eccm-s-4); }
   /* Loobu at the row's far end (asked 2026-09-28: "move loobu to justified right"), and on a phone every button the full width, one under the other ("in mobile make buttons full w") */
   .actions .btn-end { margin-inline-start: auto; }

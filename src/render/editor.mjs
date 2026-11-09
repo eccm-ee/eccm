@@ -82,7 +82,10 @@ const READ_PICTURE = `      const { read, contract } = await import('/scheme.mjs
         img.removeAttribute('width'); img.removeAttribute('height'); img.src = URL.createObjectURL(f); fig.hidden = false;
         try { await reading(img); } catch { out.textContent = 'Could not read the picture. It will be saved without a scheme.'; }
       });
-      if (img.hasAttribute('data-read')) reading(img).catch(() => {});`;
+      if (img.hasAttribute('data-read')) reading(img).catch(() => {});
+      // a file dragged over the dropzone rules it in the ink until it is dropped or leaves, as on the partners page
+      const zone = fig.closest('.drop'), on = () => zone.classList.add('over'), off = () => zone.classList.remove('over');
+      zone.addEventListener('dragenter', on); zone.addEventListener('dragleave', off); zone.addEventListener('drop', off);`;
 
 // v: the form's values (src/editor.mjs, fromRows or parse); errors: [{ field,
 // msg }]; roles: the role table; media: the media table; saved: the row's
@@ -135,16 +138,20 @@ export const editorForm = ({ v, errors = [], roles, media, partners = [], cancel
     </div>
 
     <h2>Picture</h2>
-    <!-- the picture and a drop field side by side (asked 2026-09-30: "implement image upload"); the
-         browser reads a chosen file with public/scheme.mjs, the derive page's own detector, and sends
-         the scheme beside it, so the page takes the picture's colours from the first save -->
-    <div class="drop">
+    <!-- the picture and the words beside it in one dropzone, the partners page's (asked 2026-09-30: "implement image
+         upload"; one zone and the existing picture's name inside it since 2026-11-09: "is ita ll drop area? rm extra
+         border arond the ui text then", "can it not be in upload area?"); the browser reads a chosen file with
+         public/scheme.mjs and sends the scheme beside it, so the page takes the picture's colours from the first save -->
+    <div class="drop drop-pic">
       <figure class="edit-pic"${pic ? '' : raw(' hidden')}><img src="${pic ? `/${pic.key}` : ''}"${pic ? raw(` width="${pic.width}" height="${pic.height}"`) : ''} alt=""${pic && !pic.scheme ? raw(' data-read') : ''}><figcaption id="scheme-say">${pic && pic.scheme ? schemeSay(pic.scheme) : ''}</figcaption></figure>
-      <label class="drop-zone">
-        <span class="drop-say"><b>Drop a picture here</b> or choose a file</span>
+      <div class="drop-words">
+        <span class="drop-say">Drop a picture here or choose a file</span>
         <span class="hint${err('image_file') ? ' err' : ''}">${err('image_file') || 'JPEG, PNG, WebP or GIF, up to 10 MB. The largest original there is.'}</span>
-        <input type="file" name="image_file" accept="image/jpeg,image/png,image/webp,image/gif">
-      </label>
+        <label class="drop-key"><span class="hint${err('image_key') ? ' err' : ''}">${err('image_key') || 'Or one already here, by file name'}</span>
+          <input id="f-image" name="image_key" value="${imageKey}" list="media-keys" spellcheck="false"></label>
+        <datalist id="media-keys">${media.map((m) => html`<option value="${m.key}">`)}</datalist>
+      </div>
+      <input class="drop-input" type="file" name="image_file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Picture file">
     </div>
     <input type="hidden" name="image_scheme" value="">
     <div class="fields">
@@ -152,7 +159,6 @@ export const editorForm = ({ v, errors = [], roles, media, partners = [], cancel
         ${field({ id: 'f-alt-et', label: 'Picture description, in Estonian', hint: 'What the picture shows, for a reader who cannot see it.', control: input('f-alt-et', 'alt_et', v.alt_et ?? pic?.alt_et ?? '') })}
         ${field({ id: 'f-alt-en', label: 'Picture description, in English', control: input('f-alt-en', 'alt_en', v.alt_en ?? pic?.alt_en ?? '') })}
       </div>
-      ${field({ id: 'f-image', label: 'Existing picture', err: err('image_key'), hint: 'The file name, when the picture is already there. An uploaded picture replaces it.', control: input('f-image', 'image_key', imageKey, ' spellcheck="false"') })}
     </div>
 
     <h2>When and where</h2>
