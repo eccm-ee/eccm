@@ -170,7 +170,7 @@ async function drawCard(env, url, kind, input, draw) {
 
 // the event's picture's bytes: an upload from the pictures bucket (media/...), a seeded picture from the site's
 // own files through the ASSETS binding
-async function pictureBytes(env, url, key) {
+export async function pictureBytes(env, url, key) {
   let res = null;
   if (key.startsWith('media/')) res = env.MEDIA ? await env.MEDIA.get(key) : null;
   else if (env.ASSETS) { const r = await env.ASSETS.fetch(new URL(`/${key}`, url)); res = r.ok ? r : null; }

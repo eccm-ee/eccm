@@ -30,6 +30,7 @@ import { social, socialRow } from './social.mjs';
 import { renderSitemap, renderFeed } from './render/feeds.mjs';
 import { serveMedia } from './media.mjs';
 import { useTransforms } from './render/pic.mjs';
+import { serveImg } from './img.mjs';
 import { renderIcs } from './render/ics.mjs';
 import { renderAdmin } from './render/admin.mjs';
 import { backup } from './backup.mjs';
@@ -165,7 +166,8 @@ const routes = {
     // /cdn-cgi/image/ exists on the zone (positron.studio) and not on workers.dev, which this laptop has to use
     // since its DNS filter blocked the custom domain (2026-10-02, asked: "images broken in .../en/"), so a
     // workers.dev host draws the originals, as wrangler dev does
-    useTransforms(url.hostname.endsWith('.workers.dev') ? 'off' : env.IMAGE_TRANSFORMS);
+    // workers.dev draws the originals, as wrangler dev does, unless the Images binding makes the renditions (src/img.mjs)
+    useTransforms(url.hostname.endsWith('.workers.dev') ? (env.IMAGES ? 'binding' : 'off') : env.IMAGE_TRANSFORMS);
     // the site's own address for canonical, og:url, og:image, the sitemap, the feeds and the calendars:
     // SITE_ORIGIN from wrangler.jsonc, the request's origin only where it is not set
     useOrigin(env.SITE_ORIGIN || url.origin);
@@ -173,7 +175,7 @@ const routes = {
     // the editors' login, and the gate in front of the tools (src/auth.mjs)
     // the footer's logos from the partner table before any page is drawn (src/partners.mjs), asked 2026-11-07
     // as "footer logos should use same system"; not for the files and images below, which draw no footer
-    if (!p.startsWith('/media/') && !p.startsWith('/og/')) await loadLayout(env);
+    if (!p.startsWith('/media/') && !p.startsWith('/og/') && !p.startsWith('/img/')) await loadLayout(env);
     if (p === '/login') return login(request, env, url);
     if (p === '/logout') return logout();
     if (isProtected(p)) { const out = await gate(request, env, url); if (out) return out; }
@@ -186,6 +188,8 @@ const routes = {
     // the radio (/stream, /files/*, /admin/files, /radio, /station) went 2026-10-07, restorable from the tag radio-last (v2in's archive/eccm-radio/radio.md)
     // the uploaded pictures from R2, /media/{sha256}.{ext} (src/media.mjs)
     if (p.startsWith('/media/')) { const out = await serveMedia(env, p); if (out) return out; }
+    // a picture's rendition through the Images binding, for a workers.dev host (src/img.mjs)
+    if (p.startsWith('/img/')) { const out = await serveImg(request, env, url, ctx); if (out) return out; }
     // the event share images and their list for /ds (src/og/route.mjs), since 2026-10-01
     if (p.startsWith('/og/')) { const out = await ogRoute(request, env, url, ctx); if (out) return out; }
     // the sitemap and the feeds (src/render/feeds.mjs), at SITE_ORIGIN; robots.txt names the sitemap

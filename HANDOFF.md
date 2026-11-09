@@ -35,6 +35,11 @@ earlier days (its Fortinet DNS filter answered with a block page); on
   empty, and the Images binding (`IMAGES`, 5,000 unique transformations a month free) covers, cuts and places the
   picture (`src/og/card.mjs` pictureCut, `src/og/route.mjs` drawCard). Without the binding, as under wrangler
   dev, resvg draws the picture as before. Checked on staging: the five OPUS MIRUM cards, the panorama continuous.
+- **Pictures on workers.dev** (`src/img.mjs`): production sent the originals, 3.8 MB for the list's first twelve
+  pictures. On a workers.dev host the picture addresses are now `/img/{t}/{key}`, the Worker resizing through the
+  Images binding: only the ladder's own transforms (anything else 302s to the original), the format from Accept,
+  a day in the colo's cache, a failure to the original. MEASURED on staging's workers.dev host: 114 KB for the same
+  twelve, AVIF. On the zone `/cdn-cgi/image/` is unchanged. Cutover step 5 still applies.
 - **Open:** the footer draws no partner logos at any width on staging (the `.end` column is empty); not looked into.
 
 ## 2026-11-09: eccm.ee synced again, the Improtest mark, the picture field
