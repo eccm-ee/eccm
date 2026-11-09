@@ -1,7 +1,7 @@
 # Handoff, 2026-11-09
 
 The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
-committed on `main` of **https://github.com/kristjanjansen/eccm**, private,
+committed on `main` of **https://github.com/eccm-ee/eccm**, private,
 pushed. Push per CLAUDE.md and switch the account back. GitHub refused pushes
 with a 500 for about ten minutes on 2026-10-07 and then took them; retry
 before suspecting the commit.
@@ -11,6 +11,15 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 2026-10-09 `curl` reached it. If it blocks again, check through
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
 
+
+## 2026-11-09, later: the repository is ECCM's, the footer fits
+
+- **Transferred** to **https://github.com/eccm-ee/eccm**, still private (MEASURED with `gh api repos/eccm-ee/eccm`).
+  The old address redirects; `origin` points at the new one. `CLAUDE.local.md` and `plans/plan-eccm-setup.md`
+  section 8, step 7, say so. Pushing still runs under `kristjanjansen`, an admin of the organisation.
+- **Footer** (on staging): the menu's column is its own width, so "Andmekaitsetingimused" no longer runs into the
+  addresses at 1280; from 48 to 64rem the mark and the copyright take a row of their own. Looked at 800, 1000
+  and 1280. The local database is empty (`/` answers a 301 to `/join`), so the check was on staging.
 
 ## 2026-11-09: eccm.ee synced again, the Improtest mark, the picture field
 
@@ -33,10 +42,8 @@ since this session's writes to production are refused by the permission check.
   datalist.
 - **Fix:** a paragraph starting "20. novembril" rendered as a numbered list and lost its date; step 14 moves the
   date inside the sentence. A body line must not start with a number and a full stop.
-- **GitHub:** the owner is now **admin** of `eccm-ee` (MEASURED). The transfer of `kristjanjansen/eccm` is not done,
-  waiting for the owner's yes; then the remote, README, `CLAUDE.local.md` and this file.
-- **Open:** in the footer at 1280, "Andmekaitsetingimused" overlaps "Postiaadress" in the next column (from the
-  footer commits `63e2404` and `af9cfdf`). Still to do before cutover: Tarmo's three changes and a date, ECCM's
+- **GitHub:** the owner is now **admin** of `eccm-ee` (MEASURED). The transfer was done later the same day.
+- **Open:** still to do before cutover: Tarmo's three changes and a date, ECCM's
   dashboard items, the full backup, the DNS move.
 - **Gotcha:** wrangler answered `fetch failed` twice today, a staging deploy and a production seed; the retry worked.
 

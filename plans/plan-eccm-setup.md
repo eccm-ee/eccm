@@ -253,7 +253,8 @@ last one.
 7. The GitHub repository is transferred to an ECCM organisation, or ECCM's
    person is added as an owner and the transfer is left for them; either way
    the README is the document they read first, and it was written for them
-   from the first commit.
+   from the first commit. Done 2026-11-09: https://github.com/eccm-ee/eccm,
+   still private.
 
 What the handover does not need: any change to the code, any change to the
 schema, any re-upload of images by hand, or any URL that changes for a
