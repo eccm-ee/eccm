@@ -29,6 +29,12 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 - **Fix, Instagram picture cards broken:** `src/og/render.mjs` never freed resvg's wasm objects, so each render left
   its decoded picture in the isolate and a few later the next answered 503, `error code: 1102` (MEASURED on
   production, 8 of 12 fresh renders failed). Freed by hand now; 30 fresh renders on staging all 200.
+- **Cards on the free plan** (template 20): production is ECCM's account on the Workers free plan, whose CPU limit
+  killed most picture-card renders with 1102 (MEASURED: 480 of 528). The owner wants 0 EUR bills, so trip's way
+  (`trip/plans/og-cards.md`, news cards): resvg draws only the type and the mark, with the picture's place left
+  empty, and the Images binding (`IMAGES`, 5,000 unique transformations a month free) covers, cuts and places the
+  picture (`src/og/card.mjs` pictureCut, `src/og/route.mjs` drawCard). Without the binding, as under wrangler
+  dev, resvg draws the picture as before. Checked on staging: the five OPUS MIRUM cards, the panorama continuous.
 - **Open:** the footer draws no partner logos at any width on staging (the `.end` column is empty); not looked into.
 
 ## 2026-11-09: eccm.ee synced again, the Improtest mark, the picture field

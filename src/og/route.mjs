@@ -8,7 +8,7 @@
 // og/e/, and a render that fills both after the response. A stale v answers
 // 302 to the current card and a missing event 404, both no-store, so a
 // fetch made before the content exists cannot poison the URL.
-import { cardInput, cardVersion, cardPath, tallVersion, tallPath, cardSvg, slideSvg, slideVersion, slidePath, slideDefaults, slideFields, SLIDE_MAX, siteSvg, PAGE_TITLES, schemeColors, pageColorMap, SITE_CARD, pageInput, pagePath, pageVersion, TEMPLATE_V, SITE_V, W, TALL_W } from './card.mjs';
+import { cardInput, cardVersion, cardPath, tallVersion, tallPath, cardSvg, slideSvg, slideVersion, slidePath, slideDefaults, slideFields, SLIDE_MAX, siteSvg, PAGE_TITLES, schemeColors, pageColorMap, SITE_CARD, pageInput, pagePath, pageVersion, TEMPLATE_V, SITE_V, W, TALL_W, pictureCut } from './card.mjs';
 import { renderPng } from './render.mjs';
 import { CATEGORY } from '../render/event.mjs';
 
@@ -48,8 +48,9 @@ export async function slidePreview(env, url, id, lang) {
   if (!r) return none(404);
   const q = url.searchParams;
   const fields = Object.fromEntries(Object.keys(SLIDE_MAX).map((k) => [k, (q.has(k) ? q.get(k) : r.fields[k]).slice(0, SLIDE_MAX[k])]));
-  const picture = r.input.pic ? await pictureUri(env, url, r.input.pic) : null;
-  const bytes = await renderPng(slideSvg(r.input, fields, picture), TALL_W);
+  const draw = (picture) => renderPng(slideSvg(r.input, fields, picture), TALL_W);
+  const bytes = r.input.pic ? await drawCard(env, url, 't4', r.input, draw) : await draw(null);
+  if (!bytes) return none(404);
   return new Response(bytes, { headers: { 'content-type': 'image/png', 'cache-control': 'private, no-store', 'x-og': 'preview' } });
 }
 
@@ -143,9 +144,9 @@ export async function ogRoute(request, env, url, ctx) {
   const strip = (kind === 't' || kind === 't4' || kind === 'e') && !!input.pic;
   const now = VERSION(kind, input, fields);
   if (now !== v) return none(302, { location: PATH(kind, id, lang, now) });
-  const picture = withPic || strip ? await pictureUri(env, url, input.pic) : null;
-  if (withPic && !picture) return none(404);
-  const bytes = await renderPng(kind === 't4' ? slideSvg(input, fields, picture) : cardSvg(input, picture, tall, strip ? 0 : PART[kind] || 1), tall ? TALL_W : W);
+  const draw = (picture) => renderPng(kind === 't4' ? slideSvg(input, fields, picture) : cardSvg(input, picture, tall, strip ? 0 : PART[kind] || 1), tall ? TALL_W : W);
+  const bytes = withPic || strip ? await drawCard(env, url, kind, input, draw) : await draw(null);
+  if (!bytes) return none(404);
   // after the response, and a failure said in the log rather than dropped (trip's lib/bg.ts)
   const keep = (what, p) => ctx.waitUntil(p.catch((e) => console.error(JSON.stringify({ msg: 'og-keep-failed', what, key, err: String(e) }))));
   if (env.MEDIA) keep('r2', env.MEDIA.put(key, bytes, { httpMetadata: { contentType: 'image/png', cacheControl: CC } }));
@@ -153,15 +154,31 @@ export async function ogRoute(request, env, url, ctx) {
   return png(bytes, 'render');
 }
 
-// the event's picture as a data URI for resvg, which reads no URL: an upload
-// from the pictures bucket (media/...), a seeded picture from the site's own
-// files through the ASSETS binding
-async function pictureUri(env, url, key) {
+// a card with the event's picture: through the Images binding when there is one, resvg drawing the type with the
+// picture's place left empty (true) and the binding covering, cutting and placing the picture (card.mjs pictureCut);
+// without the binding (wrangler dev) resvg draws the picture too, as a data URI. null when the picture is missing
+async function drawCard(env, url, kind, input, draw) {
+  const b = await pictureBytes(env, url, input.pic);
+  if (!b) return null;
+  if (!env.IMAGES) return draw(dataUri(input.pic, b));
+  const c = pictureCut(kind);
+  const pic = env.IMAGES.input(new Response(b).body).transform(c.box).transform({ trim: { top: 0, bottom: 0, left: c.from, right: c.bw - c.from - c.w } });
+  const out = c.alone ? pic : env.IMAGES.input(new Response(await draw(true)).body).draw(pic, { left: c.x, top: 0 });
+  const res = (await out.output({ format: 'image/png' })).response();
+  return new Uint8Array(await res.arrayBuffer());
+}
+
+// the event's picture's bytes: an upload from the pictures bucket (media/...), a seeded picture from the site's
+// own files through the ASSETS binding
+async function pictureBytes(env, url, key) {
   let res = null;
   if (key.startsWith('media/')) res = env.MEDIA ? await env.MEDIA.get(key) : null;
   else if (env.ASSETS) { const r = await env.ASSETS.fetch(new URL(`/${key}`, url)); res = r.ok ? r : null; }
-  if (!res) return null;
-  const b = new Uint8Array(await res.arrayBuffer());
+  return res ? new Uint8Array(await res.arrayBuffer()) : null;
+}
+
+// the picture as a data URI for resvg, which reads no URL
+function dataUri(key, b) {
   let bin = '';
   for (let i = 0; i < b.length; i += 0x8000) bin += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000));
   return `data:${/\.png$/i.test(key) ? 'image/png' : 'image/jpeg'};base64,${btoa(bin)}`;

@@ -17,7 +17,8 @@ import M from './metrics.mjs';
 // and the stored images are orphaned, never purged
 // 18 since 2026-11-07: the panorama runs one strip further, onto the fourth card (STRIP says why)
 // 19 since 2026-11-09: the share card shows the picture's left edge at its right edge (WIDE_STRIP says why)
-export const TEMPLATE_V = 19;
+// 20 the same day: the picture placed by the Images binding, not resvg (pictureCut says why)
+export const TEMPLATE_V = 20;
 export const W = 1200, H = 630;
 
 // the frame: 64 on every side, the site's --eccm-s-16 at 1x
@@ -249,7 +250,8 @@ const markSvg = (ink, markTop = MARK_TOP, k = K) => {
 // picture alone ("make text card and image only card next to each other"), and
 // for an hour before that the picture across the top with the text under it.
 // part 0 with a picture is the text card with the panorama's first strip at its right edge
-const pano = (picture, x) => `<image x="${x}" y="0" width="${PANO_W}" height="${TALL_H}" preserveAspectRatio="xMidYMid slice" href="${picture}"/>`;
+// picture is a data URI drawn here, or true for the layout with its strip left empty, for the Images binding to fill
+const pano = (picture, x) => typeof picture !== 'string' ? '' : `<image x="${x}" y="0" width="${PANO_W}" height="${TALL_H}" preserveAspectRatio="xMidYMid slice" href="${picture}"/>`;
 export const cardSvg = (input, picture = null, tall = false, part = 1) => {
   if (tall && picture && part > 0) return `<svg xmlns="http://www.w3.org/2000/svg" width="${TALL_W}" height="${TALL_H}" viewBox="0 0 ${TALL_W} ${TALL_H}">`
     + `<rect width="${TALL_W}" height="${TALL_H}" fill="${input.ground}"/>${pano(picture, -STRIP - (part - 1) * TALL_W)}</svg>`;
@@ -270,7 +272,7 @@ export const cardSvg = (input, picture = null, tall = false, part = 1) => {
     y += META_LH * metaFs;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${L.w}" height="${L.h}" viewBox="0 0 ${L.w} ${L.h}">`
-    + `<rect width="${L.w}" height="${L.h}" fill="${input.ground}"/>${L.strip ? pano(picture, TALL_W - STRIP) : ''}${L.wideStrip ? `<image x="${W - WIDE_STRIP}" y="0" width="${Math.round(H * 1.5)}" height="${H}" preserveAspectRatio="xMinYMid slice" href="${picture}"/>` : ''}${out.join('')}${markSvg(input.ink, L.markTop, L.k)}${input.plate === false ? '' : plateSvg(input.ink, input.lang, L.markTop, L.k)}`
+    + `<rect width="${L.w}" height="${L.h}" fill="${input.ground}"/>${L.strip ? pano(picture, TALL_W - STRIP) : ''}${L.wideStrip && typeof picture === 'string' ? `<image x="${W - WIDE_STRIP}" y="0" width="${Math.round(H * 1.5)}" height="${H}" preserveAspectRatio="xMinYMid slice" href="${picture}"/>` : ''}${out.join('')}${markSvg(input.ink, L.markTop, L.k)}${input.plate === false ? '' : plateSvg(input.ink, input.lang, L.markTop, L.k)}`
     + '</svg>';
 };
 
@@ -444,3 +446,20 @@ export const pagePath = (key, lang, tall = false) => `/og/${tall ? 'gt' : 'g'}/$
 export const pageVersion = (input, tall = false) => cardVersion(tall ? { ...input, layout: 'tall' } : input);
 export const sitePath = (lang) => `/og/site-${lang === 'en' ? 'en' : 'et'}.png`;
 export const siteAlt = (lang) => (lang === 'en' ? 'ECCM, Estonian Centre of Contemporary Music' : 'ECCM, Eesti Nüüdismuusika Keskus');
+
+// where the Images binding puts the picture on each card, the same geometry as the <image> elements above:
+// the picture covered to a box, cut to a window of it, drawn at x. Asked 2026-11-09 after the free plan's CPU
+// limit killed most renders on ECCM's account ("i promised to team to have 0eur bills"): resvg draws only the
+// type and the mark, which fits the limit, and the binding, 5,000 unique transformations a month free, does
+// the picture (trip does its news cards the same way, trip/plans/og-cards.md)
+export const pictureCut = (kind) => {
+  if (kind === 'e') {
+    const bw = Math.round(H * 1.5);
+    return { box: { width: bw, height: H, fit: 'cover', gravity: 'left' }, from: 0, w: WIDE_STRIP, bw, x: W - WIDE_STRIP };
+  }
+  const box = { width: PANO_W, height: TALL_H, fit: 'cover' }, bw = PANO_W;
+  if (kind === 't') return { box, from: 0, w: STRIP, bw, x: TALL_W - STRIP };
+  if (kind === 't4') return { box, from: PANO_W - STRIP, w: STRIP, bw, x: 0 };
+  const part = kind === 'tp1' ? 1 : 2;
+  return { box, from: STRIP + (part - 1) * TALL_W, w: TALL_W, bw, x: 0, alone: true };
+};

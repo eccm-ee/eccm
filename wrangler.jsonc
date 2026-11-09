@@ -49,6 +49,8 @@
       // the uploaded pictures, one original per sha256 (src/media.mjs), created
       // 2026-09-30 with wrangler r2 bucket create eccm-media-staging
       // the radio's audio left with its bucket on 2026-11-03, now in v2in-media/eccm-radio/ (v2in's archive/eccm-radio/radio.md)
+      // the picture on the share and Instagram cards (src/og/route.mjs drawCard), free to 5,000 a month
+      "images": { "binding": "IMAGES" },
       "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "eccm-media-staging" },
         // the daily copy of every D1 table (src/backup.mjs), d1/YYYY-MM-DD.json, 30 days kept;
         // created 2026-10-07 with wrangler r2 bucket create eccm-backup-staging
@@ -83,6 +85,8 @@
       // eccm in ECCM's account, created 2026-11-07
       "d1_databases": [{ "binding": "DB", "database_name": "eccm", "database_id": "ffdd830e-81a4-427a-9dc2-c3543e49df64", "migrations_dir": "migrations" }],
       // wrangler r2 bucket create eccm-media and eccm-backup on ECCM's account
+      // the picture on the share and Instagram cards, as on staging
+      "images": { "binding": "IMAGES" },
       "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "eccm-media" }, { "binding": "BACKUP", "bucket_name": "eccm-backup" }],
       // no Durable Objects: this list replaces the top-level one, which is
       // staging's history, so a new Worker gets no class (a throwaway deploy
