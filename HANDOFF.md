@@ -18,9 +18,9 @@ earlier days (its Fortinet DNS filter answered with a block page); on
   --env staging` removed the Worker and its two addresses (MEASURED: the name no longer resolves, workers.dev answers
   1042). The database `eccm-staging` and the buckets `eccm-media-staging`, `eccm-backup-staging` are kept.
   Test locally, deploy production only (CLAUDE.md, Deploy).
-- **Waiting on the owner** before the next production deploy: `d1 migrations apply eccm --remote --env production`
-  (0017, series) and `d1 execute eccm --remote --env production --file data/seed-step16-koosloome-page.sql`. The
-  code on `main` reads `event.series`, so deploying before 0017 breaks every page.
+- **On eccm.ee:** the series dropdown (0017, production `b34978c4`) and the Koosloome programme page (seed step 16,
+  run by the owner): /et/koosloome-programm and /en/co-creation-programme answer 200, the two old Ulysses News
+  addresses 301 there, /en/ulysses links it (MEASURED through Cloudflare).
 
 ## 2026-11-13, later: eccm.ee is the new site
 
