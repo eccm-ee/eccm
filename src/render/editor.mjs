@@ -24,7 +24,6 @@ import { partnerPicker } from './partners.mjs';
 // a blank credit block, the one the form shows when an event has none and the one Add credit adds
 export const BLANK_CREDIT = () => ({ role_key: '', label_et: '', label_en: '', people: '', orgs_et: '', orgs_en: '' });
 
-export const CATEGORIES = [['eccm', 'ECCM'], ['koostoo', 'Collaboration'], ['improtest', 'Improtest'], ['schoenberg', 'Schönberg series'], ['ulysses', 'Ulysses'], ['u', 'U:'], ['tuma', 'TUMA']];
 export const STATUSES = [['draft', 'Draft'], ['published', 'Published']];
 export const eventPath = (lang, slug) => (lang === 'et' ? `/et/sundmused/${slug}` : `/en/events/${slug}`);
 
@@ -59,6 +58,13 @@ const langBlock = (v, err, lang, name, tLabel, sLabel, bLabel, part) => html`<se
         ${part === 'body' ? '' : field({ id: `f-slug-${lang}`, label: sLabel, err: err(`slug_${lang}`), hint: lang === 'et' ? 'Leave empty to derive it from the title. Lowercase a to z, digits and hyphens.' : 'Leave empty to derive it from the title.', control: input(`f-slug-${lang}`, `slug_${lang}`, v[lang].slug, ' spellcheck="false"') })}
         ${part === 'head' ? '' : field({ id: `f-body-${lang}`, label: bLabel, err: err(`body_${lang}`), hint: lang === 'et' ? 'A blank line starts a paragraph, a line starting with ## is a heading, **text** is bold, [words](https://…) is a link.' : 'A blank line starts a paragraph, a line starting with ## is a heading.', control: html`<textarea id="f-body-${lang}" name="body_${lang}" rows="18">${v[lang].body}</textarea>` })}
       </section>`;
+// the series as a dropdown of the series table's rows and a field for a new one beside it (asked 2026-11-13: "why
+// not have dropdown and optional textfield on edit event/page?"); a typed name wins over the dropdown on save
+// (src/series.mjs resolveSeries). none: the page form's hint, given with a None option first for a page with no series
+const seriesFields = (v, err, series, none = '') => html`<div class="field-row">
+        ${field({ id: 'f-series', label: 'Series', err: err('series'), hint: none, control: html`<select id="f-series" name="series">${opts((none ? [['', 'None']] : []).concat(series.map((r) => [r.key, r.name_en === r.name_et ? r.name_en : `${r.name_en} (${r.name_et})`])), v.series)}</select>` })}
+        ${field({ id: 'f-series-new', label: 'New series', hint: 'Or type a new one', control: input('f-series-new', 'series_new', v.series_new) })}
+      </div>`;
 // the two texts keep one height: a drag on either resizes the other (asked 2026-09-28: "when resizing textarea in one col, other height should change too")
 const SAME_HEIGHT = `      const tas = [...document.querySelectorAll('.langs textarea')];
       const ro = new ResizeObserver((entries) => { for (const en of entries) { const h = en.target.offsetHeight; for (const t of tas) if (t !== en.target && t.offsetHeight !== h) t.style.height = h + 'px'; } });
@@ -93,7 +99,8 @@ const READ_PICTURE = `      const { read, contract } = await import('/scheme.mjs
 // the public links
 // cancel: where Cancel goes, the event itself or the public list (src/editor.mjs)
 // partners: every logo, for the picker (src/render/partners.mjs)
-export const editorForm = ({ v, errors = [], roles, media, partners = [], cancel = '/et/sundmused' }) => {
+// series: the series table's rows, for the dropdown
+export const editorForm = ({ v, errors = [], roles, media, partners = [], series = [], cancel = '/et/sundmused' }) => {
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
   const isNew = !v.id;
   const action = isNew ? '/edit/events/new' : `/edit/events/${v.id}`;
@@ -177,7 +184,7 @@ export const editorForm = ({ v, errors = [], roles, media, partners = [], cancel
       ${field({ id: 'f-address', label: 'Address', control: input('f-address', 'address', v.address) })}
       ${field({ id: 'f-tickets', label: 'Tickets', err: err('ticket_url'), control: input('f-tickets', 'ticket_url', v.ticket_url, ' type="url" inputmode="url"') })}
       ${field({ id: 'f-website', label: 'Website', err: err('website_url'), control: input('f-website', 'website_url', v.website_url, ' type="url" inputmode="url"') })}
-      ${field({ id: 'f-category', label: 'Series', err: err('category'), control: html`<select id="f-category" name="category">${opts(CATEGORIES, v.category)}</select>` })}
+      ${seriesFields(v, err, series)}
     </div>
 
     <h2>Text</h2>
@@ -222,8 +229,8 @@ ${raw(READ_PICTURE)}
 
 // ── the text pages: the same form with nothing a page lacks ─────────────────
 // v: the form's values (src/editor.mjs, pageFromRows or parsePage); errors as editorForm takes them;
-// cancel: where Cancel goes, the page itself (src/editor.mjs)
-export const pageForm = ({ v, errors = [], cancel = '/' }) => {
+// cancel: where Cancel goes, the page itself (src/editor.mjs); series: as editorForm takes it
+export const pageForm = ({ v, errors = [], series = [], cancel = '/' }) => {
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
   const isNew = !v.id;
   const action = isNew ? '/edit/pages/new' : `/edit/pages/${v.id}`;
@@ -243,6 +250,11 @@ export const pageForm = ({ v, errors = [], cancel = '/' }) => {
     <div class="langs">
       ${langBlock(v, err, 'et', 'Estonian', 'Title', 'Slug', 'Text', 'head')}
       ${langBlock(v, err, 'en', 'English', 'Title', 'Slug', 'Text', 'head')}
+    </div>
+
+    <h2>Series</h2>
+    <div class="fields">
+      ${seriesFields(v, err, series, 'Its coming events are listed under the text.')}
     </div>
 
     <h2>Text</h2>

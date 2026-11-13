@@ -13,6 +13,7 @@ import { opening, clip } from './lead.mjs';
 import { cardInput, cardVersion, cardPath, cardAlt, slideDefaults, slideFields, W as CARD_W, H as CARD_H } from '../og/card.mjs';
 import { renderSocial } from './social.mjs';
 import { partnerRow } from './partners.mjs';
+import { seriesName } from '../series.mjs';
 
 // the Open Graph head of plans/plan-eccm-event-markup.md section 4, with the
 // versioned share image of src/og/card.mjs; the description is the body's
@@ -20,7 +21,7 @@ import { partnerRow } from './partners.mjs';
 // page() writes as the meta description too
 const SITE_NAME = { et: 'Eesti Nüüdismuusika Keskus', en: 'Estonian Centre of Contemporary Music' };
 const LOCALE = { et: 'et_EE', en: 'en_GB' };
-const describe = ({ title, body, ev, textLang }) => clip(opening(body, { title, venue: ev.venue, address: ev.address, series: CATEGORY[ev.category] && CATEGORY[ev.category][textLang] }));
+const describe = ({ title, body, ev, textLang }) => clip(opening(body, { title, venue: ev.venue, address: ev.address, series: seriesOf(ev, textLang) }));
 const ogHead = ({ lang, title, desc, ev, media, origin, canonical, textLang }) => {
   // the same input the card route builds, picture included, so og:image names the hash the route renders and no scraper takes a 302 first
   const input = cardInput({ lang, title, ev, scheme: media && media.scheme, pic: media && media.key });
@@ -64,11 +65,9 @@ const eventLd = ({ lang, title, desc, ev, origin, canonical, image, textLang = l
   });
 };
 
-export const CATEGORY = {
-  eccm: { et: 'ECCM', en: 'ECCM' }, koostoo: { et: 'Koostöö', en: 'Collaboration' }, improtest: { et: 'Improtest', en: 'Improtest' },
-  schoenberg: { et: 'Schönbergi sari', en: 'Schönberg series' }, ulysses: { et: 'Ulysses', en: 'Ulysses' }, u: { et: 'U:', en: 'U:' },
-  tuma: { et: 'TUMA', en: 'TUMA' },
-};
+// the event's series in a language, from the series table (src/series.mjs); a preview of a series typed into the
+// form and not yet saved carries its name as series_names, since the table has no row for it yet
+export const seriesOf = (ev, lang) => (ev.series_names ? ev.series_names[lang] : seriesName(ev.series, lang));
 // 'https://www.ule-heli.ee/' as 'ule-heli.ee', the way the seeded bodies wrote it
 const host = (url) => { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; } };
 const CONTACT = { tel: '+37255655596', telText: '5565 5596', site: 'https://eccm.ee', siteText: 'eccm.ee' };
@@ -159,7 +158,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
         <dl class="facts">
           <div><dt>${t.when}</dt><dd><time datetime="${ev.starts_at}${off}">${whenLine(ev.starts_at, ev.ends_at, lang)}</time>${ev.duration_min ? html`, <time datetime="PT${ev.duration_min}M">${ev.duration_min} ${t.min}</time>` : ''}</dd></div>
           ${where ? html`<div><dt>${t.where}</dt><dd><a class="place" href="${mapsUrl(where)}">${where}</a></dd></div>` : ''}
-          ${ev.category !== 'eccm' ? html`<div><dt>${t.series}</dt><dd>${CATEGORY[ev.category][lang]}</dd></div>` : ''}
+          ${ev.series !== 'eccm' && seriesOf(ev, lang) ? html`<div><dt>${t.series}</dt><dd>${seriesOf(ev, lang)}</dd></div>` : ''}
           ${ev.website_url ? html`<div><dt>${t.website}</dt><dd><a href="${ev.website_url}">${host(ev.website_url)}</a></dd></div>` : ''}
           <div><dt>${t.calendar}</dt><dd><a href="${gcal}">Google</a> <a href="${outlook}">Outlook</a> <a href="${eventPath(textLang, text.slug)}.ics">iCal</a></dd></div>
           <div><dt>${t.ask}</dt><dd><a href="tel:${CONTACT.tel}">${CONTACT.telText}</a>, <a href="${CONTACT.site}">${CONTACT.siteText}</a></dd></div>
@@ -194,7 +193,7 @@ export const renderEvent = ({ lang, text, fallback, ev, media, credits, twin, ne
   </article>${social ? renderSocial({
     id: ev.id, lang, slug: text.slug, path, stored: !!social.row,
     input: cardInput({ lang, title, ev, scheme: media && media.scheme, pic: media && media.key }),
-    fields: slideFields(social.row, slideDefaults({ title, body: text.body, ev, series: CATEGORY[ev.category] && CATEGORY[ev.category][lang] })),
+    fields: slideFields(social.row, slideDefaults({ title, body: text.body, ev, series: seriesOf(ev, lang) })),
   }) : ''}`;
   return page({ lang, title, alternate, canonical, alternates, body, notice, head, description });
 };

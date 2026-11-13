@@ -34,10 +34,11 @@ import { renderEvent, cleanScheme } from './render/event.mjs';
 import { storeUpload } from './media.mjs';
 import { renderPage, pagePath } from './render/page.mjs';
 import { OTHER, origin } from './render/chrome.mjs';
-import { editorForm, pageForm, errorPage, CATEGORIES, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
+import { editorForm, pageForm, errorPage, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
 import { renderDrafts } from './render/events.mjs';
 import { allPartners } from './partners.mjs';
 import { VERSIONS } from './render/partners.mjs';
+import { allSeries, resolveSeries, insertSeries, categoryFor, resetSeries, seriesEvents } from './series.mjs';
 
 const HEAD = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' };
 const reply = (body, status = 200, extra = {}) => new Response(String(body), { status, headers: { ...HEAD, ...extra } });
@@ -65,6 +66,8 @@ const names = (v) => v.split(/[,;]/).map((x) => x.trim()).filter(Boolean);
 const orgs = (v) => v.split(';').map((x) => x.trim()).filter(Boolean);
 // a local time as the field posts it, seconds dropped, and only a real date
 const local = (v) => { v = String(v ?? '').trim(); return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(v) ? v.slice(0, 16) : v; };
+// today in Tallinn as YYYY-MM-DD, the events list's own (src/index.mjs)
+const TODAY = () => new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn' }).format(new Date());
 const isLocal = (v) => LOCAL.test(v) && new Date(v + ':00Z').toISOString().slice(0, 16) === v;
 
 const text = (rows, lang) => { const r = rows.find((t) => t.lang === lang); return { title: r?.title ?? '', slug: r?.slug ?? '', body: r?.body ?? '', exists: !!r }; };
@@ -75,7 +78,7 @@ export const fromRows = (ev, texts, credits, eps = []) => ({
   id: ev?.id, rev: ev?.rev ?? 0,
   starts_at: ev?.starts_at ?? '', ends_at: ev?.ends_at ?? '', duration_min: ev?.duration_min ?? '',
   venue: ev?.venue ?? 'ECCM saal', venue_en: ev ? venueEn(texts) : 'ECCM hall', address: ev?.address ?? 'Pühavaimu 9, Tallinn',
-  ticket_url: ev?.ticket_url ?? '', website_url: ev?.website_url ?? '', category: ev?.category ?? 'eccm',
+  ticket_url: ev?.ticket_url ?? '', website_url: ev?.website_url ?? '', series: ev?.series ?? 'eccm', series_new: '',
   image_id: ev?.image_id ?? '', status: ev?.status ?? 'draft', publish_at: ev?.publish_at ?? '',
   et: text(texts, 'et'), en: text(texts, 'en'),
   credits: credits.map((c) => ({
@@ -98,7 +101,7 @@ export const parse = (fd, before) => {
     id: before.id, rev: parseInt(s(fd, 'rev'), 10) || 0,
     starts_at: local(s(fd, 'starts_at')), ends_at: local(s(fd, 'ends_at')), duration_min: s(fd, 'duration_min'),
     venue: s(fd, 'venue'), venue_en: s(fd, 'venue_en'), address: s(fd, 'address'), ticket_url: s(fd, 'ticket_url'), website_url: s(fd, 'website_url'),
-    category: s(fd, 'category'), image_key: s(fd, 'image_key'), image_id: '', status: s(fd, 'status'), publish_at: local(s(fd, 'publish_at')),
+    series: s(fd, 'series'), series_new: s(fd, 'series_new'), image_key: s(fd, 'image_key'), image_id: '', status: s(fd, 'status'), publish_at: local(s(fd, 'publish_at')),
     alt_et: s(fd, 'alt_et'), alt_en: s(fd, 'alt_en'), image_scheme: cleanScheme(s(fd, 'image_scheme')),
     et: { title: s(fd, 'title_et'), slug: s(fd, 'slug_et').toLowerCase(), body: s(fd, 'body_et'), exists: before.et.exists },
     en: { title: s(fd, 'title_en'), slug: s(fd, 'slug_en').toLowerCase(), body: s(fd, 'body_en'), exists: before.en.exists },
@@ -113,7 +116,7 @@ export const parse = (fd, before) => {
 };
 
 // the messages, in words; every one names the field it is about
-export async function validate(v, db, roles, media, partners = []) {
+export async function validate(v, db, roles, media, partners = [], series = []) {
   const errors = [];
   const bad = (field, msg) => errors.push({ field, msg });
   if (!v.starts_at) bad('starts_at', 'Start is empty.');
@@ -123,7 +126,7 @@ export async function validate(v, db, roles, media, partners = []) {
   if (v.duration_min !== '' && !(/^\d+$/.test(v.duration_min) && +v.duration_min >= 1 && +v.duration_min <= 1440)) bad('duration_min', 'Duration is a whole number of minutes, 1 to 1440.');
   if (v.ticket_url && !URLISH.test(v.ticket_url)) bad('ticket_url', 'The ticket link starts with https:// or http://.');
   if (v.website_url && !URLISH.test(v.website_url)) bad('website_url', 'The website address starts with https:// or http://.');
-  if (!CATEGORIES.some(([k]) => k === v.category)) bad('category', 'No series chosen.');
+  { const e = resolveSeries(v, series, true); if (e) bad('series', e); }
   if (!STATUSES.some(([k]) => k === v.status)) bad('status', 'No status chosen.');
   // the typed file name becomes the media row's id, or a sentence naming the files that exist
   if (v.image_key !== undefined) {
@@ -179,8 +182,9 @@ const creditRows = (v, before) => {
     };
   });
 };
-const eventValues = (v) => [v.starts_at, v.ends_at || null, v.duration_min === '' ? null : +v.duration_min, v.venue, v.address, v.ticket_url, v.website_url, v.category, v.image_id ? +v.image_id : null, v.status, v.publish_at || null];
-const EVENT_COLS = 'starts_at, ends_at, duration_min, venue, address, ticket_url, website_url, category, image_id, status, publish_at';
+const eventValues = (v) => [v.starts_at, v.ends_at || null, v.duration_min === '' ? null : +v.duration_min, v.venue, v.address, v.ticket_url, v.website_url, categoryFor(v.series), v.series, v.image_id ? +v.image_id : null, v.status, v.publish_at || null];
+// category is kept at one of the seven keys its CHECK allows (src/series.mjs categoryFor), series is the event's series
+const EVENT_COLS = 'starts_at, ends_at, duration_min, venue, address, ticket_url, website_url, category, series, image_id, status, publish_at';
 
 // the picture's descriptions go onto its media row, and the scheme the
 // editor's browser read goes there too when the row has none yet (a picture
@@ -194,7 +198,8 @@ async function save(db, v, before) {
   const credits = creditRows(v, before.creditRows);
   const texts = ['et', 'en'].filter((l) => v[l].title);
   if (!v.id) {
-    const ins = await db.prepare(`INSERT INTO event (${EVENT_COLS}, updated_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`).bind(...eventValues(v), BY).run();
+    if (v.newSeries) await insertSeries(db, v.newSeries).run();
+    const ins = await db.prepare(`INSERT INTO event (${EVENT_COLS}, updated_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(...eventValues(v), BY).run();
     const id = ins.meta.last_row_id;
     const stmts = texts.map((l) => db.prepare('INSERT INTO event_text (event_id, lang, slug, title, body, venue) VALUES (?,?,?,?,?,?)').bind(id, l, v[l].slug, v[l].title, v[l].body, l === 'en' ? v.venue_en || null : null))
       .concat(credits.map((c) => db.prepare('INSERT INTO event_credit (event_id, position, role_key, label_et, label_en, people, orgs) VALUES (?,?,?,?,?,?,?)').bind(id, c.position, c.role_key, c.label_et, c.label_en, c.people, c.orgs)))
@@ -208,14 +213,14 @@ async function save(db, v, before) {
   // its changed-row count says whether anything happened at all
   const guard = 'EXISTS (SELECT 1 FROM event WHERE id = ? AND rev = ?)';
   const g = [v.id, v.rev];
-  const stmts = texts.map((l) => db.prepare(`INSERT INTO event_text (event_id, lang, slug, title, body, venue) SELECT ?,?,?,?,?,? WHERE ${guard} ON CONFLICT (event_id, lang) DO UPDATE SET slug = excluded.slug, title = excluded.title, body = excluded.body, venue = CASE WHEN excluded.lang = 'en' THEN excluded.venue ELSE event_text.venue END`).bind(v.id, l, v[l].slug, v[l].title, v[l].body, l === 'en' ? v.venue_en || null : null, ...g))
+  const stmts = (v.newSeries ? [insertSeries(db, v.newSeries, guard, g)] : []).concat(texts.map((l) => db.prepare(`INSERT INTO event_text (event_id, lang, slug, title, body, venue) SELECT ?,?,?,?,?,? WHERE ${guard} ON CONFLICT (event_id, lang) DO UPDATE SET slug = excluded.slug, title = excluded.title, body = excluded.body, venue = CASE WHEN excluded.lang = 'en' THEN excluded.venue ELSE event_text.venue END`).bind(v.id, l, v[l].slug, v[l].title, v[l].body, l === 'en' ? v.venue_en || null : null, ...g)))
     .concat([db.prepare(`DELETE FROM event_credit WHERE event_id = ? AND ${guard}`).bind(v.id, ...g)])
     .concat(credits.map((c) => db.prepare(`INSERT INTO event_credit (event_id, position, role_key, label_et, label_en, people, orgs) SELECT ?,?,?,?,?,?,? WHERE ${guard}`).bind(v.id, c.position, c.role_key, c.label_et, c.label_en, c.people, c.orgs, ...g)))
     .concat(mediaStmts(db, v, guard, g))
     // the logos as the picker left them (asked 2026-11-07: "allow editing to pick from logos"), replaced whole like the credits
     .concat([db.prepare(`DELETE FROM event_partner WHERE event_id = ? AND ${guard}`).bind(v.id, ...g)])
     .concat(v.partners.map((pid, i) => db.prepare(`INSERT INTO event_partner (event_id, partner_id, position, version) SELECT ?,?,?,? WHERE ${guard}`).bind(v.id, pid, i + 1, v.partner_version, ...g)))
-    .concat([db.prepare(`UPDATE event SET starts_at = ?, ends_at = ?, duration_min = ?, venue = ?, address = ?, ticket_url = ?, website_url = ?, category = ?, image_id = ?, status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = ?, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(...eventValues(v), BY, ...g)]);
+    .concat([db.prepare(`UPDATE event SET starts_at = ?, ends_at = ?, duration_min = ?, venue = ?, address = ?, ticket_url = ?, website_url = ?, category = ?, series = ?, image_id = ?, status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = ?, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(...eventValues(v), BY, ...g)]);
   const results = await db.batch(stmts);
   return { id: v.id, stale: results[results.length - 1].meta.changes !== 1 };
 }
@@ -225,12 +230,12 @@ async function save(db, v, before) {
 // a status and a publish time; key is the row's name in the page table
 // ('eccm', 'tallinn-1965'), set once at the insert and never by the form
 export const pageFromRows = (pg, texts) => ({
-  id: pg?.id, rev: pg?.rev ?? 0, key: pg?.key ?? '',
+  id: pg?.id, rev: pg?.rev ?? 0, key: pg?.key ?? '', series: pg?.series ?? '', series_new: '',
   status: pg?.status ?? 'draft', publish_at: pg?.publish_at ?? '',
   et: text(texts, 'et'), en: text(texts, 'en'),
 });
 export const parsePage = (fd, before) => ({
-  id: before.id, rev: parseInt(s(fd, 'rev'), 10) || 0, key: before.key,
+  id: before.id, rev: parseInt(s(fd, 'rev'), 10) || 0, key: before.key, series: s(fd, 'series'), series_new: s(fd, 'series_new'),
   status: s(fd, 'status'), publish_at: local(s(fd, 'publish_at')),
   et: { title: s(fd, 'title_et'), slug: s(fd, 'slug_et').toLowerCase(), body: s(fd, 'body_et'), exists: before.et.exists },
   en: { title: s(fd, 'title_en'), slug: s(fd, 'slug_en').toLowerCase(), body: s(fd, 'body_en'), exists: before.en.exists },
@@ -238,9 +243,10 @@ export const parsePage = (fd, before) => ({
 // the one segment after the language that is not a page: the events list of
 // plans/plan-eccm-urls-sitemap-rss.md section 2
 const RESERVED = { et: ['sundmused'], en: ['events'] };
-export async function validatePage(v, db) {
+export async function validatePage(v, db, series = []) {
   const errors = [];
   const bad = (field, msg) => errors.push({ field, msg });
+  { const e = resolveSeries(v, series, false); if (e) bad('series', e); }
   if (!STATUSES.some(([k]) => k === v.status)) bad('status', 'No status chosen.');
   if (v.publish_at && !isLocal(v.publish_at)) bad('publish_at', 'Publish from is not a date and time.');
   // the texts: either language may be missing, since on eccm.ee NAN and
@@ -273,7 +279,8 @@ export async function validatePage(v, db) {
 async function savePage(db, v) {
   const texts = ['et', 'en'].filter((l) => v[l].title);
   if (!v.id) {
-    const ins = await db.prepare('INSERT INTO page (key, status, publish_at, updated_by) VALUES (?,?,?,?)').bind(v.key, v.status, v.publish_at || null, BY).run();
+    if (v.newSeries) await insertSeries(db, v.newSeries).run();
+    const ins = await db.prepare('INSERT INTO page (key, series, status, publish_at, updated_by) VALUES (?,?,?,?,?)').bind(v.key, v.series || null, v.status, v.publish_at || null, BY).run();
     const id = ins.meta.last_row_id;
     await db.batch(texts.map((l) => db.prepare('INSERT INTO page_text (page_id, lang, slug, title, body) VALUES (?,?,?,?,?)').bind(id, l, v[l].slug, v[l].title, v[l].body)));
     return { id };
@@ -282,19 +289,21 @@ async function savePage(db, v) {
   // its changed-row count says whether anything happened at all
   const guard = 'EXISTS (SELECT 1 FROM page WHERE id = ? AND rev = ?)';
   const g = [v.id, v.rev];
-  const stmts = texts.map((l) => db.prepare(`INSERT INTO page_text (page_id, lang, slug, title, body) SELECT ?,?,?,?,? WHERE ${guard} ON CONFLICT (page_id, lang) DO UPDATE SET slug = excluded.slug, title = excluded.title, body = excluded.body`).bind(v.id, l, v[l].slug, v[l].title, v[l].body, ...g))
-    .concat([db.prepare(`UPDATE page SET status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = ?, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(v.status, v.publish_at || null, BY, ...g)]);
+  const stmts = (v.newSeries ? [insertSeries(db, v.newSeries, guard, g)] : []).concat(texts.map((l) => db.prepare(`INSERT INTO page_text (page_id, lang, slug, title, body) SELECT ?,?,?,?,? WHERE ${guard} ON CONFLICT (page_id, lang) DO UPDATE SET slug = excluded.slug, title = excluded.title, body = excluded.body`).bind(v.id, l, v[l].slug, v[l].title, v[l].body, ...g)))
+    .concat([db.prepare(`UPDATE page SET series = ?, status = ?, publish_at = ?, updated_at = ${NOW}, updated_by = ?, rev = rev + 1 WHERE id = ? AND rev = ?`).bind(v.series || null, v.status, v.publish_at || null, BY, ...g)]);
   const results = await db.batch(stmts);
   return { id: v.id, stale: results[results.length - 1].meta.changes !== 1 };
 }
 
-function previewPage(v, lang, url) {
+async function previewPage(db, v, lang, url) {
   if (!v[lang].title) lang = OTHER[lang];
   const text = { page_id: v.id, lang, slug: v[lang].slug, title: v[lang].title, body: v[lang].body };
   const other = OTHER[lang];
   const twin = v[other].title ? { lang: other, slug: v[other].slug } : null;
   const notice = 'Preview. Nothing is saved. Close this tab and save from the form.';
-  return reply(renderPage({ lang, text, fallback: false, twin, origin: origin(), path: pagePath(lang, text.slug), notice, editor: true, editHref: v.id ? `/edit/pages/${v.id}` : '/edit/pages/new' }));
+  // the series' coming events as the page will list them; a series typed and not yet saved has none
+  const events = v.series && !v.newSeries ? await seriesEvents(db, lang, v.series, TODAY()) : [];
+  return reply(renderPage({ lang, text, fallback: false, twin, origin: origin(), path: pagePath(lang, text.slug), notice, editor: true, editHref: v.id ? `/edit/pages/${v.id}` : '/edit/pages/new', events }));
 }
 
 async function loadPage(db, id) {
@@ -317,15 +326,17 @@ async function pageRoute(request, env, url, id) {
   const before = id === 'new' ? { pg: null, texts: [], values: pageFromRows(null, []) } : await loadPage(db, +id);
   if (!before) return reply(errorPage({ status: 404, reason: 'page' }), 404);
   const cancel = pageHome(before.texts) || '/';
-  if (request.method !== 'POST') return reply(pageForm({ v: before.values, cancel }));
+  const series = await allSeries(db);
+  if (request.method !== 'POST') return reply(pageForm({ v: before.values, series, cancel }));
   const fd = await request.formData();
   const v = parsePage(fd, before.values);
   const action = s(fd, 'do');
-  const errors = await validatePage(v, db);
-  if (errors.length) return reply(pageForm({ v, errors, cancel }), 422);
-  if (action.startsWith('preview')) return previewPage(v, action.endsWith('en') ? 'en' : 'et', url);
+  const errors = await validatePage(v, db, series);
+  if (errors.length) return reply(pageForm({ v, errors, series, cancel }), 422);
+  if (action.startsWith('preview')) return previewPage(db, v, action.endsWith('en') ? 'en' : 'et', url);
   const out = await savePage(db, v);
-  if (out.stale) return reply(pageForm({ v, errors: [{ field: 'rev', msg: 'Someone else saved this page in the meantime. Open it in a new tab, compare, and make the change again.' }], cancel }), 409);
+  if (out.stale) return reply(pageForm({ v, errors: [{ field: 'rev', msg: 'Someone else saved this page in the meantime. Open it in a new tab, compare, and make the change again.' }], series, cancel }), 409);
+  if (v.newSeries) resetSeries();
   return redirect(landing(v, pagePath) || `/edit/pages/${out.id}`);
 }
 
@@ -342,12 +353,14 @@ const lookups = async (db) => ({
   roles: (await db.prepare('SELECT * FROM role ORDER BY sort').bind().all()).results,
   media: (await db.prepare('SELECT id, key, width, height, alt_et, alt_en, scheme FROM media ORDER BY id').bind().all()).results,
   partners: await allPartners(db),
+  series: await allSeries(db),
 });
 
 async function preview(db, v, lang, before, roles, media, url, partners = []) {
   if (!v[lang].title) lang = 'et';
   const ev = { id: v.id, rev: v.rev, ...Object.fromEntries(EVENT_COLS.split(', ').map((k, i) => [k, eventValues(v)[i]])) };
   if (lang === 'en' && v.venue_en) ev.venue = v.venue_en;
+  if (v.newSeries) ev.series_names = { et: v.newSeries.name, en: v.newSeries.name };
   const text = { event_id: v.id, lang, slug: v[lang].slug, title: v[lang].title, body: v[lang].body };
   const other = lang === 'et' ? 'en' : 'et';
   const twin = v[other].title ? { lang: other, slug: v[other].slug } : null;
@@ -366,11 +379,11 @@ async function form(request, env, url, id) {
   const db = env.DB;
   const before = id === 'new' ? { ev: null, texts: [], creditRows: [], values: fromRows(null, [], []) } : await load(db, +id);
   if (!before) return reply(errorPage({ status: 404 }), 404);
-  const { roles, media, partners } = await lookups(db);
+  const { roles, media, partners, series } = await lookups(db);
   // where Cancel goes: the event itself, Estonian first, or /admin for a new one, where its card is
   const home = before.texts.find((x) => x.lang === 'et') || before.texts.find((x) => x.lang === 'en');
   const cancel = home ? eventPath(home.lang, home.slug) : id === 'new' ? '/admin' : '/et/sundmused';
-  if (request.method !== 'POST') return reply(editorForm({ v: padded(before.values), roles, media, partners, cancel }));
+  if (request.method !== 'POST') return reply(editorForm({ v: padded(before.values), roles, media, partners, series, cancel }));
   const fd = await request.formData();
   const v = parse(fd, before.values);
   const action = s(fd, 'do');
@@ -385,12 +398,14 @@ async function form(request, env, url, id) {
     else { v.image_key = up.row.key; if (!media.some((m) => m.id === up.row.id)) media.push(up.row); }
   }
   // one more blank credit block, the typed values kept, nothing validated and nothing saved
-  if (action === 'add-credit') return reply(editorForm({ v: { ...v, credits: v.credits.concat([BLANK_CREDIT()]) }, roles, media, partners, cancel }));
-  const errors = upErrors.concat(await validate(v, db, roles, media, partners));
-  if (errors.length) return reply(editorForm({ v: padded(v), errors, roles, media, partners, cancel }), 422);
+  if (action === 'add-credit') return reply(editorForm({ v: { ...v, credits: v.credits.concat([BLANK_CREDIT()]) }, roles, media, partners, series, cancel }));
+  const errors = upErrors.concat(await validate(v, db, roles, media, partners, series));
+  if (errors.length) return reply(editorForm({ v: padded(v), errors, roles, media, partners, series, cancel }), 422);
   if (action.startsWith('preview')) return preview(db, v, action.endsWith('en') ? 'en' : 'et', before, roles, media, url, partners);
   const out = await save(db, v, before);
-  if (out.stale) return reply(editorForm({ v: padded(v), errors: [{ field: 'rev', msg: 'Someone else saved this event in the meantime. Open it in a new tab, compare, and make the change again.' }], roles, media, partners, cancel }), 409);
+  if (out.stale) return reply(editorForm({ v: padded(v), errors: [{ field: 'rev', msg: 'Someone else saved this event in the meantime. Open it in a new tab, compare, and make the change again.' }], roles, media, partners, series, cancel }), 409);
+  // a series made by this save is named on the next page drawn, not a minute later
+  if (v.newSeries) resetSeries();
   // the event page when it is published, else the form again, as a page save lands
   return redirect(landing(v, eventPath) || `/edit/events/${out.id}`);
 }
@@ -400,7 +415,7 @@ async function form(request, env, url, id) {
 // is not published, its Estonian text or else its English one, the picture
 // joined, the one made last first
 async function drafts(env) {
-  const rows = (await env.DB.prepare(`SELECT e.id, e.starts_at, COALESCE(NULLIF(t0.venue, ''), e.venue) AS venue, e.address, e.category, COALESCE(t0.title, t1.title) AS title, COALESCE(t0.lang, t1.lang, 'et') AS tlang, COALESCE(t0.body, t1.body) AS body, m.key AS pic, m.width, m.height
+  const rows = (await env.DB.prepare(`SELECT e.id, e.starts_at, COALESCE(NULLIF(t0.venue, ''), e.venue) AS venue, e.address, e.series, COALESCE(t0.title, t1.title) AS title, COALESCE(t0.lang, t1.lang, 'et') AS tlang, COALESCE(t0.body, t1.body) AS body, m.key AS pic, m.width, m.height
     FROM event e LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et' LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = 'en' LEFT JOIN media m ON m.id = e.image_id
     WHERE e.status != 'published' ORDER BY e.created_at DESC, e.id DESC`).all()).results;
   return reply(renderDrafts({ drafts: rows }));

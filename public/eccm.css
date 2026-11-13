@@ -396,6 +396,9 @@
   .page-text { max-inline-size: 48rem; margin-inline: auto; }
   .page-text .event-top { grid-template-columns: minmax(0, 1fr); }
   .page-text .prose { max-inline-size: none; }
+  /* a page's series events under its text (src/render/page.mjs), the list's rows set off from the prose by the
+     list's own gap between rows and one step more, since the text and the rows are two groups */
+  .page-events { margin-block-start: var(--eccm-s-16); }
   /* the EU emblem under the Ulysses text, a group of its own two lines down, 3rem tall so the flag inside
      it is over the 1cm the EU's rule sets (public/partners/SOURCE.md); the negative file in the dark theme */
   .eu-emblem { --eccm-flow: 2lh; }

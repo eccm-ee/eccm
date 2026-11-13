@@ -10,7 +10,7 @@
 // fetch made before the content exists cannot poison the URL.
 import { cardInput, cardVersion, cardPath, tallVersion, tallPath, cardSvg, slideSvg, slideVersion, slidePath, slideDefaults, slideFields, SLIDE_MAX, siteSvg, PAGE_TITLES, schemeColors, pageColorMap, SITE_CARD, pageInput, pagePath, pageVersion, TEMPLATE_V, SITE_V, W, TALL_W, pictureCut } from './card.mjs';
 import { renderPng } from './render.mjs';
-import { CATEGORY } from '../render/event.mjs';
+import { seriesOf } from '../render/event.mjs';
 
 const CC = 'public, max-age=31536000, immutable';
 const png = (body, from) => new Response(body, { headers: { 'content-type': 'image/png', 'cache-control': CC, 'x-og': from } });
@@ -38,7 +38,7 @@ async function rows(db, id, lang, slide = false) {
   const input = cardInput({ lang, title: text.title, ev: e, scheme: media && media.scheme, pic: media && media.key });
   if (!slide) return input;
   const row = await db.prepare('SELECT header, body, footer FROM event_social WHERE event_id = ? AND lang = ?').bind(id, lang).first();
-  return { input, fields: slideFields(row, slideDefaults({ title: text.title, body: text.body, ev: e, series: CATEGORY[ev.category] && CATEGORY[ev.category][lang] })) };
+  return { input, fields: slideFields(row, slideDefaults({ title: text.title, body: text.body, ev: e, series: seriesOf(ev, lang) })) };
 }
 
 // the fourth card drawn from words in the address, for the editor's preview as they type: under /edit, so
@@ -197,7 +197,7 @@ async function list(env, url) {
   const out = all.map((r) => {
     const input = cardInput({ lang: r.lang, title: r.title, ev: r, scheme: r.scheme, pic: r.pic_key });
     const fields = slideFields(r.s_id ? { header: r.s_header, body: r.s_body, footer: r.s_footer } : null,
-      slideDefaults({ title: r.title, body: r.text_body, ev: r, series: CATEGORY[r.category] && CATEGORY[r.category][r.lang] }));
+      slideDefaults({ title: r.title, body: r.text_body, ev: r, series: seriesOf(r, r.lang) }));
     return {
       id: r.id, lang: r.lang, title: input.title, ground: input.ground,
       page: r.lang === 'et' ? `/et/sundmused/${r.slug}` : `/en/events/${r.slug}`,

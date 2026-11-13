@@ -14,11 +14,14 @@
 // for a preview, with a notice and an editHref of its own. page-text is the
 // stylesheet's one centred column of the measure, since a page has no
 // picture for the event page's second column (asked 2026-09-28: "page
-// content is too left, not great to read").
+// content is too left, not great to read"). A page given a series in its form
+// lists that series' coming events under the text since 2026-11-13, in the
+// events list's own rows.
 import { html, raw } from './html.mjs';
 import { md } from './md.mjs';
 import { T, OTHER, page } from './chrome.mjs';
 import { opening, firstSentence, clip } from './lead.mjs';
+import { row } from './events.mjs';
 
 export const pagePath = (lang, slug) => `/${lang}/${slug}`;
 
@@ -37,8 +40,9 @@ const euEmblem = (lang) => html`<p class="eu-emblem">${['', '-neg'].map((v) => h
 // when it exists, which in the fallback case is the row shown; editHref:
 // where the edit button goes, the row's own editor page unless the caller
 // says otherwise (a preview of an unsaved page); notice: chrome.mjs; editor: a logged-in editor is looking,
-// the only one shown the edit button, as on an event (src/render/event.mjs)
-export const renderPage = ({ lang, text, fallback, twin, origin, path, notice, editHref, editor = false }) => {
+// the only one shown the edit button, as on an event (src/render/event.mjs); events: the coming events of the
+// page's series (src/series.mjs), drawn under the text in the events list's rows, and nothing when there are none
+export const renderPage = ({ lang, text, fallback, twin, origin, path, notice, editHref, editor = false, events = [] }) => {
   const t = T[lang];
   const textLang = fallback ? text.lang : lang;
   const alternate = { lang: OTHER[lang], href: pagePath(OTHER[lang], twin ? twin.slug : text.slug) };
@@ -63,6 +67,9 @@ export const renderPage = ({ lang, text, fallback, twin, origin, path, notice, e
       ${raw(md(text.body, { video: true }))}
       ${text.page_key === 'ulysses' ? euEmblem(lang) : ''}
     </div>
+    ${events.length ? html`<ol class="events page-events">
+    ${events.map((e) => row(e, lang))}
+    </ol>` : ''}
   </article>`;
   return page({ lang, title: text.title, alternate, canonical, alternates, body, notice, og: { key: text.slug, title: text.title, lang: textLang }, description: clip(firstSentence(opening(text.body, { title: text.title }))) });
 };

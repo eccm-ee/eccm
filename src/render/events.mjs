@@ -19,7 +19,7 @@ import { PAGE_TITLES } from '../og/card.mjs';
 import { html, raw } from './html.mjs';
 import { T, OTHER, page, DESCRIPTION } from './chrome.mjs';
 import { dateLong, dateShort, clock, hasClock, mapsUrl } from './dates.mjs';
-import { offsetFor, CATEGORY } from './event.mjs';
+import { offsetFor, seriesOf } from './event.mjs';
 import { listImg } from './pic.mjs';
 import { opening } from './lead.mjs';
 import { jsonLd, organization } from './ld.mjs';
@@ -31,7 +31,7 @@ const eventPath = (l, slug) => (l === 'et' ? `/et/sundmused/${slug}` : `/en/even
 // repeating the title or saying only when and where is passed over), its
 // first sentence when it runs long
 const lead = (e, lang) => {
-  const plain = opening(e.body, { title: e.title, venue: e.venue, address: e.address, series: CATEGORY[e.category] && CATEGORY[e.category][e.tlang] });
+  const plain = opening(e.body, { title: e.title, venue: e.venue, address: e.address, series: seriesOf(e, e.tlang) });
   if (plain.length <= 220) return plain;
   const m = /^(.{40,219}?[.!?])(\s|$)/.exec(plain);
   return m ? m[1] : plain.slice(0, 220).replace(/\s+\S*$/, '') + '…';
@@ -39,13 +39,13 @@ const lead = (e, lang) => {
 
 // href: where the title and the picture lead, the public page unless the
 // drafts list below sends them to the editor
-const row = (e, lang, first = false, href = eventPath(e.tlang, e.slug)) => {
+export const row = (e, lang, first = false, href = eventPath(e.tlang, e.slug)) => {
   const foreign = e.tlang !== lang ? raw(` lang="${e.tlang}"`) : '';
   const summary = lead(e, lang);
   return html`<li class="ev">
       ${e.pic ? html`<a class="ev-pic" href="${href}" tabindex="-1" aria-hidden="true">${listImg(e.pic, e.width, e.height, first)}</a>` : html`<span class="ev-pic ev-blank" aria-hidden="true"></span>`}
       <div class="ev-body">
-        <p class="ev-kicker"><time datetime="${e.starts_at}${offsetFor(e.starts_at)}"><span class="d-long">${dateLong(e.starts_at, lang)}</span><span class="d-short">${dateShort(e.starts_at, lang)}</span></time>${hasClock(e.starts_at) ? html`<time>${clock(e.starts_at, lang)}</time>` : ''}${e.venue ? html`<span><a class="place" href="${mapsUrl(e.venue)}">${e.venue}</a></span>` : ''}${e.category !== 'eccm' && CATEGORY[e.category] ? html`<span>${CATEGORY[e.category][lang]}</span>` : ''}</p>
+        <p class="ev-kicker"><time datetime="${e.starts_at}${offsetFor(e.starts_at)}"><span class="d-long">${dateLong(e.starts_at, lang)}</span><span class="d-short">${dateShort(e.starts_at, lang)}</span></time>${hasClock(e.starts_at) ? html`<time>${clock(e.starts_at, lang)}</time>` : ''}${e.venue ? html`<span><a class="place" href="${mapsUrl(e.venue)}">${e.venue}</a></span>` : ''}${e.series !== 'eccm' && seriesOf(e, lang) ? html`<span>${seriesOf(e, lang)}</span>` : ''}</p>
         <h2 class="ev-title"><a href="${href}"${foreign}>${e.title}</a></h2>
         ${summary ? html`<p class="ev-summary prose"${foreign}>${summary}</p>` : ''}
       </div>

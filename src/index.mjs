@@ -41,6 +41,7 @@ import { legacy } from './redirects.mjs';
 import { passthrough } from './passthrough.mjs';
 import { partners, eventPartners } from './partners.mjs';
 import { layout, loadLayout } from './layout.mjs';
+import { loadSeries, seriesEvents } from './series.mjs';
 import { recordView, stats } from './stats.mjs';
 import { gate, isProtected, isStatic, login, logout, loggedIn } from './auth.mjs';
 
@@ -89,7 +90,7 @@ async function event(env, lang, slug, url, editor = false) {
 // its Estonian text when it has none, the picture joined; the ones still to
 // come in date order, the ones that have been newest first
 async function eventsList(env, lang, url, home = false) {
-  const rows = (await env.DB.prepare(`SELECT e.id, e.starts_at, COALESCE(NULLIF(t1.venue, ''), e.venue) AS venue, e.category, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang, COALESCE(t1.body, t0.body) AS body, m.key AS pic, m.width, m.height
+  const rows = (await env.DB.prepare(`SELECT e.id, e.starts_at, COALESCE(NULLIF(t1.venue, ''), e.venue) AS venue, e.series, COALESCE(t1.slug, t0.slug) AS slug, COALESCE(t1.title, t0.title) AS title, COALESCE(t1.lang, t0.lang) AS tlang, COALESCE(t1.body, t0.body) AS body, m.key AS pic, m.width, m.height
     FROM event e LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = ? LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et' LEFT JOIN media m ON m.id = e.image_id
     WHERE e.status = 'published' AND COALESCE(t1.title, t0.title) IS NOT NULL ORDER BY e.starts_at`).bind(lang).all()).results;
   const today = tallinnToday();
@@ -103,13 +104,15 @@ async function eventsList(env, lang, url, home = false) {
 // other language's row under this language's chrome and the fallback line
 async function textPage(env, lang, slug, url, editor = false) {
   const db = env.DB;
-  const q = "SELECT t.*, p.key AS page_key FROM page_text t JOIN page p ON p.id = t.page_id WHERE t.lang = ? AND t.slug = ? AND p.status = 'published'";
+  const q = "SELECT t.*, p.key AS page_key, p.series AS page_series FROM page_text t JOIN page p ON p.id = t.page_id WHERE t.lang = ? AND t.slug = ? AND p.status = 'published'";
   let text = await db.prepare(q).bind(lang, slug).first();
   let fallback = false;
   if (!text) { text = await db.prepare(q).bind(OTHER[lang], slug).first(); fallback = !!text; }
   if (!text) return null;
   const twin = await db.prepare('SELECT lang, slug FROM page_text WHERE page_id = ? AND lang = ?').bind(text.page_id, OTHER[lang]).first();
-  return renderPage({ lang, text, fallback, twin, origin: origin(), path: url.pathname, editor });
+  // a page with a series lists that series' coming events under its text (src/series.mjs)
+  const events = text.page_series ? await seriesEvents(db, lang, text.page_series, tallinnToday()) : [];
+  return renderPage({ lang, text, fallback, twin, origin: origin(), path: url.pathname, editor, events });
 }
 
 // an event's or a language's calendar; the rows are the list's query, one event or the window
@@ -176,6 +179,8 @@ const routes = {
     // the footer's logos from the partner table before any page is drawn (src/partners.mjs), asked 2026-11-07
     // as "footer logos should use same system"; not for the files and images below, which draw no footer
     if (!p.startsWith('/media/') && !p.startsWith('/og/') && !p.startsWith('/img/')) await loadLayout(env);
+    // the series' names (src/series.mjs), for the pages and for the share cards, which name an event's series
+    if (!p.startsWith('/media/') && !p.startsWith('/img/')) await loadSeries(env);
     if (p === '/login') return login(request, env, url);
     if (p === '/logout') return logout();
     if (isProtected(p)) { const out = await gate(request, env, url); if (out) return out; }
