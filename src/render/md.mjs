@@ -8,7 +8,8 @@
 import { esc } from './html.mjs';
 
 export const mdInline = (e) => {
-  let s = e.replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s<>)]+)\)/g, (_, t, u) => `<a href="${u}" rel="noopener">${t}</a>`);
+  // a link to another site, a mail address, or a page of this site by its path (/en/co-creation-programme)
+  let s = e.replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s<>)]+|mailto:[^\s<>)]+|\/(?!\/)[^\s<>)]*)\)/g, (_, t, u) => (u.startsWith('http') ? `<a href="${u}" rel="noopener">${t}</a>` : `<a href="${u}">${t}</a>`));
   s = s.replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>');
   s = s.replace(/(^|\s)_([^_\n]+)_(?=[\s.,;:!?)]|$)/gm, '$1<i>$2</i>');
   return s;
