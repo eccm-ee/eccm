@@ -439,7 +439,7 @@ The old hosting can hold files nobody links to, and the archive's best source is
 
 ### Move the DNS to Cloudflare
 
-**Who:** the owner, in ECCM's Virtuaal and Cloudflare accounts. **State:** done on 13 November 2026, waiting on the registry. eccm.ee is a Free zone in ECCM's Cloudflare account, its 28 records imported from the backup's zone file, every one DNS only, and each answered the same from `lee.ns.cloudflare.com`, `sara.ns.cloudflare.com` and `ns1.virtuaal.com` (MEASURED with `dig`, the DKIM key as one string). The nameservers at Virtuaal were changed the same day. Bot Preference Sync is off, so `robots.txt` stays the site's own. Step 1, lowering the TTLs, was not needed: both sides answer the same, and the import set 300.
+**Who:** the owner, in ECCM's Virtuaal and Cloudflare accounts. **State:** done on 13 November 2026, waiting on the registry. eccm.ee is a Free zone in ECCM's Cloudflare account, its 28 records imported from the backup's zone file, every one DNS only, and each answered the same from `lee.ns.cloudflare.com`, `sara.ns.cloudflare.com` and `ns1.virtuaal.com` (MEASURED with `dig`, the DKIM key as one string). The nameservers at Virtuaal were changed the same day, the .ee registry published them at 10:21 and Cloudflare marked the zone active at 10:23 (MEASURED through the API). Bot Preference Sync is off, so `robots.txt` stays the site's own. Step 1, lowering the TTLs, was not needed: both sides answer the same, and the import set 300.
 
 DMARC is set to reject, so one wrong mail record bounces everything. Every record is recreated by hand, unproxied (grey cloud: the name points straight at Virtuaal and Cloudflare stays out of the way).
 
