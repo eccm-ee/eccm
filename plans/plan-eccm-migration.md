@@ -458,7 +458,7 @@ DMARC is set to reject, so one wrong mail record bounces everything. Every recor
 1. Tarmo: cleared on 13 November 2026 ([his changes](#what-tarmo-changes-before-cutover)).
 2. Read eccm.ee once more for what changed since the last sync, write the next `data/seed-step*-sync-*.sql` the way step 13 is, and apply it to staging and production. The last sync is step 15 of 13 November 2026: Koosloome's texts with the three chosen composers and the weekend's schedule, on staging and production.
 3. Delete the A record for eccm.ee and the CNAME for www.
-4. Deploy production, which attaches eccm.ee and www.eccm.ee to the Worker. In the same deploy, delete the two noindex lines (`/*` and `X-Robots-Tag: noindex`) at the top of `public/_headers`: static files bypass the Worker's `NOINDEX`.
+4. Deploy production, which attaches eccm.ee and www.eccm.ee to the Worker: uncomment `routes` in `env.production` of `wrangler.jsonc`. `public/_headers` needs no change: since 13 November 2026 its noindex names the staging and workers.dev hosts only, never eccm.ee.
 5. Turn on Image Transformations for the zone (Images, Transformations, eccm.ee, "This zone only" as the allowed sources). Until then every picture is its original: on 9 November 2026 the first twelve on /et/sundmused were 3.8 MB on production against 195 KB on staging, where the renditions run. Check: a list picture's address starts `/cdn-cgi/image/` and answers 200.
 6. Check: the front page, an event, an old Joomla address, the newsletter sign-up, a file under /radio1965/streams.
 7. To go back: recreate the A and CNAME records. Minutes.

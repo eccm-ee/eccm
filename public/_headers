@@ -1,4 +1,12 @@
-/*
+# noindex on every host but eccm.ee, so the cutover leaves this file alone: staging's
+# two names, production's workers.dev name, and every version's preview name
+https://eccm.positron.studio/*
+  X-Robots-Tag: noindex
+
+https://:sub.:account.workers.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:sub.:account.workers.dev/*
   X-Robots-Tag: noindex
 
 # the fonts never change under their names, so a browser keeps them for a year
