@@ -1,16 +1,40 @@
-# Handoff, 2026-11-09
+# Handoff, 2026-11-13
 
-The prototype of a new eccm.ee, live at **https://eccm.positron.studio/** and
-committed on `main` of **https://github.com/eccm-ee/eccm**, public,
-pushed. Push per CLAUDE.md and switch the account back. GitHub refused pushes
-with a 500 for about ten minutes on 2026-10-07 and then took them; retry
-before suspecting the commit.
+**eccm.ee is the new site** since about 10:45 on 2026-11-13: the production Worker in ECCM's Cloudflare account,
+committed on `main` of **https://github.com/eccm-ee/eccm**, public, pushed. Push per CLAUDE.md and switch the
+account back. Staging (eccm.positron.studio) is taken down: test locally with `wrangler dev`, deploy
+`--env production` only, and hand over eccm.ee addresses.
 
-**This laptop could not reach `eccm.positron.studio` or `positron.studio`** on
-earlier days (its Fortinet DNS filter answered with a block page); on
-2026-10-09 `curl` reached it. If it blocks again, check through
-**https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
+**Production database writes** (`d1 migrations apply`, `d1 execute`, `secret put`) are refused by this session's
+permission check; deploys are not. Write the seed or migration, commit it, give the owner the exact command, and
+deploy after it has run. A migration always goes before the deploy whose code reads it.
 
+**DNS:** eccm.ee's zone is on Cloudflare (nameservers `lee` and `sara`). Virtuaal's own copy of the zone also
+points eccm.ee at Cloudflare (`104.21.6.215`, `172.67.135.77`) for resolvers that cached Virtuaal; mail and every
+cPanel name still point at Virtuaal (185.169.68.37). On this laptop the router's upstream resolver held the old
+address for a while; check through Cloudflare with `curl --resolve eccm.ee:443:104.21.6.215`.
+
+## 2026-11-13, end of day
+
+- **Markdown links** (`c4d1329`): `src/render/md.mjs` now links a path of this site (`/en/...`) and `mailto:`,
+  not only `https://`; `//host` and `javascript:` stay text.
+- **Ulysses page** (seed step 17, run by the owner): an Estonian text, a translation of the English for ECCM to
+  read through, linking /et/koosloome-programm; the English one without the line the EU emblem repeats.
+- **Editor key:** a new `xxxx-xxxx-xxxx` key set on production by the owner (the old one was not at hand; a first
+  `secret put` through `!` saved an empty key, which the login refuses as "not set up"). MEASURED: a wrong key
+  answers 401.
+- **Koosloome, two things** (the owner was lost between them): the event, /et/sundmused/koosloome-opituba and
+  /en/events/co-creation-workshop, this weekend only; and the programme page, /et/koosloome-programm and
+  /en/co-creation-programme, the season to May 2027, linked from the Ulysses page. Offered and not yet chosen:
+  drop the page and link the event, or keep both and connect them (the event links the page, the page lists the
+  series' sessions through `page.series`). Recommended: keep both.
+- **Joomla compared** with production from the backup's database dump (09:21): no event published here that
+  Joomla removed, no new category; the editor's "deleted events" were already drafts, likely seen through a
+  cached old site. The dump is in the scratchpad only, never in the repository.
+- **Open:** the Koosloome choice above; series renaming (a section on /edit/layout); on a page listing a series,
+  each row's kicker repeats the series name; mail; Search Console; `workers_dev` on production; a www to eccm.ee
+  redirect; ECCM's Üle Heli time, Kuni kolm and the privacy text; the 2.6 GB backup copy on Virtuaal's server;
+  the staging database and buckets, kept, to delete only on the owner's word.
 
 ## 2026-11-13, afternoon: staging taken down
 
