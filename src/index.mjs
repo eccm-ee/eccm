@@ -43,6 +43,7 @@ import { partners, eventPartners } from './partners.mjs';
 import { layout, loadLayout } from './layout.mjs';
 import { loadSeries, seriesEvents } from './series.mjs';
 import { recordView, stats } from './stats.mjs';
+import { newsPublic, newsEdit, newsRows } from './news.mjs';
 import { gate, isProtected, isStatic, login, logout, loggedIn } from './auth.mjs';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
@@ -96,7 +97,9 @@ async function eventsList(env, lang, url, home = false) {
   const today = tallinnToday();
   const upcoming = rows.filter((r) => r.starts_at.slice(0, 10) >= today);
   const past = rows.filter((r) => r.starts_at.slice(0, 10) < today).reverse();
-  return renderEvents({ lang, upcoming, past, origin: origin(), path: url.pathname, home });
+  // the front page's column of the three newest news items (src/news.mjs), asked 2026-11-13
+  const news = home ? await newsRows(env.DB, lang, 3) : [];
+  return renderEvents({ lang, upcoming, past, origin: origin(), path: url.pathname, home, news });
 }
 
 // a text page by (lang, slug), the same query shape as an event's: the text
@@ -218,6 +221,9 @@ const routes = {
     if (/^\/(et\/uudiskiri|en\/newsletter|uudiskiri|edit\/uudiskiri)(\/|$)/.test(p)) { const out = await newsletter(request, env, url, ctx); if (out) return out; }
     // the contact form, /et/kontakt and /en/contact (src/contact.mjs), since 2026-10-07; before the text pages, whose pattern it matches
     if (CONTACT_PATHS.includes(p.replace(/\/$/, ''))) return contact(request, env, url, ctx);
+    // the news, /et/uudised and /en/news and an item under each (src/news.mjs), since 2026-11-13; before the text
+    // pages, whose pattern the list's address matches
+    { const out = await newsPublic(request, env, url, { loggedIn, replyFor, reply }); if (out) return out; }
     const pm = PAGE.exec(p);
     if (pm) { const editor = await loggedIn(request, env); const out = await textPage(env, pm[1], pm[2], url, editor); if (out) return replyFor(out, editor); }
     // the notices to phones (/items, /teated/{n}, /en/notices/{n}, the Items Durable Object and Web Push) went 2026-11-06 (archive/notices.md)
@@ -232,6 +238,7 @@ const routes = {
     if (p === '/edit/layout') { const out = await layout(request, env, url); if (out) return out; }
     // the Logos page, the partners' logos (src/partners.mjs), since 2026-11-07
     if (p === '/edit/partners' || p.startsWith('/edit/partners/')) { const out = await partners(request, env, url); if (out) return out; }
+    if (p === '/edit/news' || p.startsWith('/edit/news/')) { const out = await newsEdit(request, env, url); if (out) return out; }
     if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);

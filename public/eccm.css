@@ -346,6 +346,28 @@
      lines under 4.5 : 1 (eccm-ui §2, every pair computed against white) */
   .events-drafts .ev-title, .events-drafts .ev-summary { color: var(--eccm-ink-2); }
   .events-drafts .ev-pic { opacity: 0.5; }
+  /* the front page with news (asked 2026-11-13: the three newest "paremal", with picture and opening, under the
+     events on a phone): the events and a narrow column, each its own container so the events list keeps deciding
+     its compact row by its own width */
+  .home { display: grid; row-gap: var(--eccm-s-16); }
+  .home-events, .home-news { container-type: inline-size; min-inline-size: 0; }
+  @container (min-width: 64rem) {
+    .home { grid-template-columns: minmax(0, 1fr) 18rem; column-gap: var(--eccm-s-12); align-items: start; }
+  }
+  .home-news h2 { font-size: var(--eccm-t-l); margin-block-end: var(--eccm-s-6); }
+  .news-col { display: grid; row-gap: var(--eccm-s-8); }
+  .news-col-pic { display: block; aspect-ratio: 3 / 2; overflow: clip; margin-block-end: var(--eccm-s-3); }
+  .news-col-pic img { inline-size: 100%; block-size: 100%; object-fit: cover; }
+  .news-col-when { font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); color: var(--eccm-ink-2); margin-block-end: var(--eccm-s-1); }
+  .news-col h3 { font-size: var(--eccm-t-m); line-height: var(--eccm-lh-head); overflow-wrap: anywhere; }
+  .news-col h3 a { text-decoration-line: none; }
+  .news-col h3 a:hover, .news-col h3 a:focus-visible { text-decoration-line: underline; }
+  .news-col-lead { margin-block-start: var(--eccm-s-2); font-size: var(--eccm-t-s); line-height: var(--eccm-lh-meta); }
+  .news-col-all { margin-block-start: var(--eccm-s-8); font-size: var(--eccm-t-s); }
+  /* an item's links under its text, one a line */
+  .news-links { display: grid; row-gap: var(--eccm-s-2); margin-block-start: 2lh; }
+  .news-pic { margin-block-end: 2lh; }
+  .news-links + .partners, .flow + .partners { margin-block-start: 2lh; }
   /* /admin/stats (asked 2026-11-08: "A sinple web stats to admin page?"): the last 90 days a thin column each, the bar
      in the ink, a date under each first of the month ("show 3 months or smth and simle bars"); each list a section with the Logos
      page's heading air ("vert spacing is a mess, no whitespace") */

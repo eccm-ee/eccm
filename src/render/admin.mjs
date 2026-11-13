@@ -21,6 +21,8 @@ const TOOLS = [
   ['/edit/events/drafts', 'Drafts', 'Every event not yet published, each opening in the editor.'],
   // the one door to a new event's form (asked 2026-11-06), here since the public list is the same for every visitor
   ['/edit/events/new', 'New event', 'A blank event form. It is saved as a draft until set to Published.'],
+  // the news (asked 2026-11-13), every item and New item on one page
+  ['/edit/news', 'News', 'News items for the news page and the front page column, drafts too.'],
   ['/edit/uudiskiri', 'Newsletter', 'Issues to subscribers: compose from events, send a test, send to all.'],
   // the partners' logos, upload, edit and delete (asked 2026-11-07: "make a admin page to upload logos"), called
   // Logos the same day; before User interface, which stays last

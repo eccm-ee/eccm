@@ -23,6 +23,7 @@ import { offsetFor, seriesOf } from './event.mjs';
 import { listImg } from './pic.mjs';
 import { opening } from './lead.mjs';
 import { jsonLd, organization } from './ld.mjs';
+import { newsColumn } from './news.mjs';
 
 export const LIST = { et: '/et/sundmused', en: '/en/events' };
 const eventPath = (l, slug) => (l === 'et' ? `/et/sundmused/${slug}` : `/en/events/${slug}`);
@@ -54,7 +55,8 @@ export const row = (e, lang, first = false, href = eventPath(e.tlang, e.slug)) =
 
 export const HOME = { et: '/', en: '/en/' };
 
-export const renderEvents = ({ lang, upcoming, past, origin, path, home = false }) => {
+// news: the front page's newest items, drawn beside the events on a desk and under them on a phone
+export const renderEvents = ({ lang, upcoming, past, origin, path, home = false, news = [] }) => {
   const t = T[lang];
   const where = home ? HOME : LIST;
   const alternate = { lang: OTHER[lang], href: where[OTHER[lang]] };
@@ -63,11 +65,15 @@ export const renderEvents = ({ lang, upcoming, past, origin, path, home = false 
     { hreflang: 'en', href: origin + where.en },
     { hreflang: 'x-default', href: origin + where.et },
   ];
+  const list = upcoming.length ? html`<ol class="events">
+    ${upcoming.map((e, i) => row(e, lang, i === 0))}
+    </ol>` : html`<p class="note">${t.noEvents}</p>`;
   const body = html`  <article class="event">
     ${home ? html`<h1 class="vh">${t.upcoming}</h1>` : html`<h1>${t.events}</h1>`}
-    ${upcoming.length ? html`<ol class="events">
-    ${upcoming.map((e, i) => row(e, lang, i === 0))}
-    </ol>` : html`<p class="note">${t.noEvents}</p>`}
+    ${home && news.length ? html`<div class="home">
+    <div class="home-events">${list}</div>
+    ${newsColumn(news, lang)}
+    </div>` : list}
     ${past.length && !home ? html`
     <section class="next">
       <h2>${t.past}</h2>
