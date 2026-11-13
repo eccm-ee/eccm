@@ -1,7 +1,6 @@
 # eccm
 
-The site for eccm.ee while it is being built, live at
-**https://eccm.positron.studio/**. Public repository since 2026-11-09, so nothing secret is committed; `README.md` is the
+The site for eccm.ee, live at **https://eccm.ee/** since 2026-11-13. Public repository since 2026-11-09, so nothing secret is committed; `README.md` is the
 maintainer's introduction, and `CLAUDE.local.md`, git-ignored, holds what is
 true only of one machine and its accounts. It left the positron repository on 2026-09-27 with its history
 (https://github.com/kristjanjansen/positron, where it was `demo/eccm/`).
@@ -51,18 +50,21 @@ works on any version.
 ## Deploy
 
 ```sh
-npx wrangler deploy --env staging
+npx wrangler deploy --env production
 ```
 
-After a new migration, first `npx wrangler d1 migrations apply eccm-staging
---remote --env staging`, since the deployed Worker reads the remote database
-`eccm-staging` (created 2026-09-27, its id in `wrangler.jsonc`), and a seed
-file the same way with `d1 execute --remote`. A machine with its own wrangler
-prefix (an API token in the shell, say) is named in `CLAUDE.local.md`.
+eccm.ee is this Worker since the cutover of 2026-11-13. Staging, eccm.positron.studio, was taken down the same day
+on the owner's word ("do not use positron studio any more"): its Worker is deleted, its database `eccm-staging` and
+buckets kept. Test locally with `wrangler dev`, then deploy production; never `--env staging`.
+
+After a new migration, first `npx wrangler d1 migrations apply eccm --remote --env production`, since the deployed
+Worker reads the remote database `eccm` (its id in `wrangler.jsonc`), and a seed file the same way with
+`d1 execute --remote`. A machine with its own wrangler prefix (an API token in the shell, say) is named in
+`CLAUDE.local.md`.
 
 Always with `--env`. `public/` is the source, there is no build step, and a
 `.env` in the directory shadows the machine's wrangler login, so deploy without
-one. Then `curl -sI https://eccm.positron.studio/` and `/et/sundmused` read `200`.
+one. Then `curl -sI https://eccm.ee/` and `/et/sundmused` read `200`.
 
 ## Pushing
 

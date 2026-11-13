@@ -12,6 +12,16 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
 
 
+## 2026-11-13, afternoon: staging taken down
+
+- **eccm.positron.studio is gone** on the owner's word ("do not use positron studio any more"): `wrangler delete
+  --env staging` removed the Worker and its two addresses (MEASURED: the name no longer resolves, workers.dev answers
+  1042). The database `eccm-staging` and the buckets `eccm-media-staging`, `eccm-backup-staging` are kept.
+  Test locally, deploy production only (CLAUDE.md, Deploy).
+- **Waiting on the owner** before the next production deploy: `d1 migrations apply eccm --remote --env production`
+  (0017, series) and `d1 execute eccm --remote --env production --file data/seed-step16-koosloome-page.sql`. The
+  code on `main` reads `event.series`, so deploying before 0017 breaks every page.
+
 ## 2026-11-13, later: eccm.ee is the new site
 
 - **Cutover done** (`edccd3d`, production `58cee376`): eccm.ee and www.eccm.ee on the production Worker, the zone
