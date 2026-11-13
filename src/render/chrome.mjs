@@ -24,7 +24,8 @@ export const useFooter = (rows) => { FOOT = rows; };
 // Events first, then each page under its menu words or its title, at its slug in this language or the other's
 let NAV = null;
 export const useNav = (rows) => { NAV = rows; };
-const navItems = (lang, rows) => [[lang === 'et' ? '/' : '/en/', T[lang].events]].concat(rows.map((p) => [`/${lang}/${p[`slug_${lang}`] || p[`slug_${OTHER[lang]}`]}`, p[`menu_title_${lang}`] || p[`title_${lang}`] || p[`title_${OTHER[lang]}`]]));
+// Events is the full list with the past under it (asked 2026-11-13: "kus möödunud üritused on?"), the front page being the coming ones only
+const navItems = (lang, rows) => [[lang === 'et' ? '/et/sundmused' : '/en/events', T[lang].events]].concat(rows.map((p) => [`/${lang}/${p[`slug_${lang}`] || p[`slug_${OTHER[lang]}`]}`, p[`menu_title_${lang}`] || p[`title_${lang}`] || p[`title_${OTHER[lang]}`]]));
 const navLis = (lang, rows) => navItems(lang, rows).map(([href, label]) => `<li><a href="${esc(href)}">${esc(label)}</a></li>`).join('');
 const header = (lang) => (NAV ? HEADER[lang].replace(/(<ul class="nav">)[\s\S]*?(<li class="lang-in">)/, (m, a, b) => a + navLis(lang, NAV.head) + b) : HEADER[lang]);
 const footer = (lang) => {
