@@ -14,6 +14,27 @@ points eccm.ee at Cloudflare (`104.21.6.215`, `172.67.135.77`) for resolvers tha
 cPanel name still point at Virtuaal (185.169.68.37). On this laptop the router's upstream resolver held the old
 address for a while; check through Cloudflare with `curl --resolve eccm.ee:443:104.21.6.215`.
 
+## 2026-11-13, evening: news, stats, the menu
+
+- **News** (`4e8102b`, `eb13596`, `8897e10`; migration 0018 on production): /et/uudised and /en/news, newest first
+  and the archive; an item at /et/uudised/{slug} and /en/news/{slug}; the three newest with picture and opening in a
+  column right of the events on the front page, after them on a phone (asked by an ECCM editor, the owner chose
+  the shape); Uudised / News in the menu after Sündmused. Editor: Admin, News (`/edit/news`, drafts too, New item).
+  An item has status, date, title and text per language, a picture through the event form's dropzone without
+  colour reading and without a pick by file name (`pictureDrop` in `src/render/editor.mjs`, `read: false, pick:
+  false`; a tick removes the picture), links as rows of Address, Title in Estonian, Title in English with Add link,
+  and the logo picker. Code: `src/news.mjs`, `src/render/news.mjs`, `.home` and `.news-col` in `public/eccm.css`.
+  No news item exists on production yet; the front page shows no column until one is published. Not done: news in
+  the sitemap and an RSS feed of news.
+- **Menu:** Sündmused / Events lead to the full list (/et/sundmused, past under "Toimunud"), asked after an editor
+  could not find past events; the logo still leads to the front page.
+- **Stats** (`663095e`): a view from a data-centre network is not counted (`hosting()` in `src/stats.mjs`, WARP
+  13335 kept), each view records its network (blob6 asn, blob7 name), and views stored before that from abroad with
+  no referrer are left out of the counts (the cutover's bot burst). Feed tables: Subscribers before Fetches.
+- **Permissions:** auto mode ended this evening; production D1 writes then ran from this session once the owner
+  said "Just run it". `migrations apply` needs `yes |` piped in, since `-y` is not taken by wrangler 4.107.
+- **Ask before structure** (owner, today): menu targets and what links where are a question with options first.
+
 ## 2026-11-13, end of day
 
 - **Markdown links** (`c4d1329`): `src/render/md.mjs` now links a path of this site (`/en/...`) and `mailto:`,
