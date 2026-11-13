@@ -449,7 +449,7 @@ DMARC is set to reject, so one wrong mail record bounces everything. Every recor
 
 **Who:** ECCM, with the agent ready. **State:** to do.
 
-1. Check that Tarmo has made [his changes](#what-tarmo-changes-before-cutover).
+1. Tarmo: cleared on 13 November 2026 ([his changes](#what-tarmo-changes-before-cutover)).
 2. Read eccm.ee once more for what changed since the last sync, write the next `data/seed-step*-sync-*.sql` the way step 13 is, and apply it to staging and production. The last sync is step 15 of 13 November 2026: Koosloome's texts with the three chosen composers and the weekend's schedule, on staging and production.
 3. Delete the A record for eccm.ee and the CNAME for www.
 4. Deploy production, which attaches eccm.ee and www.eccm.ee to the Worker. In the same deploy, delete the two noindex lines (`/*` and `X-Robots-Tag: noindex`) at the top of `public/_headers`: static files bypass the Worker's `NOINDEX`.
@@ -532,7 +532,7 @@ curl -sI https://eccm.ee/radio1965/streams/tarmo-20261025-184903.mp3   # 200, au
 
 ### What Tarmo changes before cutover
 
-**Who:** Tarmo. **State:** to ask.
+**Who:** Tarmo. **State:** cleared, the owner on 13 November 2026: "tarmo is fine".
 
 **Ask Tarmo:** the three steps below, and a date for them.
 
