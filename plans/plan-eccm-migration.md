@@ -323,7 +323,7 @@ eccm.ee's lists, then apply to staging. Report what was skipped and why.
 
 ### Copy /nan/
 
-**Who:** agent. **State:** later.
+**Who:** agent. **State:** done 13 November 2026: `public/nan/index.html`, the fonts in `public/vendor/nan/`, pixel for pixel the same as eccm.ee/nan/ at 375 and 1280.
 
 [eccm.ee/nan](https://eccm.ee/nan/) is one hand-made HTML file, 547 KB, its five pictures inside it. It loads Google Fonts, which sends visitors' addresses to Google, so its fonts come from the site when copied.
 
@@ -546,8 +546,8 @@ curl -sI https://eccm.ee/radio1965/streams/tarmo-20261025-184903.mp3   # 200, au
 | --- | --- | --- | --- |
 | Does the site need a cookie banner? | No. Visitors get no cookies; the only thing kept in their browser is the theme they pick. Editors get one login cookie, strictly necessary. | Nobody | Done |
 | Analytics. | [Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/): no cookies, counts only, so no consent. Never Google Analytics or the Meta pixel, which would need a banner. | ECCM turns it on | After migration |
-| Third parties. | None on the site: no outside scripts, fonts from the site itself. /nan/'s Google Fonts move to the site, Konkursid's YouTube embed uses youtube-nocookie.com or loads on click. | Agent | To do |
-| Personal data: newsletter, contact. | A privacy notice per language (GDPR article 13): who is responsible, what and why, how long, Cloudflare as processor, rights, complaints to the [Data Protection Inspectorate](https://www.aki.ee/). | ECCM writes, agent builds | To do |
+| Third parties. | None on the site: no outside scripts, fonts from the site itself. /nan/'s fonts are the site's own since 13 November 2026, and a YouTube or Vimeo link loads only on click. | Agent | Done |
+| Personal data: newsletter, contact. | A privacy notice per language (GDPR article 13): who is responsible, what and why, how long, Cloudflare as processor, rights, complaints to the [Data Protection Inspectorate](https://www.aki.ee/). | ECCM approves the text at /et/andmekaitse and /en/privacy, built with seed step 8 | ECCM | Approve |
 | Proof of consent. | Double opt-in and one-click unsubscribe on the newsletter. The list ECCM already writes to is imported as confirmed (source `import`, with its date), by the owner's word that it is their existing list. | Nobody | Done |
 | Processor agreement. | Cloudflare's [Data Processing Addendum](https://www.cloudflare.com/cloudflare-customer-dpa/) is part of its terms, nothing to sign. | ECCM | At account setup |
 | EULA or terms of use. | A website needs no EULA, terms are optional unless ECCM sells online. | Nobody | Decided |
