@@ -23,7 +23,7 @@ const list = (label, head, rows) => html`<h2>${label}</h2>
 
 // the RSS feeds and the calendars apart (asked 2026-11-08: "Feeds and calendars - split."), each fetch with its reader
 const readers = (label, head, rows) => html`<h2>${label}</h2>
-  ${rows.length ? table({ label, cols: [{ label: head, cls: '' }, { label: 'Reader', cls: 'main' }, { label: 'Fetches', cls: 'num' }, { label: 'Subscribers', cls: 'num' }], rows: rows.map((r) => [r.path, r.who || 'Unknown', num(r.n), Number(r.subs) ? num(r.subs) : '']) }) : html`<p class="note">None yet.</p>`}`;
+  ${rows.length ? table({ label, cols: [{ label: head, cls: '' }, { label: 'Reader', cls: 'main' }, { label: 'Subscribers', cls: 'num' }, { label: 'Fetches', cls: 'num' }], rows: rows.map((r) => [r.path, r.who || 'Unknown', Number(r.subs) ? num(r.subs) : '', num(r.n)]) }) : html`<p class="note">None yet.</p>`}`;
 
 export const renderStats = ({ days = [], pages = [], from = [], countries = [], feeds = [], missing = false, error = '' }) => {
   const total = days.reduce((s, d) => s + Number(d.n || 0), 0);
