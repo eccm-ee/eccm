@@ -61,7 +61,7 @@ earlier days (its Fortinet DNS filter answered with a block page); on
   rounds of retries left 33 (a rendered card is kept in R2). So the Social section now retries a failed card up to
   five times (`src/render/social.mjs`), on production since `c3c735df` and confirmed by the owner. The thorough fix, offered and not chosen yet: every card composed by the
   Images binding (its `.text()` with our TTF, the mark as a PNG), resvg gone from the Worker.
-- **Open:** the footer draws no partner logos at any width on staging (the `.end` column is empty); not looked into.
+- ~~Open: the footer draws no partner logos on staging.~~ Not so on 13 November 2026: ULYSSES and Tallinn show at 375, 800, 1000 and 1280 (MEASURED, shots of /et/kontakt).
 
 ## 2026-11-09: eccm.ee synced again, the Improtest mark, the picture field
 
