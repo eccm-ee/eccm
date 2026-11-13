@@ -285,13 +285,13 @@ The missing events, the archive, the changed dates.
 
 **Who:** ECCM. **State:** ask.
 
-**Ask ECCM:** the dates that will change, the three times below, and whether Kuni kolm on 5.12 is still on.
+**Ask ECCM:** the dates that will change, Üle Heli's time below, and whether Kuni kolm on 5.12 is still on.
 
 | Problem | Solution | Who | State |
 | --- | --- | --- | --- |
 | TUMA AFEKT festivalil 1.11 17:30 and in Tartu 2.11 19:00 were on eccm.ee, not here. | Imported with the archive. | Agent | Done |
 | Up to three / Kuni kolm, 5.12, is here but gone from eccm.ee. | Say whether it moved or was cancelled. | ECCM | Ask |
-| Üle Heli (00:00), Koosloome (14.11 11:00) and Schönberg (8.12 18:00) have times eccm.ee does not print. | Confirm each. | ECCM | Ask |
+| Üle Heli (00:00) has a time eccm.ee does not print (it keeps a placeholder). Koosloome (14.11 11:00) and Schönberg (8.12 18:00) match eccm.ee since 13 November 2026. | Confirm Üle Heli. | ECCM | Ask |
 | Feldman had no English text here. | Imported with the archive. | Agent | Done |
 | A few dates will change. | Edit them here once known. | ECCM | Waiting |
 | 2027 placeholders, empty news, Residentuurid, duplicates on eccm.ee. | Leave them behind. | Nobody | Decided |
@@ -450,7 +450,7 @@ DMARC is set to reject, so one wrong mail record bounces everything. Every recor
 **Who:** ECCM, with the agent ready. **State:** to do.
 
 1. Check that Tarmo has made [his changes](#what-tarmo-changes-before-cutover).
-2. Read eccm.ee once more for what changed since the last sync, write the next `data/seed-step*-sync-*.sql` the way step 13 is, and apply it to staging and production. The last sync is step 13 of 9 November 2026: two Improtest evenings and two Fienta links, on staging and production.
+2. Read eccm.ee once more for what changed since the last sync, write the next `data/seed-step*-sync-*.sql` the way step 13 is, and apply it to staging and production. The last sync is step 15 of 13 November 2026: Koosloome's texts with the three chosen composers and the weekend's schedule, on staging; production runs the same file. Step 13 of 9 November is on both.
 3. Delete the A record for eccm.ee and the CNAME for www.
 4. Deploy production, which attaches eccm.ee and www.eccm.ee to the Worker. In the same deploy, delete the two noindex lines (`/*` and `X-Robots-Tag: noindex`) at the top of `public/_headers`: static files bypass the Worker's `NOINDEX`.
 5. Turn on Image Transformations for the zone (Images, Transformations, eccm.ee, "This zone only" as the allowed sources). Until then every picture is its original: on 9 November 2026 the first twelve on /et/sundmused were 3.8 MB on production against 195 KB on staging, where the renditions run. Check: a list picture's address starts `/cdn-cgi/image/` and answers 200.

@@ -12,6 +12,17 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
 
 
+## 2026-11-13: eccm.ee synced again, Koosloome
+
+- **Sync with eccm.ee** (`data/seed-step15-sync-2026-11-13.sql`): one change since step 13. Koosloome õpituba
+  (event 24, iCagenda 111 and 112, 14.11) names the three composers chosen out of 55 (Parham Behzad, Sofus
+  Preisel, Żaneta Rydzewska), the guest Liisa Hõbepappel and the weekend's schedule, both languages. Every other
+  event and the menu pages unchanged; no new events; 143/144 and 128/129 still 404. No edit on staging after
+  9 November. Applied to staging (rev 2, MEASURED on the page). **Production not yet:** the owner runs
+  `env -u CF_API_TOKEN -u CLOUDFLARE_API_TOKEN npx wrangler d1 execute eccm --remote --env production --file data/seed-step15-sync-2026-11-13.sql`.
+- eccm.ee still prints no time for Kuni kolm (404) and keeps Üle Heli's placeholder times; Koosloome and
+  Schönberg on 8.12 print the times staging has, so those two asks are answered.
+
 ## 2026-11-09, later: the repository is ECCM's, the footer fits
 
 - **Transferred** to **https://github.com/eccm-ee/eccm**, then made public on the owner's ask (MEASURED with `gh api repos/eccm-ee/eccm`); a history scan first found no secret, only placeholders.
