@@ -421,7 +421,13 @@ eccm.ee is ECCM's (registry code 80603988) until 18.03.2027. Registrar, DNS, hos
 
 ### Take a full backup first
 
-**Who:** ECCM. **State:** ask.
+**Who:** ECCM. **State:** done 13 November 2026, a 2.6 GB full account backup downloaded by the owner and kept off this repository. What it holds:
+
+- The Joomla database, one dump of 15 MB.
+- `public_html`, about 29,000 files, with no Google or Bing verification file.
+- Six mailboxes on Virtuaal, about 1.15 GB, nearly all of it info@; one forwarder, info@ to two people's own addresses; every other address is refused.
+- The zone: two nameservers, the A, MX, SPF, DKIM and DMARC records above, the cPanel names, CalDAV and CardDAV SRV and TXT records, an ACME and a cPanel validation TXT. No Search Console record.
+- No cron jobs and no mail filters.
 
 **Ask ECCM:** who holds the Virtuaal login (registrar, cPanel and mail are probably one account). Answered 7 November 2026: the owner has ECCM's Virtuaal client account (MTÜ Eesti Nüüdismuusika Keskus), which holds eccm.ee and also v2in.stream.
 
@@ -461,7 +467,7 @@ DMARC is set to reject, so one wrong mail record bounces everything. Every recor
 
 **Who:** the owner, in ECCM's Cloudflare account and the team's Gmail. **State:** decided 8 November 2026, after the cutover.
 
-ECCM's mail is two addresses, info@eccm.ee and eccm@eccm.ee, and the team reads both in one shared Gmail account and already sends as ECCM from it. Cloudflare has no mailboxes, which is fine: Email Routing forwards the two addresses to that Gmail, and Gmail's "Send mail as" sends through Cloudflare's SMTP. The team's work does not change, and the Joomla hosting at Virtuaal can then go, keeping only the domain.
+ECCM's mail is two addresses, info@eccm.ee and eccm@eccm.ee, and the team reads both in one shared Gmail account and already sends as ECCM from it. The backup of 13 November 2026 says otherwise in part: six mailboxes live on Virtuaal, info@ alone holds about 1.1 GB, and info@ is also forwarded to two people. So step 2 of Before below matters: whose mail is only on the server, and which of the six addresses are still used, before any of them moves. Cloudflare has no mailboxes, which is fine: Email Routing forwards the two addresses to that Gmail, and Gmail's "Send mail as" sends through Cloudflare's SMTP. The team's work does not change, and the Joomla hosting at Virtuaal can then go, keeping only the domain.
 
 Its own step, on a quiet day, after the DNS move and the cutover, so a problem has one cause. Going back is restoring Virtuaal's MX record.
 
