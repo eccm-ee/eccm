@@ -80,8 +80,8 @@
       "account_id": "47bdc40605b72aa6cd3d6caf5eb9a92e",
       // the workers.dev address until cutover, then false
       "workers_dev": true,
-      // at cutover, once ECCM says the zone is active (plans/plan-eccm-migration.md, Cutover):
-      // "routes": [{ "pattern": "eccm.ee", "custom_domain": true }, { "pattern": "www.eccm.ee", "custom_domain": true }],
+      // eccm.ee and www on the Worker since the cutover of 2026-11-13 (plans/plan-eccm-migration.md, Cutover)
+      "routes": [{ "pattern": "eccm.ee", "custom_domain": true }, { "pattern": "www.eccm.ee", "custom_domain": true }],
       // eccm in ECCM's account, created 2026-11-07
       "d1_databases": [{ "binding": "DB", "database_name": "eccm", "database_id": "ffdd830e-81a4-427a-9dc2-c3543e49df64", "migrations_dir": "migrations" }],
       // wrangler r2 bucket create eccm-media and eccm-backup on ECCM's account
