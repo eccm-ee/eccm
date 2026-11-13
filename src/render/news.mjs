@@ -133,8 +133,8 @@ export const newsForm = ({ v, errors = [], media = [], partners = [], cancel = '
   // template can carry a placeholder
   const linkRow = (l, i, k = String(i)) => html`<div class="field-row">
         ${field({ id: `f-l${k}-url`, label: 'Address', err: err(`l${k}_url`), control: input(`f-l${k}-url`, `l${k}_url`, l.url, ' type="url" inputmode="url" spellcheck="false"') })}
-        ${field({ id: `f-l${k}-et`, label: 'Words, in Estonian', hint: i === 0 ? 'Empty shows the address.' : '', control: input(`f-l${k}-et`, `l${k}_et`, l.label_et) })}
-        ${field({ id: `f-l${k}-en`, label: 'Words, in English', hint: i === 0 ? 'Empty shows the Estonian words.' : '', control: input(`f-l${k}-en`, `l${k}_en`, l.label_en) })}
+        ${field({ id: `f-l${k}-et`, label: 'Title in Estonian', control: input(`f-l${k}-et`, `l${k}_et`, l.label_et) })}
+        ${field({ id: `f-l${k}-en`, label: 'Title in English', control: input(`f-l${k}-en`, `l${k}_en`, l.label_en) })}
       </div>`;
   const isNew = !v.id;
   const title = isNew ? 'New news item' : (v.et.title || v.en.title || 'News item');
