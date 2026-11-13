@@ -453,7 +453,7 @@ DMARC is set to reject, so one wrong mail record bounces everything. Every recor
 
 ### Cutover
 
-**Who:** ECCM, with the agent ready. **State:** to do.
+**Who:** the owner and the agent. **State:** done on 13 November 2026, about 10:45. The last scan of the old site, read by its IP, found nothing after step 15. The A and www records deleted, production deployed as `58cee376` with eccm.ee and www.eccm.ee as custom domains, Image Transformations on for the zone. MEASURED through Cloudflare: both hosts answer the new site, the front pages, the events list, /nan/, the newsletter sign-up, robots.txt, a Joomla address (`/index.php/et/111` 301 to Koosloome) and a radio file (audio/mpeg); 30 of 30 list pictures 200 from `/cdn-cgi/image/`; no noindex on eccm.ee. Mail untouched on Virtuaal. A resolver that cached the old address (TTL 3600) shows the old site for up to an hour.
 
 1. Tarmo: cleared on 13 November 2026 ([his changes](#what-tarmo-changes-before-cutover)).
 2. Read eccm.ee once more for what changed since the last sync, write the next `data/seed-step*-sync-*.sql` the way step 13 is, and apply it to staging and production. The last sync is step 15 of 13 November 2026: Koosloome's texts with the three chosen composers and the weekend's schedule, on staging and production.

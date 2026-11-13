@@ -12,6 +12,18 @@ earlier days (its Fortinet DNS filter answered with a block page); on
 **https://eccm-staging.kristjan-jansen.workers.dev/** (the same Worker).
 
 
+## 2026-11-13, later: eccm.ee is the new site
+
+- **Cutover done** (`edccd3d`, production `58cee376`): eccm.ee and www.eccm.ee on the production Worker, the zone
+  on ECCM's Cloudflare account (active 10:23), every other record still pointing at Virtuaal, mail unchanged.
+  Details and checks in `plans/plan-eccm-migration.md`, Cutover.
+- **Full backup** of the cPanel account downloaded by the owner (2.6 GB, not in this repository); a copy is still
+  in Virtuaal's home directory, to delete when the owner says.
+- `/nan/` copied (`2e42009`); `_headers` noindex by host since `b96cdfd`, so eccm.ee never gets it.
+- **Open:** mail (six mailboxes on Virtuaal, decided later), Search Console (no verification found in DNS or
+  public_html), `workers_dev` on production still true, ECCM's two content asks (Üle Heli's time, Kuni kolm),
+  ECCM's approval of the privacy text, a www to eccm.ee redirect (www serves the same pages, canonical eccm.ee).
+
 ## 2026-11-13: eccm.ee synced again, Koosloome
 
 - **Sync with eccm.ee** (`data/seed-step15-sync-2026-11-13.sql`): one change since step 13. Koosloome õpituba
