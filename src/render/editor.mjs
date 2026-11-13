@@ -77,14 +77,16 @@ const schemeSay = (json) => { try { return say(JSON.parse(json)); } catch { retu
 // the picture field's script: a chosen or dropped file is shown at once and read with public/scheme.mjs, and the
 // reading goes into the hidden field the save stores on the media row; a picture already on the event with no
 // scheme yet is read the same way on load, so opening and saving an old event gives it one
-const READ_PICTURE = `      const { read, contract } = await import('/scheme.mjs');
+// read: false for a form whose picture takes no colours (the news, asked 2026-11-13: "do not extract color bg for
+// news items"): the file is still shown at once and the zone still lights on a drag, and nothing is read
+const pictureScript = (read = true) => `${read ? `      const { read, contract } = await import('/scheme.mjs');
       const say = ${say.toString()};
-      const fig = document.querySelector('.edit-pic'), img = fig.querySelector('img'), out = document.getElementById('scheme-say');
+` : ''}      const fig = document.querySelector('.edit-pic'), img = fig.querySelector('img'), out = document.getElementById('scheme-say');
       const field = document.querySelector('[name="image_scheme"]'), file = document.querySelector('[name="image_file"]');
-      const reading = async (el) => { await el.decode(); const { r, s } = read(el); const c = contract(r, s); field.value = JSON.stringify(c); out.textContent = say(c); };
+      const reading = ${read ? 'async (el) => { await el.decode(); const { r, s } = read(el); const c = contract(r, s); field.value = JSON.stringify(c); out.textContent = say(c); }' : 'async () => {}'};
       file.addEventListener('change', async () => {
         const f = file.files[0]; if (!f) return;
-        field.value = ''; out.textContent = 'Reading the picture.';
+        if (field) field.value = '';${read ? " out.textContent = 'Reading the picture.';" : ''}
         img.removeAttribute('width'); img.removeAttribute('height'); img.src = URL.createObjectURL(f); fig.hidden = false;
         try { await reading(img); } catch { out.textContent = 'Could not read the picture. It will be saved without a scheme.'; }
       });
@@ -92,6 +94,26 @@ const READ_PICTURE = `      const { read, contract } = await import('/scheme.mjs
       // a file dragged over the dropzone rules it in the ink until it is dropped or leaves, as on the partners page
       const zone = fig.closest('.drop'), on = () => zone.classList.add('over'), off = () => zone.classList.remove('over');
       zone.addEventListener('dragenter', on); zone.addEventListener('dragleave', off); zone.addEventListener('drop', off);`;
+const READ_PICTURE = pictureScript(true);
+export const PICTURE_ONLY = pictureScript(false);
+
+// the picture's dropzone, the event form's since 2026-09-30 and the news form's since 2026-11-13 (asked: "drop area
+// component"): the picture as it stands, the words, a file field over the whole zone and the name of one already
+// here; READ_PICTURE below is its script. pic: the media row shown or null; imageKey: the typed name
+// pick: false leaves out the field for a picture already here (the news, asked 2026-11-13: "Or one already here, by
+// file name - rm"); the picture the item has rides in a hidden field, and a tick takes it off
+export const pictureDrop = ({ pic, imageKey, media, err, read = true, pick = true }) => html`    <div class="drop drop-pic">
+      <figure class="edit-pic"${pic ? '' : raw(' hidden')}><img src="${pic ? `/${pic.key}` : ''}"${pic ? raw(` width="${pic.width}" height="${pic.height}"`) : ''} alt=""${read && pic && !pic.scheme ? raw(' data-read') : ''}><figcaption id="scheme-say">${read && pic && pic.scheme ? schemeSay(pic.scheme) : ''}</figcaption></figure>
+      <div class="drop-words">
+        <span class="drop-say">Drop a picture here or choose a file</span>
+        <span class="hint${err('image_file') ? ' err' : ''}">${err('image_file') || 'JPEG, PNG, WebP or GIF, up to 10 MB. The largest original there is.'}</span>
+        ${pick ? html`<label class="drop-key"><span class="hint${err('image_key') ? ' err' : ''}">${err('image_key') || 'Or one already here, by file name'}</span>
+          <input id="f-image" name="image_key" value="${imageKey}" list="media-keys" spellcheck="false"></label>
+        <datalist id="media-keys">${media.map((m) => html`<option value="${m.key}">`)}</datalist>` : html`<input type="hidden" name="image_key" value="${imageKey}">${imageKey ? html`<label class="drop-key"><input type="checkbox" name="image_remove" value="1"> Remove the picture</label>` : ''}`}
+      </div>
+      <input class="drop-input" type="file" name="image_file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Picture file">
+    </div>
+    ${read ? raw('<input type="hidden" name="image_scheme" value="">') : ''}`;
 
 // v: the form's values (src/editor.mjs, fromRows or parse); errors: [{ field,
 // msg }]; roles: the role table; media: the media table; saved: the row's
@@ -149,18 +171,7 @@ export const editorForm = ({ v, errors = [], roles, media, partners = [], series
          upload"; one zone and the existing picture's name inside it since 2026-11-09: "is ita ll drop area? rm extra
          border arond the ui text then", "can it not be in upload area?"); the browser reads a chosen file with
          public/scheme.mjs and sends the scheme beside it, so the page takes the picture's colours from the first save -->
-    <div class="drop drop-pic">
-      <figure class="edit-pic"${pic ? '' : raw(' hidden')}><img src="${pic ? `/${pic.key}` : ''}"${pic ? raw(` width="${pic.width}" height="${pic.height}"`) : ''} alt=""${pic && !pic.scheme ? raw(' data-read') : ''}><figcaption id="scheme-say">${pic && pic.scheme ? schemeSay(pic.scheme) : ''}</figcaption></figure>
-      <div class="drop-words">
-        <span class="drop-say">Drop a picture here or choose a file</span>
-        <span class="hint${err('image_file') ? ' err' : ''}">${err('image_file') || 'JPEG, PNG, WebP or GIF, up to 10 MB. The largest original there is.'}</span>
-        <label class="drop-key"><span class="hint${err('image_key') ? ' err' : ''}">${err('image_key') || 'Or one already here, by file name'}</span>
-          <input id="f-image" name="image_key" value="${imageKey}" list="media-keys" spellcheck="false"></label>
-        <datalist id="media-keys">${media.map((m) => html`<option value="${m.key}">`)}</datalist>
-      </div>
-      <input class="drop-input" type="file" name="image_file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Picture file">
-    </div>
-    <input type="hidden" name="image_scheme" value="">
+    ${pictureDrop({ pic, imageKey, media, err })}
     <div class="fields">
       <div class="field-row">
         ${field({ id: 'f-alt-et', label: 'Picture description, in Estonian', hint: 'What the picture shows, for a reader who cannot see it.', control: input('f-alt-et', 'alt_et', v.alt_et ?? pic?.alt_et ?? '') })}

@@ -11,7 +11,7 @@ import { dateLong, dateShort } from './dates.mjs';
 import { listImg, poster } from './pic.mjs';
 import { opening, firstSentence, clip } from './lead.mjs';
 import { partnerRow, partnerPicker } from './partners.mjs';
-import { field, input, group, segment } from './editor.mjs';
+import { field, input, group, segment, pictureDrop, PICTURE_ONLY } from './editor.mjs';
 
 export const NEWS = { et: '/et/uudised', en: '/en/news' };
 export const newsPath = (lang, slug) => `${NEWS[lang]}/${slug}`;
@@ -125,8 +125,17 @@ export const renderNewsAdmin = ({ rows }) => page({
 });
 
 // v: the form's values (src/news.mjs); media: the media rows for the picture's name; partners: every logo
+export const BLANK_LINK = () => ({ url: '', label_et: '', label_en: '' });
 export const newsForm = ({ v, errors = [], media = [], partners = [], cancel = '/edit/news' }) => {
   const err = (f) => (errors.find((e) => e.field === f) || {}).msg;
+  const links = v.links.length ? v.links : [BLANK_LINK()];
+  // one link: its address and its words in each language on one row; k is the index in the names, a string so the
+  // template can carry a placeholder
+  const linkRow = (l, i, k = String(i)) => html`<div class="field-row">
+        ${field({ id: `f-l${k}-url`, label: 'Address', err: err(`l${k}_url`), control: input(`f-l${k}-url`, `l${k}_url`, l.url, ' type="url" inputmode="url" spellcheck="false"') })}
+        ${field({ id: `f-l${k}-et`, label: 'Words, in Estonian', hint: i === 0 ? 'Empty shows the address.' : '', control: input(`f-l${k}-et`, `l${k}_et`, l.label_et) })}
+        ${field({ id: `f-l${k}-en`, label: 'Words, in English', hint: i === 0 ? 'Empty shows the Estonian words.' : '', control: input(`f-l${k}-en`, `l${k}_en`, l.label_en) })}
+      </div>`;
   const isNew = !v.id;
   const title = isNew ? 'New news item' : (v.et.title || v.en.title || 'News item');
   const lang = (l, name) => html`<section lang="${l}">
@@ -140,6 +149,7 @@ export const newsForm = ({ v, errors = [], media = [], partners = [], cancel = '
 
   <form class="form form-wide" method="post" action="${isNew ? '/edit/news/new' : `/edit/news/${v.id}`}" enctype="multipart/form-data">
     <input type="hidden" name="rev" value="${v.rev}">
+    <input type="hidden" name="link_count" value="${links.length}">
     <h2>Publishing</h2>
     <div class="fields">
       ${group({ label: 'Status', hint: 'A draft is not shown on the public site.', err: err('status'), control: segment('status', STATUSES, v.status) })}
@@ -153,9 +163,8 @@ export const newsForm = ({ v, errors = [], media = [], partners = [], cancel = '
     </div>
 
     <h2>Picture</h2>
+    ${pictureDrop({ pic: media.find((m) => m.key === v.image_key) || null, imageKey: v.image_key, media, err, read: false, pick: false })}
     <div class="fields">
-      ${field({ id: 'f-image-file', label: 'Picture file', err: err('image_file'), hint: 'Optional. JPEG, PNG, WebP or GIF, up to 10 MB.', control: html`<input id="f-image-file" type="file" name="image_file" accept="image/jpeg,image/png,image/webp,image/gif">` })}
-      ${field({ id: 'f-image', label: 'Or one already here, by file name', err: err('image_key'), hint: 'Empty the field to remove the picture.', control: html`<input id="f-image" name="image_key" value="${v.image_key}" list="media-keys" spellcheck="false"><datalist id="media-keys">${media.map((m) => html`<option value="${m.key}">`)}</datalist>` })}
       <div class="field-row">
         ${field({ id: 'f-alt-et', label: 'Picture description, in Estonian', hint: 'What the picture shows, for a reader who cannot see it.', control: input('f-alt-et', 'alt_et', v.alt_et) })}
         ${field({ id: 'f-alt-en', label: 'Picture description, in English', control: input('f-alt-en', 'alt_en', v.alt_en) })}
@@ -163,12 +172,28 @@ export const newsForm = ({ v, errors = [], media = [], partners = [], cancel = '
     </div>
 
     <h2>Links</h2>
-    <div class="fields">
-      ${field({ id: 'f-links', label: 'Links', err: err('links'), hint: 'One per line: the address, then | and the words in Estonian, then | and the words in English. Words are optional: https://example.com | Loe lähemalt | Read more', control: html`<textarea id="f-links" name="links" rows="5" spellcheck="false">${v.links}</textarea>` })}
+    <!-- three fields a link (asked 2026-11-13: "just 3 fields"), one row shown when there are none, more by Add link,
+         in place with script and through the server without, as the event form's credits -->
+    <div class="links-edit">
+      ${links.map((l, i) => linkRow(l, i))}
     </div>
+    <p class="add-credit"><button class="btn" type="submit" name="do" value="add-link" formnovalidate>Add link</button></p>
+    <template id="link-tpl">${linkRow(BLANK_LINK(), links.length, '__i__')}</template>
 
     <h2>Partners</h2>
     ${partnerPicker({ partners, selected: v.partners || [], version: v.partner_version || 'bw', label: 'Logos', err: err('partner') || err('partner_version') })}
+
+    <script type="module">
+${raw(PICTURE_ONLY)}
+      const btn = document.querySelector('[name="do"][value="add-link"]'), tpl = document.getElementById('link-tpl'), list = document.querySelector('.links-edit'), count = document.querySelector('[name="link_count"]');
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const i = Number(count.value);
+        list.insertAdjacentHTML('beforeend', tpl.innerHTML.replaceAll('__i__', String(i)));
+        count.value = String(i + 1);
+        list.lastElementChild.querySelector('input').focus();
+      });
+    </script>
 
     <div class="actions">
       <button class="btn btn-pri" type="submit" name="do" value="save">Save</button>

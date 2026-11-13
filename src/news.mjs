@@ -2,7 +2,7 @@
 // /en/news, one item at /et/uudised/{slug} and /en/news/{slug}, and the three newest for the front page. Behind the
 // editor key: /edit/news (every item, drafts too), /edit/news/new and /edit/news/{id}, a save guarded by the
 // item's rev the way an event's is (src/editor.mjs), preview drawn by the public template without saving.
-import { renderNewsList, renderNewsItem, renderNewsAdmin, newsForm, newsPath, STATUSES } from './render/news.mjs';
+import { renderNewsList, renderNewsItem, renderNewsAdmin, newsForm, newsPath, STATUSES, BLANK_LINK } from './render/news.mjs';
 import { OTHER, origin } from './render/chrome.mjs';
 import { slugify } from './editor.mjs';
 import { storeUpload } from './media.mjs';
@@ -66,26 +66,21 @@ export async function newsPublic(request, env, url, { loggedIn, replyFor, reply:
 // ── the editor ──────────────────────────────────────────────────────────────
 const s = (fd, k) => String(fd.get(k) ?? '').replace(/\r\n/g, '\n').trim();
 const textOf = (rows, lang) => { const r = rows.find((t) => t.lang === lang); return { title: r?.title ?? '', slug: r?.slug ?? '', body: r?.body ?? '', exists: !!r }; };
-// a link row back to its line, the words dropped from the end when empty
-const linkLine = (l) => [l.url, l.label_et, l.label_en].join(' | ').replace(/( \| )+$/, '');
 const fromRows = (n, texts, links, nps, pic) => ({
   id: n?.id, rev: n?.rev ?? 0, status: n?.status ?? 'draft', published_on: n?.published_on ?? TODAY(),
   et: textOf(texts, 'et'), en: textOf(texts, 'en'),
   image_key: pic?.key ?? '', alt_et: pic?.alt_et ?? '', alt_en: pic?.alt_en ?? '',
-  links: links.map(linkLine).join('\n'),
+  links: links.map((l) => ({ url: l.url, label_et: l.label_et, label_en: l.label_en })),
   partners: nps.map((r) => r.partner_id), partner_version: nps[0]?.version ?? 'bw',
 });
 const parse = (fd, before) => ({
   id: before.id, rev: parseInt(s(fd, 'rev'), 10) || 0, status: s(fd, 'status'), published_on: s(fd, 'published_on'),
   et: { title: s(fd, 'title_et'), slug: s(fd, 'slug_et').toLowerCase(), body: s(fd, 'body_et'), exists: before.et.exists },
   en: { title: s(fd, 'title_en'), slug: s(fd, 'slug_en').toLowerCase(), body: s(fd, 'body_en'), exists: before.en.exists },
-  image_key: s(fd, 'image_key'), alt_et: s(fd, 'alt_et'), alt_en: s(fd, 'alt_en'),
-  links: s(fd, 'links'),
+  image_key: fd.get('image_remove') ? '' : s(fd, 'image_key'), alt_et: s(fd, 'alt_et'), alt_en: s(fd, 'alt_en'),
+  // the link rows as posted, an empty row dropped
+  links: Array.from({ length: Math.min(40, Math.max(0, parseInt(fd.get('link_count'), 10) || 0)) }, (_, i) => ({ url: s(fd, `l${i}_url`), label_et: s(fd, `l${i}_et`), label_en: s(fd, `l${i}_en`) })).filter((l) => l.url || l.label_et || l.label_en),
   partners: [...new Set(fd.getAll('partner').map((x) => parseInt(x, 10)).filter((x) => x > 0))], partner_version: s(fd, 'partner_version') || 'bw',
-});
-const linkRows = (text) => text.split('\n').map((x) => x.trim()).filter(Boolean).map((line) => {
-  const [url, et = '', en = ''] = line.split('|').map((x) => x.trim());
-  return { url, label_et: et, label_en: en };
 });
 
 async function validate(v, db, media, partners) {
@@ -112,8 +107,8 @@ async function validate(v, db, media, partners) {
   const m = v.image_key ? media.find((x) => x.key === v.image_key) : null;
   if (v.image_key && !m) bad('image_key', 'No such picture. Choose one from the list or upload a file.');
   v.image_id = m ? m.id : null;
-  v.linkRows = linkRows(v.links);
-  v.linkRows.forEach((l, i) => { if (!URLISH.test(l.url)) bad('links', `Link ${i + 1} does not start with https:// or http://.`); });
+  v.linkRows = v.links;
+  v.links.forEach((l, i) => { if (!URLISH.test(l.url)) bad(`l${i}_url`, l.url ? `Link ${i + 1}: the address starts with https:// or http://.` : `Link ${i + 1}: the address is empty.`); });
   if (v.partners.some((id) => !partners.some((p) => p.id === id))) bad('partner', 'One of the ticked logos is no longer there. Tick them again.');
   if (!VERSIONS.some(([k]) => k === v.partner_version)) bad('partner_version', 'Choose colour or black and white for the logos.');
   return errors;
@@ -170,10 +165,13 @@ async function form(request, env, url, id) {
   const errors = [];
   const file = fd.get('image_file');
   if (file && typeof file === 'object' && file.size > 0) {
+    // no scheme: a news picture takes no colours (asked 2026-11-13)
     const up = await storeUpload(env, file, '', { et: v.alt_et, en: v.alt_en });
     if (up.error) errors.push({ field: 'image_file', msg: up.error });
     else { v.image_key = up.row.key; if (!media.some((x) => x.id === up.row.id)) media.push(up.row); }
   }
+  // one more blank link row, the typed values kept, nothing validated and nothing saved
+  if (action === 'add-link') return reply(newsForm({ v: { ...v, links: v.links.concat([BLANK_LINK()]) }, media, partners, cancel }));
   errors.push(...await validate(v, db, media, partners));
   if (errors.length) return reply(newsForm({ v, errors, media, partners, cancel }), 422);
   if (action.startsWith('preview')) {
