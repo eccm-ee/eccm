@@ -23,13 +23,13 @@ const MENU = {
   et: {
     syndmusest: LIST.et, 'syndmusest/moeoedunud-suendmused': LIST.et,
     'tallinn-1965/residentuurid': { page: 'tallinn-1965' }, 'tallinn-1965/tallinn-1965-uudised': { page: 'tallinn-1965' },
-    ulysses: { page: 'ulysses' }, 'ulysses/ulysses-uudised': { page: 'ulysses' },
+    ulysses: { page: 'ulysses' }, 'ulysses/ulysses-uudised': { page: 'koosloome' },
     konkursid: { page: 'konkursid' }, kontakt: '/et/kontakt', 'eccm/kontakt': '/et/kontakt',
   },
   en: {
     eventseng: LIST.en, 'eventseng/past-events': LIST.en,
     'tallinn-1965-eng': { page: 'tallinn-1965' }, 'tallinn-1965-eng/residencies': { page: 'tallinn-1965' }, 'tallinn-1965-eng/tallinn-1965-news': { page: 'tallinn-1965' },
-    'ulysses-eng/ulysses-uudised-eng': { page: 'ulysses' },
+    'ulysses-eng/ulysses-uudised-eng': { page: 'koosloome' },
     'open-calls': { page: 'konkursid' }, 'new-eng-contact': '/en/contact', 'eccm-new-eng/new-eng-contact': '/en/contact',
   },
 };
