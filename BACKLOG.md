@@ -9,6 +9,8 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ### Open 2026-11-14: every old Joomla address to its own new page, and a log of every miss and every redirect used
 
+✅ Done 2026-11-14 (dc45029, deployed 4dee1fb7, migration 0019 applied to production): the redirect table, every 404 and every redirect followed counted, /edit/redirects. Checked against the Joomla dump in the owner's Downloads (backup-11.13.2026_09-21-06_eccmee1.tar.gz, mysql/eccmee1_jos2.sql, read in the scratchpad only): 24 menu addresses and 7 menu articles, all 31 now 301 (4 rows added: the two home menus to / and /en/, the two NAN menus to /et/nan and /en/nan); 156 published events, all 301, 139 to their own page, 1 row added (68, the English Dream Sequence, to its page), 16 Schönberg series placeholders for 2027 and 2028 never migrated, left on the events list. Open: 40 published articles no menu showed (their real addresses will show in the miss log), and old articles to news items once news is published (none on 2026-11-14).
+
 Asked verbatim: *"What is the point of one-off link redirects? Why don't we properly do the redirection of old links for SEO reasons, etc.? I assumed you already done it"*, then *"Also, two-way log missed URLs. We need to keep track of those and learn from redirects, because there might be pages which we didn't even know browsers are requesting."*
 
 Prompted by Tarmo: /index.php/et/ulysses/ulysses-uudised/kandideeri-u-koosloome-programmi answered 404 during an event on 2026-11-14 and 15. Stopgap 3fb234a (an unknown old path falls back to its nearest known parent menu), not deployed (the permission check refused a production deploy) and not pushed.
