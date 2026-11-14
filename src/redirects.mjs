@@ -1,12 +1,17 @@
 // redirects.mjs: eccm.ee's old Joomla addresses, answered before anything else
 // (plans/plan-eccm-urls-sitemap-rss.md section 3, plans/plan-eccm-migration.md
 // "Redirects from the old Joomla addresses"). Only /index.php, /images/ and
-// /administrator reach here; every other path gets null at once. Each answer is
-// one hop: a 301 to a page that answers 200 itself, a 410 for Joomla's login,
-// or the 404 page with the path upserted into redirect_miss (0007) in
-// waitUntil, so the response does not wait for the write.
+// /administrator reach legacy(); every other path gets null at once, and meets
+// lastChance() only where it would otherwise 404. Each answer is one hop: a 301
+// to a page that answers 200 itself, a 410, or the 404 page.
+// Both ways are logged in waitUntil, so no response waits for the write (0019):
+// every redirect answered, with the rule that answered it, into redirect_hit, and
+// every 404 on the site into redirect_miss, with bots apart and the referring site.
+// The redirect table (0019) is tried first; /edit/redirects reads both logs and
+// turns a miss into a row.
 import { LIST } from './render/events.mjs';
 import { notFound, OTHER } from './render/chrome.mjs';
+import { BOT, hosting } from './stats.mjs';
 
 // every event shape: /index.php/{lang}/[up to two menu segments/]{id}-{alias}[/{date}]; a menu
 // segment starts with a letter, so an id segment is never taken for one
@@ -89,41 +94,67 @@ function missKey(url) {
   return (url.pathname + (s ? '?' + s : '')).slice(0, 500);
 }
 
-function logMiss(env, ctx, url) {
-  const now = new Date().toISOString().slice(0, 19) + 'Z';
-  const write = env.DB.prepare('INSERT INTO redirect_miss (path, count, first_seen, last_seen) VALUES (?, 1, ?, ?) ON CONFLICT (path) DO UPDATE SET count = count + 1, last_seen = excluded.last_seen')
-    .bind(missKey(url), now, now).run().catch(() => {});
-  if (ctx && ctx.waitUntil) ctx.waitUntil(write);
+const nowIso = () => new Date().toISOString().slice(0, 19) + 'Z';
+const isBot = (request) => { const ua = request?.headers.get('user-agent') || ''; return !ua || BOT.test(ua) || !!request?.cf?.verifiedBotCategory || hosting(request?.cf); };
+const referrer = (request, url) => { try { const r = new URL(request?.headers.get('referer') || ''); return r.hostname === url.hostname ? '' : r.hostname.replace(/^www\./, '').slice(0, 100); } catch { return ''; } };
+const later = (ctx, p) => { if (ctx && ctx.waitUntil) ctx.waitUntil(p); };
+
+// a 404: counted per path, bots apart, the last referring site kept; 'old' for a Joomla address, 'site' for the rest
+export function logMiss(env, ctx, url, request, area = 'old') {
+  const now = nowIso(), bot = isBot(request) ? 1 : 0, ref = referrer(request, url);
+  later(ctx, env.DB.prepare(`INSERT INTO redirect_miss (path, count, first_seen, last_seen, bots, area, referrer) VALUES (?, 1, ?, ?, ?, ?, ?)
+    ON CONFLICT (path) DO UPDATE SET count = count + 1, last_seen = excluded.last_seen, bots = bots + excluded.bots,
+    referrer = CASE WHEN excluded.referrer != '' THEN excluded.referrer ELSE referrer END`)
+    .bind(missKey(url), now, now, bot, area, ref).run().catch(() => {}));
+}
+
+// a redirect answered, by the address asked, where it went and which rule sent it
+function logHit(env, ctx, url, request, to, rule) {
+  const now = nowIso(), bot = isBot(request) ? 1 : 0;
+  later(ctx, env.DB.prepare(`INSERT INTO redirect_hit (from_path, to_path, rule, count, bots, first_seen, last_seen) VALUES (?, ?, ?, 1, ?, ?, ?)
+    ON CONFLICT (from_path) DO UPDATE SET count = count + 1, bots = bots + excluded.bots, to_path = excluded.to_path, rule = excluded.rule, last_seen = excluded.last_seen`)
+    .bind(missKey(url), to, rule, bot, now, now).run().catch(() => {}));
+}
+
+// the redirect table's row for this address: the path and its query lowercased, then the path alone, each
+// with and without a trailing slash
+async function fromTable(db, url) {
+  const k = missKey(url).toLowerCase(), p = url.pathname.toLowerCase();
+  const keys = [...new Set([k, p, p.replace(/\/+$/, ''), p.replace(/\/+$/, '') + '/'])].filter(Boolean);
+  try {
+    return await db.prepare(`SELECT to_path, status FROM redirect WHERE from_path IN (${keys.map(() => '?').join(', ')}) LIMIT 1`).bind(...keys).first();
+  } catch { return null; }   // a database without 0019
 }
 
 async function target(env, url) {
   const p = url.pathname.toLowerCase();
   const q = url.searchParams;
-  if (p.startsWith('/images/')) return pictureTarget(env, url, url.pathname);
+  if (p.startsWith('/images/')) { const to = await pictureTarget(env, url, url.pathname); return to && { to, rule: 'picture' }; }
   if (p === '/index.php' || p === '/index.php/') {
-    if (q.get('format') === 'feed') return FEED.et;
-    return isList(q) ? LIST.et : HOME.et;
+    if (q.get('format') === 'feed') return { to: FEED.et, rule: 'feed' };
+    return isList(q) ? { to: LIST.et, rule: 'list' } : { to: HOME.et, rule: 'home' };
   }
   const m = OLD_LANG.exec(p);
   if (!m) return null;
   const lang = m[1];
   const rest = (m[2] || '').replace(/\/+$/, '');
-  if (q.get('format') === 'feed') return FEED[lang];
+  if (q.get('format') === 'feed') return { to: FEED[lang], rule: 'feed' };
   const ev = OLD_EVENT.exec(p);
   if (ev) {
     const to = await eventTarget(env.DB, lang, Number(ev[2]));
-    if (to && q.get('layout') === 'vcal') return `${to}.ics`;
-    if (to) return to;
+    if (to && q.get('layout') === 'vcal') return { to: `${to}.ics`, rule: 'event' };
+    if (to) return { to, rule: 'event' };
   }
-  if (!rest) return isList(q) ? LIST[lang] : HOME[lang];
+  if (!rest) return isList(q) ? { to: LIST[lang], rule: 'list' } : { to: HOME[lang], rule: 'home' };
   // the path itself, then each parent menu: an old article under a known menu (its alias has no id) goes to that
   // menu's page rather than the 404
   for (let r = rest; r; r = r.includes('/') ? r.slice(0, r.lastIndexOf('/')) : '') {
     const row = await env.DB.prepare("SELECT t.lang, t.slug FROM page_text t JOIN page p ON p.id = t.page_id WHERE t.legacy_path = ? AND p.status = 'published'").bind(`/index.php/${lang}/${r}`).first();
-    if (row) return `/${row.lang}/${row.slug}`;
+    const rule = r === rest ? 'page' : 'parent';
+    if (row) return { to: `/${row.lang}/${row.slug}`, rule };
     const hit = Object.hasOwn(MENU[lang], r) ? MENU[lang][r] : null;
-    if (typeof hit === 'string') return hit;
-    if (hit) { const to = await pageByKey(env.DB, lang, hit.page); if (to) return to; }
+    if (typeof hit === 'string') return { to: hit, rule: r === rest ? 'menu' : 'parent' };
+    if (hit) { const to = await pageByKey(env.DB, lang, hit.page); if (to) return { to, rule: r === rest ? 'menu' : 'parent' }; }
   }
   return null;
 }
@@ -135,8 +166,22 @@ export async function legacy(request, env, url, ctx) {
   if (!old && !lp.startsWith('/administrator')) return null;
   const lang = lp.startsWith('/index.php/en') ? 'en' : 'et';
   if (lp.startsWith('/administrator') || LOGIN.test(lp)) return page(lang, p, 410);
-  const to = await target(env, url);
-  if (to) return moved(url, to);
-  logMiss(env, ctx, url);
+  const row = await fromTable(env.DB, url);
+  if (row) { logHit(env, ctx, url, request, row.to_path, 'table'); return row.status === 410 ? page(lang, p, 410) : moved(url, row.to_path); }
+  const hit = await target(env, url);
+  if (hit) { logHit(env, ctx, url, request, hit.to, hit.rule); return moved(url, hit.to); }
+  logMiss(env, ctx, url, request, 'old');
   return page(lang, p, 404);
+}
+
+// any other address, where it would otherwise be the 404: the redirect table, else the miss counted and null
+export async function lastChance(request, env, url, ctx) {
+  const row = await fromTable(env.DB, url);
+  if (row) {
+    logHit(env, ctx, url, request, row.to_path, 'table');
+    if (row.status === 410) return page(url.pathname.startsWith('/en') ? 'en' : 'et', url.pathname, 410);
+    return moved(url, row.to_path);
+  }
+  if (request.method === 'GET' || request.method === 'HEAD') logMiss(env, ctx, url, request, 'site');
+  return null;
 }

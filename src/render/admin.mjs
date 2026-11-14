@@ -29,6 +29,8 @@ const TOOLS = [
   ['/edit/partners', 'Logos', 'Partners’ logos for event pages and the footer, in colour and in black and white.'],
   // the menu's pages and the footer's logos (asked 2026-11-07: "perhaps a Admin > Layout where you can pick what pages to link and what logos go to footer?")
   // the page views (asked 2026-11-08: "A sinple web stats to admin page?")
+  // the 404s, the redirects followed and the redirect table (asked 2026-11-14: "two-way log missed URLs")
+  ['/edit/redirects', 'Redirects', 'Addresses that were not found, old addresses sent on to new pages, and the redirects to add.'],
   ['/admin/stats', 'Stats', 'Page views of the last 30 days, the pages read most, and where readers came from.'],
   ['/edit/layout', 'Layout', 'Which pages the menu links and which logos the footer shows.'],
   // one card since 2026-11-07 (asked: "drop social. mv logo to User interface (/ui) with components. last item"),

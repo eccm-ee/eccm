@@ -37,7 +37,8 @@ import { backup } from './backup.mjs';
 import { newsletter, drain } from './newsletter.mjs';
 import { contact, CONTACT_PATHS } from './contact.mjs';
 import { ogRoute } from './og/route.mjs';
-import { legacy } from './redirects.mjs';
+import { legacy, lastChance } from './redirects.mjs';
+import { redirectsEdit } from './redirects-edit.mjs';
 import { passthrough } from './passthrough.mjs';
 import { partners, eventPartners } from './partners.mjs';
 import { layout, loadLayout } from './layout.mjs';
@@ -238,8 +239,12 @@ const routes = {
     if (p === '/edit/layout') { const out = await layout(request, env, url); if (out) return out; }
     // the Logos page, the partners' logos (src/partners.mjs), since 2026-11-07
     if (p === '/edit/partners' || p.startsWith('/edit/partners/')) { const out = await partners(request, env, url); if (out) return out; }
+    // the 404 log, the redirects followed and the redirect table (src/redirects-edit.mjs), since 2026-11-14
+    if (p === '/edit/redirects') return redirectsEdit(request, env, url);
     if (p === '/edit/news' || p.startsWith('/edit/news/')) { const out = await newsEdit(request, env, url); if (out) return out; }
     if (p === '/edit' || p.startsWith('/edit/')) { const out = await editor(request, env, url); if (out) return out; }
+    // the redirect table, else the miss counted (src/redirects.mjs), before the 404
+    { const out = await lastChance(request, env, url, ctx); if (out) return out; }
     const lang = p.startsWith('/en') ? 'en' : 'et';
     return reply(notFound(lang, p), 404);
   },

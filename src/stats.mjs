@@ -7,7 +7,7 @@
 // Before the zone move there is no zone traffic to read, which is why the Worker counts for itself.
 import { renderStats } from './render/stats.mjs';
 
-const BOT = /bot|crawl|spider|slurp|preview|facebookexternalhit|embedly|whatsapp|telegram|discord|curl|wget|python|httpclient|headless|lighthouse|pagespeed|monitor|uptime|feed|scrap/i;
+export const BOT = /bot|crawl|spider|slurp|preview|facebookexternalhit|embedly|whatsapp|telegram|discord|curl|wget|python|httpclient|headless|lighthouse|pagespeed|monitor|uptime|feed|scrap/i;
 const TOOLS = /^\/(admin|edit|login|logout|ui|media|og|cdn-cgi)(\/|$)/;
 // a data centre is not a reader (asked 2026-11-13, "are us visitors bots": 291 views from the US and Canada in two
 // hours after the cutover, no referrer, fifty pages each, with ordinary browser names). The Free plan has no bot
@@ -15,7 +15,7 @@ const TOOLS = /^\/(admin|edit|login|logout|ui|media|og|cdn-cgi)(\/|$)/;
 // reader on Cloudflare's WARP (13335) stays counted
 const HOSTING_ASN = new Set([16509, 14618, 8987, 15169, 396982, 19527, 8075, 8068, 14061, 24940, 213230, 16276, 63949, 20473, 45102, 37963, 132203, 45090, 31898, 36352, 9009, 212238, 60068, 51167, 12876, 8100, 46606, 26496, 197540, 55286, 62240, 60781, 28753, 16125, 47583, 35916, 40021, 174, 23470, 398324, 399629, 208091, 211252, 202425, 136907, 55990]);
 const HOSTING_NAME = /amazon|aws|google cloud|microsoft|azure|digitalocean|hetzner|ovh|linode|akamai|vultr|choopa|alibaba|tencent|oracle|contabo|scaleway|m247|datacamp|cdn77|colocrossing|leaseweb|hostinger|ionos|netcup|quadranet|psychz|clouvider|hosting|datacenter|data center|server|cloud|vps/i;
-const hosting = (cf) => !!cf && Number(cf.asn) !== 13335 && (HOSTING_ASN.has(Number(cf.asn)) || HOSTING_NAME.test(String(cf.asOrganization || '')));
+export const hosting = (cf) => !!cf && Number(cf.asn) !== 13335 && (HOSTING_ASN.has(Number(cf.asn)) || HOSTING_NAME.test(String(cf.asOrganization || '')));
 
 // a feed reader's name from its user agent, its first word ("Feedly/1.0 ..." is Feedly), and the subscribers
 // it says it serves when it says ("... 123 subscribers"), which is how a feed's readers are counted at all

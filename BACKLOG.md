@@ -7,6 +7,21 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Open 2026-11-14: every old Joomla address to its own new page, and a log of every miss and every redirect used
+
+Asked verbatim: *"What is the point of one-off link redirects? Why don't we properly do the redirection of old links for SEO reasons, etc.? I assumed you already done it"*, then *"Also, two-way log missed URLs. We need to keep track of those and learn from redirects, because there might be pages which we didn't even know browsers are requesting."*
+
+Prompted by Tarmo: /index.php/et/ulysses/ulysses-uudised/kandideeri-u-koosloome-programmi answered 404 during an event on 2026-11-14 and 15. Stopgap 3fb234a (an unknown old path falls back to its nearest known parent menu), not deployed (the permission check refused a production deploy) and not pushed.
+
+Known: plans/plan-eccm-urls-sitemap-rss.md section 3 planned three layers; only layers 2 and 3 were built (src/redirects.mjs: events by legacy id, about a dozen menu paths, pictures, redirect_miss for /index.php, /images/, /administrator only). Layer 1, the `redirect` table filled from a crawl of the old site, was never built: no migration, no crawl.
+
+To do:
+1. The old address list from the Joomla database dump (articles, categories, menu items with their aliases; HANDOFF says the dump was kept in a scratchpad only, the backup on Virtuaal's server has it), each mapped to its own new page: event, news item (0018), page; 410 for what the site does not keep.
+2. The `redirect` table (from_path, to_path, status, source, hits, last_hit), tried first, one hop, every to_path checked to answer 200.
+3. Two-way logging: every 404 on the whole site, not only old paths (path, count, first and last seen, referrer host, browser or bot), and hits on every redirect row and rule, so both what is missed and what is used can be read.
+4. A page under /edit to read both logs and turn a miss into a redirect.
+5. The production miss log read since the cutover of 2026-11-13 (needs a read of the production D1, refused by the permission check on 2026-11-14 until the owner allows it).
+
 ### Done 2026-10-02: "figure out dark mode colors for derived colors"
 
 Asked verbatim. ✅ A light scheme now follows the site's theme: event.mjs writes each colour as light-dark(light, dark), the dark half from darkOf in public/scheme.mjs, computed from the stored hex so no row changes. The ground keeps its hue at OKLCH 0.24 (chroma at most 0.05); white, grey and the muddy hues 40 to 110 take the site's #121212; the ink is the site's dark ink, the second ink at 4.5 : 1, the accent its own hue walked up under the dark scheme's rule, the button the inverse. The body serif goes back to the sans in dark, as on a dark scheme. A dark scheme stays dark in both themes. Of the 14 light schemes, 7 get a tinted dark ground and 7 the site's dark.
