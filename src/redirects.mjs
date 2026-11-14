@@ -116,11 +116,15 @@ async function target(env, url) {
     if (to) return to;
   }
   if (!rest) return isList(q) ? LIST[lang] : HOME[lang];
-  const row = await env.DB.prepare("SELECT t.lang, t.slug FROM page_text t JOIN page p ON p.id = t.page_id WHERE t.legacy_path = ? AND p.status = 'published'").bind(`/index.php/${lang}/${rest}`).first();
-  if (row) return `/${row.lang}/${row.slug}`;
-  const hit = Object.hasOwn(MENU[lang], rest) ? MENU[lang][rest] : null;
-  if (typeof hit === 'string') return hit;
-  if (hit) return pageByKey(env.DB, lang, hit.page);
+  // the path itself, then each parent menu: an old article under a known menu (its alias has no id) goes to that
+  // menu's page rather than the 404
+  for (let r = rest; r; r = r.includes('/') ? r.slice(0, r.lastIndexOf('/')) : '') {
+    const row = await env.DB.prepare("SELECT t.lang, t.slug FROM page_text t JOIN page p ON p.id = t.page_id WHERE t.legacy_path = ? AND p.status = 'published'").bind(`/index.php/${lang}/${r}`).first();
+    if (row) return `/${row.lang}/${row.slug}`;
+    const hit = Object.hasOwn(MENU[lang], r) ? MENU[lang][r] : null;
+    if (typeof hit === 'string') return hit;
+    if (hit) { const to = await pageByKey(env.DB, lang, hit.page); if (to) return to; }
+  }
   return null;
 }
 
