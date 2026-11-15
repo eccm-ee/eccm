@@ -44,6 +44,7 @@ import { partners, eventPartners } from './partners.mjs';
 import { layout, loadLayout } from './layout.mjs';
 import { loadSeries, seriesEvents } from './series.mjs';
 import { recordView, stats } from './stats.mjs';
+import { edge } from './edge.mjs';
 import { newsPublic, newsEdit, newsRows } from './news.mjs';
 import { gate, isProtected, isStatic, login, logout, loggedIn } from './auth.mjs';
 
@@ -154,7 +155,8 @@ const noindex = (res) => {
 
 export default {
   async fetch(request, env, ctx) {
-    const res = await routes.fetch(request, env, ctx);
+    // the cache in front of every public answer, so a crawler costs D1 nothing (src/edge.mjs)
+    const res = await edge(request, ctx, () => routes.fetch(request, env, ctx));
     // one page view to Analytics Engine, for /admin/stats (src/stats.mjs)
     recordView(request, env, new URL(request.url), res);
     return env.NOINDEX === 'on' ? noindex(res) : res;
