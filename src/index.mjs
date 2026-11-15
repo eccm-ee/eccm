@@ -158,7 +158,7 @@ const noindex = (res) => {
 export default {
   async fetch(request, env, ctx) {
     // the cache in front of every public answer, so a crawler costs D1 nothing (src/edge.mjs)
-    const res = await edge(request, ctx, () => routes.fetch(request, env, ctx));
+    const res = await edge(request, ctx, () => routes.fetch(request, env, ctx), !!(env.PURGE_TOKEN && env.ZONE_ID));
     // an edit or an addition empties the edge cache everywhere, so readers see it at once (src/edge.mjs)
     purgeOnSave(request, env, ctx, res);
     // one page view to Analytics Engine, for /admin/stats (src/stats.mjs)

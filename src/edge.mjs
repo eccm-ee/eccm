@@ -10,6 +10,8 @@
 const NOT = /^\/(admin|edit|login|logout|ui|media|og|img|cdn-cgi|radio1965|uudiskiri|et\/uudiskiri|en\/newsletter|et\/kontakt|en\/contact)(\/|$)/;
 const TYPES = /^(text\/html|application\/(rss\+)?xml|text\/calendar)/;
 const FRESH = { 200: 86400, 404: 86400, 301: 86400, 410: 86400 };
+// without PURGE_TOKEN no save empties the cache, so a copy is fresh five minutes and an edit waits that long at most
+const SHORT = 300;
 const KEEP = 7 * 86400;
 const AT = 'x-edge-at', CC = 'x-edge-cc';
 // the day in Tallinn, since the list moves an event to the past at midnight there: a copy from yesterday is stale
@@ -31,14 +33,14 @@ function keyOf(url) {
   return new Request(u.toString(), { method: 'GET' });
 }
 
-export async function edge(request, ctx, run) {
+export async function edge(request, ctx, run, purges = false) {
   const url = new URL(request.url);
   const cache = globalThis.caches?.default;
   if (!cache || request.method !== 'GET' || NOT.test(url.pathname) || /(?:^|;\s*)eccm_editor=/.test(request.headers.get('cookie') || '')) return run();
   const key = keyOf(url);
   const hit = await cache.match(key).catch(() => null);
   const at = Number(hit?.headers.get(AT) || 0);
-  if (hit && Date.now() - at < 1000 * (FRESH[hit.status] || 0) && day(at) === day(Date.now())) return served(hit);
+  if (hit && Date.now() - at < 1000 * Math.min(FRESH[hit.status] || 0, purges ? Infinity : SHORT) && day(at) === day(Date.now())) return served(hit);
   let res;
   try { res = await run(); } catch (e) { if (hit) return served(hit, 'stale'); throw e; }
   if (res.status >= 500 && hit) return served(hit, 'stale');
