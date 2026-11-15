@@ -1,13 +1,22 @@
 # Handoff, 2026-11-15
 
 - **D1 ran out, eccm.ee answered 500** from about 17:50 UTC: crawlers (Googlebot in the old JEvents calendar,
-  SemrushBot, ExaSearchBot) spent the free 5M daily reads, 3.9M of them on the events list. ECCM moved to
-  **Workers Paid** ($5 a month) the same evening and the site came back.
-- **Edge cache** (99c8c37, src/edge.mjs): public answers kept in the Cache API, pages 5 minutes, redirects an hour,
-  a stale copy served if the Worker fails, editors and forms bypass; `x-edge: hit` shows it. Checked on eccm.ee.
-- **Cheaper redirects** (75a6890): the JEvents calendar goes to the list with no lookup and robots.txt closes it,
-  a 301 loads no chrome, the chrome caches hold 5 minutes; migration 0020 (legacy_path index) applied to production.
-- Open: purge on save would let the cache hold a day; it needs a Cache Purge API token from ECCM's zone.
+  SemrushBot, ExaSearchBot) spent the free 5M daily reads, 3.9M of them on the events list (`wrangler d1 insights`).
+  ECCM moved to **Workers Paid** ($5 a month) the same evening and the site came back. Headroom: 25B reads a
+  month against about 210M at the surge's rate, so under 1%, before the cache.
+- **Edge cache** (src/edge.mjs; 99c8c37, d164042, 470c719, d7e610e): every public answer kept in the Cache API,
+  fresh a day or until midnight in Tallinn (the list moves events to the past then), a stale copy kept a week and
+  sent if the Worker fails. Editors (the cookie), the forms and the tools bypass it; `x-edge: hit` shows a cached
+  answer. Pages say `no-cache` to the browser, so nothing between holds an old copy.
+- **Purge on save**: every POST under /edit or /admin answered under 400 purges the whole zone through the API with
+  the secret **PURGE_TOKEN** (an API token, Zone, Cache Purge, Purge on eccm.ee only, no expiry) and the var
+  ZONE_ID. Checked on eccm.ee: a Layout save logged `purge ok` and the next request was drawn fresh. Without the
+  token a copy keeps five minutes. A stranger's POST gets 401 from the gate and purges nothing.
+- **Cheaper redirects** (75a6890): the JEvents calendar (`iccaldate`, `component/jevents`) goes to the list with no
+  lookup and robots.txt closes it to crawlers, a 301 loads no chrome; migration 0020 (legacy_path index) applied to
+  production. The menu, footer and series are read for every page drawn, which the cache keeps few.
+- Side effect: a cached 404 or redirect is not counted again in /edit/redirects until the copy expires or a save.
+- Open: tomorrow, `wrangler d1 insights eccm --env production --timePeriod 1d` to see the reads with the cache on.
 
 # Handoff, 2026-11-14
 
