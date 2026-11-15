@@ -157,15 +157,13 @@ export const allPartners = async (db) => (await db.prepare('SELECT * FROM partne
 export const eventPartners = async (db, eventId, lang) => (await db.prepare(`SELECT p.*, ep.version FROM event_partner ep JOIN partner p ON p.id = ep.partner_id
   WHERE ep.event_id = ? AND (p.lang IS NULL OR p.lang = ?) ORDER BY ep.position`).bind(eventId, lang).all()).results;
 
-// the footer's logos, read once every five minutes per isolate rather than on every page, and at once after a save
-// here; a database without the table (migration 0014 not applied) keeps the footer's static markup
+// the footer's logos, read for every page drawn, which the edge cache keeps few (src/edge.mjs), so a save shows at
+// once; a database without the table (migration 0014 not applied) keeps the footer's static markup
 let footer = { at: 0, rows: null };
 export const resetFooter = () => { footer = { at: 0, rows: null }; };
 export async function loadFooter(env) {
-  if (Date.now() - footer.at > 300000) {
-    try { footer = { at: Date.now(), rows: (await env.DB.prepare('SELECT * FROM partner WHERE in_footer = 1 ORDER BY footer_order, id').all()).results }; }
-    catch { footer = { at: Date.now(), rows: null }; }
-  }
+  try { footer = { at: Date.now(), rows: (await env.DB.prepare('SELECT * FROM partner WHERE in_footer = 1 ORDER BY footer_order, id').all()).results }; }
+  catch { footer = { at: Date.now(), rows: null }; }
   useFooter(footer.rows);
 }
 

@@ -44,11 +44,12 @@ import { partners, eventPartners } from './partners.mjs';
 import { layout, loadLayout } from './layout.mjs';
 import { loadSeries, seriesEvents } from './series.mjs';
 import { recordView, stats } from './stats.mjs';
-import { edge } from './edge.mjs';
+import { edge, purgeOnSave } from './edge.mjs';
 import { newsPublic, newsEdit, newsRows } from './news.mjs';
 import { gate, isProtected, isStatic, login, logout, loggedIn } from './auth.mjs';
 
-const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' };
+// no-cache: the browser asks again each time and the edge cache answers (src/edge.mjs), so an edit shows at once
+const HTML = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-cache' };
 const EVENT = { et: /^\/et\/sundmused\/([a-z0-9-]+)$/, en: /^\/en\/events\/([a-z0-9-]+)$/ };
 const PAGE = /^\/(et|en)\/([a-z0-9-]+)$/;
 const LIST_LANG = Object.fromEntries(Object.entries(LIST).map(([l, p]) => [p, l]));
@@ -158,6 +159,8 @@ export default {
   async fetch(request, env, ctx) {
     // the cache in front of every public answer, so a crawler costs D1 nothing (src/edge.mjs)
     const res = await edge(request, ctx, () => routes.fetch(request, env, ctx));
+    // an edit or an addition empties the edge cache everywhere, so readers see it at once (src/edge.mjs)
+    purgeOnSave(request, env, ctx, res);
     // one page view to Analytics Engine, for /admin/stats (src/stats.mjs)
     recordView(request, env, new URL(request.url), res);
     return env.NOINDEX === 'on' ? noindex(res) : res;

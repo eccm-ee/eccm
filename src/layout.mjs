@@ -15,7 +15,7 @@ import { loadFooter, resetFooter } from './partners.mjs';
 
 const HEAD = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' };
 
-// the menu's pages, read once every five minutes per isolate like the footer's logos, and at once after a save here;
+// the menu's pages, read for every page drawn, which the edge cache keeps few (src/edge.mjs), so a save shows at once;
 // a database without the columns (migration 0015 not applied) keeps the menu typed into mark.mjs
 let menu = { at: 0, rows: null };
 // the header's pages and, since 2026-11-08 ("header menu / footer menu"), the footer's, in one read
@@ -23,10 +23,8 @@ const MENU_SQL = `SELECT p.id, p.key, p.in_menu, p.in_footer_menu, p.menu_title_
   FROM page p LEFT JOIN page_text et ON et.page_id = p.id AND et.lang = 'et' LEFT JOIN page_text en ON en.page_id = p.id AND en.lang = 'en'
   WHERE (p.in_menu = 1 OR p.in_footer_menu = 1) AND p.status = 'published' ORDER BY p.menu_order, p.id`;
 export async function loadLayout(env) {
-  if (Date.now() - menu.at > 300000) {
-    try { menu = { at: Date.now(), rows: (await env.DB.prepare(MENU_SQL).all()).results }; }
-    catch { menu = { at: Date.now(), rows: null }; }
-  }
+  try { menu = { at: Date.now(), rows: (await env.DB.prepare(MENU_SQL).all()).results }; }
+  catch { menu = { at: Date.now(), rows: null }; }
   useNav(menu.rows && { head: menu.rows.filter((r) => r.in_menu), foot: menu.rows.filter((r) => r.in_footer_menu) });
   await loadFooter(env);
 }
