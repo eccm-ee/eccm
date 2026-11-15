@@ -146,6 +146,9 @@ async function target(env, url) {
     if (to) return { to, rule: 'event' };
   }
   if (!rest) return isList(q) ? { to: LIST[lang], rule: 'list' } : { to: HOME[lang], rule: 'home' };
+  // the old JEvents calendar, endless for a crawler (?iccaldate=1641-6-1, /component/jevents/.../2026/9/20), goes
+  // to the list without the menu walk below, which read page_text up to six times per address (2026-11-15)
+  if (isList(q) || /^component\/jevents(\/|$)/.test(rest)) return { to: LIST[lang], rule: 'list' };
   // the path itself, then each parent menu: an old article under a known menu (its alias has no id) goes to that
   // menu's page rather than the 404
   for (let r = rest; r; r = r.includes('/') ? r.slice(0, r.lastIndexOf('/')) : '') {
@@ -159,18 +162,19 @@ async function target(env, url) {
   return null;
 }
 
-export async function legacy(request, env, url, ctx) {
+export async function legacy(request, env, url, ctx, chrome = async () => {}) {
   const p = url.pathname;
   const lp = p.toLowerCase();
   const old = lp === '/index.php' || lp.startsWith('/index.php/') || lp.startsWith('/images/');
   if (!old && !lp.startsWith('/administrator')) return null;
   const lang = lp.startsWith('/index.php/en') ? 'en' : 'et';
-  if (lp.startsWith('/administrator') || LOGIN.test(lp)) return page(lang, p, 410);
+  if (lp.startsWith('/administrator') || LOGIN.test(lp)) { await chrome(); return page(lang, p, 410); }
   const row = await fromTable(env.DB, url);
-  if (row) { logHit(env, ctx, url, request, row.to_path, 'table'); return row.status === 410 ? page(lang, p, 410) : moved(url, row.to_path); }
+  if (row) { logHit(env, ctx, url, request, row.to_path, 'table'); if (row.status !== 410) return moved(url, row.to_path); await chrome(); return page(lang, p, 410); }
   const hit = await target(env, url);
   if (hit) { logHit(env, ctx, url, request, hit.to, hit.rule); return moved(url, hit.to); }
   logMiss(env, ctx, url, request, 'old');
+  await chrome();
   return page(lang, p, 404);
 }
 

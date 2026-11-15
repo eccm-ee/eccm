@@ -1,13 +1,13 @@
 // series.mjs: the series an event belongs to and a page can list, from the series table
 // (migrations/0017_series.sql), asked 2026-11-13: "why not have dropdown and optional textfield on edit
-// event/page?". The names are read once a minute per isolate, like the footer's logos (src/partners.mjs),
+// event/page?". The names are read once every five minutes per isolate, like the footer's logos (src/partners.mjs),
 // and at once after a form makes a new series; the templates ask seriesName, which reads what was loaded.
 import { slugify } from './editor.mjs';
 
 let cache = { at: 0, names: new Map() };
 export const resetSeries = () => { cache = { at: 0, names: new Map() }; };
 export async function loadSeries(env) {
-  if (Date.now() - cache.at <= 60000) return;
+  if (Date.now() - cache.at <= 300000) return;
   // a database without the table (migration 0017 not applied) names no series
   try { cache = { at: Date.now(), names: new Map((await allSeries(env.DB)).map((r) => [r.key, r])) }; }
   catch { cache = { at: Date.now(), names: new Map() }; }

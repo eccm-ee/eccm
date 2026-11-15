@@ -141,7 +141,8 @@ async function calendar(env, lang, slug, url) {
 
 // robots.txt from here rather than public/, since its Sitemap line is an absolute address and the
 // origin is the environment's (SITE_ORIGIN); crawling stays open so a crawler can read the noindex
-const robots = () => new Response(`User-agent: *\nAllow: /\n\nSitemap: ${origin()}/sitemap.xml\n`, { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
+// the old JEvents calendar is closed to crawlers: its dates never end, and each one was a redirect to work out (2026-11-15)
+const robots = () => new Response(`User-agent: *\nAllow: /\nDisallow: /*iccaldate=\nDisallow: /*/component/jevents/\n\nSitemap: ${origin()}/sitemap.xml\n`, { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
 
 // x-robots-tag: noindex on every response the Worker returns while NOINDEX is "on" (staging), the one place
 // it is set for the whole site (plans/plan-eccm-migration.md, Noindex on every page until cutover). A response with
@@ -182,6 +183,9 @@ const routes = {
     useOrigin(env.SITE_ORIGIN || url.origin);
     if (p === '/robots.txt') return robots();
     // the editors' login, and the gate in front of the tools (src/auth.mjs)
+    // eccm.ee's old Joomla addresses: 301, 410, or the 404 with the miss logged (src/redirects.mjs); first, and
+    // the menu, footer and series loaded only for the 404 or 410 page, since a 301 draws none (2026-11-15)
+    { const out = await legacy(request, env, url, ctx, () => Promise.all([loadLayout(env), loadSeries(env)])); if (out) return out; }
     // the footer's logos from the partner table before any page is drawn (src/partners.mjs), asked 2026-11-07
     // as "footer logos should use same system"; not for the files and images below, which draw no footer
     if (!p.startsWith('/media/') && !p.startsWith('/og/') && !p.startsWith('/img/')) await loadLayout(env);
@@ -192,8 +196,6 @@ const routes = {
     if (isProtected(p)) { const out = await gate(request, env, url); if (out) return out; }
     // /ui is a file under public/, sent here first by assets.run_worker_first so the gate sees it
     if (isStatic(p)) return env.ASSETS.fetch(request);
-    // eccm.ee's old Joomla addresses: 301, 410, or the 404 with the miss logged (src/redirects.mjs)
-    { const out = await legacy(request, env, url, ctx); if (out) return out; }
     // the radio1965 recordings, /radio1965/streams/*, from v2in.stream (src/passthrough.mjs)
     { const out = await passthrough(request, env, url); if (out) return out; }
     // the radio (/stream, /files/*, /admin/files, /radio, /station) went 2026-10-07, restorable from the tag radio-last (v2in's archive/eccm-radio/radio.md)
