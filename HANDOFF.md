@@ -1,3 +1,14 @@
+# Handoff, 2026-11-15
+
+- **D1 ran out, eccm.ee answered 500** from about 17:50 UTC: crawlers (Googlebot in the old JEvents calendar,
+  SemrushBot, ExaSearchBot) spent the free 5M daily reads, 3.9M of them on the events list. ECCM moved to
+  **Workers Paid** ($5 a month) the same evening and the site came back.
+- **Edge cache** (99c8c37, src/edge.mjs): public answers kept in the Cache API, pages 5 minutes, redirects an hour,
+  a stale copy served if the Worker fails, editors and forms bypass; `x-edge: hit` shows it. Checked on eccm.ee.
+- **Cheaper redirects** (75a6890): the JEvents calendar goes to the list with no lookup and robots.txt closes it,
+  a 301 loads no chrome, the chrome caches hold 5 minutes; migration 0020 (legacy_path index) applied to production.
+- Open: purge on save would let the cache hold a day; it needs a Cache Purge API token from ECCM's zone.
+
 # Handoff, 2026-11-14
 
 - **Redirects, done properly** (3fb234a, dc45029, a3a997a; migration 0019 applied to production; deployed 4dee1fb7):
