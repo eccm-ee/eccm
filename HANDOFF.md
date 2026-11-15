@@ -1,3 +1,14 @@
+# Handoff, 2026-11-14
+
+- **Redirects, done properly** (3fb234a, dc45029, a3a997a; migration 0019 applied to production; deployed 4dee1fb7):
+  the redirect table (layer 1 of plans/plan-eccm-urls-sitemap-rss.md section 3), every 404 on the site and every
+  redirect followed counted with people and bots apart, and /edit/redirects to read both and turn a miss into a row.
+  Tarmo's /index.php/et/ulysses/ulysses-uudised/kandideeri-u-koosloome-programmi now 301s to /et/koosloome-programm.
+- **Checked against the Joomla dump** (the owner's ~/Downloads/backup-11.13.2026_09-21-06_eccmee1.tar.gz): all 24 menu
+  addresses and 7 menu articles 301 (4 table rows added), all 156 events 301, 139 to their own page (one row added;
+  16 Schönberg placeholders for 2027 and 2028 were never migrated and go to the list). Open: 40 articles no menu
+  showed, to be found in the miss log; old articles to news items once news is published.
+
 # Handoff, 2026-11-13
 
 **eccm.ee is the new site** since about 10:45 on 2026-11-13: the production Worker in ECCM's Cloudflare account,
