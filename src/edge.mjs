@@ -57,14 +57,14 @@ export async function edge(request, ctx, run, purges = false) {
 }
 
 // a POST, PUT or DELETE the tools answered without an error (an event, a page, a news item, the menu, a logo, a
-// redirect, a newsletter, an upload) empties the zone's cache, the Cache API's copies with it. PURGE_TOKEN is an API
+// redirect, a newsletter, an upload), all behind the login, so a stranger's POST (401) purges nothing, empties the zone's cache, the Cache API's copies with it. PURGE_TOKEN is an API
 // token of ECCM's account with Zone, Cache Purge, Purge on eccm.ee; ZONE_ID is eccm.ee's (wrangler.jsonc). Without
 // them nothing is purged and a page waits for its day
-const SAVES = /^\/(edit|admin|media)(\/|$)/;
+const SAVES = /^\/(edit|admin)(\/|$)/;
 export function purgeOnSave(request, env, ctx, res) {
   if (request.method === 'GET' || request.method === 'HEAD' || !res || res.status >= 400) return;
   if (!SAVES.test(new URL(request.url).pathname) || !env.PURGE_TOKEN || !env.ZONE_ID) return;
   ctx.waitUntil(fetch(`https://api.cloudflare.com/client/v4/zones/${env.ZONE_ID}/purge_cache`, {
     method: 'POST', headers: { authorization: `Bearer ${env.PURGE_TOKEN}`, 'content-type': 'application/json' }, body: JSON.stringify({ purge_everything: true }),
-  }).then(async (r) => { if (!r.ok) console.log('purge', r.status, (await r.text()).slice(0, 200)); }).catch((e) => console.log('purge', String(e))));
+  }).then(async (r) => { if (!r.ok) console.log('purge', r.status, (await r.text()).slice(0, 200)); else console.log('purge ok'); }).catch((e) => console.log('purge', String(e))));
 }
