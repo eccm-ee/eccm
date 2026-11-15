@@ -57,9 +57,9 @@ export async function edge(request, ctx, run, purges = false) {
 }
 
 // a POST, PUT or DELETE the tools answered without an error (an event, a page, a news item, the menu, a logo, a
-// redirect, a newsletter, an upload), all behind the login, so a stranger's POST (401) purges nothing, empties the zone's cache, the Cache API's copies with it. PURGE_TOKEN is an API
-// token of ECCM's account with Zone, Cache Purge, Purge on eccm.ee; ZONE_ID is eccm.ee's (wrangler.jsonc). Without
-// them nothing is purged and a page waits for its day
+// redirect, a newsletter, an upload) empties the zone's cache, the Cache API's copies with it. The tools are behind
+// the login, so a stranger's POST gets 401 and purges nothing. PURGE_TOKEN is an API token with Zone, Cache Purge,
+// Purge on eccm.ee; ZONE_ID is eccm.ee's (wrangler.jsonc). Without them nothing is purged and a copy keeps five minutes
 const SAVES = /^\/(edit|admin)(\/|$)/;
 export function purgeOnSave(request, env, ctx, res) {
   if (request.method === 'GET' || request.method === 'HEAD' || !res || res.status >= 400) return;
