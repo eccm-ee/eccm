@@ -1,3 +1,11 @@
+# Handoff, 2026-11-20
+
+- **Schönberg series 2027 and 2028**: asked by the Estonian Arnold Schönberg Society as drafts.
+  `data/seed-step18-schoenberg-2027-2028.sql`, sixteen events at 19:00 with their iCagenda ids. The audit of the
+  Joomla dump found no other published event missing; the open question is the articles (BACKLOG.md, 2026-11-20).
+- **/edit/events**: the events list for editors, one table with four dropdowns (when, status, series, year), in place
+  of the drafts list. The Admin card is Events; /edit/events/drafts redirects to the drafts of every date.
+
 # Handoff, 2026-11-15
 
 - **D1 ran out, eccm.ee answered 500** from about 17:50 UTC: crawlers (Googlebot in the old JEvents calendar,

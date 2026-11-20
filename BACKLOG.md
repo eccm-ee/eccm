@@ -7,6 +7,14 @@ Earlier eccm lines, up to the move-out of 2026-09-27, are in positron's
 
 ## Open
 
+### Open 2026-11-20: the Schönberg series of 2027 and 2028, and a filterable events list under Admin
+
+✅ Done 2026-11-20: `data/seed-step18-schoenberg-2027-2028.sql`, the sixteen evenings (iCagenda 74 to 80, 152, 161 to 168) as drafts with their iCagenda ids, run twice locally without a duplicate. An audit of the Joomla dump of 2026-11-13 against production found no other published event missing: 68 is the known English duplicate, and the three unpublished ones (86, 104, 139) are copies of events here. ✅ /edit/events: every event in one table (date, title, series, status, a View link once published), filtered by when, status, series and year with dropdowns that send the form on a change, the filters in the address; the Admin card Drafts is Events, and /edit/events/drafts leads to the drafts of every date. MEASURED locally at 375 and 1280.
+
+Asked verbatim, relayed from the Estonian Arnold Schönberg Society: *"Meil tekkis väike probleem sellega, et koduka vanasse keskkonda sisestatud sündmused ei ole uudele kodukale üle üle tulnud. Näiteks olid meil vanas süsteemis sisestatud Schönbergi sarja kontserdid kuni detsembrini 2028. Kas oleks võimalik teha nii, et need jõuaks ka uue koduka süsteemi ning saaks staatuse DRAFT?"*, then the owner: *"maybe we haev more missing content?"* and *"perhaps we need a filterable list of events instad of just drafts under admin. with dropdowns, more compact listing"*.
+
+Open: articles with content and no home here (the conferences of 2023 and 2024 with their programme, DUOD I, Hommage à Kaija Saariaho, the talk "Tulevik läks meist mööda", the HCMF news of 2025-11, Living Legends of 1926), for the owner to say which come over.
+
 ### Open 2026-11-14: every old Joomla address to its own new page, and a log of every miss and every redirect used
 
 ✅ Done 2026-11-14 (dc45029, deployed 4dee1fb7, migration 0019 applied to production): the redirect table, every 404 and every redirect followed counted, /edit/redirects. Checked against the Joomla dump in the owner's Downloads (backup-11.13.2026_09-21-06_eccmee1.tar.gz, mysql/eccmee1_jos2.sql, read in the scratchpad only): 24 menu addresses and 7 menu articles, all 31 now 301 (4 rows added: the two home menus to / and /en/, the two NAN menus to /et/nan and /en/nan); 156 published events, all 301, 139 to their own page, 1 row added (68, the English Dream Sequence, to its page), 16 Schönberg series placeholders for 2027 and 2028 never migrated, left on the events list. Open: 40 published articles no menu showed (their real addresses will show in the miss log), and old articles to news items once news is published (none on 2026-11-14).

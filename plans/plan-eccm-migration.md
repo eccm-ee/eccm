@@ -295,6 +295,7 @@ The missing events, the archive, the changed dates.
 | Feldman had no English text here. | Imported with the archive. | Agent | Done |
 | A few dates will change. | Edit them here once known. | ECCM | Waiting |
 | 2027 placeholders, empty news, Residentuurid, duplicates on eccm.ee. | Leave them behind. | Nobody | Decided |
+| The Schönberg placeholders of 2027 and 2028, sixteen, asked back by the Schönberg Society on 20 November 2026. | Imported as drafts, `data/seed-step18-schoenberg-2027-2028.sql`. | Agent | Done |
 
 ### Existing subscribers
 
