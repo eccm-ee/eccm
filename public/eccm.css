@@ -340,12 +340,10 @@
      2026-09-26 with a crop: "feels like these need biiit more vert space in
      between"): 12 px under the small line, 16 px under the title */
   .ev-summary { margin-block-start: var(--eccm-s-4); }
-  /* the drafts list at /edit/events/drafts, dimmed (asked 2026-11-07: "dim
-     them in listing view"): the title and summary in the meta line's ink and the picture
-     faded, never the whole row at an opacity, which would take the small
-     lines under 4.5 : 1 (eccm-ui §2, every pair computed against white) */
-  .events-drafts .ev-title, .events-drafts .ev-summary { color: var(--eccm-ink-2); }
-  .events-drafts .ev-pic { opacity: 0.5; }
+  /* the editor's events list at /edit/events (asked 2026-11-20: "with dropdowns, more compact listing"): the
+     four dropdowns two to a row on a phone rather than a screen of four, and the count a group away from them */
+  .ev-filter { margin-block-end: var(--eccm-s-8); }
+  .ev-filter .field-row { gap: var(--eccm-s-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); }
   /* the front page with news (asked 2026-11-13: the three newest "paremal", with picture and opening, under the
      events on a phone): the events and a narrow column, each its own container so the events list keeps deciding
      its compact row by its own width */

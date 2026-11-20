@@ -24,6 +24,7 @@ import { listImg } from './pic.mjs';
 import { opening } from './lead.mjs';
 import { jsonLd, organization } from './ld.mjs';
 import { newsColumn } from './news.mjs';
+import { table } from './table.mjs';
 
 export const LIST = { et: '/et/sundmused', en: '/en/events' };
 const eventPath = (l, slug) => (l === 'et' ? `/et/sundmused/${slug}` : `/en/events/${slug}`);
@@ -39,7 +40,7 @@ const lead = (e, lang) => {
 };
 
 // href: where the title and the picture lead, the public page unless the
-// drafts list below sends them to the editor
+// news editor's list sends them to its form
 export const row = (e, lang, first = false, href = eventPath(e.tlang, e.slug)) => {
   const foreign = e.tlang !== lang ? raw(` lang="${e.tlang}"`) : '';
   const summary = lead(e, lang);
@@ -85,18 +86,38 @@ export const renderEvents = ({ lang, upcoming, past, origin, path, home = false,
   return page({ lang, title: home ? t.upcoming : t.events, alternate, canonical: origin + path, alternates, body, head: home ? jsonLd(organization(origin, lang)) : null, og: home ? { key: 'home', title: PAGE_TITLES.home[lang] } : { key: 'events', title: PAGE_TITLES.events[lang] }, description: DESCRIPTION[home ? 'home' : 'events'][lang] });
 };
 
-// the drafts list at /edit/events/drafts, asked 2026-11-07 as "drafts list.
-// re-use events list but with Drafts header and dim them in listing view":
-// every event that is not published, in the rows above, each leading to its
-// editor because a draft has no public page. Newest first by when it was
-// made, so the draft just saved from New event is on top. In English like
-// every admin page, and dimmed by the class on the list (public/eccm.css).
-export const renderDrafts = ({ drafts }) => page({
-  wide: true, lang: 'en', title: 'Drafts.',
-  body: html`  <article class="event">
-    <h1>Drafts</h1>
-    ${drafts.length ? html`<ol class="events events-drafts">
-    ${drafts.map((e, i) => row({ ...e, title: e.title || 'Untitled' }, 'en', i === 0, `/edit/events/${e.id}`))}
-    </ol>` : html`<p class="note">No drafts.</p>`}
-  </article>`,
+// the editor's list at /edit/events (asked 2026-11-20: "perhaps we need a filterable list of events instad of just
+// drafts under admin. with dropdowns, more compact listing"), in place of the drafts list of 2026-11-07: one table
+// row per event, four dropdowns that send the form on a change, every choice in the address so a view can be kept
+// as a link. f: the filters as read (src/editor.mjs eventList); series: every series row; years: the years events
+// have. In English like every admin page.
+const WHEN = [['upcoming', 'Upcoming'], ['past', 'Past'], ['all', 'All dates']];
+const STATUS = [['', 'Any status'], ['draft', 'Draft'], ['published', 'Published']];
+const select = (name, label, options, value) => html`<div class="field"><label for="f-${name}">${label}</label><select id="f-${name}" name="${name}">${options.map(([v, l]) => html`<option value="${v}"${String(v) === String(value) ? raw(' selected') : ''}>${l}</option>`)}</select></div>`;
+export const renderEventAdmin = ({ rows, f, series, years }) => page({
+  wide: true, lang: 'en', title: 'Events.',
+  body: html`  <h1>Events</h1>
+  <p class="note"><a class="btn" href="/edit/events/new">New event</a></p>
+  <form class="form form-wide ev-filter" method="get" action="/edit/events">
+    <div class="field-row">
+      ${select('when', 'When', WHEN, f.when)}
+      ${select('status', 'Status', STATUS, f.status)}
+      ${select('series', 'Series', [['', 'Any series']].concat(series.map((r) => [r.key, r.name_en])), f.series)}
+      ${select('year', 'Year', [['', 'Any year']].concat(years.map((y) => [y, y])), f.year)}
+    </div>
+    <noscript><p><button class="btn" type="submit">Show</button></p></noscript>
+  </form>
+  <script type="module">
+    const form = document.querySelector('.ev-filter');
+    form.addEventListener('change', () => form.submit());
+  </script>
+  <p class="note">${rows.length === 1 ? '1 event' : `${rows.length} events`}</p>
+  ${rows.length ? table({ label: 'Events', cols: [{ label: 'Date', cls: '' }, { label: 'Title', cls: 'main' }, { label: 'Series', cls: '' }, { label: 'Status', cls: '' }, { label: 'Page', cls: '' }],
+    rows: rows.map((e) => [
+      html`<time datetime="${e.starts_at}">${dateShort(e.starts_at, 'en')}${hasClock(e.starts_at) ? `, ${clock(e.starts_at, 'en')}` : ''}</time>`,
+      html`<a href="/edit/events/${e.id}"${e.tlang !== 'en' ? raw(` lang="${e.tlang}"`) : ''}>${e.title || 'Untitled'}</a>`,
+      seriesOf(e, 'en') || e.series,
+      e.status === 'published' ? 'Published' : 'Draft',
+      e.status === 'published' && e.slug ? html`<a href="${eventPath(e.tlang, e.slug)}">View</a>` : '',
+    ]) }) : html`<p class="note">No events.</p>`}`,
 });

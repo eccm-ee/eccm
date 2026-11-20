@@ -17,8 +17,9 @@ import { page } from './chrome.mjs';
 // three cards since that evening ("split ds into components logo and social, separate cards in admin. 4 col cards").
 // Radio, Files, Icons and Research went 2026-10-07 with what they led to (archive/README.md, v2in's archive/eccm-radio/radio.md)
 const TOOLS = [
-  // left of New event (asked 2026-11-07: "add link to admin page in left of new event"), the drafts list
-  ['/edit/events/drafts', 'Drafts', 'Every event not yet published, each opening in the editor.'],
+  // left of New event (asked 2026-11-07: "add link to admin page in left of new event"), the drafts list until
+  // 2026-11-20, every event since ("a filterable list of events instad of just drafts under admin")
+  ['/edit/events', 'Events', 'Every event in a short table, filtered by date, status, series and year.'],
   // the one door to a new event's form (asked 2026-11-06), here since the public list is the same for every visitor
   ['/edit/events/new', 'New event', 'A blank event form. It is saved as a draft until set to Published.'],
   // the news (asked 2026-11-13), every item and New item on one page

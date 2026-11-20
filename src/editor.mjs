@@ -3,7 +3,8 @@
 //
 //   GET  /edit                                 to the front page; an event is edited from its own Muuda button
 //   GET  /edit/events/new, POST                a blank form, then an insert
-//   GET  /edit/events/drafts                   every event not yet published, each to its form
+//   GET  /edit/events                          every event, filtered by when, status, series and year
+//   GET  /edit/events/drafts                   to /edit/events with the drafts of every date
 //   GET  /edit/events/{id}, POST               the form from D1, then a save
 //   GET  /edit/pages/new, POST                 a blank form, then an insert
 //   GET  /edit/pages/{id}, POST                the form from D1, then a save
@@ -35,7 +36,7 @@ import { storeUpload } from './media.mjs';
 import { renderPage, pagePath } from './render/page.mjs';
 import { OTHER, origin } from './render/chrome.mjs';
 import { editorForm, pageForm, errorPage, STATUSES, eventPath, BLANK_CREDIT } from './render/editor.mjs';
-import { renderDrafts } from './render/events.mjs';
+import { renderEventAdmin } from './render/events.mjs';
 import { allPartners } from './partners.mjs';
 import { VERSIONS } from './render/partners.mjs';
 import { allSeries, resolveSeries, insertSeries, categoryFor, resetSeries, seriesEvents } from './series.mjs';
@@ -410,22 +411,40 @@ async function form(request, env, url, id) {
   return redirect(landing(v, eventPath) || `/edit/events/${out.id}`);
 }
 
-// the drafts list (asked 2026-11-07: "drafts list. re-use events list but
-// with Drafts header and dim them in listing view"): every event whose status
-// is not published, its Estonian text or else its English one, the picture
-// joined, the one made last first
-async function drafts(env) {
-  const rows = (await env.DB.prepare(`SELECT e.id, e.starts_at, COALESCE(NULLIF(t0.venue, ''), e.venue) AS venue, e.address, e.series, COALESCE(t0.title, t1.title) AS title, COALESCE(t0.lang, t1.lang, 'et') AS tlang, COALESCE(t0.body, t1.body) AS body, m.key AS pic, m.width, m.height
-    FROM event e LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et' LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = 'en' LEFT JOIN media m ON m.id = e.image_id
-    WHERE e.status != 'published' ORDER BY e.created_at DESC, e.id DESC`).all()).results;
-  return reply(renderDrafts({ drafts: rows }));
+// the editor's list (asked 2026-11-20, in place of the drafts list of 2026-11-07): every event filtered by when,
+// status, series and year from the address, its Estonian text or else its English one. Upcoming is from today in
+// Tallinn on, the way the public list counts it, in date order; past and all dates newest first. A value not in
+// its dropdown is read as no filter.
+const tallinnToday = () => new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Tallinn' }).format(new Date());
+async function eventList(env, url) {
+  const q = url.searchParams;
+  const series = await allSeries(env.DB);
+  const years = (await env.DB.prepare("SELECT DISTINCT substr(starts_at, 1, 4) AS y FROM event ORDER BY y DESC").all()).results.map((r) => r.y);
+  const f = {
+    when: ['upcoming', 'past', 'all'].includes(q.get('when')) ? q.get('when') : 'upcoming',
+    status: ['draft', 'published'].includes(q.get('status')) ? q.get('status') : '',
+    series: series.some((r) => r.key === q.get('series')) ? q.get('series') : '',
+    year: years.includes(q.get('year')) ? q.get('year') : '',
+  };
+  const where = []; const bind = [];
+  if (f.when === 'upcoming') { where.push('substr(e.starts_at, 1, 10) >= ?'); bind.push(tallinnToday()); }
+  if (f.when === 'past') { where.push('substr(e.starts_at, 1, 10) < ?'); bind.push(tallinnToday()); }
+  if (f.status) { where.push('e.status = ?'); bind.push(f.status); }
+  if (f.series) { where.push('e.series = ?'); bind.push(f.series); }
+  if (f.year) { where.push('substr(e.starts_at, 1, 4) = ?'); bind.push(f.year); }
+  const rows = (await env.DB.prepare(`SELECT e.id, e.starts_at, e.status, e.series, COALESCE(t0.title, t1.title) AS title, COALESCE(t0.slug, t1.slug) AS slug, COALESCE(t0.lang, t1.lang, 'et') AS tlang
+    FROM event e LEFT JOIN event_text t0 ON t0.event_id = e.id AND t0.lang = 'et' LEFT JOIN event_text t1 ON t1.event_id = e.id AND t1.lang = 'en'
+    ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY e.starts_at ${f.when === 'upcoming' ? 'ASC' : 'DESC'}, e.id`).bind(...bind).all()).results;
+  return reply(renderEventAdmin({ rows, f, series, years }));
 }
 
 export async function editor(request, env, url) {
   const p = url.pathname;
   try {
     if (p === '/edit') return redirect('/');
-    if (p === '/edit/events/drafts') return drafts(env);
+    if (p === '/edit/events' || p === '/edit/events/') return eventList(env, url);
+    // the drafts list's address, kept for a bookmark
+    if (p === '/edit/events/drafts') return redirect('/edit/events?when=all&status=draft');
     const m = /^\/edit\/events\/(new|\d+)$/.exec(p);
     if (m) return form(request, env, url, m[1]);
     const pm = /^\/edit\/pages\/(new|\d+)$/.exec(p);
